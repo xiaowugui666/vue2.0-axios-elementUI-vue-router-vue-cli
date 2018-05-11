@@ -108,6 +108,7 @@ export default {
   height: 76px;
   line-height: 76px;
   text-align: center;
+  border-bottom: 2px solid #D5D5D5;
 
   img {
     vertical-align: middle;
