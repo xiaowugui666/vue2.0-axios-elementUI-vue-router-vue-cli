@@ -3,7 +3,7 @@
     <menu-left-com></menu-left-com>
     <div class="home-content">
       <div class="shop-info">
-        <span>阿迪达斯旗舰店</span>
+        <span>{{shopName}}</span>
         <i class="icon-淘宝认证"></i>
         <i class="icon-微信认证"></i>
         <i class="icon-公众号认证"></i>
@@ -14,7 +14,7 @@
         <el-col class="li" :span="4"><router-link to="/orderManagement"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/customerManagement"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/account"><i class="icon-账户"></i><span>我的账户</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/collageManagement"><i class="icon-拼团icon"></i><span>拼团管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/collageManagement"><i class="icon-拼团"></i><span>拼团管理</span></router-link></el-col>
       </el-row>
       <ul class="home-survey">
         <li>
@@ -48,7 +48,7 @@
           placement="left"
           width="150"
           trigger="hover">
-          <div class="detailed-consultation">详情咨询QQ：<span>2881778283</span></div>
+          <div class="detailed-consultation">详情咨询QQ：<span>{{tel}}</span></div>
           <el-button slot="reference">在<br>线<br>咨<br>询</el-button>
         </el-popover>
       </div>
@@ -64,6 +64,8 @@ import {mapState, mapMutations} from 'vuex'
 export default {
   data () {
     return {
+      shopName: '阿迪达斯旗舰店',
+      tel: '2881778283'
     }
   },
   mounted () {

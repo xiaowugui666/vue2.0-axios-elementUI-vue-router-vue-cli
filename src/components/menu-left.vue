@@ -97,7 +97,7 @@ export default {
   width: 180px;
   min-height: 600px;
   background: #fff;
-  position: absolute;
+  position: fixed;
   box-shadow: 3px 0 2px #eee;
 }
 .el-submenu .el-menu-item {
@@ -108,7 +108,7 @@ export default {
   height: 76px;
   line-height: 76px;
   text-align: center;
-  border-bottom: 2px solid #D5D5D5;
+  border-bottom: 2px solid #f5f5f5;
 
   img {
     vertical-align: middle;

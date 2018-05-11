@@ -8,6 +8,8 @@ import orderManagement from '@/page/order-management'
 import customerManagement from '@/page/customer-management'
 import account from '@/page/account'
 import collageManagement from '@/page/collage-management'
+import informationSetting from '@/page/information-setting'
+import informationSettingEdit from '@/page/information-setting-edit'
 
 Vue.use(Router)
 
@@ -52,6 +54,16 @@ export default new Router({
       path: '/collageManagement',
       name: 'collageManagement',
       component: collageManagement
+    },
+    {
+      path: '/informationSetting',
+      name: 'informationSetting',
+      component: informationSetting
+    },
+    {
+      path: '/informationSettingEdit',
+      name: 'informationSettingEdit',
+      component: informationSettingEdit
     }
   ]
 })

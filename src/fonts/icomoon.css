@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('icomoon.eot?9uo7ye');
-  src:  url('icomoon.eot?9uo7ye#iefix') format('embedded-opentype'),
-    url('icomoon.ttf?9uo7ye') format('truetype'),
-    url('icomoon.woff?9uo7ye') format('woff'),
-    url('icomoon.svg?9uo7ye#icomoon') format('svg');
+  src:  url('icomoon.eot?culnbk');
+  src:  url('icomoon.eot?culnbk#iefix') format('embedded-opentype'),
+    url('icomoon.ttf?culnbk') format('truetype'),
+    url('icomoon.woff?culnbk') format('woff'),
+    url('icomoon.svg?culnbk#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -35,33 +35,42 @@
 }
 .icon-公众号认证:before {
   content: "\e903";
+  color: #2a99ff;
+}
+.icon-京东认证:before {
+  content: "\e904";
+  color: #ed3541;
 }
 .icon-客户:before {
-  content: "\e904";
-}
-.icon-拼团icon:before {
   content: "\e905";
 }
-.icon-商品:before {
+.icon-拼团:before {
   content: "\e906";
 }
-.icon-设置:before {
+.icon-钱:before {
   content: "\e907";
+  color: #f44f4c;
 }
-.icon-数据:before {
+.icon-商品:before {
   content: "\e908";
 }
-.icon-淘宝认证:before {
+.icon-设置:before {
   content: "\e909";
+}
+.icon-数据:before {
+  content: "\e90a";
+}
+.icon-淘宝认证:before {
+  content: "\e90b";
   color: #fc4f00;
 }
 .icon-微信认证:before {
-  content: "\e90a";
+  content: "\e90c";
   color: #2bc102;
 }
 .icon-营销:before {
-  content: "\e90b";
+  content: "\e90d";
 }
 .icon-账户:before {
-  content: "\e90c";
+  content: "\e90e";
 }
