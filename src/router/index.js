@@ -10,7 +10,6 @@ import account from '@/page/account'
 import collageManagement from '@/page/collage-management'
 import informationSetting from '@/page/information-setting'
 import orderSetting from '@/page/order-setting'
-import firstSetting from '@/page/first-setting'
 
 Vue.use(Router)
 
@@ -65,11 +64,6 @@ export default new Router({
       path: '/orderSetting',
       name: 'orderSetting',
       component: orderSetting
-    },
-    {
-      path: '/firstSetting',
-      name: 'firstSetting',
-      component: firstSetting
     }
   ]
 })
