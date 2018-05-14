@@ -131,8 +131,8 @@
           </div>
         </div>
         <div class="edit-btn">
-          <el-button v-show="!editState" type="primary" size="small" @click="editClick">编辑</el-button>
-          <el-button v-show="editState" type="success" size="small" @click="editClick">保存</el-button>
+          <el-button v-show="!editState" type="primary" size="small" @click="editClick" style="padding-left: 25px;padding-right: 25px;">编辑</el-button>
+          <el-button v-show="editState" type="success" size="small" @click="editClick" style="padding-left: 25px;padding-right: 25px;">保存</el-button>
         </div>
       </div>
     </div>
