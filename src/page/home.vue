@@ -9,7 +9,7 @@
         <i class="icon-公众号认证"></i>
       </div>
       <el-row class="shortcut-entrance">
-        <el-col class="li" :span="4"><router-link to="/shortcutEntrance"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/shopProfile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/commodityManagement"><i class="icon-商品"></i><span>商品管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/orderManagement"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/customerManagement"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>

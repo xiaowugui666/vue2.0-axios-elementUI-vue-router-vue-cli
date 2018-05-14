@@ -16,7 +16,7 @@
         <i class="icon-概况"></i>
         <span>概况</span>
       </el-menu-item>
-      <el-menu-item index="/initialSetting">
+      <el-menu-item index="/shopProfile">
         <i class="icon-店铺"></i>
         <span>店铺</span>
       </el-menu-item>
