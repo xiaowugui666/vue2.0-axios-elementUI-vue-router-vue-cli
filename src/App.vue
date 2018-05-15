@@ -1,12 +1,17 @@
 <template>
   <div id="app">
+    <menu-left></menu-left>
     <router-view/>
   </div>
 </template>
 
 <script>
+import menuLeft from '@/components/menu-left'
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    menuLeft
+  }
 }
 </script>
 

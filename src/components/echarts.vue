@@ -1,7 +1,7 @@
 <template>
   <div class="echarts-component">
     <div class="user-flow-chart">用户流量图</div>
-    <el-select v-model="value" size="mini" class="select-time">
+    <el-select v-model="value" size="mini" class="select-time" @change="selectTime">
       <el-option
         v-for="item in options"
         :key="item.value"
@@ -48,6 +48,9 @@ export default {
     this.drawLine()
   },
   methods: {
+    selectTime (val) {
+      console.log(this.value)
+    },
     drawLine () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = echarts.init(document.getElementById('myChart'))

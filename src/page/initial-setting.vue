@@ -15,11 +15,11 @@
           <div class="subject-info-setting">
             <ul>
               <li>
-                <span class="name">商铺名称：</span>
-                <input type="text" v-model="shopName" placeholder="请输入店铺名称"/>
+                <span class="name required">商铺名称：</span>
+                <input type="text" v-model="shopName" placeholder="请输入店铺名称 (15个字符以内)"/>
               </li>
               <li>
-                <span class="name">主营类目：</span>
+                <span class="name required">主营类目：</span>
                 <el-select v-model="value" size="small" class="select-state">
                   <el-option
                     v-for="item in selectStateOptions"
@@ -30,13 +30,137 @@
                 </el-select>
               </li>
             </ul>
+            <div class="next-step">
+              <el-button type="success" size="small" :disabled="false" @click="setStepActive">下一步</el-button>
+            </div>
           </div>
         </div>
-        <div v-show="active == 1" class="subject-information plate">
+        <div v-show="active == 1" class="store-information plate">
           <div class="plate-top">店铺信息</div>
+          <div class="store-information-setting">
+            <ul>
+              <li>
+                <span class="name alignment-top">商铺logo：</span>
+                <el-upload
+                  class="avatar-uploader"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :on-change='changeUpload'
+                  :before-upload="beforeUpload"
+                  :show-file-list="false"
+                  :auto-upload="false"
+                  :on-success="handleAvatarSuccess">
+                  <img :src="imageUrl" class="avatar">
+                  <div class="alignment-tip">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <p slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</p>
+                  </div>
+                </el-upload>
+              </li>
+              <li>
+                <span class="name alignment-top required">商铺描述：</span>
+                <textarea class="shop-description-textarea" placeholder="请输入商品描述" v-model="textArea"></textarea>
+              </li>
+              <li>
+                <span class="name alignment-top">banner：</span>
+                <el-upload
+                  class="avatar-uploader"
+                  action="https://jsonplaceholder.typicode.com/posts/"
+                  :on-change='changeUpload'
+                  :before-upload="beforeUpload"
+                  :show-file-list="false"
+                  :auto-upload="false"
+                  :on-success="handleAvatarSuccess">
+                  <img :src="imageUrl2" class="avatar avatar2">
+                  <div class="alignment-tip">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                    <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
+                    <p slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</p>
+                  </div>
+                </el-upload>
+              </li>
+              <li>
+                <span class="name required">店长姓名：</span>
+                <input type="text" v-model="shopChiefName" placeholder="请输入店长姓名"/>
+              </li>
+              <li>
+                <span class="name">联系电话：</span>
+                <span>{{telNum}}</span>
+              </li>
+              <li>
+                <span class="name">联系微信：</span>
+                <input type="text" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+              </li>
+              <li>
+                <span class="name">客服电话：</span>
+                <input type="text" v-model="customerServiceNum" placeholder="请输入客服电话"/>
+              </li>
+              <li>
+                <span class="name">联系地址：</span>
+                <div class="el-cascader-box">
+                  <el-cascader
+                    size="small"
+                    :options="options"
+                    v-model="selectedOptions"
+                    placeholder="省 / 市 / 区"
+                    @change="handleChange">
+                  </el-cascader>
+                  <input class="contact-address-input" type="text" v-model="contactAddress" placeholder="请输入详细地址"/>
+                </div>
+              </li>
+            </ul>
+            <div class="next-step">
+              <el-button type="success" size="small" :disabled="false" @click="setStepActive">下一步</el-button>
+            </div>
+          </div>
         </div>
-        <div v-show="active == 2" class="subject-information plate">
+        <div v-show="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
+          <div class="pay-information-setting">
+            <ul>
+              <li>
+                <span class="pay-info-title">服务商商户号：</span>
+                <span class="pay-info-txt">{{merchantNumber}}</span>
+                <el-button type="primary" size="small" @click="setMerchantNumber">设置</el-button>
+                <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
+              </li>
+              <li>
+                <span class="pay-info-title">服务商商户秘钥：</span>
+                <span class="pay-info-txt">{{businessSecretKey}}</span>
+                <el-button type="primary" size="small" @click="setMerchantNumber">设置</el-button>
+                <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API 安全 > API 秘钥</span>
+              </li>
+              <li>
+                <span class="pay-info-title">服务商P12证书：</span>
+                <span class="pay-info-txt">{{p12Certificate}}</span>
+                <el-button type="primary" size="small" @click="setMerchantNumber">上传</el-button>
+                <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API安全 > 下载证书。<br>得到的 apiclient_cert.p12 文件后，点击右侧的上传按钮进行上传即可。</span>
+              </li>
+              <li>
+                <span class="pay-info-title">升级支付接口：</span>
+                <span class="pay-info-txt"></span>
+                <el-button type="primary" size="small" @click="setMerchantNumber">免费升级</el-button>
+                <span>如果您是特约支付商户，创建社交立减金前需要完成接口升级</span>
+              </li>
+            </ul>
+            <div class="checked-protocol">
+              <el-checkbox v-model="checked">
+                <span class="checked-protocol-text">我已同意并阅读</span>
+                <el-button  type="text" @click="readingProtocol = true">《协议》</el-button>
+              </el-checkbox>
+              <el-dialog
+                title="提示"
+                :visible.sync="readingProtocol"
+                width="60%">
+                <span>这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级这是一段信息创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级创建社交立减金前需要完成接口升级级要完成接口升级级</span>
+                <span slot="footer" class="dialog-footer">
+                  <el-button type="primary" size="small" @click="readingProtocol = false">确 定</el-button>
+                </span>
+              </el-dialog>
+            </div>
+            <div class="next-step">
+              <el-button type="success" size="small" :disabled="true" @click="setStepActive">完成</el-button>
+            </div>
+          </div>
         </div>
       </div>
       <div v-show="!settingStep" class="authorized-small-program-object" :style="{height:authorizedHeight}">
@@ -68,6 +192,10 @@ export default {
       authorizedHeight: this.setAuthorizedHeight(),
       active: 0,
       shopName: '',
+      merchantNumber: '--',
+      businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
+      p12Certificate: 'apiclient_cert.p12',
+      checked: true,
       selectStateOptions: [{
         value: '1',
         label: '食品'
@@ -94,10 +222,11 @@ export default {
       editState: false,
       imageUrl: ceshi,
       imageUrl2: ceshi2,
-      textarea: 'wqetrwqerwesdfdfasldkfjalsejtlaweflsadkjflwe',
+      textArea: 'wqetrwqerwesdfdfasldkfjalsejtlaweflsadkjflwe',
       options: regionData,
       selectedOptions: [],
-      contactAddress: ''
+      contactAddress: '',
+      readingProtocol: false
     }
   },
   mounted () {
@@ -110,6 +239,46 @@ export default {
     setAuthorizedHeight () {
       let wHeight = document.documentElement.clientHeight - 40 + 'px'
       return wHeight
+    },
+    setStepActive () {
+      this.active++
+    },
+    setMerchantNumber () {
+      this.$prompt('请输入邮箱', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/,
+        inputErrorMessage: '邮箱格式不正确'
+      }).then(({ value }) => {
+        this.$message({
+          type: 'success',
+          message: '你的邮箱是: ' + value
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消输入'
+        })
+      })
+    },
+    handleAvatarSuccess (res, file) {
+      console.log('success')
+      this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeUpload (x) {
+      // console.log(x)
+    },
+    changeUpload (file, fileList) {
+      // console.log(file)
+      this.imageUrl = file.url
+    },
+    handleChange (value) {
+      // console.log(CodeToText[value[0]], CodeToText[value[1]], CodeToText[value[2]])
+    },
+    getDetailedAddress () {
+      let selAdd = this.selectedOptions
+      let detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
+      return detAdd
     }
   }
 }
@@ -149,8 +318,22 @@ export default {
           background: #999;
         }
       }
+      .required::before {
+        content: '*';
+        color: #DE5B67;
+        margin-left: -10px;
+        padding-right: 5px;
+      }
+      .el-button--success.is-disabled {
+        background: #d5d5d5;
+        border-color: #d5d5d5;
+      }
     }
-    .subject-info-setting {
+    .setting-step {
+      .next-step {
+        padding-top: 30px;
+        padding-left: 74px;
+      }
       input {
         color: #333;
         border: 1px solid #d5d5d5;
@@ -163,6 +346,112 @@ export default {
         &::-webkit-input-placeholder {
           color: #b5b5b5;
         }
+      }
+    }
+    .subject-info-setting {
+      padding: 10px 0;
+      padding-left: 10px;
+      li {
+        box-sizing: border-box;
+        font-size: 12px;
+        padding-top: 20px;
+        padding-left: 5px;
+        span {
+          vertical-align: middle;
+          display: inline-block;
+        }
+        span.name {
+          color: #999;
+          width: 65px;
+        }
+        .select-state {
+          color: #333;
+          display: inline-block;
+          width: 258px;
+        }
+      }
+    }
+    .store-information-setting {
+      padding: 10px 0;
+      padding-left: 10px;
+      li {
+        box-sizing: border-box;
+        font-size: 12px;
+        padding-top: 20px;
+        padding-left: 5px;
+        span {
+          display: inline-block;
+          vertical-align: middle;
+        }
+        span.name {
+          color: #999;
+          width: 65px;
+        }
+        .name.alignment-top {
+          vertical-align: top;
+          padding-top: 6px;
+        }
+        .shop-description-textarea {
+          display: inline-block;
+          border: 1px solid #d5d5d5;
+          padding: 10px;
+          width: 236px;
+          min-height: 80px;
+        }
+        .el-cascader-box {
+          display: inline-block;
+          .el-cascader {
+            display: inline-block;
+            vertical-align: middle;
+            width: 258px;
+          }
+          .contact-address-input {
+            vertical-align: middle;
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+    .pay-information-setting {
+      padding: 0 0 10px;
+      padding-left: 5px;
+      li {
+        padding-top: 20px;
+        font-size: 12px;
+        color: #B5B5B5;
+        span {
+          display: inline-block;
+          vertical-align: middle;
+          line-height: 1.4;
+        }
+        .pay-info-title {
+          width: 96px;
+          text-align: right;
+          padding-right: 3px;
+        }
+        .pay-info-txt {
+          width: 250px;
+          color: #333;
+          padding-right: 10px;
+        }
+        .el-button--small {
+          margin-right: 25px;
+        }
+      }
+    }
+    .checked-protocol {
+      padding-left: 74px;
+      padding-top: 60px;
+      .checked-protocol-text {
+        color: #999;
+      }
+      .el-button--text {
+        padding: 0;
+        border: none;
+      }
+      .dialog-footer {
+        text-align: center;
+        display: block;
       }
     }
     .authorized-small-program-object {
@@ -208,6 +497,43 @@ export default {
       }
     }
   }
+  .avatar-uploader {
+    display: inline-block;
+    .avatar {
+      width: 80px;
+      height: 80px;
+      display: inline-block;
+      vertical-align: top;
+    }
+    .avatar.avatar2 {
+      width: 160px;
+    }
+    .alignment-tip {
+      display: inline-block;
+      vertical-align: top;
+      height: 80px;
+      width: 350px;
+      text-align: left;
+      position: relative;
+      margin-left: 17px;
+      .el-upload__tip {
+        color: #b5b5b5;
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+      }
+      .banner-tip {
+        color: #b5b5b5;
+        padding-top: 10px;
+      }
+    }
+  }
+  .el-button--small {
+    width: 80px;
+    height: 30px;
+    padding: 0;
+    vertical-align: middle;
+  }
 </style>
 <style>
   .el-step__title.is-process {
@@ -215,5 +541,20 @@ export default {
   }
   .el-step__title.is-wait {
     color: #d5d5d5;
+  }
+  .el-input__inner {
+     border-radius: 0;
+     color: #333;
+   }
+  .el-dialog__header {
+    text-align: center;
+  }
+  .el-dialog__header span {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+  }
+  .el-dialog__body {
+    padding-top: 20px;
   }
 </style>

@@ -1,6 +1,5 @@
 <template>
     <div>
-      <menu-left></menu-left>
       <div class="time-setting-subject">
         <div class="order-cancellation-time plate">
           <div class="plate-top">
@@ -37,7 +36,6 @@
 </template>
 
 <script>
-import menuLeft from '../components/menu-left'
 export default {
   data () {
     return {
@@ -47,7 +45,6 @@ export default {
     }
   },
   components: {
-    menuLeft
   },
   methods: {
     editClick () {

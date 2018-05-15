@@ -1,6 +1,5 @@
 <template>
     <div>
-      <menu-left></menu-left>
       <div class="info-setting-subject">
         <div class="subject-info plate">
           <div class="plate-top">
@@ -139,7 +138,6 @@
 </template>
 
 <script>
-import menuLeft from '../components/menu-left'
 import ceshi from '../assets/ceshi.png'
 import ceshi2 from '../assets/ceshi2.png'
 import { regionData, CodeToText } from 'element-china-area-data'
@@ -180,7 +178,6 @@ export default {
     }
   },
   components: {
-    menuLeft,
     CodeToText
   },
   mounted () {
@@ -283,7 +280,7 @@ export default {
       .select-state {
         color: #333;
         display: inline-block;
-        width: 256px;
+        width: 258px;
       }
     }
   }
@@ -339,7 +336,7 @@ export default {
         .el-cascader {
           display: inline-block;
           vertical-align: middle;
-          width: 356px;
+          width: 258px;
         }
         .contact-address-input {
           vertical-align: middle;

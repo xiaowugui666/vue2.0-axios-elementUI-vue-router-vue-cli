@@ -1,6 +1,5 @@
 <template>
   <div>
-    <menu-left-com></menu-left-com>
     <div class="home-content">
       <div class="shop-info">
         <span>{{shopName}}</span>
@@ -57,7 +56,6 @@
 </template>
 
 <script>
-import menuLeftCom from '@/components/menu-left'
 import echarts from '@/components/echarts'
 import {mapState, mapMutations} from 'vuex'
 
@@ -71,8 +69,7 @@ export default {
   mounted () {
   },
   components: {
-    echarts,
-    menuLeftCom
+    echarts
   },
   computed: {
     ...mapState(['menuLeft'])
