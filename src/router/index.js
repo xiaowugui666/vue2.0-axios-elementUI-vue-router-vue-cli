@@ -12,6 +12,7 @@ import orderSetting from '@/page/order-setting'
 import shopProfile from '@/page/shop-profile'
 import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
+import addEditGoods from '@/page/add-edit-goods'
 
 Vue.use(Router)
 
@@ -76,6 +77,11 @@ export default new Router({
       path: '/shopProfile',
       name: 'shopProfile',
       component: shopProfile
+    },
+    {
+      path: '/addEditGoods',
+      name: 'addEditGoods',
+      component: addEditGoods
     }
   ]
 })
