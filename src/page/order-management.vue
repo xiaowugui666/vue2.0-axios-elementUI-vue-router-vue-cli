@@ -72,9 +72,9 @@
                 <label>商铺名称：金桔小店</label>
                 <label>客户手机：18923821231</label>
               </div>
-              <div class="content" v-for="item in tradeList">
+              <div class="content" v-for="(item,index) in tradeList"  :key="index">
                   <div>
-                      <div class="prolist"  v-for="items in item.list" >
+                      <div class="prolist"  v-for="(items,id) in item.list"  :key="id">
                         <div class="proInfo">
                           <img :src="items.img" alt="">
                           <div class="desc">{{items.desc}}</div>

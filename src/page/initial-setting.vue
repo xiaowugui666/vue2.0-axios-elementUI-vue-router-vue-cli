@@ -185,6 +185,7 @@ import firstSettingMenu from '@/components/first-setting-menu'
 import ceshi from '../assets/ceshi.png'
 import ceshi2 from '../assets/ceshi2.png'
 import { regionData, CodeToText } from 'element-china-area-data'
+import {mapState, mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -230,12 +231,17 @@ export default {
     }
   },
   mounted () {
+    this.setMenuShow(false)
   },
   components: {
     firstSettingMenu,
     CodeToText
   },
+  computed: {
+    ...mapState(['menuShow'])
+  },
   methods: {
+    ...mapMutations(['setMenuShow']),
     setAuthorizedHeight () {
       let wHeight = document.documentElement.clientHeight - 40 + 'px'
       return wHeight

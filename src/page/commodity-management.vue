@@ -25,7 +25,7 @@
       </div>
       <div class="commodity-list">
         <div class="add-commodity-box">
-          <el-button type="primary" size="small">添加商品</el-button>
+          <el-button type="primary" size="small" @click="setRouter('/addEditGoods')">添加商品</el-button>
         </div>
         <div class="commodity-list-table">
           <el-table
@@ -89,21 +89,36 @@
               label="状态"
               width="80"
               show-overflow-tooltip>
-              <template :class="{'goods-state':scope.row.state}" slot-scope="scope">{{scope.row.state?'已上架':'已下架'}}</template>
+              <template slot-scope="scope">
+                <div :class="{'goods-state':scope.row.state}" @click="upperLowerFrame">{{scope.row.state?'已上架':'已下架'}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               fixed="right"
               label="操作"
               width="200">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">查看</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.state?'下架':'上架'}}</el-button>
                 <el-button type="text" size="small">编辑</el-button>
+                <el-button type="text" size="small">浏览</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <div style="margin-top: 20px">
-            <el-button @click="toggleSelection([tableData3[1], tableData3[2]])">切换第二、第三行的选中状态</el-button>
-            <el-button @click="toggleSelection()">取消选择</el-button>
+          <div class="operation-paging clear">
+            <div class="opera-btn-row left">
+              <el-row>
+                <el-button size="small">上架</el-button>
+                <el-button disabled size="small">下架</el-button>
+                <el-button disabled size="small">删除</el-button>
+              </el-row>
+            </div>
+            <div class="right">
+              <el-pagination
+                background
+                layout="prev, pager, next"
+                :total="300">
+              </el-pagination>
+            </div>
           </div>
         </div>
       </div>
@@ -136,6 +151,7 @@ export default {
       }],
       value: '食品',
       tableData: [{
+        id: 1,
         goods: {
           imgSrc: '/static/test/ceshi2.png',
           name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
@@ -150,6 +166,7 @@ export default {
         creationTime: '2016-05-03 18:30',
         state: true
       }, {
+        id: 2,
         goods: {
           imgSrc: '/static/test/ceshi3.png',
           name: 'asdlkjfhlkwehrfiuwasssadsadssadsdaswqweqqweqweqweh',
@@ -164,6 +181,7 @@ export default {
         creationTime: '2016-05-03 18:30',
         state: true
       }, {
+        id: 3,
         goods: {
           imgSrc: '/static/test/ceshi.png',
           name: 'asdlkjfhlkwehrfiuwh',
@@ -178,6 +196,7 @@ export default {
         creationTime: '2016-05-03 18:30',
         state: false
       }, {
+        id: 4,
         goods: {
           imgSrc: '/static/test/ceshi.png',
           name: 'asdlkjfhlkwehrfiuwh',
@@ -199,6 +218,34 @@ export default {
     menuLeft
   },
   methods: {
+    handleClick (row) {
+      // console.log(row)
+      this.upperLowerFrame(row)
+    },
+    upperLowerFrame (data) {
+      let _this = this
+      this.$confirm(`是否${data.state ? '下架' : '上架'}该商品`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        for (let k of _this.tableData) {
+          // console.log(k['id'])
+          if (k['id'] === data['id']) {
+            k['state'] = !data['state']
+          }
+        }
+        this.$message({
+          type: 'success',
+          message: `${data.state ? '上架' : '下架'}成功!`
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: `已取消${data.state ? '上架' : '下架'}`
+        })
+      })
+    },
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -210,6 +257,11 @@ export default {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
+    },
+    setRouter (link) {
+      this.$router.push({
+        path: link
+      })
     }
   }
 }
@@ -337,7 +389,15 @@ export default {
           }
         }
         .goods-state {
-          color: #2bc102;
+          color: #59A304;
+        }
+        .operation-paging {
+          text-align: left;
+          padding-top: 30px;
+          div {
+            display: inline-block;
+            vertical-align: middle;
+          }
         }
       }
     }
@@ -345,6 +405,21 @@ export default {
       width: 80px;
       height: 30px;
       padding: 0;
+    }
+    .el-button--default {
+      color: #333;
+      border-color: #333;
+      background: #fff;
+      &.is-disabled {
+        border: 1px solid #B5B5B5;
+        color: #999;
+      }
+    }
+    .el-button--text {
+      width: auto;
+      padding: 0 5px;
+      height: 24px;
+      border: 1px solid #63A4FF;
     }
   }
 </style>
@@ -366,4 +441,14 @@ export default {
     color: #333;
     padding-left: 6px;
   }
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background: #DE5B67;
+    border-color: #DE5B67;
+  }
+  .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
+    font-weight: normal;
+    color: #333;
+    background: #fff;
+    border: 1px solid #d5d5d5;
+   }
 </style>

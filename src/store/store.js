@@ -4,7 +4,8 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 
 const state = {
-  menuLeft: '3-1',
+  menuLeft: '',
+  menuShow: true,
   adminInfo: {
     avatar: 'default.jpg'
   }
@@ -13,6 +14,9 @@ const state = {
 const mutations = {
   setMenuLeft (state, i) {
     state.menuLeft = i
+  },
+  setMenuShow (state, i) {
+    state.menuShow = i
   }
 }
 
