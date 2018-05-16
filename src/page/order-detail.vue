@@ -46,7 +46,7 @@
             </div>
             <div class="content">
               <div>
-                <div class="prolist"  v-for="items in tradeList.list" >
+                <div class="prolist" v-for="(items,index) in tradeList.list" :key="index">
                   <div class="proInfo">
                     <img :src="items.img" alt="">
                     <div class="desc">{{items.desc}}</div>
@@ -58,7 +58,7 @@
                     <input v-if="!isCompile" type="tel"  v-model="items.nowPrice">
                   </div>
                 </div>
-                </div>
+              </div>
               <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
                 <label>￥{{tradeList.totalPrice}}</label>
                 <label>
@@ -79,31 +79,30 @@ export default {
     return {
       isCompile: true,
       tradeList: {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个伤心的故事',
-              num: 1,
-              prePrice: '12323',
-              nowPrice: '123'
-            },
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 12323,
-          yfPrice: 10
-        }
+        list: [
+          {
+            img: '/static/test/ceshi.png',
+            desc: '这真是一个伤心的故事',
+            num: 1,
+            prePrice: '12323',
+            nowPrice: '123'
+          },
+          {
+            img: '/static/test/ceshi.png',
+            desc: '这真是一个开心的故事',
+            num: 2,
+            prePrice: 996,
+            nowPrice: 429
+          }
+        ],
+        totalPrice: 12323,
+        yfPrice: 10
+      }
     }
   },
   methods: {
     changeCompile () {
       this.isCompile = false
-
     },
     saveCompile () {
       this.isCompile = true

@@ -98,66 +98,65 @@
   </div>
 </template>
 <script>
-  export default {
-    data () {
-      return {
-        n: '1',
-        // 搜索时间间隔
-        keyTime: '',
-        // 搜索类别
-        keyValue: '',
-        // 商品名称
-        keyName: '',
-        // 订单类型
-        optionType: [{
-          value: '1',
-          label: '全部'
-        }, {
-          value: '2',
-          label: '仅退款'
-        }, {
-          value: '3',
-          label: '退货退款'
-        }],
-
-        // 搜索类型
-        options: [{
-          value: '1',
-          label: '订单号'
-        }, {
-          value: '2',
-          label: '外部订单'
-        }, {
-          value: '3',
-          label: '收货人姓名'
-        }, {
-          value: '4',
-          label: '收货人手机号'
-        }],
-        // 搜索类型
+export default {
+  data () {
+    return {
+      n: '1',
+      // 搜索时间间隔
+      keyTime: '',
+      // 搜索类别
+      keyValue: '',
+      // 商品名称
+      keyName: '',
+      // 订单类型
+      optionType: [{
         value: '1',
-        // 订单类型
-        OrderType: '1',
-        // 交易类型
-        tradeType: 'first'
-      }
-    },
-    methods: {
-      changeType () {
-      },
-      changeTime () {
-      },
-      searchOrder () {
-      },
-      timeRange (res) {
-        console.log(res)
-      },
-      handleClick (tab, event) {
-        console.log(tab.index)
-      }
-    }
+        label: '全部'
+      }, {
+        value: '2',
+        label: '仅退款'
+      }, {
+        value: '3',
+        label: '退货退款'
+      }],
 
+      // 搜索类型
+      options: [{
+        value: '1',
+        label: '订单号'
+      }, {
+        value: '2',
+        label: '外部订单'
+      }, {
+        value: '3',
+        label: '收货人姓名'
+      }, {
+        value: '4',
+        label: '收货人手机号'
+      }],
+      // 搜索类型
+      value: '1',
+      // 订单类型
+      OrderType: '1',
+      // 交易类型
+      tradeType: 'first'
+    }
+  },
+  methods: {
+    changeType () {
+    },
+    changeTime () {
+    },
+    searchOrder () {
+    },
+    timeRange (res) {
+      console.log(res)
+    },
+    handleClick (tab, event) {
+      console.log(tab.index)
+    }
   }
+}
 </script>
 <style lang="less">
   .el-pagination.is-background .el-pager li {
