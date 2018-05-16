@@ -5,7 +5,7 @@
       <span>一起选·商城</span>
     </div>
     <el-menu
-      :default-active="$route.path"
+      :default-active="getRoutePath(menuLeft)"
       @open="handleOpen"
       @close="handleClose"
       text-color="#666"
@@ -67,13 +67,21 @@
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
 export default {
   data () {
     return {
       clientHeight: this.getClientHeight()
     }
   },
+  mounted () {
+    // this.getRoutePath(this.menuLeft)
+  },
+  computed: {
+    ...mapState(['menuLeft'])
+  },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     handleOpen (key, keyPath) {
       console.log(key, keyPath)
     },
@@ -83,6 +91,13 @@ export default {
     getClientHeight () {
       let height = document.documentElement.clientHeight + 'px'
       return height
+    },
+    getRoutePath (m) {
+      if (m) {
+        return m
+      } else {
+        return this.$route.path
+      }
     }
   }
 }

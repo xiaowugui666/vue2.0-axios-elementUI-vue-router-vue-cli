@@ -72,10 +72,10 @@ export default {
     echarts
   },
   computed: {
-    ...mapState(['menuLeft'])
+    ...mapState(['menuShow'])
   },
   methods: {
-    ...mapMutations(['setMenuLeft'])
+    ...mapMutations(['setMenuShow'])
   }
 }
 </script>
