@@ -10,6 +10,8 @@ import collageManagement from '@/page/collage-management'
 import informationSetting from '@/page/information-setting'
 import orderSetting from '@/page/order-setting'
 import shopProfile from '@/page/shop-profile'
+import orderAfterSale from '@/page/order-afterSale'
+import orderDetail from '@/page/order-detail'
 
 Vue.use(Router)
 
@@ -59,6 +61,16 @@ export default new Router({
       path: '/orderSetting',
       name: 'orderSetting',
       component: orderSetting
+    },
+    {
+      path: '/orderDetail',
+      name: 'orderDetail',
+      component: orderDetail
+    },
+    {
+      path: '/orderAfterSale',
+      name: 'orderAfterSale',
+      component: orderAfterSale
     },
     {
       path: '/shopProfile',
