@@ -74,7 +74,6 @@
 </template>
 
 <script>
-import menuLeftCom from '@/components/menu-left'
 import echarts from '@/components/echarts'
 import {mapState, mapMutations} from 'vuex'
 export default {
@@ -83,8 +82,7 @@ export default {
     }
   },
   components: {
-    echarts,
-    menuLeftCom
+    echarts
   },
   computed: {
     ...mapState(['menuLeft'])
@@ -186,7 +184,7 @@ export default {
     width: 100%;
   }
   .list{
-    border-left: 1px solid #d5d5d5;
+    border-left: 1px solid #EFEFEF;
   }
   .datalist>div{
     width: 100%;
@@ -199,23 +197,30 @@ export default {
     background: #d5d5d5;
     height: 40px;
     line-height: 40px;
-    border:1px solid #d5d5d5;
+    border:1px solid #EFEFEF;
+    font-family: MicrosoftYaHei;
+    font-size: 12px;
+    color: #333333;
+    text-align: center;
   }
   .datalist>div div{
     width: 20%;
     box-sizing: border-box;
     text-align: center;
-    border-right:1px solid #d5d5d5;
-    border-bottom: 1px solid #d5d5d5;
+    border-right:1px solid #EFEFEF;
+    border-bottom: 1px solid #EFEFEF;
     height: 50px;
     line-height: 50px;
+    font-family: MicrosoftYaHei;
+    font-size: 12px;
+    color: #666666;
   }
   .datalist .top div{
     width: 20%;
     box-sizing: border-box;
     text-align: center;
-    border-right:1px solid #d5d5d5;
-    border-bottom: 1px solid #d5d5d5;
+    border-right:1px solid #EFEFEF;
+    border-bottom: 1px solid #EFEFEF;
     height: 40px;
     line-height: 40px;
   }
