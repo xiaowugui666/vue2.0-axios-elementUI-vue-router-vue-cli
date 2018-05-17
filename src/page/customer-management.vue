@@ -90,7 +90,7 @@ export default {
   data () {
     return {
       name: '',
-      dialogVisible: true,
+      dialogVisible: false,
       phoneNum: '',
       wechatNum: '',
       options: [{

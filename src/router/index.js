@@ -5,6 +5,7 @@ import initialSetting from '@/page/initial-setting'
 import commodityManagement from '@/page/commodity-management'
 import orderManagement from '@/page/order-management'
 import customerManagement from '@/page/customer-management'
+import customerOrder from '@/page/customer-order'
 import account from '@/page/account'
 import collageManagement from '@/page/collage-management'
 import informationSetting from '@/page/information-setting'
@@ -42,6 +43,11 @@ export default new Router({
       path: '/customerManagement',
       name: 'customerManagement',
       component: customerManagement
+    },
+    {
+      path: '/customerOrder',
+      name: 'customerOrder',
+      component: customerOrder
     },
     {
       path: '/account',
