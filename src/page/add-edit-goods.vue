@@ -128,7 +128,71 @@
           <ul>
             <li>
               <span class="required name alignment-top">商品规格：</span>
-              <div class="goods-specification-box"></div>
+              <div class="goods-specification-box">
+                <div class="specification-block" v-for="(item, index) in specificationList" :key="index">
+                  <div>
+                    <span>规格名：</span>
+                    <input type="text" placeholder="" v-model="item.name"/>
+                    <i @click="deleteThis" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
+                  </div>
+                  <div>
+                    <span>规格值：</span>
+                    <el-tag
+                      :key="tag"
+                      v-for="tag in dynamicTags"
+                      closable
+                      :disable-transitions="false"
+                      @close="handleClose(tag)">
+                      {{tag}}
+                    </el-tag>
+                    <el-input
+                      class="input-new-tag"
+                      v-if="inputVisible"
+                      v-model="inputValue"
+                      ref="saveTagInput"
+                      size="small"
+                      @keyup.enter.native="handleInputConfirm"
+                      @blur="handleInputConfirm"
+                    >
+                    </el-input>
+                  </div>
+                </div>
+                <div class="add-specification-name specification-block">
+                  <el-button type="primary" size="small" :disabled="specificNum === 2">添加规格名</el-button>
+                </div>
+              </div>
+            </li>
+            <li>
+              <span class="name alignment-top">规格明细：</span>
+              <div>
+                <el-table
+                  :data="tableData6"
+                  :span-method="objectSpanMethod"
+                  border
+                  style="width: 100%; margin-top: 20px">
+                  <el-table-column
+                    prop="id"
+                    label="ID"
+                    width="180">
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="姓名">
+                  </el-table-column>
+                  <el-table-column
+                    prop="amount1"
+                    label="数值 1（元）">
+                  </el-table-column>
+                  <el-table-column
+                    prop="amount2"
+                    label="数值 2（元）">
+                  </el-table-column>
+                  <el-table-column
+                    prop="amount3"
+                    label="数值 3（元）">
+                  </el-table-column>
+                </el-table>
+              </div>
             </li>
           </ul>
         </div>
@@ -158,7 +222,6 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
-// require styles
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -190,22 +253,66 @@ export default {
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
-      selectStateOptions: [{
-        value: '1',
-        label: '食品'
+      specificNum: 0,
+      specificationList: [
+        {
+          specific: {
+            specificationNameList: [],
+            specificationName: '',
+            specificationValueList1: []
+          },
+          name: '123'
+        }
+      ],
+      tableData6: [{
+        id: '12987122',
+        name: '王小虎',
+        amount1: '234',
+        amount2: '3.2',
+        amount3: 10
       }, {
-        value: '2',
-        label: '数码家电'
+        id: '12987123',
+        name: '王小虎',
+        amount1: '165',
+        amount2: '4.43',
+        amount3: 12
       }, {
-        value: '3',
-        label: '女装'
+        id: '12987124',
+        name: '王小虎',
+        amount1: '324',
+        amount2: '1.9',
+        amount3: 9
       }, {
-        value: '4',
-        label: '美妆'
+        id: '12987125',
+        name: '王小虎',
+        amount1: '621',
+        amount2: '2.2',
+        amount3: 17
       }, {
-        value: '5',
-        label: '日用百货'
+        id: '12987126',
+        name: '王小虎',
+        amount1: '539',
+        amount2: '4.1',
+        amount3: 15
       }],
+      selectStateOptions: [
+        {
+          value: '1',
+          label: '食品'
+        }, {
+          value: '2',
+          label: '数码家电'
+        }, {
+          value: '3',
+          label: '女装'
+        }, {
+          value: '4',
+          label: '美妆'
+        }, {
+          value: '5',
+          label: '日用百货'
+        }
+      ],
       value: '食品',
       secondClass: '',
       quillContent: '',
@@ -277,10 +384,27 @@ export default {
   },
   mounted () {
     this.setRoutePath()
-    console.log('this is current quill instance object', this.editor)
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    deleteThis (x) {
+      x.toElement.parentNode.parentNode.parentNode.removeChild(x.toElement.parentNode.parentNode)
+    },
+    objectSpanMethod ({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0) {
+        if (rowIndex % 2 === 0) {
+          return {
+            rowspan: 2,
+            colspan: 1
+          }
+        } else {
+          return {
+            rowspan: 0,
+            colspan: 0
+          }
+        }
+      }
+    },
     setRoutePath () {
       this.setMenuLeft('/commodityManagement')
     },
@@ -317,7 +441,7 @@ export default {
       console.log('editor focus!', quill)
     },
     onEditorReady (quill) {
-      console.log('editor ready!', quill)
+      // console.log('editor ready!', quill)
     },
     onEditorChange ({ quill, html, text }) {
       console.log('editor change!', quill, html, text)
@@ -519,6 +643,19 @@ export default {
           vertical-align: middle;
           border: 1px solid #d5d5d5;
           padding: 20px;
+          min-width: 900px;
+          .specification-block {
+            background: #efefef;
+            margin-bottom: 10px;
+            padding: 20px;
+            .delete-specific {
+              float: right;
+              display: none;
+            }
+            &:hover .delete-specific {
+              display: block;
+            }
+          }
         }
       }
     }
