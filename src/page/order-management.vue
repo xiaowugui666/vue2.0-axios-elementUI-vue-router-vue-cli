@@ -92,7 +92,7 @@
                 </div>
                 <div class="orderResult"  :style="{height:item.list.length*80+'px'}">
                     <label>交易完成</label>
-                    <label>订单详情</label>
+                  <router-link :to="{ name:'orderDetail',params:{orderDetail:num }}" tag="label">订单详情</router-link>
                 </div>
               </div>
             </div>
@@ -114,6 +114,7 @@
 export default {
   data () {
     return {
+      num: 1,
       n: '1',
       // 搜索时间间隔
       keyTime: '',
@@ -396,6 +397,9 @@ export default {
             display: flex;
             justify-content: flex-start;
             align-items: center;
+            >div{
+              width: 66%;
+            }
             .desc{
               font-family: MicrosoftYaHei;
               font-size: 14px;
@@ -411,7 +415,7 @@ export default {
               text-align: center;
             }
             .proInfo{
-              width: 400px;
+              width: 60%;
               display: flex;
               height: 100%;
               justify-content: flex-start;
@@ -422,6 +426,7 @@ export default {
             }
             .prolist{
               height: 80px;
+              width: 100%;
               box-sizing: border-box;
               display: flex;
               align-items: center;
@@ -430,7 +435,7 @@ export default {
             }
             .orderMon,.orderResult{
               height: 100%;
-              width: 170px;
+              width: 17%;
               display: flex;
               flex-direction: column;
               justify-content: center;
@@ -471,7 +476,7 @@ export default {
               }
             }
             .proNum{
-              width: 190px;
+              width: 20%;
               height: 100%;
               line-height: 80px;
               font-family: MicrosoftYaHei;
@@ -482,7 +487,7 @@ export default {
             }
             .price{
               height: 100%;
-              width: 190px;
+              width: 20%;
               display: flex;
               flex-direction: column;
               justify-content: center;
