@@ -1,6 +1,5 @@
 <template>
     <div>
-      <menu-left-com></menu-left-com>
       <div class="home-content">
         <ul class="home-survey">
           <li>

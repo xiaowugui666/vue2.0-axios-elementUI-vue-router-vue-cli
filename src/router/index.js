@@ -13,6 +13,8 @@ import shopProfile from '@/page/shop-profile'
 import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
 import addEditGoods from '@/page/add-edit-goods'
+import orderRebate from '@/page/order-rebate'
+import addOrder from '@/page/add-order'
 
 Vue.use(Router)
 
@@ -64,14 +66,24 @@ export default new Router({
       component: orderSetting
     },
     {
-      path: '/orderDetail',
+      path: '/orderDetail/:orderDetail',
       name: 'orderDetail',
       component: orderDetail
+    },
+    {
+      path: '/addOrder',
+      name: 'addOrder',
+      component: addOrder
     },
     {
       path: '/orderAfterSale',
       name: 'orderAfterSale',
       component: orderAfterSale
+    },
+    {
+      path: '/orderRebate',
+      name: 'orderRebate',
+      component: orderRebate
     },
     {
       path: '/shopProfile',
