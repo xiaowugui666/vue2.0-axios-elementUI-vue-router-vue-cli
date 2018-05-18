@@ -1,5 +1,5 @@
 <template>
-    <div class="home-content">
+    <div class="orderRebate">
       <div class="title">退款维权 > 处理退款</div>
       <div class="rebateDetail">
           <div class="content">
@@ -226,7 +226,7 @@ export default {
     padding-right: 10px;
     border-right: 1px solid #EFEFEF;
   }
-  .home-content {
+  .orderRebate {
     margin: 0 20px 0 200px;
     position: relative;
     min-width: 1000px;

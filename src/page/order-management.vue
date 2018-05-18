@@ -1,6 +1,6 @@
 <template>
   <div>
-      <div class="home-content">
+      <div class="orderManager">
         <div class="header">
           <div class="selectInfo">
             <el-select v-model="value" placeholder="订单号"  @change="changeType" >
@@ -208,6 +208,7 @@ export default {
 }
 </script>
 <style lang="less">
+  .orderManager{
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -361,9 +362,10 @@ export default {
       margin-right: 10px;
     }
   }
+  }
 </style>
 <style scoped lang="less">
-  .home-content {
+  .orderManager {
     margin: 0 20px 0 200px;
     padding-top: 20px;
     position: relative;

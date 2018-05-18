@@ -1,6 +1,6 @@
 <template>
     <div>
-      <div class="home-content">
+      <div class="orderDetail">
         <div class="top">
           <div class="title">订单管理 > 订单详情</div>
           <el-steps :active="tradeType" align-center  finish-status="success" >
@@ -150,10 +150,12 @@ export default {
 }
 </script>
 <style lang="less">
-  .el-steps--horizontal {
-    white-space: nowrap;
-    width: 60%;
-    margin-top:20px;
+  .orderDetail {
+    .el-steps--horizontal {
+      white-space: nowrap;
+      width: 60%;
+      margin-top: 20px;
+    }
   }
 </style>
 <style scoped lang="less">
@@ -212,21 +214,18 @@ export default {
       }
     }
   }
-  .home-content {
+  .orderDetail{
     margin: 0 20px 0 200px;
     padding-top: 20px;
-    padding-right: 20px;
     position: relative;
     min-width: 1000px;
-    /*background: #fff;*/
     .top{
       background: #fff;
-      padding: 20px;
-      position: relative;
+      padding:20px;
       margin-bottom: 20px;
       .saveCompile{
         position: absolute;
-        right: 0;
+        right: 20px;
         top:40px;
         width:80px;
         color: #fff;
@@ -246,14 +245,14 @@ export default {
       }
     }
     .tradeList {
-      padding-bottom: 30px;
-      padding-top: 20px;
+      padding:20px 20px 30px;
       background: #fff;
       .top {
         background: #EFEFEF;
         border: 1px solid #D5D5D5;
         height: 40px;
         display: flex;
+        margin-bottom: 0;
         align-items: center;
         box-sizing: border-box;
         line-height: 40px;
