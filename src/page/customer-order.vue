@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="cus-order-container">
     <div class="home-content">
       <div class="header">
         <div class="selectInfo">
@@ -193,371 +193,375 @@ export default {
 }
 </script>
 <style lang="less">
-  .el-pagination.is-background{
-    float: right;
-  }
-  .el-pagination button span {
-    padding: 0 16px;
-    border: 1px solid #D5D5D5;
-    font-family: MicrosoftYaHei;
-    font-size: 12px;
-    text-align: center;
-  }
-  .el-pagination.is-background .el-pager li{
-    border: 1px solid #D5D5D5;
-    border-radius: 2px;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled).active{
-    background-color: #DE5B67;
-    color: #ffffff;
-  }
-  .el-pagination.is-background .el-pager li:not(.active):hover {
-    color: #DE5B67;
-  }
-  .el-pagination button:hover {
-    color: #DE5B67;
-  }
-  .el-pager li {
-    padding: 0;
-    background: #fff;
-    vertical-align: top;
-    display: inline-block;
-    font-size: 13px;
-    min-width: 30px;
-    height: 30px;
-    line-height: 30px;
-    cursor: pointer;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    text-align: center;
-    margin: 0;
-    border: 1px solid #D5D5D5;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-  }
-  .el-tabs__item.is-active {
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #333333;
-    text-align: center;
-  }
-  .el-tabs--top.el-tabs--card .el-tabs__item{
-    text-align: center;
-  }
-  .el-tabs--top.el-tabs--card .is-active{
-    box-sizing: border-box;
-    background: #EFEFEF;
-    font-family: MicrosoftYaHei-Bold;
-    font-size: 14px;
-    color: #333333;
-    font-weight: 500;
-    border-bottom: 1px solid #F5F5F5;
-  }
-  .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-    border-bottom-color:  #333;
-  }
-  .el-tabs--top.el-tabs--card .el-tabs__item:last-child{
-    padding-right: 0px;
-  }
-  .el-tabs--top.el-tabs--card .el-tabs__item:nth-child(2){
-    padding-left: 0px;
-  }
-  .el-tabs__item {
-    width: 140px;
-    height: 40px;
-    padding: 0;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    line-height: 40px;
-    display: inline-block;
-    list-style: none;
-    font-size: 14px;
-    font-weight: 500;
-    color: #303133;
-    position: relative;
-  }
-  .header{
-    .el-date-editor .el-range__icon {
-      display: none;
+  .cus-order-container{
+    .el-pagination.is-background{
+      float: right;
     }
-    .el-input--suffix:nth-child(1){
-      width: 128px;
-    }
-    .el-input--suffix:nth-child(2){
-      width: 180px;
-    }
-    .el-pagination{
-      text-align: right;
-    }
-    .el-date-editor--daterange.el-input__inner{
-      width: 230px;
-    }
-    .el-date-editor .el-range__close-icon {
-      line-height: 23px;
-    }
-    .el-select .el-input .el-select__caret {
-      line-height: 30px;
-    }
-    .el-date-editor .el-range-input{
-      width: 43%;
-    }
-    .block{
-      margin-left:20px;
-    }
-    .el-input__inner{
-      height: 30px;
-      line-height: 30px;
-    }
-    .el-input--suffix .el-input__inner {
-      padding:0 12px;
+    .el-pagination button span {
+      padding: 0 16px;
+      border: 1px solid #D5D5D5;
       font-family: MicrosoftYaHei;
       font-size: 12px;
-      color: #B5B5B5;
-      line-height: 15px;
+      text-align: center;
     }
-    .el-date-editor .el-range__icon {
+    .el-pagination.is-background .el-pager li{
+      border: 1px solid #D5D5D5;
+      border-radius: 2px;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active{
+      background-color: #DE5B67;
+      color: #ffffff;
+    }
+    .el-pagination.is-background .el-pager li:not(.active):hover {
+      color: #DE5B67;
+    }
+    .el-pagination button:hover {
+      color: #DE5B67;
+    }
+    .el-pager li {
+      padding: 0;
+      background: #fff;
+      vertical-align: top;
+      display: inline-block;
+      font-size: 13px;
+      min-width: 30px;
+      height: 30px;
+      line-height: 30px;
+      cursor: pointer;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 0;
+      border: 1px solid #D5D5D5;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+    }
+    .el-tabs__item.is-active {
+      font-family: MicrosoftYaHei;
       font-size: 14px;
-      margin-left: -5px;
-      color: #c0c4cc;
-      float: left;
-      line-height: 23px;
+      color: #333333;
+      text-align: center;
     }
-    .el-date-editor .el-range-separator {
-      line-height: 23px;
+    .el-tabs--top.el-tabs--card .el-tabs__item{
+      text-align: center;
     }
-    .el-select{
-      margin-right: 10px;
+    .el-tabs--top.el-tabs--card .is-active{
+      box-sizing: border-box;
+      background: #EFEFEF;
+      font-family: MicrosoftYaHei-Bold;
+      font-size: 14px;
+      color: #333333;
+      font-weight: 500;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+      border-bottom-color:  #333;
+    }
+    .el-tabs--top.el-tabs--card .el-tabs__item:last-child{
+      padding-right: 0px;
+    }
+    .el-tabs--top.el-tabs--card .el-tabs__item:nth-child(2){
+      padding-left: 0px;
+    }
+    .el-tabs__item {
+      width: 140px;
+      height: 40px;
+      padding: 0;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      line-height: 40px;
+      display: inline-block;
+      list-style: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #303133;
+      position: relative;
+    }
+    .header{
+      .el-date-editor .el-range__icon {
+        display: none;
+      }
+      .el-input--suffix:nth-child(1){
+        width: 128px;
+      }
+      .el-input--suffix:nth-child(2){
+        width: 180px;
+      }
+      .el-pagination{
+        text-align: right;
+      }
+      .el-date-editor--daterange.el-input__inner{
+        width: 230px;
+      }
+      .el-date-editor .el-range__close-icon {
+        line-height: 23px;
+      }
+      .el-select .el-input .el-select__caret {
+        line-height: 30px;
+      }
+      .el-date-editor .el-range-input{
+        width: 43%;
+      }
+      .block{
+        margin-left:20px;
+      }
+      .el-input__inner{
+        height: 30px;
+        line-height: 30px;
+      }
+      .el-input--suffix .el-input__inner {
+        padding:0 12px;
+        font-family: MicrosoftYaHei;
+        font-size: 12px;
+        color: #B5B5B5;
+        line-height: 15px;
+      }
+      .el-date-editor .el-range__icon {
+        font-size: 14px;
+        margin-left: -5px;
+        color: #c0c4cc;
+        float: left;
+        line-height: 23px;
+      }
+      .el-date-editor .el-range-separator {
+        line-height: 23px;
+      }
+      .el-select{
+        margin-right: 10px;
+      }
     }
   }
 </style>
 <style scoped lang="less">
-  .home-content {
-    margin: 0 20px 0 200px;
-    padding-top: 20px;
-    position: relative;
-    min-width: 1000px;
-  }
+  .cus-order-container{
+    .home-content {
+      margin: 0 20px 0 200px;
+      padding-top: 20px;
+      position: relative;
+      min-width: 1000px;
+    }
 
-  .tradeRecord {
-    background: #fff;
-    padding:0 20px 20px;
-    overflow: hidden;
-    .tradeList{
-      padding-bottom: 30px;
-      .top{
-        background: #EFEFEF;
-        border: 1px solid #D5D5D5;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
-        line-height: 40px;
-        label{
-          font-family: MicrosoftYaHei;
-          font-size: 12px;
-          color: #333333;
-          margin-left: 80px;
-        }
-        label:first-child{
-          margin-left: 20px;
-        }
-      }
-      .content{
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        .desc{
-          font-family: MicrosoftYaHei;
-          font-size: 14px;
-          color: #333333;
-        }
-        img{
-          width: 60px;
-          height: 60px;
-          padding:0 10px;
-        }
-        label{
-          display: block;
-          text-align: center;
-        }
-        .proInfo{
-          width: 400px;
+    .tradeRecord {
+      background: #fff;
+      padding:0 20px 20px;
+      overflow: hidden;
+      .tradeList{
+        padding-bottom: 30px;
+        .top{
+          background: #EFEFEF;
+          border: 1px solid #D5D5D5;
+          height: 40px;
           display: flex;
-          height: 100%;
+          align-items: center;
+          box-sizing: border-box;
+          line-height: 40px;
+          label{
+            font-family: MicrosoftYaHei;
+            font-size: 12px;
+            color: #333333;
+            margin-left: 80px;
+          }
+          label:first-child{
+            margin-left: 20px;
+          }
+        }
+        .content{
+          display: flex;
           justify-content: flex-start;
           align-items: center;
-          border-right: 1px solid #efefef;
-          border-right: 1px solid #efefef;
-          border-left: 1px solid #efefef;
-        }
-        .prolist{
-          height: 80px;
-          box-sizing: border-box;
-          display: flex;
-          align-items: center;
-          /*border-right: 1px solid #efefef;*/
-          border-bottom: 1px solid #efefef;
-        }
-        .orderMon,.orderResult{
-          height: 100%;
-          width: 170px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          border-right: 1px solid #efefef;
-          border-bottom: 1px solid #efefef;
-        }
-        .orderResult{
-          label:first-child{
+          .desc{
             font-family: MicrosoftYaHei;
-            font-size: 12px;
+            font-size: 14px;
             color: #333333;
+          }
+          img{
+            width: 60px;
+            height: 60px;
+            padding:0 10px;
+          }
+          label{
+            display: block;
             text-align: center;
           }
-          label:last-child{
-            width: 70px;
-            height: 24px;
-            line-height: 24px;
-            text-align: center;
-            border: 1px solid #63A4FF;
-            border-radius: 2px;
-            color:#63A4FF;
-            font-size: 12px;
-            margin: 0 auto;
-            margin-top: 10px;
+          .proInfo{
+            width: 400px;
+            display: flex;
+            height: 100%;
+            justify-content: flex-start;
+            align-items: center;
+            border-right: 1px solid #efefef;
+            border-right: 1px solid #efefef;
+            border-left: 1px solid #efefef;
           }
-        }
-        .orderMon{
-          label:first-child{
+          .prolist{
+            height: 80px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            /*border-right: 1px solid #efefef;*/
+            border-bottom: 1px solid #efefef;
+          }
+          .orderMon,.orderResult{
+            height: 100%;
+            width: 170px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+          }
+          .orderResult{
+            label:first-child{
+              font-family: MicrosoftYaHei;
+              font-size: 12px;
+              color: #333333;
+              text-align: center;
+            }
+            label:last-child{
+              width: 70px;
+              height: 24px;
+              line-height: 24px;
+              text-align: center;
+              border: 1px solid #63A4FF;
+              border-radius: 2px;
+              color:#63A4FF;
+              font-size: 12px;
+              margin: 0 auto;
+              margin-top: 10px;
+            }
+          }
+          .orderMon{
+            label:first-child{
+              font-family: MicrosoftYaHei;
+              font-size: 12px;
+              color: #DE5B67;
+            }
+            label:last-child{
+              ont-family: MicrosoftYaHei;
+              font-size: 12px;
+              color: #666666;
+              margin-top: 5px;
+            }
+          }
+          .proNum{
+            width: 190px;
+            height: 100%;
+            line-height: 80px;
             font-family: MicrosoftYaHei;
-            font-size: 12px;
-            color: #DE5B67;
-          }
-          label:last-child{
-            ont-family: MicrosoftYaHei;
             font-size: 12px;
             color: #666666;
-            margin-top: 5px;
+            text-align: center;
+            border-right: 1px solid #efefef;
           }
-        }
-        .proNum{
-          width: 190px;
-          height: 100%;
-          line-height: 80px;
-          font-family: MicrosoftYaHei;
-          font-size: 12px;
-          color: #666666;
-          text-align: center;
-          border-right: 1px solid #efefef;
-        }
-        .price{
-          height: 100%;
-          width: 190px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          border-right: 1px solid #efefef;
-          label:first-child{
-            font-family: MicrosoftYaHei;
-            font-size: 12px;
-            color: #999999;
-            text-decoration: line-through;
-          }
-          label:last-child{
-            font-size: 12px;
-            color: #333333;
-            font-family: MicrosoftYaHei;
-            margin-top: 5px;
+          .price{
+            height: 100%;
+            width: 190px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-right: 1px solid #efefef;
+            label:first-child{
+              font-family: MicrosoftYaHei;
+              font-size: 12px;
+              color: #999999;
+              text-decoration: line-through;
+            }
+            label:last-child{
+              font-size: 12px;
+              color: #333333;
+              font-family: MicrosoftYaHei;
+              margin-top: 5px;
+            }
           }
         }
       }
     }
-  }
-  .tradeRecord .title{
-    padding: 20px 0 20px 10px;
-    position: relative;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #333333;
-  }
-  .tradeRecord .title::after{
-    position: absolute;
-    top:24px;
-    left:0;
-    content:'';
-    width: 3px;
-    height: 13px;
-    background: #999;
-  }
-  .header{
-    background: #fff;
-    padding: 20px;
-    position: relative;
-    margin-bottom: 20px;
-    label{
+    .tradeRecord .title{
+      padding: 20px 0 20px 10px;
+      position: relative;
       font-family: MicrosoftYaHei;
-      font-size: 12px;
-      color: #999999;
-      line-height: 15px;
+      font-size: 14px;
+      color: #333333;
     }
-    .el-input__inner{
-      height: 30px;
-      line-height: 30px;
-      border-radius: 2px;
+    .tradeRecord .title::after{
+      position: absolute;
+      top:24px;
+      left:0;
+      content:'';
+      width: 3px;
+      height: 13px;
+      background: #999;
     }
-    .el-input--suffix{
-      height: 30px;
-      border-radius: 2px;
-    }
-    .selectInfo{
-      align-items: center;
-      justify-content:flex-start;
-      overflow: hidden;
-      .order-number{
-        float: left;
-      }
-      .block{
-        float: left;
-      }
-      .timeRange{
-        float:left;
-        line-height: 28px;
-        padding: 0 16px;
+    .header{
+      background: #fff;
+      padding: 20px;
+      position: relative;
+      margin-bottom: 20px;
+      label{
+        font-family: MicrosoftYaHei;
         font-size: 12px;
-        border: 1px solid #eeeeee;
-        color:#B5B5B5;
-        margin-left: 20px;
+        color: #999999;
+        line-height: 15px;
       }
-      .cur{
-        border: 1px solid #DE5B67;
-        color:#DE5B67;
-      }
-
-    }
-    .proName{
-      align-items: center;
-      justify-content:space-between;
-      margin-top: 20px;
-      overflow: hidden;
-      .keyName{
-        float: left;
-      }
-      .search{
-        position: absolute;
-        top: 45px;
-        right: 20px;
-        line-height: 30px;
-        width: 80px;
-        background: #DE5B67;
-        color:#fff;
-        text-align: center;
+      .el-input__inner{
+        height: 30px;
         line-height: 30px;
         border-radius: 2px;
       }
-      .orderType{
-        margin-left: 20px;
-        float: left;
+      .el-input--suffix{
+        height: 30px;
+        border-radius: 2px;
+      }
+      .selectInfo{
+        align-items: center;
+        justify-content:flex-start;
+        overflow: hidden;
+        .order-number{
+          float: left;
+        }
+        .block{
+          float: left;
+        }
+        .timeRange{
+          float:left;
+          line-height: 28px;
+          padding: 0 16px;
+          font-size: 12px;
+          border: 1px solid #eeeeee;
+          color:#B5B5B5;
+          margin-left: 20px;
+        }
+        .cur{
+          border: 1px solid #DE5B67;
+          color:#DE5B67;
+        }
+
+      }
+      .proName{
+        align-items: center;
+        justify-content:space-between;
+        margin-top: 20px;
+        overflow: hidden;
+        .keyName{
+          float: left;
+        }
+        .search{
+          position: absolute;
+          top: 45px;
+          right: 20px;
+          line-height: 30px;
+          width: 80px;
+          background: #DE5B67;
+          color:#fff;
+          text-align: center;
+          line-height: 30px;
+          border-radius: 2px;
+        }
+        .orderType{
+          margin-left: 20px;
+          float: left;
+        }
       }
     }
   }
