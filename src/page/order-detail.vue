@@ -1,15 +1,15 @@
 <template>
     <div>
-      <div class="home-content">
+      <div class="orderDetail">
         <div class="top">
           <div class="title">订单管理 > 订单详情</div>
-          <el-steps :active="1" align-center  finish-status="success" >
+          <el-steps :active="tradeType" align-center  finish-status="success" >
             <el-step title="待付款"></el-step>
             <el-step title="已付款"></el-step>
             <el-step title="已发货"></el-step>
             <el-step title="确认收货"></el-step>
           </el-steps>
-            <div @click="saveCompile" class="saveCompile" v-if="!isCompile">保存</div>
+            <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
         </div>
         <div class="tradeList">
             <div class="top">
@@ -28,25 +28,33 @@
                       </div>
                       <div><i>收货地址：</i>上海市卢湾区泰康路999弄99号909室</div>
                       <div>
-                        <label><i>快递公司：</i>顺丰</label>
-                        <label><i>快递单号：</i>1323454657567575</label>
+                        <label>
+                          <i>快递公司：</i>
+                          <label v-if="isCompile">顺丰</label>
+                          <input v-else type="text"  v-model="expressCompany">
+                        </label>
+                        <label>
+                            <i>快递单号：</i>
+                              <label v-if="isCompile">1323454657567575</label>
+                              <input v-else type="text"  v-model="expressNo">
+                        </label>
                       </div>
                   </div>
                   <div class="right">
                     <div>
                       <label><i>创建时间：</i>2018-08-22    12:33</label>
-                      <label><i>付款时间：</i>2018-08-22    12:35</label>
+                      <label v-if="tradeType>1"><i>付款时间：</i>2018-08-22    12:35</label>
                     </div>
                     <div>
-                      <label><i>发货时间：</i>2018-08-23    10:38</label>
-                      <label><i>收货时间：</i>2018-08-27    20:17</label>
+                      <label v-if="tradeType>2"><i>发货时间：</i>2018-08-23    10:38</label>
+                      <label v-if="tradeType>3"><i>收货时间：</i>2018-08-27    20:17</label>
                     </div>
                   </div>
 
             </div>
             <div class="content">
               <div>
-                <div class="prolist"  v-for="items in tradeList.list" >
+                <div class="prolist" v-for="(items,index) in tradeList.list" :key="index">
                   <div class="proInfo">
                     <img :src="items.img" alt="">
                     <div class="desc">{{items.desc}}</div>
@@ -54,19 +62,19 @@
                   <div class="proNum">数量 x{{items.num}}</div>
                   <div class="price">
                     <label>￥</label>
-                    <label v-if="isCompile">{{items.nowPrice}}</label>
-                    <input v-if="!isCompile" type="tel"  v-model="items.nowPrice">
+                    <label v-if="isPrice">{{items.nowPrice}}</label>
+                    <input v-else type="tel"  v-model="items.nowPrice">
                   </div>
                 </div>
-                </div>
+              </div>
               <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
                 <label>￥{{tradeList.totalPrice}}</label>
                 <label>
                   <label>运费：</label>
-                  <label v-if="isCompile">{{tradeList.yfPrice}}</label>
-                  <input v-if="!isCompile" type="tel" v-model="tradeList.yfPrice">
+                  <label v-if="isPrice">{{tradeList.yfPrice}}</label>
+                  <input v-else type="tel" v-model="tradeList.yfPrice">
                 </label>
-                <label @click="changeCompile" v-if="isCompile">编辑订单</label>
+                <label @click="changeCompile" v-if="isPrices">编辑订单</label>
               </div>
             </div>
           </div>
@@ -77,45 +85,77 @@
 export default {
   data () {
     return {
+      // 是否保存
+      isSave: false,
+      // 是否更改价格
+      isPrice: true,
+      isPrices: true,
+      // 添加物流信息
       isCompile: true,
+      tradeType: 1,
+      expressNo: '',
+      expressCompany: '',
       tradeList: {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个伤心的故事',
-              num: 1,
-              prePrice: '12323',
-              nowPrice: '123'
-            },
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 12323,
-          yfPrice: 10
-        }
+        list: [
+          {
+            img: '/static/test/ceshi.png',
+            desc: '这真是一个伤心的故事',
+            num: 1,
+            prePrice: '12323',
+            nowPrice: '123'
+          },
+          {
+            img: '/static/test/ceshi.png',
+            desc: '这真是一个开心的故事',
+            num: 2,
+            prePrice: 996,
+            nowPrice: 429
+          }
+        ],
+        totalPrice: 12323,
+        yfPrice: 10
+      }
     }
   },
   methods: {
     changeCompile () {
-      this.isCompile = false
-
+      this.isPrice = false
+      this.isPrices = false
+      this.isSave = true
     },
-    saveCompile () {
-      this.isCompile = true
+    changeSave () {
+      if (this.tradeType === 1) {
+        this.isPrice = true
+        this.isPrices = true
+        this.isSave = false
+      } else if (this.tradeType === 2) {
+        this.isSave = false
+        this.isCompile = true
+      }
+    },
+    getParams () {
+      this.tradeType = parseInt(this.$route.params.orderDetail)
+      if (this.tradeType === 2) {
+        this.isSave = true
+        this.isPrices = false
+        this.isCompile = false
+      } else if (this.tradeType === 3 || this.tradeType === 4) {
+        this.isPrices = false
+      }
     }
+  },
+  mounted () {
+    this.getParams()
   }
 }
 </script>
 <style lang="less">
-  .el-steps--horizontal {
-    white-space: nowrap;
-    width: 60%;
-    margin-top:20px;
+  .orderDetail {
+    .el-steps--horizontal {
+      white-space: nowrap;
+      width: 60%;
+      margin-top: 20px;
+    }
   }
 </style>
 <style scoped lang="less">
@@ -133,6 +173,12 @@ export default {
     }
     .left{
       border-right: 1px solid #EFEFEF;
+      input{
+        border: 1px solid #efefef;
+        height: 25px;
+        font-size: 12px;
+        /*width: 150px;*/
+      }
     }
     >div{
       width: 50%;
@@ -168,20 +214,18 @@ export default {
       }
     }
   }
-  .home-content {
+  .orderDetail{
     margin: 0 20px 0 200px;
     padding-top: 20px;
-    padding-right: 20px;
     position: relative;
     min-width: 1000px;
-    background: #fff;
     .top{
       background: #fff;
-      padding: 20px;
-      position: relative;
+      padding:20px;
+      margin-bottom: 20px;
       .saveCompile{
         position: absolute;
-        right: 0;
+        right: 20px;
         top:40px;
         width:80px;
         color: #fff;
@@ -201,13 +245,14 @@ export default {
       }
     }
     .tradeList {
-      padding-bottom: 30px;
+      padding:20px 20px 30px;
       background: #fff;
       .top {
         background: #EFEFEF;
         border: 1px solid #D5D5D5;
         height: 40px;
         display: flex;
+        margin-bottom: 0;
         align-items: center;
         box-sizing: border-box;
         line-height: 40px;
@@ -223,8 +268,12 @@ export default {
       }
       .content {
         display: flex;
+        width: 100%;
         justify-content: flex-start;
         align-items: center;
+        >div{
+          width: 100%;
+        }
         .desc {
           font-family: MicrosoftYaHei;
           font-size: 14px;
@@ -237,7 +286,7 @@ export default {
         }
 
         .proInfo {
-          width: 440px;
+          width: 50%;
           display: flex;
           height: 100%;
           justify-content: flex-start;
@@ -248,6 +297,7 @@ export default {
         }
         .prolist {
           height: 80px;
+          width: 100%;
           box-sizing: border-box;
           display: flex;
           align-items: center;
@@ -318,7 +368,7 @@ export default {
           }
         }
         .proNum {
-          width: 240px;
+          width: 25%;
           height: 100%;
           line-height: 80px;
           font-family: MicrosoftYaHei;
@@ -329,7 +379,7 @@ export default {
         }
         .price {
           height: 100%;
-          width: 240px;
+          width: 25%;
           display: flex;
           justify-content: center;
           align-items: center;

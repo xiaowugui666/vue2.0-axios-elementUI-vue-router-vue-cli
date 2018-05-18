@@ -1,6 +1,6 @@
 <template>
   <div>
-      <div class="home-content">
+      <div class="orderManager">
         <div class="header">
           <div class="selectInfo">
             <el-select v-model="value" placeholder="订单号"  @change="changeType" >
@@ -72,9 +72,9 @@
                 <label>商铺名称：金桔小店</label>
                 <label>客户手机：18923821231</label>
               </div>
-              <div class="content" v-for="item in tradeList">
+              <div class="content" v-for="(item,index) in tradeList"  :key="index">
                   <div>
-                      <div class="prolist"  v-for="items in item.list" >
+                      <div class="prolist"  v-for="(items,id) in item.list"  :key="id">
                         <div class="proInfo">
                           <img :src="items.img" alt="">
                           <div class="desc">{{items.desc}}</div>
@@ -92,7 +92,7 @@
                 </div>
                 <div class="orderResult"  :style="{height:item.list.length*80+'px'}">
                     <label>交易完成</label>
-                    <label>订单详情</label>
+                  <router-link :to="{ name:'orderDetail',params:{orderDetail:num }}" tag="label">订单详情</router-link>
                 </div>
               </div>
             </div>
@@ -114,6 +114,7 @@
 export default {
   data () {
     return {
+      num: 1,
       n: '1',
       // 搜索时间间隔
       keyTime: '',
@@ -207,6 +208,7 @@ export default {
 }
 </script>
 <style lang="less">
+  .orderManager{
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -360,9 +362,10 @@ export default {
       margin-right: 10px;
     }
   }
+  }
 </style>
 <style scoped lang="less">
-  .home-content {
+  .orderManager {
     margin: 0 20px 0 200px;
     padding-top: 20px;
     position: relative;
@@ -396,6 +399,9 @@ export default {
             display: flex;
             justify-content: flex-start;
             align-items: center;
+            >div{
+              width: 66%;
+            }
             .desc{
               font-family: MicrosoftYaHei;
               font-size: 14px;
@@ -411,7 +417,7 @@ export default {
               text-align: center;
             }
             .proInfo{
-              width: 400px;
+              width: 60%;
               display: flex;
               height: 100%;
               justify-content: flex-start;
@@ -422,6 +428,7 @@ export default {
             }
             .prolist{
               height: 80px;
+              width: 100%;
               box-sizing: border-box;
               display: flex;
               align-items: center;
@@ -430,7 +437,7 @@ export default {
             }
             .orderMon,.orderResult{
               height: 100%;
-              width: 170px;
+              width: 17%;
               display: flex;
               flex-direction: column;
               justify-content: center;
@@ -471,7 +478,7 @@ export default {
               }
             }
             .proNum{
-              width: 190px;
+              width: 20%;
               height: 100%;
               line-height: 80px;
               font-family: MicrosoftYaHei;
@@ -482,7 +489,7 @@ export default {
             }
             .price{
               height: 100%;
-              width: 190px;
+              width: 20%;
               display: flex;
               flex-direction: column;
               justify-content: center;

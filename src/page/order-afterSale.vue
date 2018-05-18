@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="home-content">
+    <div class="orderAfterSale">
       <div class="header">
         <div class="selectInfo">
           <div>
@@ -98,68 +98,68 @@
   </div>
 </template>
 <script>
-  export default {
-    data () {
-      return {
-        n: '1',
-        // 搜索时间间隔
-        keyTime: '',
-        // 搜索类别
-        keyValue: '',
-        // 商品名称
-        keyName: '',
-        // 订单类型
-        optionType: [{
-          value: '1',
-          label: '全部'
-        }, {
-          value: '2',
-          label: '仅退款'
-        }, {
-          value: '3',
-          label: '退货退款'
-        }],
-
-        // 搜索类型
-        options: [{
-          value: '1',
-          label: '订单号'
-        }, {
-          value: '2',
-          label: '外部订单'
-        }, {
-          value: '3',
-          label: '收货人姓名'
-        }, {
-          value: '4',
-          label: '收货人手机号'
-        }],
-        // 搜索类型
+export default {
+  data () {
+    return {
+      n: '1',
+      // 搜索时间间隔
+      keyTime: '',
+      // 搜索类别
+      keyValue: '',
+      // 商品名称
+      keyName: '',
+      // 订单类型
+      optionType: [{
         value: '1',
-        // 订单类型
-        OrderType: '1',
-        // 交易类型
-        tradeType: 'first'
-      }
-    },
-    methods: {
-      changeType () {
-      },
-      changeTime () {
-      },
-      searchOrder () {
-      },
-      timeRange (res) {
-        console.log(res)
-      },
-      handleClick (tab, event) {
-        console.log(tab.index)
-      }
-    }
+        label: '全部'
+      }, {
+        value: '2',
+        label: '仅退款'
+      }, {
+        value: '3',
+        label: '退货退款'
+      }],
 
+      // 搜索类型
+      options: [{
+        value: '1',
+        label: '订单号'
+      }, {
+        value: '2',
+        label: '外部订单'
+      }, {
+        value: '3',
+        label: '收货人姓名'
+      }, {
+        value: '4',
+        label: '收货人手机号'
+      }],
+      // 搜索类型
+      value: '1',
+      // 订单类型
+      OrderType: '1',
+      // 交易类型
+      tradeType: 'first'
+    }
+  },
+  methods: {
+    changeType () {
+    },
+    changeTime () {
+    },
+    searchOrder () {
+    },
+    timeRange (res) {
+      console.log(res)
+    },
+    handleClick (tab, event) {
+      console.log(tab.index)
+    }
   }
+}
 </script>
 <style lang="less">
+  .orderAfterSale{
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -313,15 +313,15 @@
       margin-right: 10px;
     }
   }
+  }
 </style>
 <style scoped lang="less">
-  .home-content {
+  .orderAfterSale{
     margin: 0 20px 0 200px;
     padding-top: 20px;
     position: relative;
     min-width: 1000px;
   }
-
   .tradeRecord {
     background: #fff;
     padding:0 20px 20px;
@@ -350,20 +350,14 @@
           text-align: center;
           border-right: 1px solid #D5D5D5;
         }
-        label:first-child,label:nth-child(2) {
-          width: 160px;
+        label:first-child,label:nth-child(2),label:nth-child(7),label:nth-child(4) {
+          width: 14%;
         }
-        label:nth-child(3) {
-          width:100px;
+        label:nth-child(3),label:nth-child(8){
+          width:10%;
         }
-        label:nth-child(4) {
-          width:120px;
-        }
-        label:nth-child(5),label:nth-child(6),label:nth-child(8),label:nth-child(9) {
-          width:107px;
-        }
-        label:nth-child(7) {
-          width:135px;
+        label:nth-child(5),label:nth-child(6),label:nth-child(9) {
+          width:8%;
         }
       }
       .content {
