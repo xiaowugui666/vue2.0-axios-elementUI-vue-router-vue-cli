@@ -129,43 +129,88 @@
             <li>
               <span class="required name alignment-top">商品规格：</span>
               <div class="goods-specification-box">
-                <div class="specification-block" v-for="(item, index) in specificationList" :key="index">
-                  <div>
-                    <span>规格名：</span>
-                    <input type="text" placeholder="" v-model="item.name"/>
-                    <i @click="deleteThis" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
+                <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
+                  <div class="specification-name-box">
+                    <span class="name">规格名：</span>
+                    <input @change="specificNameChange(index, item.name)" :data-value="item.name" type="text" placeholder="请输入规格名" v-model="item.name"/>
+                    <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
                   </div>
-                  <div>
-                    <span>规格值：</span>
-                    <el-tag
-                      :key="tag"
-                      v-for="tag in dynamicTags"
-                      closable
-                      :disable-transitions="false"
-                      @close="handleClose(tag)">
-                      {{tag}}
-                    </el-tag>
-                    <el-input
-                      class="input-new-tag"
-                      v-if="inputVisible"
-                      v-model="inputValue"
-                      ref="saveTagInput"
-                      size="small"
-                      @keyup.enter.native="handleInputConfirm"
-                      @blur="handleInputConfirm"
-                    >
-                    </el-input>
+                  <div class="specification-value-box">
+                    <span class="name alignment-top">规格值：</span>
+                    <div class="specification-value-list">
+                      <el-tag
+                        :key="index2"
+                        v-for="(tag, index2) in item.values"
+                        closable
+                        :disable-transitions="false"
+                        @close="alignmentHandleClose(tag,index)">
+                        {{tag.name}}
+                      </el-tag>
+                      <el-input
+                        class="input-new-tag"
+                        v-if="showSpecInputIf(index)"
+                        v-model="inputSpacValue"
+                        :ref="'saveSpecTagInput'+index"
+                        size="small"
+                        @keyup.enter.native="handleInputSpec(index)"
+                        @blur="handleInputSpec(index)"
+                      >
+                      </el-input>
+                      <el-button v-else @click="showSpecInput(index)" type="primary" size="small">添加规格值</el-button>
+                    </div>
                   </div>
                 </div>
                 <div class="add-specification-name specification-block">
-                  <el-button type="primary" size="small" :disabled="specificNum === 2">添加规格名</el-button>
+                  <el-button :disabled="specificationList.length === 3" @click="addSpecific" class="add-specific-btn" type="primary" size="small">添加规格名</el-button>
                 </div>
               </div>
             </li>
-            <li>
+            <li v-if="skus[0].values.length>0">
               <span class="name alignment-top">规格明细：</span>
-              <div>
+              <div class="goods-specific-table">
+                <!--商品表格-->
+                <table >
+                  <tr>
+                    <th v-for="(item, index) in specificationList" v-if="item.values.length>0 && item.name" :key="index">{{item.name}}</th>
+                    <th><span class="c_red">*</span>价格</th>
+                    <th><span class="c_red">*</span>库存</th>
+                    <th>规格编码</th>
+                    <th>划线价格</th>
+                    <th>图片</th>
+                  </tr>
+                  <tr v-for="(sku, index) in skus" :key="index">
+                    <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
+                    <td><span class="money-tips">￥</span><input type="text" v-model="sku.SkuPrice" maxlength="10"/></td>
+                    <td><input type="text" v-model="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
+                    <td><input type="text" v-model="sku.SkuCode" class="sku-code" maxlength="20"/></td>
+                    <td><span class="money-tips">￥</span><input type="text" v-model="sku.linePrice" maxlength="20"/></td>
+                    <td width="50">
+                      <el-upload
+                        class="avatar-uploader"
+                        action="https://jsonplaceholder.typicode.com/posts/"
+                        :show-file-list="false"
+                        :on-change='(value)=>changeUpload(value, index)'
+                        :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
+                        :before-upload="(value)=>beforeAvatarUpload(value, index)">
+                        <img v-if="sku.imgSrc" :src="sku.imgSrc" class="avatar">
+                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                      </el-upload>
+                    </td>
+                  </tr>
+                </table>
               </div>
+            </li>
+            <li>
+              <span class="name required alignment-top">商品价格：</span>
+              <span class="goods-price">
+                <input type="text" v-model="goodsPrice" placeholder="" :disabled="specificationList.length>0">
+              </span>
+            </li>
+            <li>
+              <span class="name required alignment-top">划线价格：</span>
+              <span class="goods-price">
+                <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+              </span>
             </li>
           </ul>
         </div>
@@ -226,17 +271,37 @@ export default {
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
-      specificNum: 0,
+      inputSpacValue: '',
+      inputSpacVisible0: false,
+      inputSpacVisible1: false,
+      inputSpacVisible2: false,
       specificationList: [
         {
-          'name': '材质',
-          'values': {
-            specificationNameList: [],
-            specificationName: '',
-            specificationValueList1: []
-          },
+          'name': '材质1',
+          'values': [
+            {
+              name: '铝1'
+            }, {
+              name: '棉花1'
+            }, {
+              name: '铝2'
+            }, {
+              name: '棉花3'
+            }
+          ]
+        },
+        {
+          'name': '材质2',
+          'values': [
+            {
+              name: '铝1232'
+            }, {
+              name: '棉花2'
+            }
+          ]
         }
       ],
+      skus: [],
       selectStateOptions: [
         {
           value: '1',
@@ -256,6 +321,8 @@ export default {
         }
       ],
       value: '食品',
+      goodsPrice: '',
+      goodsLinePrice: '',
       secondClass: '',
       quillContent: '',
       editorOption: {
@@ -324,31 +391,117 @@ export default {
       quantifier: '个'
     }
   },
+  beforeMount () {
+    this.setSkus()
+  },
   mounted () {
     this.setRoutePath()
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
-    deleteThis (x) {
-      x.toElement.parentNode.parentNode.parentNode.removeChild(x.toElement.parentNode.parentNode)
-    },
     setRoutePath () {
       this.setMenuLeft('/commodityManagement')
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
     },
+    // 计算规格属性的笛卡尔积
+    setSpeRetData () {
+      let orz = []
+      for (let k of this.specificationList) {
+        if (k.name && k.values.length > 0) {
+          orz.push(k.values)
+        }
+      }
+      let ret = this.cartesianProduct(orz)
+      return ret
+    },
+    // 设置skus，渲染规格表
+    setSkus () {
+      this.skus = []
+      let ret = this.setSpeRetData()
+      for (let k of ret) {
+        let sku = {SkuPrice: '', StockQuantity: '0', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+        for (let l of k) {
+          sku.values.push({ specificName: l.name })
+        }
+        this.skus.push(sku)
+      }
+    },
+    // 删除当前规格
+    deleteThis (index) {
+      this.specificationList.splice(index, 1)
+    },
+    // 添加一个规格
+    addSpecific () {
+      this.specificationList.push({
+        'name': '',
+        'values': []
+      })
+    },
+    // 使规格名不重复
+    specificNameChange (index) {
+      let val = this.specificationList[index].name
+      let newS = this.specificationList.slice(0)
+      newS.splice(index, 1)
+      for (let k of newS) {
+        if (val === k.name) {
+          this.$message({
+            showClose: true,
+            message: '规格名重复！',
+            type: 'error'
+          })
+          this.specificationList[index].name = ''
+          return false
+        }
+      }
+    },
+    // 删除选中的规则值
+    alignmentHandleClose (tag, index) {
+      let values = this.specificationList[index].values
+      this.specificationList[index].values.splice(values.indexOf(tag), 1)
+    },
+    // 显示 规则值输入框，使输入框获取焦点
+    showSpecInput (index) {
+      this['inputSpacVisible' + index] = true
+      this.$nextTick(_ => {
+        // console.log(this.$refs['saveSpecTagInput' + index])
+        this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
+      })
+    },
+    showSpecInputIf (index) {
+      return this['inputSpacVisible' + index]
+    },
+    // 获取规则值输入框的内容，赋值给this.specificationList[index].values，清空this.inputSpacValue
+    handleInputSpec (index) {
+      let inputValue = this.inputSpacValue
+      if (inputValue) {
+        for (let k of this.specificationList[index].values) {
+          if (inputValue === k.name) {
+            this.$message({
+              showClose: true,
+              message: '规格值重复！',
+              type: 'error'
+            })
+            return false
+          }
+        }
+        this.specificationList[index].values.push({'name': inputValue})
+      }
+      this['inputSpacVisible' + index] = false
+      this.inputSpacValue = ''
+    },
+
+    // 关键字操作部分
     handleClose (tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
     },
-
     showInput () {
       this.inputVisible = true
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
-
     handleInputConfirm () {
       let inputValue = this.inputValue
       if (inputValue) {
@@ -357,6 +510,8 @@ export default {
       this.inputVisible = false
       this.inputValue = ''
     },
+    // 关键字操作部分结束
+
     handlePictureCardPreview (file) {
       this.goodsPicUrl = file.url
       this.goodsPicVisible = true
@@ -373,6 +528,35 @@ export default {
     onEditorChange ({ quill, html, text }) {
       console.log('editor change!', quill, html, text)
       this.content = html
+    },
+    // 每种规格图片上传
+    handleAvatarSuccess (res, file, index) {
+      console.log(res, file, index)
+      // this.imageUrl = URL.createObjectURL(file.raw)
+    },
+    beforeAvatarUpload (file, index) {},
+    changeUpload (file, index) {
+      // console.log(file)
+      this.skus[index].imgSrc = file.url
+    },
+    // 求笛卡尔积
+    cartesianProduct (arr) {
+      return arr.reduce(function (a, b) {
+        return a.map(function (x) {
+          return b.map(function (y) {
+            return x.concat(y)
+          })
+        }).reduce(function (a, b) { return a.concat(b) }, [])
+      }, [[]])
+    }
+  },
+  watch: {
+    specificationList: {
+      handler (newValue, oldValue) {
+        this.setSkus()
+        console.log(this.skus)
+      },
+      deep: true
     }
   },
   computed: {
@@ -571,6 +755,11 @@ export default {
           border: 1px solid #d5d5d5;
           padding: 20px;
           min-width: 900px;
+          width: 900px;
+          .name {
+            color: #666;
+            width: auto;
+          }
           .specification-block {
             background: #efefef;
             margin-bottom: 10px;
@@ -578,10 +767,107 @@ export default {
             .delete-specific {
               float: right;
               display: none;
+              cursor: pointer;
             }
             &:hover .delete-specific {
               display: block;
             }
+            .specification-name-box {
+              margin-bottom: 20px;
+            }
+            .specification-value-box {
+              .specification-value-list {
+                display: inline-block;
+                width: 800px;
+                .el-tag {
+                  margin-right: 10px;
+                  border-color: #d5d5d5;
+                  color: #333;
+                  background: #fff;
+                  margin-bottom: 10px;
+                }
+                .input-new-tag {
+                  width: 100px;
+                }
+              }
+            }
+          }
+        }
+        .goods-specific-table {
+          display: inline-block;
+          vertical-align: middle;
+          width: 942px;
+          table {
+            width: 100%;
+            font-size: 12px;
+            color: #666;
+            border: 1px solid #d5d5d5;
+            border-collapse: collapse;
+            text-align: center;
+            th {
+              border: 1px solid #d5d5d5;
+              color: #333;
+              padding: 8px 10px;
+              background: #f5f5f5;
+              .c_red {
+                color: #DE5B67;
+                padding-right: 5px;
+              }
+            }
+            td {
+              border: 1px solid #d5d5d5;
+              padding: 8px 10px;
+              .avatar-uploader .el-upload {
+                border: 1px dashed #d9d9d9;
+                border-radius: 6px;
+                cursor: pointer;
+                position: relative;
+                overflow: hidden;
+              }
+              .money-tips {
+                padding-right: 5px;
+              }
+              .stock-quantity {
+                width: 60px;
+              }
+              .sku-code {
+                width: 120px;
+              }
+              .avatar-uploader .el-upload:hover {
+                border-color: #409EFF;
+              }
+              .avatar-uploader-icon {
+                font-size: 20px;
+                color: #8c939d;
+                width: 50px;
+                height: 50px;
+                line-height: 50px;
+                text-align: center;
+                border: 1px solid #d5d5d5;
+              }
+              .avatar {
+                width: 50px;
+                height: 50px;
+                display: block;
+              }
+            }
+          }
+          input {
+            width: 90px;
+          }
+        }
+        .goods-price {
+          position: relative;
+          &::before {
+            content: '￥';
+            display: block;
+            position: absolute;
+            top: 2px;
+            left: 10px;
+          }
+          input {
+            padding-left: 30px;
+            width: 206px;
           }
         }
       }
