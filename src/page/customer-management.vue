@@ -24,37 +24,37 @@
             :data="tableData"
             border>
             <el-table-column
-              prop="date"
-              label="姓名"
-              width="180">
-            </el-table-column>
-            <el-table-column
               prop="name"
               label="姓名"
               width="180">
             </el-table-column>
             <el-table-column
-              prop="address"
-              label="地址">
+              prop="phoneNumber"
+              label="手机号码"
+              width="180">
             </el-table-column>
             <el-table-column
-              prop="address"
-              label="地址">
+              prop="wechat"
+              label="微信号">
             </el-table-column>
             <el-table-column
-              prop="address"
-              label="地址">
+              prop="orders"
+              label="拥有订单数">
             </el-table-column>
             <el-table-column
-              prop="address"
-              label="地址">
+              prop="from"
+              label="来源渠道">
+            </el-table-column>
+            <el-table-column
+              prop="methods"
+              label="来源方式">
             </el-table-column>
             <el-table-column
               prop="address"
               label="操作">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="dialogVisible=true">编辑</el-button>
-                <el-button type="text" size="small">订单详情</el-button>
+                <el-button type="text" size="small" @click="orderDetails">订单详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -74,7 +74,7 @@
           :before-close="handleClose">
           <hr/>
           <div>
-            <span class="dialog_name">姓名</span><input type="text" v-model="name">
+            <span class="dialog_name">姓名</span><input type="text" v-model="name" clearable>
           </div>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false" plain size="small">保存</el-button>
@@ -111,33 +111,54 @@ export default {
       }],
       value: '',
       tableData: [{
-        date: '2016-05-02',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }, {
-        date: '2016-05-04',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }, {
-        date: '2016-05-01',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }, {
-        date: '2016-05-03',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }, {
-        date: '2016-05-02',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }, {
-        date: '2016-05-02',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }, {
-        date: '2016-05-02',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        phoneNumber: '13577884567',
+        wechat: 'skakjshdkhakh',
+        orders: 18,
+        from: '微信',
+        methods: '普通下单'
       }]
     }
   },
@@ -145,6 +166,9 @@ export default {
     handleClose (done) {
       console.log(done)
       this.$confirm('are you sure?')
+    },
+    orderDetails () {
+      this.$router.push({path: '/customerOrder'})
     }
   }
 }
