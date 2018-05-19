@@ -53,8 +53,8 @@
               prop="address"
               label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="dialogVisible=true">编辑</el-button>
-                <el-button type="text" size="small" @click="orderDetails">订单详情</el-button>
+                <el-button type="text" size="small" @click="editDetails(scope.$index)">编辑</el-button>
+                <el-button type="text" size="small" @click="orderDetails(scope.$index)">订单详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -77,7 +77,7 @@
             <span class="dialog_name">姓名</span><input type="text" v-model="name" clearable>
           </div>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false" plain size="small">保存</el-button>
+            <el-button @click="saveInfo" plain size="small">保存</el-button>
             <el-button @click="dialogVisible = false" plain size="small">返回</el-button>
           </div>
         </el-dialog>
@@ -116,56 +116,78 @@ export default {
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 1
       }, {
         name: '王小虎',
         phoneNumber: '13577884567',
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 0
       }, {
         name: '王小虎',
         phoneNumber: '13577884567',
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 0
       }, {
         name: '王小虎',
         phoneNumber: '13577884567',
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 0
       }, {
         name: '王小虎',
         phoneNumber: '13577884567',
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 0
       }, {
         name: '王小虎',
         phoneNumber: '13577884567',
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 0
       }, {
         name: '王小虎',
         phoneNumber: '13577884567',
         wechat: 'skakjshdkhakh',
         orders: 18,
         from: '微信',
-        methods: '普通下单'
+        methods: '普通下单',
+        flag: 0
       }]
     }
   },
   methods: {
     handleClose (done) {
-      console.log(done)
       this.$confirm('are you sure?')
+        .then(_ => {
+          done()
+        })
+    },
+    // 编辑列表
+    editDetails (detail) {
+      // 打开模态框
+      this.dialogVisible = true
+      this.detail = detail
+    },
+    // 保存姓名 关闭模态框
+    saveInfo () {
+      let that = this
+      that.tableData[that.detail].name = that.name
+      that.dialogVisible = false
+      that.name = ''
     },
     orderDetails () {
       this.$router.push({path: '/customerOrder'})
@@ -215,7 +237,6 @@ export default {
       font-size: 12px;
       color: #ffffff;
       line-height: 30px;
-      font-family: MicrosoftYaHei;
     }
   }
   .table{
@@ -234,7 +255,6 @@ export default {
       width: 128px;
       height: 30px;
       color: #333333;
-      font-family: MicrosoftYaHei;
       border-radius: 0;
     }
     .el-table__header-wrapper thead{
@@ -278,7 +298,6 @@ export default {
     .el-pagination button span {
       padding: 0 16px;
       border: 1px solid #D5D5D5;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       text-align: center;
     }
@@ -293,7 +312,7 @@ export default {
     .el-pagination.is-background .el-pager li:not(.active):hover {
       color: #DE5B67;
     }
-    .el-pagination button:hover {
+    .el-pagination button {
       color: #DE5B67;
     }
     .el-dialog .el-dialog__header .el-dialog__title {
@@ -306,7 +325,6 @@ export default {
       padding-top: 20px;
     }
     .el-dialog .el-dialog__body .dialog_name{
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
