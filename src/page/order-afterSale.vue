@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="home-content">
+    <div class="orderAfterSale">
       <div class="header">
         <div class="selectInfo">
           <div>
@@ -159,6 +159,7 @@ export default {
 }
 </script>
 <style lang="less">
+  .orderAfterSale{
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -312,15 +313,15 @@ export default {
       margin-right: 10px;
     }
   }
+  }
 </style>
 <style scoped lang="less">
-  .home-content {
+  .orderAfterSale{
     margin: 0 20px 0 200px;
     padding-top: 20px;
     position: relative;
     min-width: 1000px;
   }
-
   .tradeRecord {
     background: #fff;
     padding:0 20px 20px;
@@ -349,20 +350,14 @@ export default {
           text-align: center;
           border-right: 1px solid #D5D5D5;
         }
-        label:first-child,label:nth-child(2) {
-          width: 160px;
+        label:first-child,label:nth-child(2),label:nth-child(7),label:nth-child(4) {
+          width: 14%;
         }
-        label:nth-child(3) {
-          width:100px;
+        label:nth-child(3),label:nth-child(8){
+          width:10%;
         }
-        label:nth-child(4) {
-          width:120px;
-        }
-        label:nth-child(5),label:nth-child(6),label:nth-child(8),label:nth-child(9) {
-          width:107px;
-        }
-        label:nth-child(7) {
-          width:135px;
+        label:nth-child(5),label:nth-child(6),label:nth-child(9) {
+          width:8%;
         }
       }
       .content {

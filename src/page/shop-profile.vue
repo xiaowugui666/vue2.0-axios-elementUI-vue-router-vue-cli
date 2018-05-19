@@ -1,7 +1,6 @@
 <template>
     <div>
-      <menu-left-com></menu-left-com>
-      <div class="home-content">
+      <div class="orderProfile">
         <ul class="home-survey">
           <li>
             <div class="up">9999.99</div>
@@ -92,63 +91,66 @@ export default {
   }
 }
 </script>
-<style>
-  .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next {
-    padding: 0 15px;
+<style lang="less">
+  .orderProfile {
+    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next {
+      padding: 0 15px;
+    }
+    .el-pagination span:not([class*=suffix]), .el-pagination button {
+      display: inline-block;
+      font-size: 13px;
+      min-width: 30px;
+      height: 30px;
+      line-height: 30px;
+      vertical-align: top;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .el-pagination .btn-prev, .el-pagination .btn-next {
+      background: center center no-repeat;
+      background-size: 16px;
+      background-color: #fff;
+      height: 30px;
+      line-height: 30px;
+      padding: 0 15px;
+      cursor: pointer;
+      margin: 0;
+      color: #303133;
+      border: 1px solid #d5d5d5;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active {
+      background-color: #DE5B67;
+      color: #fff;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
+      color: #fff;
+    }
+    .el-pager li {
+      padding: 0;
+      background: #fff;
+      vertical-align: top;
+      display: inline-block;
+      font-size: 13px;
+      min-width: 30px;
+      height: 30px;
+      line-height: 30px;
+      cursor: pointer;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      text-align: center;
+      margin: 0;
+      border: 1px solid #D5D5D5;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+      border-radius: 2px;
+    }
+    .el-pager li.active + li {
+      border-left: 1px solid #D5D5D5;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled):hover {
+      color: #DE5B67;
+    }
   }
-  .el-pagination span:not([class*=suffix]), .el-pagination button {
-    display: inline-block;
-    font-size: 13px;
-    min-width: 30px;
-    height: 30px;
-    line-height: 30px;
-    vertical-align: top;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  .el-pagination .btn-prev, .el-pagination .btn-next {
-    background: center center no-repeat;
-    background-size: 16px;
-    background-color: #fff;
-    height: 30px;
-    line-height: 30px;
-    padding:0 15px;
-    cursor: pointer;
-    margin: 0;
-    color: #303133;
-    border: 1px solid #d5d5d5;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled).active {
-    background-color: #DE5B67;
-    color: #fff;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-    color: #fff;
-  }
-  .el-pager li {
-    padding: 0;
-    background: #fff;
-    vertical-align: top;
-    display: inline-block;
-    font-size: 13px;
-    min-width: 30px;
-    height: 30px;
-    line-height: 30px;
-    cursor: pointer;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    text-align: center;
-    margin: 0;
-    border: 1px solid #D5D5D5;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
-    border-radius: 2px;
-  }
-  .el-pager li.active + li {
-    border-left: 1px solid #D5D5D5;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled):hover {
-    color: #DE5B67; }
 </style>
 <style scoped lang="less">
 
@@ -224,7 +226,7 @@ export default {
     height: 40px;
     line-height: 40px;
   }
-  .home-content {
+  .orderProfile {
     margin: 0 60px 0 200px;
     padding-top: 20px;
     position: relative;

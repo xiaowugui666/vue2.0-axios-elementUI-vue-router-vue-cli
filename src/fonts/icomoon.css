@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('icomoon.eot?culnbk');
-  src:  url('icomoon.eot?culnbk#iefix') format('embedded-opentype'),
-    url('icomoon.ttf?culnbk') format('truetype'),
-    url('icomoon.woff?culnbk') format('woff'),
-    url('icomoon.svg?culnbk#icomoon') format('svg');
+  src:  url('icomoon.eot?xz6nc7');
+  src:  url('icomoon.eot?xz6nc7#iefix') format('embedded-opentype'),
+    url('icomoon.ttf?xz6nc7') format('truetype'),
+    url('icomoon.woff?xz6nc7') format('woff'),
+    url('icomoon.svg?xz6nc7#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,53 +24,70 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-店铺:before {
+.icon-查看:before {
   content: "\e900";
 }
-.icon-订单:before {
+.icon-成功:before {
   content: "\e901";
 }
-.icon-概况:before {
+.icon-店铺:before {
   content: "\e902";
 }
-.icon-公众号认证:before {
+.icon-订单:before {
   content: "\e903";
+}
+.icon-概况:before {
+  content: "\e904";
+}
+.icon-公众号认证:before {
+  content: "\e905";
   color: #2a99ff;
 }
+.icon-勾:before {
+  content: "\e906";
+}
 .icon-京东认证:before {
-  content: "\e904";
+  content: "\e907";
   color: #ed3541;
 }
 .icon-客户:before {
-  content: "\e905";
+  content: "\e908";
 }
 .icon-拼团:before {
-  content: "\e906";
+  content: "\e909";
 }
 .icon-钱:before {
-  content: "\e907";
+  content: "\e90a";
   color: #f44f4c;
 }
 .icon-商品:before {
-  content: "\e908";
+  content: "\e90b";
 }
 .icon-设置:before {
-  content: "\e909";
+  content: "\e90c";
+}
+.icon-收入:before {
+  content: "\e90d";
+  color: #f7982a;
 }
 .icon-数据:before {
-  content: "\e90a";
+  content: "\e90e";
 }
 .icon-淘宝认证:before {
-  content: "\e90b";
+  content: "\e90f";
   color: #fc4f00;
 }
 .icon-微信认证:before {
-  content: "\e90c";
+  content: "\e910";
   color: #2bc102;
 }
+.icon-隐藏:before {
+  content: "\e911";
+  color: #5a2e0b;
+}
 .icon-营销:before {
-  content: "\e90d";
+  content: "\e912";
 }
 .icon-账户:before {
-  content: "\e90e";
+  content: "\e913";
 }

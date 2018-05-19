@@ -9,11 +9,15 @@ import customerOrder from '@/page/customer-order'
 import account from '@/page/account'
 import collageManagement from '@/page/collage-management'
 import informationSetting from '@/page/information-setting'
+import addEditGoods from '@/page/add-edit-goods'
+import oneKeyIntroduction from '@/page/one-key-introduction'
+import categoryManagement from '@/page/category-management'
 import orderSetting from '@/page/order-setting'
 import shopProfile from '@/page/shop-profile'
 import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
-import addEditGoods from '@/page/add-edit-goods'
+import orderRebate from '@/page/order-rebate'
+import addOrder from '@/page/add-order'
 
 Vue.use(Router)
 
@@ -70,14 +74,24 @@ export default new Router({
       component: orderSetting
     },
     {
-      path: '/orderDetail',
+      path: '/orderDetail/:orderDetail',
       name: 'orderDetail',
       component: orderDetail
+    },
+    {
+      path: '/addOrder',
+      name: 'addOrder',
+      component: addOrder
     },
     {
       path: '/orderAfterSale',
       name: 'orderAfterSale',
       component: orderAfterSale
+    },
+    {
+      path: '/orderRebate',
+      name: 'orderRebate',
+      component: orderRebate
     },
     {
       path: '/shopProfile',
@@ -88,6 +102,16 @@ export default new Router({
       path: '/addEditGoods',
       name: 'addEditGoods',
       component: addEditGoods
+    },
+    {
+      path: '/oneKeyIntroduction',
+      name: 'oneKeyIntroduction',
+      component: oneKeyIntroduction
+    },
+    {
+      path: '/categoryManagement',
+      name: 'categoryManagement',
+      component: categoryManagement
     }
   ]
 })
