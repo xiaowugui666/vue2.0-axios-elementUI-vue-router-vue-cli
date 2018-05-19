@@ -10,7 +10,7 @@
             <el-step title="支付信息"></el-step>
           </el-steps>
         </div>
-        <div v-show="active == 0" class="subject-info plate">
+        <div v-if="active == 0" class="subject-info plate">
           <div class="plate-top">主体信息</div>
           <div class="subject-info-setting">
             <ul>
@@ -35,7 +35,7 @@
             </div>
           </div>
         </div>
-        <div v-show="active == 1" class="store-information plate">
+        <div v-if="active == 1" class="store-information plate">
           <div class="plate-top">店铺信息</div>
           <div class="store-information-setting">
             <ul>
@@ -113,7 +113,7 @@
             </div>
           </div>
         </div>
-        <div v-show="active == 2" class="pay-information plate">
+        <div v-if="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div class="pay-information-setting">
             <ul>
@@ -295,7 +295,7 @@ export default {
     margin-left: 200px;
     margin-right: 20px;
     padding-top: 20px;
-    min-width: 1000px;
+    min-width: 1100px;
     .el-steps-box {
       background: #fff;
       padding: 20px;
