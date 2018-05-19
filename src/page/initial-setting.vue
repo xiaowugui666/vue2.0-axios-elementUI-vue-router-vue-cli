@@ -541,26 +541,28 @@ export default {
     vertical-align: middle;
   }
 </style>
-<style>
-  .el-step__title.is-process {
-    color: #333;
-  }
-  .el-step__title.is-wait {
-    color: #d5d5d5;
-  }
-  .el-input__inner {
-     border-radius: 0;
-     color: #333;
-   }
-  .el-dialog__header {
-    text-align: center;
-  }
-  .el-dialog__header span {
-    font-size: 14px;
-    color: #333;
-    font-weight: bold;
-  }
-  .el-dialog__body {
-    padding-top: 20px;
+<style lang="less">
+  .first-setting-object {
+    .el-step__title.is-process {
+      color: #333;
+    }
+    .el-step__title.is-wait {
+      color: #d5d5d5;
+    }
+    .el-input__inner {
+       border-radius: 0;
+       color: #333;
+     }
+    .el-dialog__header {
+      text-align: center;
+    }
+    .el-dialog__header span {
+      font-size: 14px;
+      color: #333;
+      font-weight: bold;
+    }
+    .el-dialog__body {
+      padding-top: 20px;
+    }
   }
 </style>

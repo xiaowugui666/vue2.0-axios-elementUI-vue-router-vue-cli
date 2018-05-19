@@ -212,6 +212,10 @@
                 <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
               </span>
             </li>
+            <li>
+              <span class="name required alignment-top">库存：</span>
+              <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+            </li>
           </ul>
         </div>
       </div>
@@ -554,7 +558,7 @@ export default {
     specificationList: {
       handler (newValue, oldValue) {
         this.setSkus()
-        console.log(this.skus)
+        // console.log(this.skus)
       },
       deep: true
     }
@@ -867,7 +871,7 @@ export default {
           }
           input {
             padding-left: 30px;
-            width: 206px;
+            width: 216px;
           }
         }
       }
