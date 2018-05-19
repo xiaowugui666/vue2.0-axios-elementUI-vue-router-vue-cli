@@ -234,7 +234,7 @@ export default {
             specificationNameList: [],
             specificationName: '',
             specificationValueList1: []
-          },
+          }
         }
       ],
       selectStateOptions: [
