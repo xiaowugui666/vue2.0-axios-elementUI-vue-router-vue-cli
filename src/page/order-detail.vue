@@ -62,16 +62,16 @@
                   <div class="proNum">数量 x{{items.num}}</div>
                   <div class="price">
                     <label>￥</label>
-                    <label v-if="isPrice">{{items.nowPrice}}</label>
+                    <label v-if="isPrice">{{items.nowPrice | tofixed }}</label>
                     <input v-else type="tel"  v-model="items.nowPrice">
                   </div>
                 </div>
               </div>
               <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
-                <label>￥{{tradeList.totalPrice}}</label>
+                <label>￥{{tradeList.totalPrice | tofixed }}</label>
                 <label>
                   <label>运费：</label>
-                  <label v-if="isPrice">{{tradeList.yfPrice}}</label>
+                  <label v-if="isPrice">{{tradeList.yfPrice | tofixed }}</label>
                   <input v-else type="tel" v-model="tradeList.yfPrice">
                 </label>
                 <label @click="changeCompile" v-if="isPrices">编辑订单</label>
@@ -146,6 +146,16 @@ export default {
   },
   mounted () {
     this.getParams()
+  },
+  filters: {
+    tofixed: value => {
+      value = value.toString()
+      if (value.indexOf('.00')) {
+        return value
+      } else {
+        return value + '.00'
+      }
+    }
   }
 }
 </script>
