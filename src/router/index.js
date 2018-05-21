@@ -18,6 +18,7 @@ import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
 import orderRebate from '@/page/order-rebate'
 import addOrder from '@/page/add-order'
+import select from '@/components/select-production'
 
 Vue.use(Router)
 
@@ -32,6 +33,11 @@ export default new Router({
       path: '/initialSetting',
       name: 'initialSetting',
       component: initialSetting
+    },
+    {
+      path: '/select',
+      name: 'select',
+      component: select
     },
     {
       path: '/commodityManagement',
