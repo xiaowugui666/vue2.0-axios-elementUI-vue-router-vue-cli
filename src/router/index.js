@@ -13,6 +13,8 @@ import addEditGoods from '@/page/add-edit-goods'
 import oneKeyIntroduction from '@/page/one-key-introduction'
 import categoryManagement from '@/page/category-management'
 import orderSetting from '@/page/order-setting'
+import paySetting from '@/page/pay-setting'
+import mpSetting from '@/page/mp-setting'
 import shopProfile from '@/page/shop-profile'
 import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
@@ -112,6 +114,16 @@ export default new Router({
       path: '/categoryManagement',
       name: 'categoryManagement',
       component: categoryManagement
+    },
+    {
+      path: '/pay-setting',
+      name: 'paySetting',
+      component: paySetting
+    },
+    {
+      path: '/mp-setting',
+      name: 'mpSetting',
+      component: mpSetting
     }
   ]
 })
