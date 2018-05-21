@@ -127,7 +127,7 @@
         <div class="price-inventory-edit">
           <ul>
             <li>
-              <span class="required name alignment-top">商品规格：</span>
+              <span class="name alignment-top">商品规格：</span>
               <div class="goods-specification-box">
                 <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
                   <div class="specification-name-box">
@@ -201,16 +201,25 @@
               </div>
             </li>
             <li>
-              <span class="name required alignment-top">商品价格：</span>
+              <span class="name required">商品价格：</span>
               <span class="goods-price">
                 <input type="text" v-model="goodsPrice" placeholder="" :disabled="specificationList.length>0">
               </span>
             </li>
             <li>
-              <span class="name required alignment-top">划线价格：</span>
+              <span class="name">划线价格：</span>
               <span class="goods-price">
                 <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
               </span>
+            </li>
+            <li>
+              <span class="name required">库存：</span>
+              <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+            </li>
+            <li class="show-stock-btn">
+              <span class="name">库存显示：</span>
+              <el-button type="success" size="small" :class="['show-stock', {'active':showStock}]" @click="showStock=true">显示库存</el-button>
+              <el-button type="success" size="small" :class="['hide-stock', {'active':!showStock}]" @click="showStock=false">不显示剩余库存</el-button>
             </li>
           </ul>
         </div>
@@ -220,16 +229,22 @@
         <div class="other-info-edit">
           <ul>
             <li>
-              <span class="required name">商品名称：</span>
-              <input type="text" placeholder="" v-model="goodsName">
+              <span class="name required">快递邮费：</span>
+              <span class="express-postage">
+                <input type="text" v-model="postage.money" :disabled="postage.freeShipping" placeholder="请输入快递邮费">
+                <el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>
+              </span>
             </li>
             <li>
-              <span class="required name">商品名称：</span>
-              <input type="text" placeholder="" v-model="goodsName">
+              <span class="required name">是否上架：</span>
+              <el-button type="success" size="small" :class="{'active':grounding}" @click="grounding=true" style="margin-left: 0;">立即上架</el-button>
+              <el-button type="success" size="small" :class="{'active':!grounding}" @click="grounding=false">暂不上架</el-button>
             </li>
             <li>
-              <span class="required name">商品名称：</span>
-              <input type="text" placeholder="" v-model="goodsName">
+              <span class="required name">商家承诺：</span>
+              <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
+              <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
+              <el-button type="success" size="small" :class="{'active':businessCommitment.deliverGoods}" @click="businessCommitment.deliverGoods=!businessCommitment.deliverGoods">24小时发货</el-button>
             </li>
           </ul>
         </div>
@@ -275,32 +290,7 @@ export default {
       inputSpacVisible0: false,
       inputSpacVisible1: false,
       inputSpacVisible2: false,
-      specificationList: [
-        {
-          'name': '材质1',
-          'values': [
-            {
-              name: '铝1'
-            }, {
-              name: '棉花1'
-            }, {
-              name: '铝2'
-            }, {
-              name: '棉花3'
-            }
-          ]
-        },
-        {
-          'name': '材质2',
-          'values': [
-            {
-              name: '铝1232'
-            }, {
-              name: '棉花2'
-            }
-          ]
-        }
-      ],
+      specificationList: [],
       skus: [],
       selectStateOptions: [
         {
@@ -323,6 +313,18 @@ export default {
       value: '食品',
       goodsPrice: '',
       goodsLinePrice: '',
+      showStock: true,
+      postage: {
+        freeShipping: true,
+        money: ''
+      },
+
+      grounding: true,
+      businessCommitment: {
+        refundable: false,
+        qualityGoods: false,
+        deliverGoods: false
+      },
       secondClass: '',
       quillContent: '',
       editorOption: {
@@ -554,7 +556,7 @@ export default {
     specificationList: {
       handler (newValue, oldValue) {
         this.setSkus()
-        console.log(this.skus)
+        // console.log(this.skus)
       },
       deep: true
     }
@@ -867,7 +869,25 @@ export default {
           }
           input {
             padding-left: 30px;
-            width: 206px;
+            width: 216px;
+          }
+        }
+        .show-stock-btn {
+          .show-stock {
+            width: 100px;
+          }
+          .hide-stock {
+            width: 146px;
+            margin-left: 9px;
+          }
+          .hide-stock, .show-stock {
+            vertical-align: middle;
+            background: #d5d5d5;
+            border-color: #d5d5d5;
+          }
+          .hide-stock.active, .show-stock.active {
+            background: #DE5B67;
+            border-color: #DE5B67;
           }
         }
       }
@@ -875,6 +895,34 @@ export default {
     .other-info {
       .other-info-edit {
         padding: 10px 5px 20px;
+        .el-button--small {
+          width: 100px;
+          vertical-align: middle;
+          margin-left: 8px;
+        }
+        .el-button--success {
+          background: #d5d5d5;
+          border-color: #d5d5d5;
+          &.active {
+            background: #DE5B67;
+            border-color: #DE5B67;
+          }
+        }
+        .express-postage {
+          position: relative;
+          &::before {
+            content: '￥';
+            display: block;
+            position: absolute;
+            top: 2px;
+            left: 10px;
+          }
+          input {
+            width: 210px;
+            padding-left: 26px;
+            box-sizing: border-box;
+          }
+        }
       }
     }
   }

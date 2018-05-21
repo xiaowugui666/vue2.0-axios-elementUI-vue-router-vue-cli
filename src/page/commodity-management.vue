@@ -423,32 +423,34 @@ export default {
     }
   }
 </style>
-<style>
-  .el-input__inner {
-    border-radius: 0;
-    color: #333;
-    border-color: #d5d5d5;
+<style lang="less">
+  .commodity-management-subject {
+    .el-input__inner {
+      border-radius: 0;
+      color: #333;
+      border-color: #d5d5d5;
+    }
+    .el-table th {
+      color: #333;
+      text-align: center;
+      font-weight: normal;
+      background: #efefef;
+      border-color: #e4e4e4;
+    }
+    .el-table th .el-checkbox::after {
+      content: '全选';
+      color: #333;
+      padding-left: 6px;
+    }
+    .el-pagination.is-background .el-pager li:not(.disabled).active {
+      background: #DE5B67;
+      border-color: #DE5B67;
+    }
+    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
+      font-weight: normal;
+      color: #333;
+      background: #fff;
+      border: 1px solid #d5d5d5;
+    }
   }
-  .el-table th {
-    color: #333;
-    text-align: center;
-    font-weight: normal;
-    background: #efefef;
-    border-color: #e4e4e4;
-  }
-  .el-table th .el-checkbox::after {
-    content: '全选';
-    color: #333;
-    padding-left: 6px;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled).active {
-    background: #DE5B67;
-    border-color: #DE5B67;
-  }
-  .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
-    font-weight: normal;
-    color: #333;
-    background: #fff;
-    border: 1px solid #d5d5d5;
-   }
 </style>

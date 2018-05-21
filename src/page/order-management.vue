@@ -24,13 +24,14 @@
                 type="daterange"
                 align="right"
                 unlink-panels
+                value-format="timestamp"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期">
               </el-date-picker>
             </div>
-            <div class="timeRange cur" @click="timeRange(7)">最近7天</div>
-            <div class="timeRange" @click="timeRange(30)">最近30天</div>
+            <div class="timeRange"  :class="{ cur : !timeBtn }" @click="timeRange(7)">最近7天</div>
+            <div class="timeRange" :class="{ cur : timeBtn }" @click="timeRange(30)">最近30天</div>
           </div>
             <div class="proName">
               <div class="keyName">
@@ -116,8 +117,12 @@ export default {
     return {
       num: 1,
       n: '1',
+      timeStart: '',
+      timeEnd: '',
+      // 时间按钮
+      timeBtn: false,
       // 搜索时间间隔
-      keyTime: '',
+      keyTime: [],
       // 搜索类别
       keyValue: '',
       // 商品名称
@@ -193,16 +198,22 @@ export default {
   methods: {
     changeType () {
     },
-    changeTime () {
+    changeTime (res) {
+      console.log(111)
     },
     searchOrder () {
     },
     timeRange (res) {
-      console.log(res)
+      this.timeBtn = !this.timeBtn
+      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+      // console.log(this.keyTime)
     },
     handleClick (tab, event) {
       console.log(tab.index)
     }
+  },
+  mounted () {
+    // this.timeRange(7)
   }
 
 }
@@ -556,6 +567,8 @@ export default {
          border: 1px solid #eeeeee;
          color:#B5B5B5;
          margin-left: 20px;
+         cursor: pointer;
+         border-radius: 4px;
        }
        .cur{
          border: 1px solid #DE5B67;
