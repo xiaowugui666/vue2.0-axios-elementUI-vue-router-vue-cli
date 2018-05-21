@@ -115,6 +115,8 @@
             <div class="right">
               <el-pagination
                 background
+                prev-text="< 上一页"
+                next-text="下一页 >"
                 layout="prev, pager, next"
                 :total="300">
               </el-pagination>
@@ -441,16 +443,6 @@ export default {
       content: '全选';
       color: #333;
       padding-left: 6px;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active {
-      background: #DE5B67;
-      border-color: #DE5B67;
-    }
-    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
-      font-weight: normal;
-      color: #333;
-      background: #fff;
-      border: 1px solid #d5d5d5;
     }
   }
 </style>

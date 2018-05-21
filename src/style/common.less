@@ -44,10 +44,6 @@ html,body{
     background-size: 100% 100%;
 }
 
-.margin{
-    margin: 0 auto;
-}
-
 .left{
     float: left;
 }
@@ -56,16 +52,50 @@ html,body{
     float: right;
 }
 
-.hide{
-    display: none;
-}
-
-.show{
-    display: block;
+.padding-top-20 {
+  padding-top: 20px;
 }
 
 .ellipsis{
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.el-pagination {
+  float: right;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background: #DE5B67;
+  border-color: #DE5B67;
+}
+.reset() {
+  font-weight: normal;
+  color: #333;
+  background: #fff;
+  border: 1px solid #d5d5d5;
+}
+.el-pagination.is-background {
+  padding: 0;
+  .btn-prev {
+    .reset();
+    padding: 0 10px;
+    margin: 0 5px 0 0;
+    &:disabled {
+      color: #d5d5d5;
+      border-color: #d5d5d5;
+    }
+  }
+  .btn-next {
+    .reset();
+    padding: 0 10px;
+    margin: 0 0 0 5px;
+    &:disabled {
+      color: #d5d5d5;
+      border-color: #d5d5d5;
+    }
+  }
+  .el-pager li {
+    .reset();
+  }
 }
