@@ -65,6 +65,9 @@ html,body{
 .el-pagination {
   float: right;
 }
+.el-pagination.is-background .el-pager li:hover {
+  color: #DE5B67;
+}
 .el-pagination.is-background .el-pager li:not(.disabled).active {
   background: #DE5B67;
   border-color: #DE5B67;
@@ -99,3 +102,7 @@ html,body{
     .reset();
   }
 }
+.el-pagination.is-background .el-pager li:not(.active):hover {
+  color: #DE5B67;
+}
+
