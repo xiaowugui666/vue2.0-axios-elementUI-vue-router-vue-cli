@@ -60,6 +60,8 @@
         </template>
           <el-menu-item index="/informationSetting">信息设置</el-menu-item>
           <el-menu-item index="/orderSetting">订单设置</el-menu-item>
+          <el-menu-item index="/pay-setting">支付设置</el-menu-item>
+          <el-menu-item index="/mp-setting">小程序设置</el-menu-item>
       </el-submenu>
     </el-menu>
     <div class="menu-left-bottom-logo">- 虎赞科技 -</div>

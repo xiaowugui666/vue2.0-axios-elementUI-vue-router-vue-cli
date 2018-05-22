@@ -194,49 +194,6 @@ export default {
 </script>
 <style lang="less">
   .cus-order-container{
-    .el-pagination.is-background{
-      float: right;
-    }
-    .el-pagination button span {
-      padding: 0 16px;
-      border: 1px solid #D5D5D5;
-      font-family: MicrosoftYaHei;
-      font-size: 12px;
-      text-align: center;
-    }
-    .el-pagination.is-background .el-pager li{
-      border: 1px solid #D5D5D5;
-      border-radius: 2px;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active{
-      background-color: #DE5B67;
-      color: #ffffff;
-    }
-    .el-pagination.is-background .el-pager li:not(.active):hover {
-      color: #DE5B67;
-    }
-    .el-pagination button:hover {
-      color: #DE5B67;
-    }
-    .el-pager li {
-      padding: 0;
-      background: #fff;
-      vertical-align: top;
-      display: inline-block;
-      font-size: 13px;
-      min-width: 30px;
-      height: 30px;
-      line-height: 30px;
-      cursor: pointer;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      text-align: center;
-      margin: 0;
-      border: 1px solid #D5D5D5;
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
-      border-radius: 2px;
-    }
     .el-tabs__item.is-active {
       font-family: MicrosoftYaHei;
       font-size: 14px;

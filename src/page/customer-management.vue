@@ -59,13 +59,15 @@
             </el-table-column>
           </el-table>
         </template>
-        <el-pagination
-          background
-          prev-text="<上一页"
-          next-text="下一页>"
-          layout="prev, pager, next"
-          :total="1000">
-        </el-pagination>
+        <div class="padding-top-20">
+          <el-pagination
+            background
+            prev-text="<上一页"
+            next-text="下一页>"
+            layout="prev, pager, next"
+            :total="1000">
+          </el-pagination>
+        </div>
         <el-dialog
           title="编辑"
           :show-close="false"
@@ -288,32 +290,6 @@ export default {
     .el-table__body-wrapper tr td .el-button--text{
       border: 1px solid #63A4FF;
       padding: 4px 8px;
-    }
-    .el-pagination {
-      padding: 0;
-      float: right;
-      margin-top: 30px;
-      padding-bottom: 30px;
-    }
-    .el-pagination button span {
-      padding: 0 16px;
-      border: 1px solid #D5D5D5;
-      font-size: 12px;
-      text-align: center;
-    }
-    .el-pagination.is-background .el-pager li{
-      border: 1px solid #D5D5D5;
-      border-radius: 2px;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active{
-      background-color: #DE5B67;
-      color: #ffffff;
-    }
-    .el-pagination.is-background .el-pager li:not(.active):hover {
-      color: #DE5B67;
-    }
-    .el-pagination button {
-      color: #DE5B67;
     }
     .el-dialog .el-dialog__header .el-dialog__title {
       font-family: MicrosoftYaHei-Bold;
