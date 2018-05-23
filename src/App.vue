@@ -22,6 +22,6 @@ export default {
 <style lang="less">
 @import "style/common.less";
 body {
-  background: #fafafa;
+  background: #F7F7F7;
 }
 </style>
