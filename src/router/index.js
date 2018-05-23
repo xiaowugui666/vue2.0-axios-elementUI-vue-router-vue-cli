@@ -9,6 +9,7 @@ import customerOrder from '@/page/customer-order'
 import account from '@/page/account'
 import accountDetails from '@/page/account-details'
 import marketingManagement from '@/page/marketing-management'
+import addMarketingActivity from '@/page/add-marketing-activity'
 import informationSetting from '@/page/information-setting'
 import addEditGoods from '@/page/add-edit-goods'
 import oneKeyIntroduction from '@/page/one-key-introduction'
@@ -73,9 +74,14 @@ export default new Router({
       component: accountDetails
     },
     {
-      path: '/marketing-management/:user',
+      path: '/marketing-management/:class',
       name: 'marketingManagement',
       component: marketingManagement
+    },
+    {
+      path: '/add-marketing-activity/:class',
+      name: 'addMarketingActivity',
+      component: addMarketingActivity
     },
     {
       path: '/informationSetting',

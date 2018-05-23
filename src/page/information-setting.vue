@@ -213,7 +213,7 @@ export default {
 <style scoped lang="less">
   @import "../fonts/icomoon.css";
   .info-setting-subject {
-    min-width: 1000px;
+    min-width: 1100px;
     padding-top: 20px;
     margin: 0 20px 0 200px;
     input {

@@ -8,7 +8,7 @@
             <li :class="{'active':managementState==2}" @click="managementState=2">已售罄</li>
             <li :class="{'active':managementState==3}" @click="managementState=3">已下架</li>
           </ul>
-          <el-button type="primary" size="small" class="newly-build">新建</el-button>
+          <el-button @click="setRouter({name:'addMarketingActivity',params:{class:linkClass}})" type="primary" size="small" class="newly-build">新建</el-button>
         </div>
         <div class="active-goods-table">
           <el-table
@@ -24,6 +24,10 @@
               <template slot-scope="scope">
                 <div>
                   <span>{{scope.row.id}}</span>
+                  <div class="sort-btn">
+                    <div class="el-icon-caret-top"></div>
+                    <div class="el-icon-caret-bottom"></div>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -36,8 +40,8 @@
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
                     <div class="goods-info-price-category">
-                      <span class="goods-info-category">
-                        {{scope.row.goods.firstCategory}}-{{scope.row.goods.secondCategory}}
+                      <span v-if="scope.row.goods.firstSpecific" class="goods-info-category">
+                        {{showSpecific(scope.$index)}}
                       </span>
                       <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
                     </div>
@@ -91,11 +95,20 @@
               width="180">
               <template slot-scope="scope">
                 <el-button v-if="scope.row.state!==2" type="text" class="edit-btn">编辑</el-button>
-                <el-button v-if="scope.row.state!==2" @click="handleClick(scope.row)" type="text" class="close-btn">关闭</el-button>
-                <el-button v-if="scope.row.state!==1" type="text" class="delete-btn">删除</el-button>
+                <el-button v-if="scope.row.state!==2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
+                <el-button v-if="scope.row.state!==1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
+        </div>
+        <div class="paging-box clear">
+          <el-pagination
+            background
+            prev-text="< 上一页"
+            next-text="下一页 >"
+            layout="prev, pager, next"
+            :total="300">
+          </el-pagination>
         </div>
       </div>
     </div>
@@ -114,8 +127,9 @@ export default {
             imgSrc: '/static/test/ceshi2.png',
             name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
             price: 12312.36,
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
+            firstSpecific: '食品',
+            secondSpecific: '四川火锅',
+            thirdSpecific: 'cxxxxxz'
           },
           amountAccess: 121,
           browsingVolume: 123211,
@@ -131,8 +145,8 @@ export default {
             imgSrc: '/static/test/ceshi.png',
             name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
             price: 12312.36,
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
+            firstSpecific: '食品',
+            secondSpecific: '四川火锅'
           },
           amountAccess: 121,
           browsingVolume: 123211,
@@ -145,11 +159,25 @@ export default {
         {
           id: 3,
           goods: {
+            imgSrc: '/static/test/ceshi.png',
+            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
+            price: 12312.36
+          },
+          amountAccess: 121,
+          browsingVolume: 123211,
+          stock: 222,
+          totalSales: 23333,
+          startTime: '2016-05-03 18:30',
+          endTime: '2016-06-03 18:30',
+          state: 1
+        },
+        {
+          id: 4,
+          goods: {
             imgSrc: '/static/test/ceshi3.png',
             name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
             price: 12312.36,
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
+            firstSpecific: '食品'
           },
           amountAccess: 121,
           browsingVolume: 123211,
@@ -160,34 +188,49 @@ export default {
           state: 2
         }
       ],
-      multipleSelection: ''
+      multipleSelection: '',
+      linkClass: this.$route.params.class
     }
   },
   mounted () {
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
-    upperLowerFrame (data) {
+    closingActivity (data) {
       let _this = this
-      this.$confirm(`是否${data.state ? '下架' : '上架'}该商品`, '提示', {
+      this.$confirm(`是否关闭该活动`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        for (let k of _this.tableData) {
-          // console.log(k['id'])
-          if (k['id'] === data['id']) {
-            k['state'] = !data['state']
-          }
-        }
+        _this.activeGoodsTableData.splice(data, 1)
         this.$message({
           type: 'success',
-          message: `${data.state ? '上架' : '下架'}成功!`
+          message: `关闭成功`
         })
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: `已取消${data.state ? '上架' : '下架'}`
+          message: `已取消`
+        })
+      })
+    },
+    deleteActivity (data) {
+      let _this = this
+      this.$confirm(`是否删除该活动`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        _this.activeGoodsTableData.splice(data, 1)
+        this.$message({
+          type: 'success',
+          message: `删除成功`
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: `已取消`
         })
       })
     },
@@ -205,10 +248,21 @@ export default {
       }
       return s
     },
+    showSpecific (index) {
+      let specificList = ''
+      if (this.activeGoodsTableData[index].goods.firstSpecific) {
+        specificList += this.activeGoodsTableData[index].goods.firstSpecific
+        if (this.activeGoodsTableData[index].goods.secondSpecific) {
+          specificList += '；' + this.activeGoodsTableData[index].goods.secondSpecific
+          if (this.activeGoodsTableData[index].goods.thirdSpecific) {
+            specificList += '；' + this.activeGoodsTableData[index].goods.thirdSpecific
+          }
+        }
+      }
+      return specificList
+    },
     setRouter (link) {
-      this.$router.push({
-        path: link
-      })
+      this.$router.push(link)
     }
   },
   computed: {
@@ -261,6 +315,22 @@ export default {
         .el-table {
           color: #666;
           font-size: 12px;
+          .sort-btn {
+            display: inline-block;
+            vertical-align: middle;
+            >div {
+              display: block;
+              font-size: 18px;
+              color: #333;
+              cursor: pointer;
+            }
+            .el-icon-caret-top {
+              margin-top: -3px;
+            }
+            .el-icon-caret-bottom {
+              margin-top: -9px;
+            }
+          }
         }
         .goods-info-box {
           text-align: left;
@@ -298,14 +368,14 @@ export default {
               white-space:nowrap;
             }
             .goods-info-price-category {
-              padding-top: 20px;
-              line-height: 1.2;
-              .goods-info-price {
-                color: #DE5B67;
-                padding-left: 15px;
-              }
+              padding-top: 10px;
+              line-height: 1.3;
               .goods-info-category {
                 color: #999;
+                padding-right: 15px;
+              }
+              .goods-info-price {
+                color: #DE5B67;
               }
             }
           }
@@ -322,16 +392,18 @@ export default {
           }
         }
         .edit-btn {}
-        .close-btn {
+        .close-btn, .delete-btn {
           color: #333;
           border-color: #333;
+          &:hover {
+            color: #f56c6c;
+            border-color: #f56c6c;
+          }
         }
-        .delete-btn {
-          /*color: #f56c6c;*/
-          /*border-color: #f56c6c;*/
-          color: #333;
-          border-color: #333;
-        }
+      }
+      .paging-box {
+        padding-top: 10px;
+        padding-right: 20px;
       }
     }
     .el-button--small {

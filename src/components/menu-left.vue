@@ -50,8 +50,8 @@
           <i class="icon-营销"></i>
           <span>营销管理</span>
         </template>
-          <el-menu-item index="/marketing-management/special-offer" :route="{name:'marketingManagement',params:{user:'special-offer'}}">特价</el-menu-item>
-          <el-menu-item index="/marketing-management/recommend" :route="{name:'marketingManagement',params:{user:'recommend'}}">推荐</el-menu-item>
+          <el-menu-item index="/marketing-management/special-offer" :route="{name:'marketingManagement',params:{class:'special-offer'}}">特价</el-menu-item>
+          <el-menu-item index="/marketing-management/recommend" :route="{name:'marketingManagement',params:{class:'recommend'}}">推荐</el-menu-item>
       </el-submenu>
       <el-submenu index="8">
         <template slot="title">
