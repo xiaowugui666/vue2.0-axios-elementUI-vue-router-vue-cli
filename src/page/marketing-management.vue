@@ -376,6 +376,7 @@ export default {
               }
               .goods-info-price {
                 color: #DE5B67;
+                display: inline-block;
               }
             }
           }

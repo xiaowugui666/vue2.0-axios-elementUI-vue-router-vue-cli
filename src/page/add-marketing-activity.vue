@@ -11,8 +11,10 @@
             <li>
               <span class="name alignment-top required">选择商品：</span>
               <div class="goods-img-box">
-                <img class="goods-img" src="../assets/ceshi.png" alt="">
-                <i class="select-goods el-icon-plus"></i>
+                <span v-if="goodsImgSrc" @click="goodsDialogVisible = true" class="goods-img">
+                <img :src="goodsImgSrc" alt="">
+                </span>
+                <i v-else @click="goodsDialogVisible = true" class="select-goods el-icon-plus"></i>
               </div>
             </li>
             <li>
@@ -39,8 +41,8 @@
                   type="datetimerange"
                   :picker-options="pickerOptions"
                   range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
+                  start-placeholder="开始时间"
+                  end-placeholder="结束时间"
                   align="left">
                 </el-date-picker>
               </div>
@@ -48,11 +50,13 @@
           </ul>
         </div>
       </div>
+      <select-production @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
 </template>
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import selectProduction from '@/components/select-production'
 export default {
   data () {
     return {
@@ -90,17 +94,32 @@ export default {
           }
         }]
       },
-      activityTime: ''
+      activityTime: '',
+      goodsImgSrc: '',
+      goodsId: undefined,
+      goodsDialogVisible: false
     }
   },
   mounted () {
     this.setMenuLeft('/marketing-management/' + this.linkClass)
   },
   methods: {
-    ...mapMutations(['setMenuLeft'])
+    ...mapMutations(['setMenuLeft']),
+    getHandleClose (msg) {
+      this.goodsDialogVisible = msg
+    },
+    getGoodsId (id) {
+      this.goodsId = id
+    },
+    getGoodsImg (src) {
+      this.goodsImgSrc = src
+    }
   },
   computed: {
     ...mapState(['menuLeft'])
+  },
+  components: {
+    selectProduction
   }
 }
 </script>
@@ -175,6 +194,19 @@ export default {
             vertical-align: middle;
             width: 80px;
             height: 80px;
+            border: 1px solid #d5d5d5;
+            text-align: center;
+            box-sizing: border-box;
+            img {
+              display: inline-block;
+              width: auto;
+              height: auto;
+              max-width: 100%;
+              max-height: 100%;
+              position: relative;
+              top: 50%;
+              transform: translateY(-50%);
+            }
           }
           .select-goods {
             display: inline-block;
