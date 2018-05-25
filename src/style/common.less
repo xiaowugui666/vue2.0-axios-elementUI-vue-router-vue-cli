@@ -22,7 +22,7 @@ textarea { -webkit-appearance: none;}
 html,body{
     height: 100%;
     width: 100%;
-    // background-color: #F5F5F5;
+    background: @bg;
 }
 
 .fillcontain{
@@ -61,22 +61,18 @@ html,body{
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
-.el-pagination {
-  float: right;
-}
 .el-pagination.is-background .el-pager li:hover {
-  color: #DE5B67;
+  color: @mainC;
 }
 .el-pagination.is-background .el-pager li:not(.disabled).active {
-  background: #DE5B67;
-  border-color: #DE5B67;
+  background: @mainC;
+  border-color: @mainC;
 }
 .reset() {
   font-weight: normal;
-  color: #333;
+  color: @b3;
   background: #fff;
-  border: 1px solid #d5d5d5;
+  border: 1px solid @bc;
 }
 .el-pagination.is-background {
   padding: 0;
@@ -85,8 +81,8 @@ html,body{
     padding: 0 10px;
     margin: 0 5px 0 0;
     &:disabled {
-      color: #d5d5d5;
-      border-color: #d5d5d5;
+      color: @bc;
+      border-color: @bc;
     }
   }
   .btn-next {
@@ -94,8 +90,8 @@ html,body{
     padding: 0 10px;
     margin: 0 0 0 5px;
     &:disabled {
-      color: #d5d5d5;
-      border-color: #d5d5d5;
+      color: @bc;
+      border-color: @bc;
     }
   }
   .el-pager li {
@@ -103,6 +99,6 @@ html,body{
   }
 }
 .el-pagination.is-background .el-pager li:not(.active):hover {
-  color: #DE5B67;
+  color: @mainC;
 }
 
