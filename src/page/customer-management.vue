@@ -16,7 +16,12 @@
             </el-option>
           </el-select>
         </div>
-        <div class="search">搜索</div>
+        <div class="search">
+          <el-button
+          size="small"
+          type="success"
+          >搜索</el-button>
+        </div>
       </div>
       <div class="table">
         <template>
@@ -51,10 +56,11 @@
             </el-table-column>
             <el-table-column
               prop="address"
+              width="168"
               label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="editDetails(scope.$index)">编辑</el-button>
-                <el-button type="text" size="small" @click="orderDetails(scope.$index)">订单详情</el-button>
+                <el-button type="text" @click="editDetails(scope.$index)">编辑</el-button>
+                <el-button type="text" @click="orderDetails(scope.$index)">订单详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -74,13 +80,13 @@
           :visible.sync="dialogVisible"
           width="30%"
           :before-close="handleClose">
-          <hr/>
+          <hr style="color: #EFEFEF;border: 1px solid #EFEFEF;border-bottom: 0;"/>
           <div>
             <span class="dialog_name">姓名</span><input type="text" v-model="name" clearable>
           </div>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="saveInfo" plain size="small">保存</el-button>
-            <el-button @click="dialogVisible = false" plain size="small">返回</el-button>
+            <el-button @click="saveInfo" type="success" style="border: 0;color: #ffffff;" size="small">保存</el-button>
+            <el-button @click="dialogVisible = false" size="small">返回</el-button>
           </div>
         </el-dialog>
       </div>
@@ -202,12 +208,13 @@ export default {
 .cus-container{
   min-width: 1000px;
   margin: 0 20px 0 200px;
-  margin-top: 20px;
+  padding-top: 20px;
   position: relative;
   .header{
     min-width: 1000px;
     background: #ffffff;
-    height: 120px;
+    padding-top: 40px;
+    height: 80px;
     span{
       font-size: 12px;
       color: #999999;
@@ -215,8 +222,8 @@ export default {
       margin-right: 10px;
     }
     .number{
-      min-width: 1000px;
-      padding-top: 20px;
+      height: 30px;
+      float: left;
       }
       input{
         width: 230px;
@@ -226,19 +233,14 @@ export default {
         padding-left: 10px;
     }
     .screen{
-      margin-top: 20px;
+      height: 30px;
+      float: left;
     }
     .search{
       width: 80px;
       height: 30px;
-      position: absolute;
-      top: 45px;
-      left: 450px;
-      background: #DE5B67;
-      text-align: center;
-      font-size: 12px;
-      color: #ffffff;
-      line-height: 30px;
+      float: left;
+      margin-left: 384px;
     }
   }
   .table{
@@ -249,10 +251,22 @@ export default {
     min-height: 281px;
     overflow: hidden;
   }
+  .el-button--small {
+    width: 80px;
+    height: 30px;
+    padding: 0;
+  }
 }
 </style>
 <style lang="less">
   .cus-container{
+    .el-table{
+      font-size: 12px;
+      color: #666666;
+      .el-button{
+        font-size: 12px;
+      }
+    }
     .el-input__inner{
       width: 128px;
       height: 30px;
@@ -292,7 +306,6 @@ export default {
       padding: 4px 8px;
     }
     .el-dialog .el-dialog__header .el-dialog__title {
-      font-family: MicrosoftYaHei-Bold;
       font-size: 14px;
       color: #333333;
       font-weight: 600;
