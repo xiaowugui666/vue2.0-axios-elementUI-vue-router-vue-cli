@@ -80,13 +80,13 @@
           :visible.sync="dialogVisible"
           width="30%"
           :before-close="handleClose">
-          <hr/>
+          <hr style="color: #EFEFEF;border: 1px solid #EFEFEF;border-bottom: 0;"/>
           <div>
             <span class="dialog_name">姓名</span><input type="text" v-model="name" clearable>
           </div>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="saveInfo" plain size="small">保存</el-button>
-            <el-button @click="dialogVisible = false" plain size="small">返回</el-button>
+            <el-button @click="saveInfo" type="success" style="border: 0;color: #ffffff;" size="small">保存</el-button>
+            <el-button @click="dialogVisible = false" size="small">返回</el-button>
           </div>
         </el-dialog>
       </div>
