@@ -90,11 +90,10 @@
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div :class="{'goods-state':scope.row.state}" @click="upperLowerFrame">{{scope.row.state?'已上架':'已下架'}}</div>
+                <div :class="{'goods-state':scope.row.state}">{{scope.row.state?'已上架':'已下架'}}</div>
               </template>
             </el-table-column>
             <el-table-column
-              fixed="right"
               label="操作"
               width="200">
               <template slot-scope="scope">

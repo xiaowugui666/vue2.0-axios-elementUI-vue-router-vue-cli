@@ -50,8 +50,8 @@
           <i class="icon-营销"></i>
           <span>营销管理</span>
         </template>
-          <el-menu-item index="/specialOfferManagement">特价</el-menu-item>
-          <el-menu-item index="/collageManagement">拼团</el-menu-item>
+          <el-menu-item index="/marketing-management/special-offer" :route="{name:'marketingManagement',params:{class:'special-offer'}}">特价</el-menu-item>
+          <el-menu-item index="/marketing-management/recommend" :route="{name:'marketingManagement',params:{class:'recommend'}}">推荐</el-menu-item>
       </el-submenu>
       <el-submenu index="8">
         <template slot="title">
@@ -65,6 +65,7 @@
       </el-submenu>
     </el-menu>
     <div class="menu-left-bottom-logo">- 虎赞科技 -</div>
+    <!--<div><router-link :to="{name:'marketingManagement',params:{user:'recommend'}}">123123213213</router-link></div>-->
   </div>
 </template>
 
@@ -78,6 +79,7 @@ export default {
   },
   mounted () {
     // this.getRoutePath(this.menuLeft)
+    // console.log(this.$route.path)
   },
   computed: {
     ...mapState(['menuLeft'])
@@ -130,6 +132,8 @@ export default {
   img {
     vertical-align: middle;
     margin-left: -10px;
+    margin-right: 10px;
+    width: 34px;
   }
   span {
     vertical-align: middle;
