@@ -47,7 +47,11 @@
               </el-option>
             </el-select>
           </div>
-          <button @click="searchOrder" class="search">搜索</button>
+          <div @click="searchOrder" class="search">
+            <el-button
+            type="success"
+            size="small">搜索</el-button>
+          </div>
         </div>
 
       </div>
@@ -266,6 +270,7 @@ export default {
       .el-input__inner{
         height: 30px;
         line-height: 30px;
+        border-radius: 0;
       }
       .el-input--suffix .el-input__inner {
         padding:0 12px;
@@ -287,6 +292,11 @@ export default {
       .el-select{
         margin-right: 10px;
       }
+      .el-button--small {
+        width: 80px;
+        height: 30px;
+        padding: 0;
+      }
     }
   }
 </style>
@@ -297,6 +307,11 @@ export default {
       padding-top: 20px;
       position: relative;
       min-width: 1000px;
+      .header{
+        label{
+          margin-right: 10px;
+        }
+      }
     }
 
     .tradeRecord {
@@ -464,11 +479,9 @@ export default {
       .el-input__inner{
         height: 30px;
         line-height: 30px;
-        border-radius: 2px;
       }
       .el-input--suffix{
         height: 30px;
-        border-radius: 2px;
       }
       .selectInfo{
         align-items: center;
@@ -507,13 +520,6 @@ export default {
           position: absolute;
           top: 45px;
           right: 20px;
-          line-height: 30px;
-          width: 80px;
-          background: #DE5B67;
-          color:#fff;
-          text-align: center;
-          line-height: 30px;
-          border-radius: 2px;
         }
         .orderType{
           margin-left: 20px;
