@@ -30,8 +30,8 @@
                 end-placeholder="结束日期">
               </el-date-picker>
             </div>
-            <div class="timeRange"  :class="{ cur : !timeBtn }" @click="timeRange(7)">最近7天</div>
-            <div class="timeRange" :class="{ cur : timeBtn }" @click="timeRange(30)">最近30天</div>
+            <div class="timeRange" data-id="0"  :class="{ cur : !timeBtn }" @click="timeRange(7,$event)">最近7天</div>
+            <div class="timeRange" data-id="1" :class="{ cur : timeBtn }" @click="timeRange(30,$event)">最近30天</div>
           </div>
             <div class="proName">
               <div class="keyName">
@@ -203,8 +203,13 @@ export default {
     },
     searchOrder () {
     },
-    timeRange (res) {
-      this.timeBtn = !this.timeBtn
+    timeRange (res, event) {
+      let flag = event.target.dataset.id
+      if (flag === '0') {
+        this.timeBtn = false
+      } else {
+        this.timeBtn = true
+      }
       this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
       // console.log(this.keyTime)
     },
@@ -330,6 +335,14 @@ export default {
   .el-input--suffix:nth-child(2){
     width: 180px;
   }
+    .keyName {
+      .el-input--suffix:nth-child(2){
+        width: 258px;
+      }
+      .el-input__inner {
+        width: 258px;
+      }
+    }
     .el-pagination{
       text-align: right;
     }
@@ -351,6 +364,7 @@ export default {
     .el-input__inner{
       height: 30px;
       line-height: 30px;
+      border-radius: 0;
     }
     .el-input--suffix .el-input__inner {
       padding:0 12px;
@@ -543,24 +557,18 @@ export default {
       padding: 20px;
       margin-bottom: 20px;
       label{
-        font-family: MicrosoftYaHei;
         font-size: 12px;
         color: #999999;
         line-height: 15px;
+        margin-right: 10px;
       }
-    .el-input__inner{
-      height: 30px;
-      line-height: 30px;
-      border-radius: 2px;
-    }
-    .el-input--suffix{
-      height: 30px;
-      border-radius: 2px;
-    }
      .selectInfo{
-       display: flex;
        align-items: center;
        justify-content:flex-start;
+       overflow: hidden;
+       >div{
+         float: left;
+       }
        .timeRange{
          line-height: 28px;
          padding: 0 16px;
@@ -569,7 +577,6 @@ export default {
          color:#B5B5B5;
          margin-left: 20px;
          cursor: pointer;
-         border-radius: 4px;
        }
        .cur{
          border: 1px solid #DE5B67;
@@ -578,10 +585,18 @@ export default {
 
      }
     .proName{
-      display: flex;
       align-items: center;
       justify-content:space-between;
       margin-top: 20px;
+      overflow: hidden;
+      >div{
+        float: left;
+      }
+      .keyName{
+        .el-input__inner {
+          width: 256px;
+        }
+      }
       .search{
         line-height: 30px;
         width: 80px;
@@ -592,7 +607,8 @@ export default {
         border-radius: 2px;
       }
       .orderType{
-        margin-right: 330px;
+        margin-left: 20px;
+        margin-right: 30px;
       }
     }
    }

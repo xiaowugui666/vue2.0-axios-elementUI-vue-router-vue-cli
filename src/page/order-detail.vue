@@ -67,7 +67,7 @@
               </div>
               <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
                 <label>
-                  <label>总价：</label>
+                  <label>{{isPrices ? "运费" : "总价"}}：</label>
                   <label v-if="isPrice">{{tradeList.yfPrice | tofixed }}</label>
                   <input v-else type="tel" v-model="tradeList.totalPrice">
                 </label>
