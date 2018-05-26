@@ -9,7 +9,6 @@
             <el-step title="已发货"></el-step>
             <el-step title="确认收货"></el-step>
           </el-steps>
-            <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
         </div>
         <div class="tradeList">
             <div class="top">
@@ -62,19 +61,19 @@
                   <div class="proNum">数量 x{{items.num}}</div>
                   <div class="price">
                     <label>￥</label>
-                    <label v-if="isPrice">{{items.nowPrice | tofixed }}</label>
-                    <input v-else type="tel"  v-model="items.nowPrice">
+                    <label>{{items.nowPrice | tofixed }}</label>
                   </div>
                 </div>
               </div>
               <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
-                <label>￥{{tradeList.totalPrice | tofixed }}</label>
                 <label>
-                  <label>运费：</label>
+                  <label>总价：</label>
                   <label v-if="isPrice">{{tradeList.yfPrice | tofixed }}</label>
-                  <input v-else type="tel" v-model="tradeList.yfPrice">
+                  <input v-else type="tel" v-model="tradeList.totalPrice">
                 </label>
+                <label>￥{{tradeList.totalPrice | tofixed }}</label>
                 <label @click="changeCompile" v-if="isPrices">编辑订单</label>
+                <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
               </div>
             </div>
           </div>
@@ -148,7 +147,7 @@ export default {
     this.getParams()
   },
   filters: {
-    tofixed: value => {
+    tofixed: (value) => {
       value = value.toString()
       if (value.indexOf('.00')) {
         return value
@@ -233,21 +232,6 @@ export default {
       background: #fff;
       padding:20px;
       margin-bottom: 20px;
-      .saveCompile{
-        position: absolute;
-        right: 20px;
-        top:40px;
-        width:80px;
-        color: #fff;
-        font-family: MicrosoftYaHei;
-        line-height: 30px;
-        font-size: 12px;
-        color: #FFFFFF;
-        text-align: center;
-        height: 30px;
-        background: #DE5B67;
-        border-radius: 2px;
-      }
       .title{
         font-family: MicrosoftYaHei;
         font-size: 12px;
@@ -353,12 +337,12 @@ export default {
           }
         }
         .orderMon {
-          >label:first-child {
-            font-family: MicrosoftYaHei;
+          >label:nth-child(2) {
+            margin-top: 10px;
             font-size: 12px;
             color: #DE5B67;
           }
-          >label:nth-child(2) {
+          >label:first-child {
             ont-family: MicrosoftYaHei;
             font-size: 12px;
             color: #666666;
@@ -375,6 +359,18 @@ export default {
             font-size: 12px;
             margin: 0 auto;
             margin-top: 5px;
+          }
+          .saveCompile{
+            width:80px;
+            line-height: 30px;
+            font-size: 12px;
+            color: #FFFFFF;
+            text-align: center;
+            height: 30px;
+            background: #DE5B67;
+            border-radius: 2px;
+            margin-left: 60px;
+            margin-top: 10px;
           }
         }
         .proNum {

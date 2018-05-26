@@ -388,6 +388,7 @@ export default {
     padding:0 20px 20px;
     .tradeList{
           padding-bottom: 30px;
+          padding-top: 30px;
           .top{
             background: #EFEFEF;
             border: 1px solid #D5D5D5;
