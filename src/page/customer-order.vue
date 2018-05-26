@@ -24,8 +24,8 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div class="timeRange cur" @click="timeRange(7)">最近7天</div>
-          <div class="timeRange" @click="timeRange(30)">最近30天</div>
+          <div class="timeRange cur" @click="timeRange(7,$event)">最近7天</div>
+          <div class="timeRange" @click="timeRange(30,$event)">最近30天</div>
         </div>
         <div class="proName">
           <div class="keyName">
@@ -102,6 +102,7 @@
   </div>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -178,17 +179,27 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.setMenuLeft('/customer')
+  },
   computed: {
   },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     changeType () {
     },
     changeTime () {
     },
     searchOrder () {
     },
-    timeRange (res) {
-      console.log(res)
+    timeRange (res, event) {
+      let flag = event.target.dataset.id
+      if (flag === '0') {
+        this.timeBtn = false
+      } else {
+        this.timeBtn = true
+      }
+      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
     },
     handleClick (tab, event) {
       console.log(tab.index)
