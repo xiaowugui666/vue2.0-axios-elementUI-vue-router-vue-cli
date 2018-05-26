@@ -32,7 +32,7 @@
               <el-button disabled size="small">批量删除</el-button>
             </el-row>
           </div>
-          <el-button class="add-edit-goods" type="primary" size="small" @click="setRouter('/addEditGoods')">添加商品</el-button>
+          <el-button class="add-edit-goods" type="primary" size="small" @click="setRouter('/add-edit-goods')">添加商品</el-button>
         </div>
         <div class="commodity-list-table">
           <el-table

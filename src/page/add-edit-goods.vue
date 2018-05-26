@@ -19,11 +19,11 @@
           <ul>
             <li>
               <span class="required name">商品名称：</span>
-              <input type="text" placeholder="请输入商品名称" v-model="goodsName">
+              <input type="text" placeholder="请输入商品名称" v-model.trim="goodsName">
             </li>
             <li>
               <span class="name">分享描述：</span>
-              <input type="text" placeholder="请输入分享描述" v-model="goodsName">
+              <input type="text" placeholder="请输入分享描述" v-model.trim="goodsName">
             </li>
             <li>
               <span class="required name alignment-top">商品图片：</span>
@@ -43,7 +43,7 @@
             </li>
             <li>
               <span class="name">商品类目：</span>
-              <el-select v-model="value" size="small" class="select-state">
+              <el-select v-model.trim="value" size="small" class="select-state">
                 <el-option
                   v-for="item in selectStateOptions"
                   :key="item.value"
@@ -51,12 +51,12 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-              <input type="text" placeholder="自定义二级类目" v-model="secondClass">
+              <input type="text" placeholder="自定义二级类目" v-model.trim="secondClass">
             </li>
             <li>
               <span class="name alignment-top">商品卖点：</span>
               <div class="rich-text-editor clear">
-                <quill-editor v-model="quillContent"
+                <quill-editor v-model.trim="quillContent"
                   ref="myQuillEditor"
                   :options="editorOption"
                   @blur="onEditorBlur($event)"
@@ -68,8 +68,8 @@
             <li>
               <span class="name">商品重量：</span>
               <div class="weight-unit">
-                <input type="tel" placeholder="请输入商品重量(纯数字)" v-model="secondClass" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="30">
-                <el-select v-model="weightUnitValue" size="small" class="select-state">
+                <input type="tel" placeholder="请输入商品重量(纯数字)" v-model.trim="secondClass" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="30">
+                <el-select v-model.trim="weightUnitValue" size="small" class="select-state">
                   <el-option
                     v-for="item in weightUnit"
                     :key="item.value"
@@ -81,11 +81,11 @@
             </li>
             <li>
               <span class="name">唯一编码：</span>
-              <input type="text" placeholder="商品的唯一编码" v-model="secondClass" maxlength="30">
+              <input type="text" placeholder="商品的唯一编码" v-model.trim="secondClass" maxlength="30">
             </li>
             <li>
               <span class="name">商品量词：</span>
-              <el-select v-model="quantifier" size="small" class="select-state">
+              <el-select v-model.trim="quantifier" size="small" class="select-state">
                 <el-option
                   v-for="item in goodsQuantifier"
                   :key="item.value"
@@ -108,7 +108,7 @@
                 <el-input
                   class="input-new-tag"
                   v-if="inputVisible"
-                  v-model="inputValue"
+                  v-model.trim="inputValue"
                   ref="saveTagInput"
                   size="small"
                   @keyup.enter.native="handleInputConfirm"
@@ -132,7 +132,8 @@
                 <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
                   <div class="specification-name-box">
                     <span class="name">规格名：</span>
-                    <input @change="specificNameChange(index, item.name)" :data-value="item.name" type="text" placeholder="请输入规格名" v-model="item.name"/>
+                    <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名"/>
+                    <!--v-model.trim="item.name"-->
                     <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
                   </div>
                   <div class="specification-value-box">
@@ -149,8 +150,8 @@
                       <el-input
                         class="input-new-tag"
                         v-if="showSpecInputIf(index)"
-                        v-model="inputSpacValue"
-                        :ref="'saveSpecTagInput'+index"
+                        v-model.trim="inputSpacValue"
+                        ref="saveSpecTagInput"
                         size="small"
                         @keyup.enter.native="handleInputSpec(index)"
                         @blur="handleInputSpec(index)"
@@ -180,10 +181,10 @@
                   </tr>
                   <tr v-for="(sku, index) in skus" :key="index">
                     <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
-                    <td><span class="money-tips">￥</span><input type="text" v-model="sku.SkuPrice" maxlength="10"/></td>
-                    <td><input type="text" v-model="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
-                    <td><input type="text" v-model="sku.SkuCode" class="sku-code" maxlength="20"/></td>
-                    <td><span class="money-tips">￥</span><input type="text" v-model="sku.linePrice" maxlength="20"/></td>
+                    <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.SkuPrice" maxlength="10"/></td>
+                    <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
+                    <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
+                    <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.linePrice" maxlength="20"/></td>
                     <td width="50">
                       <el-upload
                         class="avatar-uploader"
@@ -203,18 +204,18 @@
             <li>
               <span class="name required">商品价格：</span>
               <span class="goods-price">
-                <input type="text" v-model="goodsPrice" placeholder="" :disabled="specificationList.length>0">
+                <input type="text" v-model.trim="goodsPrice" placeholder="" :disabled="specificationList.length>0">
               </span>
             </li>
             <li>
               <span class="name">划线价格：</span>
               <span class="goods-price">
-                <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+                <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
               </span>
             </li>
             <li>
               <span class="name required">库存：</span>
-              <input type="text" v-model="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+              <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
             </li>
             <li class="show-stock-btn">
               <span class="name">库存显示：</span>
@@ -231,7 +232,7 @@
             <li>
               <span class="name required">快递邮费：</span>
               <span class="express-postage">
-                <input type="text" v-model="postage.money" :disabled="postage.freeShipping" placeholder="请输入快递邮费">
+                <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="请输入快递邮费">
                 <el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>
               </span>
             </li>
@@ -290,7 +291,44 @@ export default {
       inputSpacVisible0: false,
       inputSpacVisible1: false,
       inputSpacVisible2: false,
-      specificationList: [],
+      specificationList: [
+        {
+          name: '1230',
+          values: [
+            {
+              name: '11'
+            },
+            {
+              name: '12'
+            },
+            {
+              name: '13'
+            }
+          ]
+        },
+        {
+          name: '2',
+          values: [
+            {
+              name: '1'
+            }
+          ]
+        },
+        {
+          name: '3',
+          values: [
+            {
+              name: '31'
+            },
+            {
+              name: '32'
+            },
+            {
+              name: '33'
+            }
+          ]
+        }
+      ],
       skus: [],
       selectStateOptions: [
         {
@@ -423,7 +461,7 @@ export default {
       this.skus = []
       let ret = this.setSpeRetData()
       for (let k of ret) {
-        let sku = {SkuPrice: '', StockQuantity: '0', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+        let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
         for (let l of k) {
           sku.values.push({ specificName: l.name })
         }
@@ -443,38 +481,62 @@ export default {
     },
     // 使规格名不重复
     specificNameChange (index) {
-      let val = this.specificationList[index].name
+      let _this = this
+      let val = this.$refs.specificV[index].value.trim()
       let newS = this.specificationList.slice(0)
       newS.splice(index, 1)
-      for (let k of newS) {
-        if (val === k.name) {
-          this.$message({
-            showClose: true,
-            message: '规格名重复！',
-            type: 'error'
-          })
-          this.specificationList[index].name = ''
-          return false
+      if (f()) {
+        // 如果规格名没有重复，触发修改
+        this.specificationList[index].name = val
+        if (this.specificationList[index].values.length > 0) {
+          this.specificationList[index].values = []
+          this.setSkus()
+          console.log(this.specificationList[index].name)
         }
+      } else {
+        // 如果规格名重复，使输入框变回原来的值
+        this.$refs.specificV[index].value = this.specificationList[index].name
+      }
+      // 判断规格名是否重复
+      function f () {
+        for (let k of newS) {
+          if (val) {
+            if (val === k.name) {
+              _this.$message({
+                showClose: true,
+                message: '规格名重复！',
+                type: 'error'
+              })
+              return false
+            }
+          }
+        }
+        return true
       }
     },
     // 删除选中的规则值
     alignmentHandleClose (tag, index) {
       let values = this.specificationList[index].values
       this.specificationList[index].values.splice(values.indexOf(tag), 1)
+      if (this.specificationList[index].name) {
+        if (this.specificationList[index].values.length === 0) {
+          this.setSkus()
+        }
+      }
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
       this['inputSpacVisible' + index] = true
       this.$nextTick(_ => {
-        // console.log(this.$refs['saveSpecTagInput' + index])
-        this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
+        // console.log(this.$refs.saveSpecTagInput[0])
+        this.$refs.saveSpecTagInput[0].$refs.input.focus()
+        // this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
       })
     },
     showSpecInputIf (index) {
       return this['inputSpacVisible' + index]
     },
-    // 获取规则值输入框的内容，赋值给this.specificationList[index].values，清空this.inputSpacValue
+    // 获取规则值输入框的内容，赋值给this.specificationList[index].values，清空this.inputSpacValue，为规格表增加此项
     handleInputSpec (index) {
       let inputValue = this.inputSpacValue
       if (inputValue) {
@@ -489,6 +551,73 @@ export default {
           }
         }
         this.specificationList[index].values.push({'name': inputValue})
+        if (this.specificationList[index].name) {
+          if (this.specificationList[index].values.length === 1) {
+            this.setSkus()
+          } else {
+            if (index === 0) {
+              let thisValueName = this.specificationList[index].values
+              if (this.specificationList[1] && this.specificationList[1].name && this.specificationList[1].values && this.specificationList[1].values.length !== 0) {
+                if (this.specificationList[2] && this.specificationList[2].name && this.specificationList[2].values && this.specificationList[2].values.length !== 0) {
+                  for (let k of this.specificationList[1].values) {
+                    for (let l of this.specificationList[2].values) {
+                      let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                      sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                      sku.values.push({ specificName: k.name })
+                      sku.values.push({ specificName: l.name })
+                      this.skus.push(sku)
+                    }
+                  }
+                } else {
+                  for (let k of this.specificationList[1].values) {
+                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                    sku.values.push({ specificName: k.name })
+                    this.skus.push(sku)
+                  }
+                }
+              } else {
+                if (this.specificationList[2] && this.specificationList[2].name && this.specificationList[2].values && this.specificationList[2].values.length !== 0) {
+                  for (let k of this.specificationList[2].values) {
+                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                    sku.values.push({ specificName: k.name })
+                    this.skus.push(sku)
+                  }
+                } else {
+                  let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                  sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                  this.skus.push(sku)
+                }
+              }
+              console.log(thisValueName[thisValueName.length - 1].name)
+            } else if (index === 1) {
+              let thisValueName = this.specificationList[index].values
+              if (this.specificationList[0].name && this.specificationList[0].values && this.specificationList[0].values.length !== 0) {
+                if (this.specificationList[2] && this.specificationList[2].name && this.specificationList[2].values && this.specificationList[2].values.length !== 0) {
+                  for (let [i, v] of this.specificationList[0].values.entries()) {
+                    for (let [j, w] of this.specificationList[2].values.entries()) {
+                      let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                      sku.values.push({ specificName: v.name })
+                      sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                      sku.values.push({ specificName: w.name })
+                      // console.log(i * j)
+                      this.skus.splice((i + 1) * (this.specificationList[1].values.length - 1) + i * this.specificationList[2].values.length + j, 0, sku)
+                    }
+                  }
+                } else {
+                  for (let [i, v] of this.specificationList[0].values.entries()) {
+                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                    sku.values.push({ specificName: v.name })
+                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                    this.skus.splice((i + 1) * (this.specificationList[1].values.length - 1) + i, 0, sku)
+                    // this.skus.push(sku)
+                  }
+                }
+              } else {}
+            }
+          }
+        }
       }
       this['inputSpacVisible' + index] = false
       this.inputSpacValue = ''
@@ -555,8 +684,8 @@ export default {
   watch: {
     specificationList: {
       handler (newValue, oldValue) {
-        this.setSkus()
-        // console.log(this.skus)
+        // this.setSkus()
+        // console.log(newValue[0].name, oldValue[0].name)
       },
       deep: true
     }

@@ -45,7 +45,7 @@ export default new Router({
       component: select
     },
     {
-      path: '/commodityManagement',
+      path: '/commodity-management',
       name: 'commodityManagement',
       component: commodityManagement
     },
@@ -120,7 +120,7 @@ export default new Router({
       component: shopProfile
     },
     {
-      path: '/addEditGoods',
+      path: '/add-edit-goods',
       name: 'addEditGoods',
       component: addEditGoods
     },
