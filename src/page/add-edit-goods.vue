@@ -293,7 +293,7 @@ export default {
       inputSpacVisible2: false,
       specificationList: [
         {
-          name: '1230',
+          name: '1',
           values: [
             {
               name: '11'
@@ -310,7 +310,13 @@ export default {
           name: '2',
           values: [
             {
-              name: '1'
+              name: '21'
+            },
+            {
+              name: '22'
+            },
+            {
+              name: '23'
             }
           ]
         },
@@ -319,12 +325,6 @@ export default {
           values: [
             {
               name: '31'
-            },
-            {
-              name: '32'
-            },
-            {
-              name: '33'
             }
           ]
         }
@@ -440,7 +440,7 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     setRoutePath () {
-      this.setMenuLeft('/commodityManagement')
+      this.setMenuLeft('/commodity-management')
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
@@ -555,10 +555,10 @@ export default {
           if (this.specificationList[index].values.length === 1) {
             this.setSkus()
           } else {
+            let thisValueName = this.specificationList[index].values
             if (index === 0) {
-              let thisValueName = this.specificationList[index].values
-              if (this.specificationList[1] && this.specificationList[1].name && this.specificationList[1].values && this.specificationList[1].values.length !== 0) {
-                if (this.specificationList[2] && this.specificationList[2].name && this.specificationList[2].values && this.specificationList[2].values.length !== 0) {
+              if (this.verificationSpecific(1)) {
+                if (this.verificationSpecific(2)) {
                   for (let k of this.specificationList[1].values) {
                     for (let l of this.specificationList[2].values) {
                       let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
@@ -577,7 +577,7 @@ export default {
                   }
                 }
               } else {
-                if (this.specificationList[2] && this.specificationList[2].name && this.specificationList[2].values && this.specificationList[2].values.length !== 0) {
+                if (this.verificationSpecific(2)) {
                   for (let k of this.specificationList[2].values) {
                     let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
                     sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
@@ -590,19 +590,18 @@ export default {
                   this.skus.push(sku)
                 }
               }
-              console.log(thisValueName[thisValueName.length - 1].name)
+              // console.log(thisValueName[thisValueName.length - 1].name)
             } else if (index === 1) {
               let thisValueName = this.specificationList[index].values
-              if (this.specificationList[0].name && this.specificationList[0].values && this.specificationList[0].values.length !== 0) {
-                if (this.specificationList[2] && this.specificationList[2].name && this.specificationList[2].values && this.specificationList[2].values.length !== 0) {
+              if (this.verificationSpecific(0)) {
+                if (this.verificationSpecific(2)) {
                   for (let [i, v] of this.specificationList[0].values.entries()) {
                     for (let [j, w] of this.specificationList[2].values.entries()) {
                       let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
                       sku.values.push({ specificName: v.name })
                       sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
                       sku.values.push({ specificName: w.name })
-                      // console.log(i * j)
-                      this.skus.splice((i + 1) * (this.specificationList[1].values.length - 1) + i * this.specificationList[2].values.length + j, 0, sku)
+                      this.skus.splice((i + 1) * (this.specificationList[2].values.length) + i * this.specificationList[2].values.length + j, 0, sku)
                     }
                   }
                 } else {
@@ -611,7 +610,42 @@ export default {
                     sku.values.push({ specificName: v.name })
                     sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
                     this.skus.splice((i + 1) * (this.specificationList[1].values.length - 1) + i, 0, sku)
-                    // this.skus.push(sku)
+                  }
+                }
+              } else {
+                if (this.verificationSpecific(2)) {
+                  for (let k of this.specificationList[2].values) {
+                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                    sku.values.push({ specificName: k.name })
+                    this.skus.push(sku)
+                  }
+                } else {
+                  let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                  sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                  this.skus.push(sku)
+                }
+              }
+            } else if (index === 2) {
+              let thisValueName = this.specificationList[index].values
+              if (this.verificationSpecific(0)) {
+                if (this.verificationSpecific(1)) {
+                  for (let [i, v] of this.specificationList[0].values.entries()) {
+                    for (let [j, w] of this.specificationList[1].values.entries()) {
+                      let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                      sku.values.push({ specificName: v.name })
+                      sku.values.push({ specificName: w.name })
+                      sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                      console.log((i + 1) * (j + 1) * (this.specificationList[2].values.length - 1) + i * (this.specificationList[1].values.length + this.specificationList[2].values.length) + (i + 1) * j)
+                      // this.skus.splice((i + 1) * (j + 1) * (this.specificationList[2].values.length - 1) + j, 0, sku)
+                    }
+                  }
+                } else {
+                  for (let [i, v] of this.specificationList[0].values.entries()) {
+                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+                    sku.values.push({ specificName: v.name })
+                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+                    this.skus.splice((i + 1) * (this.specificationList[2].values.length - 1) + i, 0, sku)
                   }
                 }
               } else {}
@@ -621,6 +655,13 @@ export default {
       }
       this['inputSpacVisible' + index] = false
       this.inputSpacValue = ''
+    },
+    verificationSpecific (i) {
+      if (this.specificationList[i] && this.specificationList[i].name && this.specificationList[i].values && this.specificationList[i].values.length !== 0) {
+        return true
+      } else {
+        return false
+      }
     },
 
     // 关键字操作部分
