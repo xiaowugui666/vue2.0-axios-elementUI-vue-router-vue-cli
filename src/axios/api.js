@@ -13,6 +13,16 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
   })
 }
 
+// 获取商品列表
+export const getGoodsList = function (url, data) {
+  return fetch({
+    // api.Hallowmas 引用url.js里面的数据
+    url: api.ip + url,
+    method: 'get', // 请求方法
+    params: data
+  })
+}
+
 // 有新接口的时候像上面那样再来一次
 // //修改昵称接口
 // export function userID(name){

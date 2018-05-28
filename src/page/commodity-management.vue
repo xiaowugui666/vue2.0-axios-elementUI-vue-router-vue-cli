@@ -127,6 +127,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {getGoodsList} from '../axios/api.js'
 export default {
   data () {
     return {
@@ -216,6 +217,18 @@ export default {
       ],
       multipleSelection: []
     }
+  },
+  created () {
+    let data = {
+      cat_id: '',
+      goods_name: '',
+      page: 1
+    }
+    getGoodsList('/goods', data).then(res => {
+      console.log(res)
+    }).catch(err => {
+      console.log(err)
+    })
   },
   components: {
     menuLeft
