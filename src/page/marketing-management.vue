@@ -23,11 +23,7 @@
               width="75">
               <template slot-scope="scope">
                 <div>
-                  <span>{{scope.row.id}}</span>
-                  <div class="sort-btn">
-                    <div class="el-icon-caret-top"></div>
-                    <div class="el-icon-caret-bottom"></div>
-                  </div>
+                  <input class="sort-input" type="text" :value="scope.row.id" @input="sorting($event)">
                 </div>
               </template>
             </el-table-column>
@@ -35,7 +31,7 @@
               label="商品"
               width="300">
               <template slot-scope="scope">
-                <div class="goods-info-box">
+                <div class="goods-info-box">input
                   <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
@@ -193,6 +189,8 @@ export default {
     }
   },
   mounted () {
+    // 推荐商品列表
+
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
@@ -233,6 +231,11 @@ export default {
           message: `已取消`
         })
       })
+    },
+    // input输入改变排序
+    sorting (e) {
+      console.log(e)
+      console.log(this.activeGoodsTableData)
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
@@ -315,6 +318,13 @@ export default {
         .el-table {
           color: #666;
           font-size: 12px;
+          .sort-input{
+            width: 27px;
+            height: 23px;
+            padding-left: 18px;
+            background-color: transparent;
+            border: 1px solid @bc;
+          }
           .sort-btn {
             display: inline-block;
             vertical-align: middle;

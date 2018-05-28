@@ -13,17 +13,19 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
   })
 }
 
-// 有新接口的时候像上面那样再来一次
-// //修改昵称接口
-// export function userID(name){
-//   return fetch({
-//     url:api.myself_name,
-//     method:"put",
-//     data:{
-//       nickname:name
-//     }
-//   })
-// }
+// 获取订单列表
+export function order (no, beginAt, endAt, name) {
+  return fetch({
+    url: api.ip + '/management/order',
+    method: 'GET',
+    data: {
+      name: name,
+      no: no,
+      begin_at: beginAt,
+      end_at: endAt
+    }
+  })
+}
 //
 //
 // //取消转发赞踩接口
