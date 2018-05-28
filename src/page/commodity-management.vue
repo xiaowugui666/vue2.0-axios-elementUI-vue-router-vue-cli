@@ -27,7 +27,7 @@
         <div class="add-commodity-box clear">
           <div class="opera-btn-row">
             <el-row>
-              <el-button size="small">批量上架</el-button>
+              <el-button :disabled="disabled" size="small">批量上架</el-button>
               <el-button disabled size="small">批量下架</el-button>
               <el-button disabled size="small">批量删除</el-button>
             </el-row>
@@ -53,13 +53,13 @@
               width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
+                  <span class="goods-img"><img :src="scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
-                    <p class="goods-info-name">{{scope.row.goods.name}}</p>
+                    <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
-                      <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
+                      <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                       <span class="goods-info-category">
-                        类目：{{scope.row.goods.firstCategory}}-{{scope.row.goods.secondCategory}}
+                        类目：{{scope.row.spec_a}}-{{scope.row.spec_b}}
                       </span>
                     </div>
                   </div>
@@ -127,7 +127,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
-import {getGoodsList} from '../axios/api.js'
+import {goodsList} from '../axios/api.js'
 export default {
   data () {
     return {
@@ -152,70 +152,9 @@ export default {
         }
       ],
       value: '',
-      tableData: [
-        {
-          id: 1,
-          goods: {
-            imgSrc: '/static/test/ceshi2.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
-          },
-          amountAccess: 121,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          creationTime: '2016-05-03 18:30',
-          state: 1
-        }, {
-          id: 2,
-          goods: {
-            imgSrc: '/static/test/ceshi3.png',
-            name: 'asdlkjfhlkwehrfiuwasssadsadssadsdaswqweqqweqweqweh',
-            price: '999.36',
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
-          },
-          amountAccess: 14321,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          creationTime: '2016-05-03 18:30',
-          state: 1
-        }, {
-          id: 3,
-          goods: {
-            imgSrc: '/static/test/ceshi.png',
-            name: 'asdlkjfhlkwehrfiuwh',
-            price: '999.36',
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
-          },
-          amountAccess: 14321,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          creationTime: '2016-05-03 18:30',
-          state: 2
-        }, {
-          id: 4,
-          goods: {
-            imgSrc: '/static/test/ceshi.png',
-            name: 'asdlkjfhlkwehrfiuwh',
-            price: '999.36',
-            firstCategory: '食品',
-            secondCategory: '四川火锅'
-          },
-          amountAccess: 14321,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          creationTime: '2016-05-03 18:30',
-          state: 3
-        }
-      ],
-      multipleSelection: []
+      tableData: [],
+      multipleSelection: [],
+      disabled: this.disabledGrounding()
     }
   },
   created () {
@@ -224,16 +163,34 @@ export default {
       goods_name: '',
       page: 1
     }
-    getGoodsList('/goods', data).then(res => {
-      console.log(res)
-    }).catch(err => {
-      console.log(err)
-    })
+    this.getGoodsList(data)
   },
   components: {
     menuLeft
   },
   methods: {
+    // 获取商品列表
+    getGoodsList (data) {
+      // goodsList(data).then(res => {
+      //   console.log(res.data)
+      //   this.tableData = res.data
+      // }).catch(err => {
+      //   console.log(err)
+      // })
+      this.$http({
+        url: 'http://dev.yqx.com/management/goods',
+        method: 'get',
+        params: data
+      }).then(
+        res => {
+          console.log(res.data)
+          this.tableData = res.data
+        }
+      )
+    },
+    disabledGrounding () {
+      return false
+    },
     // 渲染商品状态
     getGoodsState (index) {
       let s = ''

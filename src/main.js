@@ -24,3 +24,8 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+Vue.filter('money', function (val) {
+  val = Number(val) / 100
+  return val.toFixed(2)
+})
