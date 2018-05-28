@@ -14,16 +14,11 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
 }
 
 // 获取订单列表
-export function order (no, beginAt, endAt, name) {
+export function order (data) {
   return fetch({
     url: api.ip + '/management/order',
     method: 'GET',
-    data: {
-      name: name,
-      no: no,
-      begin_at: beginAt,
-      end_at: endAt
-    }
+    params: data
   })
 }
 
