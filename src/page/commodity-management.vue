@@ -10,7 +10,7 @@
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>
-          <el-select v-model="value" size="small" class="select-state">
+          <el-select v-model="value" size="small" clearable class="select-state">
             <el-option
               v-for="item in selectStateOptions"
               :key="item.value"
@@ -24,8 +24,15 @@
         </div>
       </div>
       <div class="commodity-list">
-        <div class="add-commodity-box">
-          <el-button type="primary" size="small" @click="setRouter('/addEditGoods')">添加商品</el-button>
+        <div class="add-commodity-box clear">
+          <div class="opera-btn-row">
+            <el-row>
+              <el-button :disabled="disabled" size="small">批量上架</el-button>
+              <el-button disabled size="small">批量下架</el-button>
+              <el-button disabled size="small">批量删除</el-button>
+            </el-row>
+          </div>
+          <el-button class="add-edit-goods" type="primary" size="small" @click="setRouter('/add-edit-goods')">添加商品</el-button>
         </div>
         <div class="commodity-list-table">
           <el-table
@@ -46,13 +53,13 @@
               width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
+                  <span class="goods-img"><img :src="scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
-                    <p class="goods-info-name">{{scope.row.goods.name}}</p>
+                    <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
-                      <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
+                      <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                       <span class="goods-info-category">
-                        类目：{{scope.row.goods.firstCategory}}-{{scope.row.goods.secondCategory}}
+                        类目：{{scope.row.spec_a}}-{{scope.row.spec_b}}
                       </span>
                     </div>
                   </div>
@@ -90,35 +97,27 @@
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div :class="{'goods-state':scope.row.state}" @click="upperLowerFrame">{{scope.row.state?'已上架':'已下架'}}</div>
+                <div :style="{'color':scope.row.state==1?'#6BA725':(scope.row.state==2?'#676767':'#DE5B67')}">{{getGoodsState(scope.$index)}}</div>
               </template>
             </el-table-column>
             <el-table-column
-              fixed="right"
               label="操作"
-              width="200">
+              width="180">
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.state?'下架':'上架'}}</el-button>
                 <el-button type="text" size="small">编辑</el-button>
-                <el-button type="text" size="small">浏览</el-button>
+                <el-button  v-if="scope.row.state!==3" @click="handleClick(scope.row)" type="text" size="small" class="black-btn">{{scope.row.state===1?'下架':'上架'}}</el-button>
+                <el-button type="text" size="small" class="black-btn">浏览</el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="operation-paging clear">
-            <div class="opera-btn-row left">
-              <el-row>
-                <el-button size="small">上架</el-button>
-                <el-button disabled size="small">下架</el-button>
-                <el-button disabled size="small">删除</el-button>
-              </el-row>
-            </div>
-            <div class="right">
-              <el-pagination
-                background
-                layout="prev, pager, next"
-                :total="300">
-              </el-pagination>
-            </div>
+            <el-pagination
+              background
+              prev-text="< 上一页"
+              next-text="下一页 >"
+              layout="prev, pager, next"
+              :total="300">
+            </el-pagination>
           </div>
         </div>
       </div>
@@ -128,100 +127,87 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {goodsList} from '../axios/api.js'
 export default {
   data () {
     return {
       managementState: 0,
       searchComName: '',
-      selectStateOptions: [{
-        value: '1',
-        label: '食品'
-      }, {
-        value: '2',
-        label: '数码家电'
-      }, {
-        value: '3',
-        label: '女装'
-      }, {
-        value: '4',
-        label: '美妆'
-      }, {
-        value: '5',
-        label: '日用百货'
-      }],
-      value: '食品',
-      tableData: [{
-        id: 1,
-        goods: {
-          imgSrc: '/static/test/ceshi2.png',
-          name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-          price: 12312.36,
-          firstCategory: '食品',
-          secondCategory: '四川火锅'
-        },
-        amountAccess: 121,
-        browsingVolume: 123211,
-        stock: 222,
-        totalSales: 23333,
-        creationTime: '2016-05-03 18:30',
-        state: true
-      }, {
-        id: 2,
-        goods: {
-          imgSrc: '/static/test/ceshi3.png',
-          name: 'asdlkjfhlkwehrfiuwasssadsadssadsdaswqweqqweqweqweh',
-          price: '999.36',
-          firstCategory: '食品',
-          secondCategory: '四川火锅'
-        },
-        amountAccess: 14321,
-        browsingVolume: 123211,
-        stock: 222,
-        totalSales: 23333,
-        creationTime: '2016-05-03 18:30',
-        state: true
-      }, {
-        id: 3,
-        goods: {
-          imgSrc: '/static/test/ceshi.png',
-          name: 'asdlkjfhlkwehrfiuwh',
-          price: '999.36',
-          firstCategory: '食品',
-          secondCategory: '四川火锅'
-        },
-        amountAccess: 14321,
-        browsingVolume: 123211,
-        stock: 222,
-        totalSales: 23333,
-        creationTime: '2016-05-03 18:30',
-        state: false
-      }, {
-        id: 4,
-        goods: {
-          imgSrc: '/static/test/ceshi.png',
-          name: 'asdlkjfhlkwehrfiuwh',
-          price: '999.36',
-          firstCategory: '食品',
-          secondCategory: '四川火锅'
-        },
-        amountAccess: 14321,
-        browsingVolume: 123211,
-        stock: 222,
-        totalSales: 23333,
-        creationTime: '2016-05-03 18:30',
-        state: true
-      }],
-      multipleSelection: []
+      selectStateOptions: [
+        {
+          value: '1',
+          label: '食品'
+        }, {
+          value: '2',
+          label: '数码家电'
+        }, {
+          value: '3',
+          label: '女装'
+        }, {
+          value: '4',
+          label: '美妆'
+        }, {
+          value: '5',
+          label: '日用百货'
+        }
+      ],
+      value: '',
+      tableData: [],
+      multipleSelection: [],
+      disabled: this.disabledGrounding()
     }
+  },
+  created () {
+    let data = {
+      cat_id: '',
+      goods_name: '',
+      page: 1
+    }
+    this.getGoodsList(data)
   },
   components: {
     menuLeft
   },
   methods: {
+    // 获取商品列表
+    getGoodsList (data) {
+      // goodsList(data).then(res => {
+      //   console.log(res.data)
+      //   this.tableData = res.data
+      // }).catch(err => {
+      //   console.log(err)
+      // })
+      this.$http({
+        url: 'http://dev.yqx.com/management/goods',
+        method: 'get',
+        params: data
+      }).then(
+        res => {
+          console.log(res.data)
+          this.tableData = res.data
+        }
+      )
+    },
+    disabledGrounding () {
+      return false
+    },
+    // 渲染商品状态
+    getGoodsState (index) {
+      let s = ''
+      if (this.tableData[index].state === 1) {
+        s = '上架中'
+      } else if (this.tableData[index].state === 2) {
+        s = '已下架'
+      } else {
+        s = '已售罄'
+      }
+      return s
+    },
     handleClick (row) {
       // console.log(row)
       this.upperLowerFrame(row)
     },
+    // 商品上下架
     upperLowerFrame (data) {
       let _this = this
       this.$confirm(`是否${data.state ? '下架' : '上架'}该商品`, '提示', {
@@ -232,7 +218,11 @@ export default {
         for (let k of _this.tableData) {
           // console.log(k['id'])
           if (k['id'] === data['id']) {
-            k['state'] = !data['state']
+            if (k['state'] === 1) {
+              k['state'] = 2
+            } else {
+              k['state'] = 1
+            }
           }
         }
         this.$message({
@@ -331,8 +321,13 @@ export default {
       background: #fff;
       padding: 20px;
       .add-commodity-box {
-        padding-top: 40px;
         padding-bottom: 20px;
+        .opera-btn-row {
+          display: inline-block;
+        }
+        .add-edit-goods {
+          float: right;
+        }
       }
       .commodity-list-table {
         text-align: center;
@@ -379,7 +374,7 @@ export default {
               padding-top: 10px;
               line-height: 1.2;
               .goods-info-price {
-                color: #DE5B67;
+                color: @mainC;
                 padding-right: 15px;
               }
               .goods-info-category {
@@ -388,16 +383,14 @@ export default {
             }
           }
         }
-        .goods-state {
-          color: #59A304;
-        }
         .operation-paging {
           text-align: left;
           padding-top: 30px;
-          div {
-            display: inline-block;
-            vertical-align: middle;
-          }
+          padding-bottom: 10px;
+        }
+        .black-btn {
+          color: #333;
+          border-color: #333;
         }
       }
     }
@@ -417,7 +410,7 @@ export default {
     }
     .el-button--text {
       width: auto;
-      padding: 0 5px;
+      padding: 0 7px;
       height: 24px;
       border: 1px solid #63A4FF;
     }
@@ -441,16 +434,6 @@ export default {
       content: '全选';
       color: #333;
       padding-left: 6px;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active {
-      background: #DE5B67;
-      border-color: #DE5B67;
-    }
-    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next, .el-pagination.is-background .el-pager li {
-      font-weight: normal;
-      color: #333;
-      background: #fff;
-      border: 1px solid #d5d5d5;
     }
   }
 </style>

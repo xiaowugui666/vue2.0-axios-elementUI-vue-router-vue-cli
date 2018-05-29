@@ -7,12 +7,16 @@ import orderManagement from '@/page/order-management'
 import customerManagement from '@/page/customer-management'
 import customerOrder from '@/page/customer-order'
 import account from '@/page/account'
-import collageManagement from '@/page/collage-management'
+import accountDetails from '@/page/account-details'
+import marketingManagement from '@/page/marketing-management'
+import addMarketingActivity from '@/page/add-marketing-activity'
 import informationSetting from '@/page/information-setting'
 import addEditGoods from '@/page/add-edit-goods'
 import oneKeyIntroduction from '@/page/one-key-introduction'
 import categoryManagement from '@/page/category-management'
 import orderSetting from '@/page/order-setting'
+import paySetting from '@/page/pay-setting'
+import mpSetting from '@/page/mp-setting'
 import shopProfile from '@/page/shop-profile'
 import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
@@ -23,6 +27,7 @@ import select from '@/components/select-production'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -40,7 +45,7 @@ export default new Router({
       component: select
     },
     {
-      path: '/commodityManagement',
+      path: '/commodity-management',
       name: 'commodityManagement',
       component: commodityManagement
     },
@@ -65,9 +70,19 @@ export default new Router({
       component: account
     },
     {
-      path: '/collageManagement',
-      name: 'collageManagement',
-      component: collageManagement
+      path: '/account-details',
+      name: 'accountDetails',
+      component: accountDetails
+    },
+    {
+      path: '/marketing-management/:class',
+      name: 'marketingManagement',
+      component: marketingManagement
+    },
+    {
+      path: '/add-marketing-activity/:class',
+      name: 'addMarketingActivity',
+      component: addMarketingActivity
     },
     {
       path: '/informationSetting',
@@ -105,7 +120,7 @@ export default new Router({
       component: shopProfile
     },
     {
-      path: '/addEditGoods',
+      path: '/add-edit-goods',
       name: 'addEditGoods',
       component: addEditGoods
     },
@@ -118,6 +133,16 @@ export default new Router({
       path: '/categoryManagement',
       name: 'categoryManagement',
       component: categoryManagement
+    },
+    {
+      path: '/pay-setting',
+      name: 'paySetting',
+      component: paySetting
+    },
+    {
+      path: '/mp-setting',
+      name: 'mpSetting',
+      component: mpSetting
     }
   ]
 })

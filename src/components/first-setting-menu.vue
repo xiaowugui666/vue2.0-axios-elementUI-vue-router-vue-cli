@@ -56,6 +56,8 @@ export default {
     img {
       vertical-align: middle;
       margin-left: -10px;
+      margin-right: 10px;
+      width: 34px;
     }
     span {
       vertical-align: middle;
