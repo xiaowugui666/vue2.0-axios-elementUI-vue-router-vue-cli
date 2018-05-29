@@ -24,8 +24,8 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div class="timeRange cur" @click="timeRange(7)">最近7天</div>
-          <div class="timeRange" @click="timeRange(30)">最近30天</div>
+          <div class="timeRange cur" @click="timeRange(7,$event)">最近7天</div>
+          <div class="timeRange" @click="timeRange(30,$event)">最近30天</div>
         </div>
         <div class="proName">
           <div class="keyName">
@@ -47,7 +47,11 @@
               </el-option>
             </el-select>
           </div>
-          <button @click="searchOrder" class="search">搜索</button>
+          <div @click="searchOrder" class="search">
+            <el-button
+            type="success"
+            size="small">搜索</el-button>
+          </div>
         </div>
 
       </div>
@@ -98,6 +102,7 @@
   </div>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -174,17 +179,27 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.setMenuLeft('/customer')
+  },
   computed: {
   },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     changeType () {
     },
     changeTime () {
     },
     searchOrder () {
     },
-    timeRange (res) {
-      console.log(res)
+    timeRange (res, event) {
+      let flag = event.target.dataset.id
+      if (flag === '0') {
+        this.timeBtn = false
+      } else {
+        this.timeBtn = true
+      }
+      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
     },
     handleClick (tab, event) {
       console.log(tab.index)
@@ -266,6 +281,7 @@ export default {
       .el-input__inner{
         height: 30px;
         line-height: 30px;
+        border-radius: 0;
       }
       .el-input--suffix .el-input__inner {
         padding:0 12px;
@@ -287,6 +303,11 @@ export default {
       .el-select{
         margin-right: 10px;
       }
+      .el-button--small {
+        width: 80px;
+        height: 30px;
+        padding: 0;
+      }
     }
   }
 </style>
@@ -297,6 +318,11 @@ export default {
       padding-top: 20px;
       position: relative;
       min-width: 1000px;
+      .header{
+        label{
+          margin-right: 10px;
+        }
+      }
     }
 
     .tradeRecord {
@@ -327,6 +353,9 @@ export default {
           display: flex;
           justify-content: flex-start;
           align-items: center;
+          >div{
+            width: 66%;
+          }
           .desc{
             font-family: MicrosoftYaHei;
             font-size: 14px;
@@ -342,7 +371,7 @@ export default {
             text-align: center;
           }
           .proInfo{
-            width: 400px;
+            width: 60%;
             display: flex;
             height: 100%;
             justify-content: flex-start;
@@ -353,6 +382,7 @@ export default {
           }
           .prolist{
             height: 80px;
+            width: 100%;
             box-sizing: border-box;
             display: flex;
             align-items: center;
@@ -361,7 +391,7 @@ export default {
           }
           .orderMon,.orderResult{
             height: 100%;
-            width: 170px;
+            width: 17%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -402,7 +432,7 @@ export default {
             }
           }
           .proNum{
-            width: 190px;
+            width: 20%;
             height: 100%;
             line-height: 80px;
             font-family: MicrosoftYaHei;
@@ -413,7 +443,7 @@ export default {
           }
           .price{
             height: 100%;
-            width: 190px;
+            width: 20%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -464,11 +494,9 @@ export default {
       .el-input__inner{
         height: 30px;
         line-height: 30px;
-        border-radius: 2px;
       }
       .el-input--suffix{
         height: 30px;
-        border-radius: 2px;
       }
       .selectInfo{
         align-items: center;
@@ -507,13 +535,6 @@ export default {
           position: absolute;
           top: 45px;
           right: 20px;
-          line-height: 30px;
-          width: 80px;
-          background: #DE5B67;
-          color:#fff;
-          text-align: center;
-          line-height: 30px;
-          border-radius: 2px;
         }
         .orderType{
           margin-left: 20px;

@@ -23,9 +23,9 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div class="timeRange cur" @click="timeRange(7)">最近7天</div>
-          <div class="timeRange" @click="timeRange(30)">最近30天</div>
-          <div class="timeRange" @click="timeRange(90)">最近90天</div>
+          <div :class="['timeRange', {'cur' : timeId === '0'}]" data-id="0" @click="timeRange(7,$event)">最近7天</div>
+          <div :class="['timeRange', {'cur' : timeId === '1'}]" data-id="1" @click="timeRange(30,$event)">最近30天</div>
+          <div :class="['timeRange', {'cur' : timeId === '2'}]" data-id="2" @click="timeRange(90,$event)">最近90天</div>
         </div>
         <div class="proName">
           <div class="keyName">
@@ -102,6 +102,8 @@ export default {
   data () {
     return {
       n: '1',
+      // 点击索引，动态类名
+      timeId: '0',
       // 搜索时间间隔
       keyTime: '',
       // 搜索类别
@@ -149,7 +151,9 @@ export default {
     },
     searchOrder () {
     },
-    timeRange (res) {
+    timeRange (res, event) {
+      this.timeId = event.target.dataset.id
+      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
       console.log(res)
     },
     handleClick (tab, event) {
@@ -291,6 +295,7 @@ export default {
     .el-input__inner{
       height: 30px;
       line-height: 30px;
+      border-radius: 0;
     }
     .el-input--suffix .el-input__inner {
       padding:0 12px;
@@ -344,7 +349,6 @@ export default {
         box-sizing: border-box;
         line-height: 50px;
         label {
-          font-family: MicrosoftYaHei;
           font-size: 12px;
           color: #333333;
           text-align: center;
@@ -392,7 +396,7 @@ export default {
     padding: 20px;
     margin-bottom: 20px;
     label{
-      font-family: MicrosoftYaHei;
+      margin-right: 10px;
       font-size: 12px;
       color: #999999;
       line-height: 15px;
@@ -400,16 +404,17 @@ export default {
     .el-input__inner{
       height: 30px;
       line-height: 30px;
-      border-radius: 2px;
     }
     .el-input--suffix{
       height: 30px;
-      border-radius: 2px;
     }
     .selectInfo{
-      display: flex;
       align-items: center;
       justify-content:flex-start;
+      overflow: hidden;
+      >div{
+        float: left;
+      }
       .timeRange{
         line-height: 28px;
         padding: 0 16px;
@@ -425,10 +430,13 @@ export default {
 
     }
     .proName{
-      display: flex;
       align-items: center;
       justify-content:space-between;
+      overflow: hidden;
       margin-top: 20px;
+      >div{
+        float: left;
+      }
       .search{
         line-height: 30px;
         width: 80px;
@@ -439,7 +447,8 @@ export default {
         border-radius: 2px;
       }
       .orderType{
-        margin-right: 470px;
+        margin-left: 20px;
+        margin-right: 30px;
       }
     }
   }

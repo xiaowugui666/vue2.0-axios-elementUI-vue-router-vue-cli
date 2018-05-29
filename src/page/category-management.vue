@@ -50,14 +50,18 @@
         </div>
         <div class="category-management-dialog">
           <el-dialog
-            title="提示"
+            title="请选择要编辑的一级类目"
             :visible.sync="dialogVisible"
-            width="30%"
+            width="620px"
             :before-close="handleClose">
-            <span>这是一段信息</span>
+            <div class="first-category-list">
+              <ul>
+                <li @click="selectFirstCategory(index)" v-for="(item, index) in firstCategoryList" :class="{'active':item.selected}" :key="index">{{item.label}}</li>
+              </ul>
+            </div>
             <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-            <el-button type="primary" @click="dialogVisible = false" size="small">确 定</el-button>
+            <el-button type="primary" @click="confirmationModification" size="small">确 定</el-button>
+            <el-button @click="handleClose" size="small">取 消</el-button>
           </span>
           </el-dialog>
         </div>
@@ -125,16 +129,207 @@ export default {
         }
       ],
       inputSpacVisible: [],
-      inputSpacValue: ''
+      inputSpacValue: '',
+      firstCategoryList: [
+        {
+          value: 1,
+          label: '食品',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 2,
+          label: '数码家电',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 3,
+          label: '女装',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 4,
+          label: '美妆',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 5,
+          label: '日用百货',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 6,
+          label: '休闲娱乐',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 7,
+          label: '男装',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 8,
+          label: '亲子',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 9,
+          label: '教育培训',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 10,
+          label: '餐饮外卖',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 11,
+          label: '箱包配饰',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 12,
+          label: '家居家纺',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 13,
+          label: '媒体服务',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 14,
+          label: '海外购',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 15,
+          label: '运动户外',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 16,
+          label: '礼品鲜花',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 17,
+          label: '医疗健康',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 18,
+          label: '酒店旅游',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 19,
+          label: '票务卡券',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 20,
+          label: '汽车养护',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 21,
+          label: '丽人健身',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 22,
+          label: '家装建材',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 23,
+          label: '充值缴费',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 24,
+          label: '图书音像',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 25,
+          label: '家政服务',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 26,
+          label: '名俗文化',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 27,
+          label: '鞋靴',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 28,
+          label: '宠物',
+          selected: false,
+          changed: false
+        },
+        {
+          value: 29,
+          label: '其他',
+          selected: false,
+          changed: false
+        }
+      ]
     }
   },
   methods: {
+    // 关闭一级类目选择框之前的动作
     handleClose (done) {
-      this.$confirm('确认关闭？')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
+      this.dialogVisible = false
+      for (let k of this.firstCategoryList) {
+        if (k.changed) {
+          k.selected = !k.selected
+          k.changed = !k.changed
+        }
+      }
+    },
+    // 确认修改一级类目
+    confirmationModification () {
+      this.dialogVisible = false
+      for (let k of this.firstCategoryList) {
+        k.changed = false
+      }
+    },
+    // 选择一级类目
+    selectFirstCategory (index) {
+      this.firstCategoryList[index].selected = !this.firstCategoryList[index].selected
+      this.firstCategoryList[index].changed = !this.firstCategoryList[index].changed
     },
     // 删除选中的规则值
     alignmentHandleClose (tag, index) {
@@ -196,8 +391,6 @@ export default {
     .category-management-content {
       background: #fff;
       padding: 20px;
-      .first-category-management {
-      }
     }
     .two-level-category-list {
       li {
@@ -265,6 +458,38 @@ export default {
         }
       }
     }
+    .category-management-dialog {
+      .first-category-list {
+        font-size: 0;
+        padding-bottom: 20px;
+        border-top: 2px solid #f5f5f5;
+        border-bottom: 2px solid #f5f5f5;
+        li {
+          font-size: 12px;
+          color: #999;
+          text-align: center;
+          width: 100px;
+          height: 30px;
+          line-height: 30px;
+          border: 1px solid #d5d5d5;
+          margin-right: 20px;
+          margin-top: 20px;
+          display: inline-block;
+          vertical-align: middle;
+          box-sizing: border-box;
+          border-radius: 3px;
+          cursor: pointer;
+          user-select:none;
+          &:nth-child(5n) {
+            margin-right: 0;
+          }
+          &.active {
+            color: #DE5B67;
+            border-color: #DE5B67;
+          }
+        }
+      }
+    }
   }
 </style>
 <style lang="less">
@@ -301,6 +526,12 @@ export default {
         display: inline-block;
         vertical-align: top;
       }
+    }
+    .el-dialog__body {
+      padding: 0 20px;
+    }
+    .el-dialog__footer {
+      padding-top: 20px;
     }
   }
 </style>

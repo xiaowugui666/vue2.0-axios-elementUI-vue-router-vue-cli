@@ -20,8 +20,4 @@ export default {
 </script>
 
 <style lang="less">
-@import "style/common.less";
-body {
-  background: #F7F7F7;
-}
 </style>
