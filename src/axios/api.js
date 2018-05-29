@@ -23,10 +23,10 @@ export function order (data) {
 }
 
 // 获取商品列表
-export const getGoodsList = function (url, data) {
+export const goodsList = function (data) {
   return fetch({
     // api.Hallowmas 引用url.js里面的数据
-    url: api.ip + url,
+    url: api.ip + '/management/goods',
     method: 'get', // 请求方法
     params: data
   })
