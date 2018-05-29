@@ -26,7 +26,7 @@
           <span>商品</span>
         </template>
           <el-menu-item index="/commodity-management">商品管理</el-menu-item>
-          <el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>
+          <!--<el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>-->
           <el-menu-item index="/categoryManagement">类目管理</el-menu-item>
       </el-submenu>
       <el-submenu index="4">

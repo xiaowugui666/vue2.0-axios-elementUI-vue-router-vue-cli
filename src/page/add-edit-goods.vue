@@ -3,14 +3,10 @@
       <div class="add-goods-type plate">
         <div class="plate-top clear">
           <span class="plate-name">商品类型</span>
-          <span class="add-goods-btn">
-            <el-button type="success" size="small">保存</el-button>
-            <el-button size="small">返回</el-button>
-          </span>
         </div>
         <ul class="select-goods-type">
           <li :class="{'active':goodsType==0}" @click="goodsType=0">实物（物流发货）</li>
-          <li :class="{'active':goodsType==1}" @click="goodsType=1">虚拟商品</li>
+          <!--<li :class="{'active':goodsType==1}" @click="goodsType=1">虚拟商品</li>-->
         </ul>
       </div>
       <div class="plate essential-info">
@@ -215,7 +211,7 @@
             </li>
             <li>
               <span class="name required">库存：</span>
-              <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+              <input type="text" v-model.trim="goodStock" placeholder="" :disabled="specificationList.length>0">
             </li>
             <li class="show-stock-btn">
               <span class="name">库存显示：</span>
@@ -232,8 +228,9 @@
             <li>
               <span class="name required">快递邮费：</span>
               <span class="express-postage">
-                <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="请输入快递邮费">
-                <el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>
+                <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="">
+                <!--<el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>-->
+                <el-checkbox v-model="postage.freeShipping" class="freeCheckbox" size="small">包邮</el-checkbox>
               </span>
             </li>
             <li>
@@ -249,12 +246,16 @@
             </li>
           </ul>
         </div>
+        <div class="add-goods-btn">
+            <el-button type="success" size="small">保存</el-button>
+          </div>
       </div>
     </div>
 </template>
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {goodsEditDetails, goodsCategory} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -351,12 +352,15 @@ export default {
       value: '食品',
       goodsPrice: '',
       goodsLinePrice: '',
+      goodStock: '',
       showStock: true,
       postage: {
         freeShipping: true,
         money: ''
       },
+      hash: this.$route.query.gid,
 
+      // 商品信息
       grounding: true,
       businessCommitment: {
         refundable: false,
@@ -431,16 +435,46 @@ export default {
       quantifier: '个'
     }
   },
-  beforeMount () {
+  created () {
+    this.setRoutePath()
     this.setSkus()
+    this.getGoods()
   },
   mounted () {
-    this.setRoutePath()
+    // console.log(this.hash)
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 设置路径为商品列表的路径，以便于菜单栏选中
     setRoutePath () {
       this.setMenuLeft('/commodity-management')
+    },
+    // 若存在商品id，获取商品信息
+    getGoods (id) {
+      goodsEditDetails()
+    },
+    // 请求商品分类
+    getGoodsCategory () {
+      goodsCategory().then(res => {
+        this.selectStateOptions = []
+        for (let v of res.data) {
+          let option = {
+            label: v.name,
+            value: v.id
+          }
+          if (v.children.length > 0) {
+            option.children = []
+            for (let w of v.children) {
+              option.children.push({
+                label: w.name,
+                value: w.id
+              })
+            }
+          }
+          this.selectStateOptions.push(option)
+        }
+        // console.log(this.selectStateOptions)
+      })
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
@@ -806,6 +840,9 @@ export default {
         font-size: 12px;
         color: #333;
         border: 1px solid #d5d5d5;
+        &:disabled {
+          background: @bc;
+        }
       }
       .select-state {
         color: #333;
@@ -837,20 +874,20 @@ export default {
           padding-top: 0;
           padding-left: 0;
           display: inline-block;
+          box-sizing: border-box;
           height: 55px;
           line-height: 55px;
           text-align: center;
-          width: 136px;
-          color: #fff;
+          width: 140px;
+          color: @b9;
           font-size: 12px;
-          border-radius: 3px;
-          background: #d5d5d5;
+          border-radius: 2px;
+          border: 1px solid @b5b5;
           cursor: pointer;
-          &:first-child {
-            margin-right: 20px;
-          }
+          margin-right: 20px;
           &.active {
-            background: #DE5B67;
+            border-color: @mainC;
+            color: @mainC;
           }
         }
       }
@@ -862,7 +899,7 @@ export default {
           display: inline-block;
         }
         .upload-img-explain {
-          color: #B5B5B5;
+          color: @b5b5;
           font-size: 12px;
           padding-top: 10px;
           padding-left: 72px;
@@ -895,7 +932,7 @@ export default {
             vertical-align: middle;
             font-size: 0;
             .keyword-tips {
-              color: #b5b5b5;
+              color: @b5b5;
               font-size: 12px;
               padding-left: 20px;
             }
@@ -1052,12 +1089,14 @@ export default {
           }
           .hide-stock, .show-stock {
             vertical-align: middle;
-            background: #d5d5d5;
-            border-color: #d5d5d5;
+            background: #fff;
+            border-color: @b5b5;
+            color: @b9;
           }
           .hide-stock.active, .show-stock.active {
-            background: #DE5B67;
-            border-color: #DE5B67;
+            background: #fff;
+            border-color: @mainC;
+            color: @mainC;
           }
         }
       }
@@ -1071,11 +1110,29 @@ export default {
           margin-left: 8px;
         }
         .el-button--success {
-          background: #d5d5d5;
-          border-color: #d5d5d5;
+          background: #fff;
+          border-color: @b5b5;
+          color: @b9;
           &.active {
-            background: #DE5B67;
-            border-color: #DE5B67;
+            background: #fff;
+            border-color: @mainC;
+            color: @mainC;
+          }
+        }
+        .freeCheckbox {
+          color: @b9;
+          border: 1px solid @b5b5;
+          display: inline-block;
+          vertical-align: middle;
+          box-sizing: border-box;
+          border-radius: 3px;
+          margin-left: 8px;
+          width: 100px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          &.is-checked {
+            border-color: @mainC;
           }
         }
         .express-postage {
@@ -1102,11 +1159,23 @@ export default {
     padding: 0;
   }
 </style>
-<style>
-  .el-input__inner {
-    border-radius: 0;
-  }
-  .ql-container .ql-editor p {
-    min-height: 150px;
+<style lang="less">
+  .add-goods-object {
+    .el-input__inner {
+      border-radius: 0;
+    }
+    .ql-container .ql-editor p {
+      min-height: 150px;
+    }
+    .el-checkbox__input.is-checked + .el-checkbox__label {
+      color: @mainC;
+    }
+    .el-checkbox__input.is-checked .el-checkbox__inner {
+      background-color: @mainC;
+      border-color: @mainC;
+    }
+    .el-checkbox__input.is-focus .el-checkbox__inner {
+      border-color: @mainC;
+    }
   }
 </style>
