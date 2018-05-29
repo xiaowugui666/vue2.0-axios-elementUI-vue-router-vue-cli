@@ -12,31 +12,39 @@
         </div>
         <div class="tradeList">
             <div class="top">
-              <label>订单编号：hz1234124883612</label>
-              <label>商铺名称：金桔小店</label>
+              <label>订单编号：{{tradeList.no}}</label>
             </div>
             <div class="orderInfo">
                   <div class="left">
                       <div>
-                        <label><i>卖家微信：</i>248773573799</label>
-                        <label><i>买家手机号：</i>13566774466</label>
+                        <label><i>买家微信：</i>248773573799</label>
+                        <label><i>买家手机号：</i>{{tradeList.mobile}}</label>
                       </div>
                       <div>
-                        <label><i>收货人名：</i>248773573799</label>
+                        <label><i>收货人名：</i>{{tradeList.consignee}}</label>
                         <label><i>收货人手机号：</i>13566774466</label>
                       </div>
-                      <div><i>收货地址：</i>上海市卢湾区泰康路999弄99号909室</div>
-                      <div>
+                      <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
+                      <div v-if="tradeType == 1">
                         <label>
                           <i>快递公司：</i>
-                          <label v-if="isCompile">顺丰</label>
-                          <input v-else type="text"  v-model="expressCompany">
+                          <el-select
+                            v-if="isCompile"
+                            v-model="transCompValue"
+                            clearable>
+                            <el-option
+                              v-for="item in transComp"
+                              :key="item"
+                              :value="item"></el-option>
+                          </el-select>
+                          <label v-else>顺丰</label>
                         </label>
                         <label>
                             <i>快递单号：</i>
-                              <label v-if="isCompile">1323454657567575</label>
-                              <input v-else type="text"  v-model="expressNo">
+                              <input v-if="isCompile" type="text"  v-model.trim="expressNo">
+                              <label v-else>1323454657567575</label>
                         </label>
+                        <el-button v-if="isCompile" size="small" type="success">提交</el-button>
                       </div>
                   </div>
                   <div class="right">
@@ -51,37 +59,37 @@
                   </div>
 
             </div>
-            <div class="content">
+            <div class="content" v-if="tradeList.items">
               <div>
-                <div class="prolist" v-for="(items,index) in tradeList.list" :key="index">
+                <div class="prolist" v-for="(item,index) in tradeList.items" :key="index">
                   <div class="proInfo">
-                    <img :src="items.img" alt="">
-                    <div class="desc">{{items.desc}}</div>
+                    <img :src="item.cover_url" alt="">
+                    <div class="desc">{{item.name}}</div>
                   </div>
-                  <div class="proNum">数量 x{{items.num}}</div>
+                  <div class="proNum">数量 x{{item.count}}</div>
                   <div class="price">
                     <label>￥</label>
-                    <label>{{items.nowPrice | tofixed }}</label>
+                    <label>{{item.price | money }}</label>
                   </div>
                 </div>
               </div>
-              <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
+              <div class="orderMon" :style="{height: tradeList.items.length * 80 + 'px'}">
                 <label>
                   <label>运费：</label>
-                  <label>{{tradeList.yfPrice | tofixed }}</label>
+                  <label>{{tradeList.express_amount | money }}</label>
                 </label>
-                <label v-if="isPrices">￥{{tradeList.totalPrice | tofixed }}</label>
-                <label v-else>￥<input type="tel" v-model="tradeList.totalPrice"></label>
+                <label v-if="isPrice">￥{{tradeList.amount | money }}</label>
+                <label v-else>￥<input type="tel" v-model.trim="inputPrice"></label>
                 <label @click="changeCompile" v-if="isPrices">编辑订单</label>
                 <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
               </div>
             </div>
-          </div>
+        </div>
       </div>
     </div>
 </template>
 <script>
-import {order} from '@/axios/api'
+import {orderDetail, transComp, orderPrice} from '@/axios/api'
 export default {
   data () {
     return {
@@ -91,32 +99,18 @@ export default {
       isSave: false,
       // 是否更改价格
       isPrice: true,
-      isPrices: true,
+      isPrices: false,
       // 添加物流信息
-      isCompile: true,
-      tradeType: 1,
+      isCompile: false,
+      // 订单状态
+      tradeType: 2,
       expressNo: '',
       expressCompany: '',
-      tradeList: {
-        list: [
-          {
-            img: '/static/test/ceshi.png',
-            desc: '这真是一个伤心的故事',
-            num: 1,
-            prePrice: '12323',
-            nowPrice: '123'
-          },
-          {
-            img: '/static/test/ceshi.png',
-            desc: '这真是一个开心的故事',
-            num: 2,
-            prePrice: 996,
-            nowPrice: 429
-          }
-        ],
-        totalPrice: 12323,
-        yfPrice: 10
-      }
+      // 快递公司
+      transComp: [],
+      transCompValue: '',
+      // 订单详情
+      tradeList: {}
     }
   },
   methods: {
@@ -126,40 +120,55 @@ export default {
       this.isSave = true
     },
     changeSave () {
-      if (this.tradeType === 1) {
-        this.isPrice = true
-        this.isPrices = true
-        this.isSave = false
-      } else if (this.tradeType === 2) {
-        this.isSave = false
-        this.isCompile = true
-      }
-    },
-    getParams () {
-      console.log(this.$route.params.id)
-      this.tradeType = parseInt(this.$route.params.id)
-      if (this.tradeType === 2) {
-        this.isSave = true
-        this.isPrices = false
-        this.isCompile = false
-      } else if (this.tradeType === 3 || this.tradeType === 4) {
-        this.isPrices = false
-      }
+      this.isSave = false
+      this.isPrice = true
+      this.isPrices = true
+      // 修改订单价格，参数： id  amount  express_amount
+      orderPrice({
+        id: this.$route.params.id,
+        amount: this.tradeList.amount
+      }).then(res => {
+        console.log(res)
+      })
     }
   },
   mounted () {
-    console.log(this.$route.params)
-    order({id: this.$route.params}).then(res => {
-      console.log(res)
+    // 请求订单信息
+    orderDetail(this.$route.params.id).then(res => {
+      console.log(this.$route.params.id)
+      console.log(res.data)
+      this.tradeList = res.data
+      // 更新订单完成状态
+      if (res.data.status == 200) { // 待付款
+        this.tradeType = 0
+        // 显示编辑订单按钮
+        this.isPrices = true
+      } else if (res.data.status > 200 && res.data.status < 305) { // 已付款
+        this.tradeType = 1
+        // 显示物流公司选择框，显示订单编号输入框
+        this.isCompile = true
+      } else if (res.data.status > 300 && res.data.status < 405) { // 已发货
+        this.tradeType = 2
+      } else if (res.data.status > 400) { // 已收货
+        this.tradeType = 3
+      }
+      console.log(this.tradeType)
+      // 如果订单状态不为待付款，即tradeType > 0,请求快递公司信息
+      if (this.tradeType > 0) {
+        transComp().then(res => {
+          console.log(res)
+          this.transComp = res.data
+        })
+      }
     })
   },
-  filters: {
-    tofixed: (value) => {
-      value = value.toString()
-      if (value.indexOf('.00')) {
-        return value
-      } else {
-        return value + '.00'
+  computed: {
+    inputPrice: {
+      get () {
+        return this.tradeList.amount / 100
+      },
+      set (value) {
+        this.tradeList.amount = value * 100
       }
     }
   }
@@ -171,6 +180,15 @@ export default {
       white-space: nowrap;
       width: 60%;
       margin-top: 20px;
+    }
+    .el-input{
+      width: 133px;
+      height: 27px;
+      .el-input__inner{
+        width: 133px;
+        height: 27px;
+        border-radius: 0;
+      }
     }
   }
 </style>
@@ -193,7 +211,12 @@ export default {
         border: 1px solid #efefef;
         height: 25px;
         font-size: 12px;
+        padding-left: 5px;
         /*width: 150px;*/
+      }
+      div.el-select{
+        width: 133px;
+        height: 27px;
       }
     }
     >div{
@@ -311,6 +334,7 @@ export default {
           display: flex;
           text-align: center;
           flex-direction: column;
+          align-items: center;
           justify-content: center;
           border-right: 1px solid #efefef;
           border-bottom: 1px solid #efefef;
@@ -319,7 +343,7 @@ export default {
           input{
             border: 1px solid #efefef;
             width: 80px;
-            height:30px;
+            height:20px;
             margin-left: 5px;
             padding-left: 10px;
             box-sizing: border-box;
@@ -347,7 +371,7 @@ export default {
         }
         .orderMon {
           >label:nth-child(2) {
-            margin-top: 10px;
+            margin-top: 5px;
             font-size: 12px;
             color: #DE5B67;
           }
@@ -355,7 +379,6 @@ export default {
             ont-family: MicrosoftYaHei;
             font-size: 12px;
             color: #666666;
-            margin-top: 5px;
           }
           >label:nth-child(3) {
             width: 70px;
@@ -371,15 +394,13 @@ export default {
           }
           .saveCompile{
             width:80px;
-            line-height: 30px;
+            line-height: 25px;
             font-size: 12px;
             color: #FFFFFF;
             text-align: center;
-            height: 30px;
             background: #DE5B67;
             border-radius: 2px;
-            margin-left: 54px;
-            margin-top: 10px;
+            margin-top: 5px;
           }
         }
         .proNum {

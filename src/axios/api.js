@@ -22,6 +22,31 @@ export function order (data) {
   })
 }
 
+// 订单详情
+export function orderDetail (id) {
+  return fetch({
+    url: api.ip + '/management/order/' + id,
+    method: 'GET'
+  })
+}
+
+// 请求快递公司信息
+export function transComp () {
+  return fetch({
+    url: api.ip + '/management/order/express',
+    method: 'GET'
+  })
+}
+
+// 修改未付款订单价格
+export function orderPrice (data) {
+  return fetch({
+    url: api.ip + '/management/order/' + data.id + '/price',
+    method: 'PUT',
+    params: data
+  })
+}
+
 // 获取商品列表
 export const goodsList = function (data) {
   return fetch({

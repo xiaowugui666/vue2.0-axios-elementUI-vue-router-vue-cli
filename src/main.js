@@ -16,6 +16,11 @@ Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.prototype.$http = axios
 
+Vue.filter('money', function (val) {
+  val = Number(val) / 100
+  return val.toFixed(2)
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -23,9 +28,4 @@ new Vue({
   store,
   components: { App },
   template: '<App/>'
-})
-
-Vue.filter('money', function (val) {
-  val = Number(val) / 100
-  return val.toFixed(2)
 })

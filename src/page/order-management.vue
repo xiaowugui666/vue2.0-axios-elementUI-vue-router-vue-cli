@@ -50,10 +50,10 @@
             <div class="title">交易记录</div>
             <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
                 <el-tab-pane label="全部" name="first"></el-tab-pane>
-                <el-tab-pane  label="待付款"  name="second"></el-tab-pane>
-                <el-tab-pane  label="待发货"  name="third"></el-tab-pane>
-                <el-tab-pane  label="已发货"  name="fourth"></el-tab-pane>
-                <el-tab-pane  label="已完成"  name="five"></el-tab-pane>
+                <el-tab-pane  label="待付款" name="second"></el-tab-pane>
+                <el-tab-pane  label="待发货" name="third"></el-tab-pane>
+                <el-tab-pane  label="已发货" name="fourth"></el-tab-pane>
+                <el-tab-pane  label="已完成" name="five"></el-tab-pane>
             </el-tabs>
             <div class="tradeList" v-for="(item,index) in ordersDetail" :key="index">
               <div class="top">
@@ -86,13 +86,13 @@
             </div>
           <el-pagination
             background
-            :page-size="20"
+            :page-size="15"
             :page-count="6"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
             current-change="currentIndex"
-            :total="1000">
+            :total="totalPagina * 15">
           </el-pagination>
         </div>
       </div>
@@ -107,6 +107,8 @@ export default {
       n: '1',
       timeStart: '',
       timeEnd: '',
+      // 分页总页数
+      totalPagina: 0,
       // 订单请求数据
       ordersDetail: [],
       // 时间按钮
@@ -203,13 +205,28 @@ export default {
       this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
       // console.log(this.keyTime)
     },
-    handleClick (tab, event) {
+    // 订单分类状态点击
+    handleClick (tab) {
       console.log(tab.index)
+      let statu = 0
+      if (tab.index == 1) {
+        statu = 200
+      } else if (tab.index == 2) {
+        statu = 300
+      } else if (tab.index == 3) {
+        statu = 305
+      } else if (tab.index == 4) {
+        statu = 505
+      }
+      order({status: statu}).then(res => {
+        console.log(res)
+      })
     }
   },
   created () {
     order().then(res => {
-      console.log(res.data)
+      console.log(res)
+      this.totalPagina = res.headers.page_count
       this.ordersDetail = res.data
       // console.log(this.ordersDetail)
     })
@@ -423,6 +440,7 @@ export default {
               width: 17%;
               display: flex;
               flex-direction: column;
+              align-items: center;
               justify-content: center;
               border-right: 1px solid #efefef;
               border-bottom: 1px solid #efefef;
