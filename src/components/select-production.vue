@@ -289,6 +289,7 @@ export default {
     font-family: MicrosoftYaHei-Bold;
     font-size: 14px;
     color: #333333;
+    font-weight: bold;
   }
   .searchBox{
     margin-top: 39px;
