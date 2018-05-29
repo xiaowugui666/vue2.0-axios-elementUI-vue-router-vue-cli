@@ -1,7 +1,7 @@
 // 有些不能用ip地址直接访问，先修改hosts文件
 export default {
-  // ip: 'http://homestead.yqx.com' // 张思建 http://192.168.20.159:8000
-  ip: 'http://dev.yqx.com' // 吴慧卿 192.168.20.176
+  ip: 'http://sj.yqx.com:8000' // 张思建 http://192.168.20.159:8000
+  // ip: 'http://hq.yqx.com' // 吴慧卿 192.168.20.176
   // ip: 'http://192.168.10.99' // 徐凯
   // 接口代理配置
 }

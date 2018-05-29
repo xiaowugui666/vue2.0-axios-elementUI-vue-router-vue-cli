@@ -67,11 +67,11 @@
               </div>
               <div class="orderMon" :style="{height: tradeList.list.length*80+'px'}">
                 <label>
-                  <label>{{isPrices ? "运费" : "总价"}}：</label>
-                  <label v-if="isPrice">{{tradeList.yfPrice | tofixed }}</label>
-                  <input v-else type="tel" v-model="tradeList.totalPrice">
+                  <label>运费：</label>
+                  <label>{{tradeList.yfPrice | tofixed }}</label>
                 </label>
-                <label>￥{{tradeList.totalPrice | tofixed }}</label>
+                <label v-if="isPrices">￥{{tradeList.totalPrice | tofixed }}</label>
+                <label v-else>￥<input type="tel" v-model="tradeList.totalPrice"></label>
                 <label @click="changeCompile" v-if="isPrices">编辑订单</label>
                 <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
               </div>
@@ -81,9 +81,12 @@
     </div>
 </template>
 <script>
+import {order} from '@/axios/api'
 export default {
   data () {
     return {
+      // 保存订单信息
+      order: [],
       // 是否保存
       isSave: false,
       // 是否更改价格
@@ -133,7 +136,8 @@ export default {
       }
     },
     getParams () {
-      this.tradeType = parseInt(this.$route.params.orderDetail)
+      console.log(this.$route.params.id)
+      this.tradeType = parseInt(this.$route.params.id)
       if (this.tradeType === 2) {
         this.isSave = true
         this.isPrices = false
@@ -144,7 +148,10 @@ export default {
     }
   },
   mounted () {
-    this.getParams()
+    console.log(this.$route.params)
+    order({id: this.$route.params}).then(res => {
+      console.log(res)
+    })
   },
   filters: {
     tofixed: (value) => {
@@ -311,8 +318,10 @@ export default {
         .orderMon,.price{
           input{
             border: 1px solid #efefef;
-            width: 100px;
+            width: 80px;
             height:30px;
+            margin-left: 5px;
+            padding-left: 10px;
             box-sizing: border-box;
           }
         }
@@ -369,7 +378,7 @@ export default {
             height: 30px;
             background: #DE5B67;
             border-radius: 2px;
-            margin-left: 60px;
+            margin-left: 54px;
             margin-top: 10px;
           }
         }
