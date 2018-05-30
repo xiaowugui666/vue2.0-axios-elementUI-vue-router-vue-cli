@@ -70,13 +70,13 @@
                         </div>
                         <div class="proNum">数量 x {{i.count}}</div>
                         <div class="price">
-                          <label>￥{{i.price}}</label>
+                          <label>￥{{i.price | money}}</label>
                         </div>
                       </div>
                   </div>
                 <div class="orderMon" :style="{height:item.items.length*80+'px'}">
-                  <label>￥{{item.amount}}</label>
-                  <label>运费：{{item.express_amount}}</label>
+                  <label>￥{{item.amount | money}}</label>
+                  <label>运费：{{item.express_amount | money}}</label>
                 </div>
                 <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
                     <label>交易完成</label>
@@ -85,6 +85,7 @@
               </div>
             </div>
           <el-pagination
+            v-if="totalPagina"
             background
             :page-size="15"
             :page-count="6"
@@ -194,6 +195,18 @@ export default {
       console.log(111)
     },
     searchOrder () {
+      // 参数
+      let params = {}
+      params.no = this.keyValue
+      params.name = this.keyName
+      order(params).then(res => {
+        console.log(res)
+        this.totalPagina = res.headers.page_count
+        this.ordersDetail = res.data
+        if (!res.data) {
+          this.$message('没有此类订单！')
+        }
+      })
     },
     timeRange (res, event) {
       let flag = event.target.dataset.id
@@ -220,6 +233,11 @@ export default {
       }
       order({status: statu}).then(res => {
         console.log(res)
+        this.totalPagina = res.headers.page_count
+        this.ordersDetail = res.data
+        if (!res.data) {
+          this.$message('没有此类订单！')
+        }
       })
     }
   },

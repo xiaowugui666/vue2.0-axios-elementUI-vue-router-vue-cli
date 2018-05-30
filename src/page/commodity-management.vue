@@ -127,7 +127,6 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
-import {goodsList} from '../axios/api.js'
 export default {
   data () {
     return {

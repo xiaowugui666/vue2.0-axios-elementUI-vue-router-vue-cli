@@ -25,7 +25,7 @@
                         <label><i>收货人手机号：</i>13566774466</label>
                       </div>
                       <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
-                      <div v-if="tradeType == 1">
+                      <div v-if="tradeType == 1 || tradeType > 1">
                         <label>
                           <i>快递公司：</i>
                           <el-select
@@ -37,14 +37,14 @@
                               :key="item"
                               :value="item"></el-option>
                           </el-select>
-                          <label v-else>顺丰</label>
+                          <label v-else>{{expressCompany}}</label>
                         </label>
                         <label>
                             <i>快递单号：</i>
                               <input v-if="isCompile" type="text"  v-model.trim="expressNo">
-                              <label v-else>1323454657567575</label>
+                              <label v-else>{{tradeList.express_no}}</label>
                         </label>
-                        <el-button v-if="isCompile" size="small" type="success">提交</el-button>
+                        <el-button v-if="isCompile" @click="commitTrade" size="small" type="success">提交</el-button>
                       </div>
                   </div>
                   <div class="right">
@@ -89,7 +89,7 @@
     </div>
 </template>
 <script>
-import {orderDetail, transComp, orderPrice} from '@/axios/api'
+import {orderDetail, transComp, orderPrice, orderExpress} from '@/axios/api'
 export default {
   data () {
     return {
@@ -104,10 +104,8 @@ export default {
       isCompile: false,
       // 订单状态
       tradeType: 2,
-      expressNo: '',
-      expressCompany: '',
       // 快递公司
-      transComp: [],
+      transComp: {},
       transCompValue: '',
       // 订单详情
       tradeList: {}
@@ -119,6 +117,7 @@ export default {
       this.isPrices = false
       this.isSave = true
     },
+    // 点击保存
     changeSave () {
       this.isSave = false
       this.isPrice = true
@@ -130,6 +129,35 @@ export default {
       }).then(res => {
         console.log(res)
       })
+    },
+    // 提交快递信息
+    commitTrade () {
+      let params = {}
+      params.id = this.tradeList.id
+      // 拿到快递公司对应的键值
+      let expressCode = ''
+      for (let i in this.transComp) {
+        if (this.transComp[i] == this.transCompValue) {
+          expressCode = i
+        }
+      }
+      params.express_code = expressCode
+      params.express_no = this.expressNo
+      if (params.express_no && params.express_code) {
+        orderExpress(params).then(res => {
+          console.log(res)
+          if (res.status == 200) {
+            // 提交快递信息成功，请求订单信息，改变可视状态
+            orderDetail(this.$route.params.id).then(res => {
+              this.tradeType = 2
+              this.isCompile = false
+              this.tradeList = res.data
+            })
+          }
+        })
+      } else {
+        this.$message('请选择快递公司并输入订单号')
+      }
     }
   },
   mounted () {
@@ -170,6 +198,10 @@ export default {
       set (value) {
         this.tradeList.amount = value * 100
       }
+    },
+    // 快递公司
+    expressCompany () {
+      return this.transComp[this.tradeList.express_code]
     }
   }
 }

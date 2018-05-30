@@ -43,7 +43,16 @@ export function orderPrice (data) {
   return fetch({
     url: api.ip + '/management/order/' + data.id + '/price',
     method: 'PUT',
-    params: data
+    data: data
+  })
+}
+
+// 订单发货
+export function orderExpress (data) {
+  return fetch({
+    url: api.ip + '/management/order/' + data.id + '/express',
+    method: 'PUT',
+    data: data
   })
 }
 
