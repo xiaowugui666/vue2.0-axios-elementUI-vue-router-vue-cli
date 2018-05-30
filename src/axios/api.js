@@ -13,11 +13,63 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
   })
 }
 
+// 获取订单列表
+export function order (data) {
+  return fetch({
+    url: api.ip + '/management/order',
+    method: 'GET',
+    params: data
+  })
+}
+
+// 订单详情
+export function orderDetail (id) {
+  return fetch({
+    url: api.ip + '/management/order/' + id,
+    method: 'GET'
+  })
+}
+
+// 请求快递公司信息
+export function transComp () {
+  return fetch({
+    url: api.ip + '/management/order/express',
+    method: 'GET'
+  })
+}
+
+// 修改未付款订单价格
+export function orderPrice (data) {
+  return fetch({
+    url: api.ip + '/management/order/' + data.id + '/price',
+    method: 'PUT',
+    data: data
+  })
+}
+
+// 订单发货
+export function orderExpress (data) {
+  return fetch({
+    url: api.ip + '/management/order/' + data.id + '/express',
+    method: 'PUT',
+    data: data
+  })
+}
+
 // 获取商品列表
 export const goodsList = function (data) {
   return fetch({
     url: api.ip + '/management/goods',
     method: 'get', // 请求方法
+    params: data
+  })
+}
+
+// 营销模块：获取商品列表
+export function marketingGoods (router, data) {
+  return fetch({
+    url: api.xkip + '/management/' + router,
+    method: 'GET',
     params: data
   })
 }

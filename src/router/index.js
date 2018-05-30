@@ -35,7 +35,7 @@ export default new Router({
       component: home
     },
     {
-      path: '/initialSetting',
+      path: '/initial-setting',
       name: 'initialSetting',
       component: initialSetting
     },
@@ -95,7 +95,7 @@ export default new Router({
       component: orderSetting
     },
     {
-      path: '/orderDetail/:orderDetail',
+      path: '/orderDetail/:id',
       name: 'orderDetail',
       component: orderDetail
     },
