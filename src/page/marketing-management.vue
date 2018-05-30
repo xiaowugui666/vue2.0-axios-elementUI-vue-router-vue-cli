@@ -13,7 +13,7 @@
         <div class="active-goods-table">
           <el-table
             ref="multipleTable"
-            :data="activeGoodsTableData"
+            :data="goodsList"
             tooltip-effect="dark"
             style="width: 100%"
             border
@@ -23,7 +23,7 @@
               width="75">
               <template slot-scope="scope">
                 <div>
-                  <input class="sort-input" type="text" :value="scope.row.id" @input="sorting($event)">
+                  <input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">
                 </div>
               </template>
             </el-table-column>
@@ -32,14 +32,14 @@
               width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">input
-                  <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
+                  <span class="goods-img"><img :src="scope.row.goods_sku.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
                     <div class="goods-info-price-category">
-                      <span v-if="scope.row.goods.firstSpecific" class="goods-info-category">
+                      <span v-if="linkClass == 'special-offer'" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                      <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
+                      <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                     </div>
                   </div>
                 </div>
@@ -49,39 +49,39 @@
               label="访问量"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div>访问量：{{scope.row.amountAccess}}</div>
-                <div>浏览量：{{scope.row.browsingVolume}}</div>
+                <div>访问量：11111</div>
+                <div>浏览量：11111</div>
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock"
+              prop="goods_sku.stock_count"
               label="库存"
               width="80"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="totalSales"
+              prop="goods_sku.sales_count"
               label="特价售出"
               width="80"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="startTime"
+              prop="begin_at"
               label="开始时间"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="endTime"
+              prop="end_at"
               label="结束时间"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="state"
+              prop="status"
               label="状态"
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div :style="[{'color':scope.row.state==0?'#DE5B67':(scope.row.state==1?'#6BA725':'#676767')}]">
+                <div :style="[{'color':scope.row.state==1?'#DE5B67':(scope.row.state==2?'#6BA725':'#676767')}]">
                   {{getActivityState(scope.$index)}}
                 </div>
               </template>
@@ -90,7 +90,7 @@
               label="操作"
               width="180">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.state!==2" type="text" class="edit-btn">编辑</el-button>
+                <el-button v-if="scope.row.state!==2" type="text" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
                 <el-button v-if="scope.row.state!==2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
                 <el-button v-if="scope.row.state!==1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
@@ -112,10 +112,12 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {marketingGoods} from '../axios/api'
 export default {
   data () {
     return {
       managementState: 0,
+      goodsList: [],
       activeGoodsTableData: [
         {
           id: 1,
@@ -189,8 +191,22 @@ export default {
     }
   },
   mounted () {
-    // 推荐商品列表
-
+    // 路由判定
+    let router = 'special-offer'
+    if (this.$route.params.class == 'special-offer') {
+      router = 'special_goods'
+    } else if (this.$route.params.class == 'recommend') {
+      router = 'recommend_goods'
+    }
+    console.log(router)
+    // 获取商品列表
+    marketingGoods(router, {
+      type: 1,
+      order_by: 1
+    }).then(res => {
+      console.log(res)
+      this.goodsList = res.data
+    })
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
@@ -242,9 +258,9 @@ export default {
     },
     getActivityState (index) {
       let s = ''
-      if (this.activeGoodsTableData[index].state === 0) {
+      if (this.goodsList[index].status === 1) {
         s = '未开始'
-      } else if (this.activeGoodsTableData[index].state === 1) {
+      } else if (this.goodsList[index].status === 2) {
         s = '进行中'
       } else {
         s = '已结束'
@@ -253,19 +269,23 @@ export default {
     },
     showSpecific (index) {
       let specificList = ''
-      if (this.activeGoodsTableData[index].goods.firstSpecific) {
-        specificList += this.activeGoodsTableData[index].goods.firstSpecific
-        if (this.activeGoodsTableData[index].goods.secondSpecific) {
-          specificList += '；' + this.activeGoodsTableData[index].goods.secondSpecific
-          if (this.activeGoodsTableData[index].goods.thirdSpecific) {
-            specificList += '；' + this.activeGoodsTableData[index].goods.thirdSpecific
+      if (this.goodsList[index].goods_sku.spec_a) {
+        specificList += this.goodsList[index].goods_sku.spec_a
+        if (this.goodsList[index].goods_sku.spec_b) {
+          specificList += '；' + this.goodsList[index].goods_sku.spec_b
+          if (this.goodsList[index].goods_sku.spec_c) {
+            specificList += '；' + this.goodsList[index].goods_sku.spec_c
           }
         }
       }
       return specificList
     },
     setRouter (link) {
+      console.log(link)
       this.$router.push(link)
+    },
+    editor (value) {
+      console.log(value)
     }
   },
   computed: {

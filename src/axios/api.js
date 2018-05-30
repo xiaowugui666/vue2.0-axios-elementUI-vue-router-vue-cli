@@ -66,6 +66,15 @@ export const goodsList = function (data) {
   })
 }
 
+// 营销模块：获取商品列表
+export function marketingGoods (router, data) {
+  return fetch({
+    url: api.xkip + '/management/' + router,
+    method: 'GET',
+    params: data
+  })
+}
+
 // 有新接口的时候像上面那样再来一次
 // //修改昵称接口
 // export function userID(name){
