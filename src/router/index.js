@@ -130,7 +130,7 @@ export default new Router({
       component: oneKeyIntroduction
     },
     {
-      path: '/categoryManagement',
+      path: '/category-management',
       name: 'categoryManagement',
       component: categoryManagement
     },

@@ -59,7 +59,6 @@ export function orderExpress (data) {
 // 获取商品列表
 export const goodsList = function (data) {
   return fetch({
-    // api.Hallowmas 引用url.js里面的数据
     url: api.ip + '/management/goods',
     method: 'get', // 请求方法
     params: data
@@ -72,6 +71,40 @@ export function marketingGoods (router, data) {
     url: api.xkip + '/management/' + router,
     method: 'GET',
     params: data
+  })
+}
+
+// 批量商品上下架
+export const goodsStatus = function (data) {
+  return fetch({
+    url: api.ip + '/management/goods/batch',
+    method: 'put', // 请求方法
+    data: data
+  })
+}
+
+// 批量删除商品
+export const goodsDelete = function (data) {
+  return fetch({
+    url: api.ip + '/management/goods/batch',
+    method: 'delete', // 请求方法
+    data: data
+  })
+}
+
+// 获取商品分类
+export const goodsCategory = function (data) {
+  return fetch({
+    url: api.ip + '/management/category',
+    method: 'get' // 请求方法
+  })
+}
+
+// 修改商品页，获取商品详情
+export const goodsEditDetails = function (id) {
+  return fetch({
+    url: api.ip + '/management/goods/' + id,
+    method: 'get' // 请求方法
   })
 }
 

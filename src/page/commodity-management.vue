@@ -3,33 +3,34 @@
     <div class="commodity-management-subject">
       <div class="commodity-management-state-search">
         <ul class="commodity-management-state clear">
-          <li :class="{'active':managementState==0}" @click="managementState=0">全部</li>
-          <li :class="{'active':managementState==1}" @click="managementState=1">出售中</li>
-          <li :class="{'active':managementState==2}" @click="managementState=2">已售罄</li>
-          <li :class="{'active':managementState==3}" @click="managementState=3">已下架</li>
+          <li :class="{'active':managementState==0}" @click="changeManagementState(0)">全部</li>
+          <li :class="{'active':managementState==1}" @click="changeManagementState(1)">出售中</li>
+          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已售罄</li>
+          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已下架</li>
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>
-          <el-select v-model="value" size="small" clearable class="select-state">
-            <el-option
-              v-for="item in selectStateOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
+          <el-cascader
+            expand-trigger="hover"
+            size="small"
+            clearable
+            class="select-state"
+            :options="selectStateOptions"
+            v-model="selectedOptions"
+            @change="categoryChange">
+          </el-cascader>
           <span>商品名称：</span>
-          <input type="text" placeholder="请输入商品名称" v-model="searchComName">
-          <el-button type="success" size="small" class="search-commodity">搜索</el-button>
+          <input type="text" @keyup.enter="changeManagementState(undefined)" v-model.trim="searchComName" maxlength="20" placeholder="请输入商品名称">
+          <el-button type="success" size="small" class="search-commodity" @click="changeManagementState(undefined)">搜索</el-button>
         </div>
       </div>
       <div class="commodity-list">
         <div class="add-commodity-box clear">
           <div class="opera-btn-row">
             <el-row>
-              <el-button :disabled="disabled" size="small">批量上架</el-button>
-              <el-button disabled size="small">批量下架</el-button>
-              <el-button disabled size="small">批量删除</el-button>
+              <el-button @click="batchOperation(1)" :disabled="disabled[0] || disabledUpper" size="small">批量上架</el-button>
+              <el-button @click="batchOperation(2)" :disabled="disabled[1] || disabledLower" size="small">批量下架</el-button>
+              <el-button @click="batchOperation(3)" :disabled="disabled[2] || disabledDelete" size="small">批量删除</el-button>
             </el-row>
           </div>
           <el-button class="add-edit-goods" type="primary" size="small" @click="setRouter('/add-edit-goods')">添加商品</el-button>
@@ -50,16 +51,16 @@
             </el-table-column>
             <el-table-column
               label="商品"
-              width="300">
+              min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="'http://image.c.51zan.cn/'+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
                       <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                       <span class="goods-info-category">
-                        类目：{{scope.row.spec_a}}-{{scope.row.spec_b}}
+                        类目：{{scope.row.category_name}}
                       </span>
                     </div>
                   </div>
@@ -75,20 +76,21 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock"
+              prop="stock_total"
               label="库存"
               width="80"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="totalSales"
+              prop="sales_count"
               label="总销量"
               width="80"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="creationTime"
+              prop="created_at"
               label="创建时间"
+              min-width="160"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
@@ -97,26 +99,29 @@
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div :style="{'color':scope.row.state==1?'#6BA725':(scope.row.state==2?'#676767':'#DE5B67')}">{{getGoodsState(scope.$index)}}</div>
+                <div :style="{'color':scope.row.status==1?'#6BA725':(scope.row.status==2?'#676767':'#DE5B67')}">{{getGoodsState(scope.$index)}}</div>
               </template>
             </el-table-column>
             <el-table-column
               label="操作"
               width="180">
               <template slot-scope="scope">
-                <el-button type="text" size="small">编辑</el-button>
-                <el-button  v-if="scope.row.state!==3" @click="handleClick(scope.row)" type="text" size="small" class="black-btn">{{scope.row.state===1?'下架':'上架'}}</el-button>
+                <el-button type="text" size="small" @click="setRouter('/add-edit-goods?gid='+scope.row.id)">编辑</el-button>
+                <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
                 <el-button type="text" size="small" class="black-btn">浏览</el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="operation-paging clear">
             <el-pagination
+              v-if="page_count"
               background
               prev-text="< 上一页"
               next-text="下一页 >"
               layout="prev, pager, next"
-              :total="300">
+              :current-page="page"
+              @current-change="currentChange"
+              :total="page_count*10">
             </el-pagination>
           </div>
         </div>
@@ -127,11 +132,16 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
   data () {
     return {
-      managementState: 0,
+      managementState: 0, // 商品状态tab
+      page: 1,
+      cat_id: '',
+      goods_name: '',
       searchComName: '',
+      page_count: 0, // 总页数
       selectStateOptions: [
         {
           value: '1',
@@ -150,88 +160,209 @@ export default {
           label: '日用百货'
         }
       ],
-      value: '',
-      tableData: [],
+      selectedOptions: [],
+      tableData: [], // 商品列表数组
       multipleSelection: [],
-      disabled: this.disabledGrounding()
+
+      // 是否可用批量操作
+      disabled: [false, false, false],
+      disabledUpper: true,
+      disabledLower: true,
+      disabledDelete: true
     }
   },
   created () {
-    let data = {
-      cat_id: '',
-      goods_name: '',
-      page: 1
-    }
-    this.getGoodsList(data)
+    this.getGoodsList()
+    this.getGoodsCategory()
+  },
+  mounted () {
+    // console.log(this.selectStateOptions)
   },
   components: {
     menuLeft
   },
   methods: {
     // 获取商品列表
-    getGoodsList (data) {
-      // goodsList(data).then(res => {
-      //   console.log(res.data)
-      //   this.tableData = res.data
-      // }).catch(err => {
-      //   console.log(err)
-      // })
-      this.$http({
-        url: 'http://dev.yqx.com/management/goods',
-        method: 'get',
-        params: data
-      }).then(
-        res => {
-          console.log(res.data)
+    getGoodsList (data = {
+      cat_id: this.cat_id,
+      // goods_name: this.goods_name,
+      goods_name: encodeURIComponent(this.goods_name),
+      page: this.page,
+      status: this.managementState
+    }) {
+      goodsList(data).then(res => {
+        this.tableData = []
+        this.page_count = 0
+        if (res.data.length > 0) {
           this.tableData = res.data
+          this.page_count = res.headers.page_count
         }
-      )
+      }).catch(err => {
+        console.log(err)
+      })
     },
+    // 请求商品分类
+    getGoodsCategory () {
+      goodsCategory().then(res => {
+        this.selectStateOptions = []
+        for (let v of res.data) {
+          let option = {
+            label: v.name,
+            value: v.id
+          }
+          if (v.children.length > 0) {
+            option.children = []
+            for (let w of v.children) {
+              option.children.push({
+                label: w.name,
+                value: w.id
+              })
+            }
+          }
+          this.selectStateOptions.push(option)
+        }
+        // console.log(this.selectStateOptions)
+      })
+    },
+    // tab-bar选择商品状态，请求商品列表
+    changeManagementState (status) {
+      if (typeof status !== 'undefined') {
+        this.managementState = status
+      }
+      this.page = 1
+      if (this.selectedOptions) {
+        this.cat_id = this.selectedOptions[this.selectedOptions.length - 1]
+      }
+      this.goods_name = this.searchComName
+      this.getGoodsList()
+    },
+    // 是否可以批量操作
     disabledGrounding () {
-      return false
+      // 初始化批量操作
+      this.disabled = [false, false, false]
+      this.disabledUpper = true
+      this.disabledLower = true
+      this.disabledDelete = true
+
+      for (let v of this.multipleSelection) {
+        if (v.status === 3) {
+          this.$set(this.disabled, 0, true)
+          this.$set(this.disabled, 1, true)
+          this.disabledDelete = false
+        } else if (v.status === 1) {
+          this.$set(this.disabled, 2, true)
+          this.disabledLower = false
+        } else if (v.status === 2) {
+          this.disabledUpper = false
+          this.disabledDelete = false
+        }
+      }
+    },
+    // 执行批量操作
+    batchOperation (status) {
+      let _this = this
+      this.$confirm(`是否批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}所选中的商品`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let statusArr = []
+        if (status !== 3) {
+          for (let v of this.multipleSelection) {
+            statusArr.push(v.id)
+          }
+          goodsStatus({'ids': statusArr, 'status': status}).then(res => {
+            // console.log(res)
+            if (res.status === 204) {
+              for (let w of _this.tableData) {
+                if (statusArr.indexOf(w.id) > -1) {
+                  w.status = status
+                }
+              }
+              this.toggleSelection()
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: `${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
+              })
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          for (let v of this.multipleSelection) {
+            statusArr.push(v.id)
+          }
+          goodsDelete({'ids': statusArr}).then(res => {
+            console.log(res)
+            if (res.status === 204) {
+              this.getGoodsList()
+              // this.toggleSelection()
+              this.$message({
+                showClose: true,
+                type: 'success',
+                message: `${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
+              })
+            }
+          }).catch(err => {
+            console.log(err)
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          showClose: true,
+          type: 'info',
+          message: `已取消批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}`
+        })
+      })
     },
     // 渲染商品状态
     getGoodsState (index) {
       let s = ''
-      if (this.tableData[index].state === 1) {
+      if (this.tableData[index].status === 1) {
         s = '上架中'
-      } else if (this.tableData[index].state === 2) {
+      } else if (this.tableData[index].status === 2) {
         s = '已下架'
       } else {
         s = '已售罄'
       }
       return s
     },
-    handleClick (row) {
-      // console.log(row)
-      this.upperLowerFrame(row)
-    },
-    // 商品上下架
+    // 单个商品上下架
     upperLowerFrame (data) {
       let _this = this
-      this.$confirm(`是否${data.state ? '下架' : '上架'}该商品`, '提示', {
+      this.$confirm(`是否${data.status === 1 ? '下架' : '上架'}该商品`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        for (let k of _this.tableData) {
-          // console.log(k['id'])
-          if (k['id'] === data['id']) {
-            if (k['state'] === 1) {
-              k['state'] = 2
-            } else {
-              k['state'] = 1
+        let s = data.status === 1 ? 2 : 1
+        goodsStatus({'ids': [data.id],
+          'status': s}).then(res => {
+          console.log(res)
+          for (let k of _this.tableData) {
+            // console.log(k['id'])
+            if (k['id'] === data['id']) {
+              if (k['status'] === 1) {
+                k['status'] = 2
+              } else {
+                k['status'] = 1
+              }
             }
           }
-        }
-        this.$message({
-          type: 'success',
-          message: `${data.state ? '上架' : '下架'}成功!`
+          this.$message({
+            showClose: true,
+            type: 'success',
+            message: `${data.status === 1 ? '上架' : '下架'}成功!`
+          })
+        }).catch(err => {
+          console.log(err)
         })
       }).catch(() => {
         this.$message({
+          showClose: true,
           type: 'info',
-          message: `已取消${data.state ? '上架' : '下架'}`
+          message: `已取消${data.status === 1 ? '上架' : '下架'}`
         })
       })
     },
@@ -244,8 +375,19 @@ export default {
         this.$refs.multipleTable.clearSelection()
       }
     },
+    // 选择商品触发
     handleSelectionChange (val) {
       this.multipleSelection = val
+      this.disabledGrounding()
+    },
+    // 点击分页数
+    currentChange (page) {
+      // console.log(page)
+      this.page = page
+      this.getGoodsList()
+    },
+    categoryChange (val) {
+      console.log(val)
     },
     setRouter (link) {
       this.$router.push({
@@ -390,6 +532,9 @@ export default {
         .black-btn {
           color: #333;
           border-color: #333;
+          &:disabled {
+            .disabled()
+          }
         }
       }
     }

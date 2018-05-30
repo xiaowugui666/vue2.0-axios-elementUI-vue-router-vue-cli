@@ -1,239 +1,238 @@
 <template>
     <div class="add-goods-object">
-      <div class="add-goods-type plate">
-        <div class="plate-top clear">
-          <span class="plate-name">商品类型</span>
-          <span class="add-goods-btn">
-            <el-button type="success" size="small">保存</el-button>
-            <el-button size="small">返回</el-button>
-          </span>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <div class="add-goods-type plate">
+          <div class="plate-top clear">
+            <span class="plate-name">商品类型</span>
+          </div>
+          <ul class="select-goods-type">
+            <li :class="{'active':goodsType==0}" @click="goodsType=0">实物（物流发货）</li>
+            <!--<li :class="{'active':goodsType==1}" @click="goodsType=1">虚拟商品</li>-->
+          </ul>
         </div>
-        <ul class="select-goods-type">
-          <li :class="{'active':goodsType==0}" @click="goodsType=0">实物（物流发货）</li>
-          <li :class="{'active':goodsType==1}" @click="goodsType=1">虚拟商品</li>
-        </ul>
-      </div>
-      <div class="plate essential-info">
-        <div class="plate-top">基本信息</div>
-        <div class="essential-info-edit">
-          <ul>
-            <li>
-              <span class="required name">商品名称：</span>
-              <input type="text" placeholder="请输入商品名称" v-model.trim="goodsName">
-            </li>
-            <li>
-              <span class="name">分享描述：</span>
-              <input type="text" placeholder="请输入分享描述" v-model.trim="goodsName">
-            </li>
-            <li>
-              <span class="required name alignment-top">商品图片：</span>
-              <div class="goods-pic-box">
-                <el-upload
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  list-type="picture-card"
-                  :on-preview="handlePictureCardPreview"
-                  :on-remove="handleRemove">
-                  <i class="el-icon-plus"></i>
-                </el-upload>
-                <el-dialog :visible.sync="goodsPicVisible">
-                  <img width="100%" :src="goodsPicUrl" alt="">
-                </el-dialog>
-              </div>
-              <p class="upload-img-explain">建议尺寸：800*800像素，最多上传15张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
-            </li>
-            <li>
-              <span class="name">商品类目：</span>
-              <el-select v-model.trim="value" size="small" class="select-state">
-                <el-option
-                  v-for="item in selectStateOptions"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-              <input type="text" placeholder="自定义二级类目" v-model.trim="secondClass">
-            </li>
-            <li>
-              <span class="name alignment-top">商品卖点：</span>
-              <div class="rich-text-editor clear">
-                <quill-editor v-model.trim="quillContent"
-                  ref="myQuillEditor"
-                  :options="editorOption"
-                  @blur="onEditorBlur($event)"
-                  @focus="onEditorFocus($event)"
-                  @ready="onEditorReady($event)">
-                </quill-editor>
-              </div>
-            </li>
-            <li>
-              <span class="name">商品重量：</span>
-              <div class="weight-unit">
-                <input type="tel" placeholder="请输入商品重量(纯数字)" v-model.trim="secondClass" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="30">
-                <el-select v-model.trim="weightUnitValue" size="small" class="select-state">
+        <div class="plate essential-info">
+          <div class="plate-top">基本信息</div>
+          <div class="essential-info-edit">
+            <ul>
+              <li>
+                <span class="required name">商品名称：</span>
+                <input v-validate="'required'" name="商品名称" v-model.trim="goodsName" maxlength="30" type="text" placeholder="请输入商品名称">
+                <div class="err-tips">{{ errors.first('商品名称') }}</div>
+              </li>
+              <li>
+                <span class="name">分享描述：</span>
+                <input type="text" placeholder="请输入分享描述" v-model.trim="sharingDescription" maxlength="30">
+              </li>
+              <li>
+                <span class="required name alignment-top">商品图片：</span>
+                <div class="goods-pic-box">
+                  <el-upload
+                    action="https://jsonplaceholder.typicode.com/posts/"
+                    list-type="picture-card"
+                    :on-preview="handlePictureCardPreview"
+                    :on-remove="handleRemove">
+                    <i class="el-icon-plus"></i>
+                  </el-upload>
+                  <el-dialog :visible.sync="goodsPicVisible">
+                    <img width="100%" :src="goodsPicUrl" alt="">
+                  </el-dialog>
+                </div>
+                <p class="upload-img-explain">建议尺寸：800*800像素，最多上传15张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
+              </li>
+              <li>
+                <span class="name">商品类目：</span>
+                <el-cascader
+                  expand-trigger="hover"
+                  size="small"
+                  clearable
+                  class="select-state"
+                  :options="selectStateOptions"
+                  v-model="selectedOptions"
+                  @change="categoryChange">
+                </el-cascader>
+              </li>
+              <li>
+                <span class="name alignment-top">商品卖点：</span>
+                <div class="rich-text-editor clear">
+                  <quill-editor v-model.trim="quillContent"
+                    ref="myQuillEditor"
+                    :options="editorOption"
+                    @blur="onEditorBlur($event)"
+                    @focus="onEditorFocus($event)"
+                    @ready="onEditorReady($event)">
+                  </quill-editor>
+                </div>
+              </li>
+              <li>
+                <span class="name">商品重量：</span>
+                <div class="weight-unit">
+                  <input type="tel" placeholder="请输入商品重量(纯数字)" v-model.trim="secondClass" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="30">
+                  <el-select v-model.trim="weightUnitValue" size="small" class="select-state">
+                    <el-option
+                      v-for="item in weightUnit"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </div>
+              </li>
+              <li>
+                <span class="name">唯一编码：</span>
+                <input type="text" placeholder="商品的唯一编码" v-model.trim="secondClass" maxlength="30">
+              </li>
+              <li>
+                <span class="name">商品量词：</span>
+                <el-select v-model.trim="quantifier" size="small" class="select-state">
                   <el-option
-                    v-for="item in weightUnit"
+                    v-for="item in goodsQuantifier"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
                   </el-option>
                 </el-select>
-              </div>
-            </li>
-            <li>
-              <span class="name">唯一编码：</span>
-              <input type="text" placeholder="商品的唯一编码" v-model.trim="secondClass" maxlength="30">
-            </li>
-            <li>
-              <span class="name">商品量词：</span>
-              <el-select v-model.trim="quantifier" size="small" class="select-state">
-                <el-option
-                  v-for="item in goodsQuantifier"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
-              </el-select>
-            </li>
-            <li class="keyword-box">
-              <span class="name">关键字：</span>
-              <div class="keyword-list">
-                <el-tag
-                  :key="tag"
-                  v-for="tag in dynamicTags"
-                  closable
-                  :disable-transitions="false"
-                  @close="handleClose(tag)">
-                  {{tag}}
-                </el-tag>
-                <el-input
-                  class="input-new-tag"
-                  v-if="inputVisible"
-                  v-model.trim="inputValue"
-                  ref="saveTagInput"
-                  size="small"
-                  @keyup.enter.native="handleInputConfirm"
-                  @blur="handleInputConfirm"
-                >
-                </el-input>
-                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 关键字</el-button>
-                <span class="keyword-tips">输入完成后，按“回车键”确认</span>
-              </div>
-            </li>
-          </ul>
+              </li>
+              <li class="keyword-box">
+                <span class="name">关键字：</span>
+                <div class="keyword-list">
+                  <el-tag
+                    :key="tag"
+                    v-for="tag in dynamicTags"
+                    closable
+                    :disable-transitions="false"
+                    @close="handleClose(tag)">
+                    {{tag}}
+                  </el-tag>
+                  <el-input
+                    class="input-new-tag"
+                    v-if="inputVisible"
+                    v-model.trim="inputValue"
+                    ref="saveTagInput"
+                    size="small"
+                    @keyup.enter.native="handleInputConfirm"
+                    @blur="handleInputConfirm"
+                  >
+                  </el-input>
+                  <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 关键字</el-button>
+                  <span class="keyword-tips">输入完成后，按“回车键”确认</span>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="plate price-inventory">
-        <div class="plate-top">价格库存</div>
-        <div class="price-inventory-edit">
-          <ul>
-            <li>
-              <span class="name alignment-top">商品规格：</span>
-              <div class="goods-specification-box">
-                <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
-                  <div class="specification-name-box">
-                    <span class="name">规格名：</span>
-                    <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名"/>
-                    <!--v-model.trim="item.name"-->
-                    <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
-                  </div>
-                  <div class="specification-value-box">
-                    <span class="name alignment-top">规格值：</span>
-                    <div class="specification-value-list">
-                      <el-tag
-                        :key="index2"
-                        v-for="(tag, index2) in item.values"
-                        closable
-                        :disable-transitions="false"
-                        @close="alignmentHandleClose(tag,index)">
-                        {{tag.name}}
-                      </el-tag>
-                      <el-input
-                        class="input-new-tag"
-                        v-if="showSpecInputIf(index)"
-                        v-model.trim="inputSpacValue"
-                        ref="saveSpecTagInput"
-                        size="small"
-                        @keyup.enter.native="handleInputSpec(index)"
-                        @blur="handleInputSpec(index)"
-                      >
-                      </el-input>
-                      <el-button v-else @click="showSpecInput(index)" type="primary" size="small">添加规格值</el-button>
+        <div class="plate price-inventory">
+          <div class="plate-top">价格库存</div>
+          <div class="price-inventory-edit">
+            <ul>
+              <li>
+                <span class="name alignment-top">商品规格：</span>
+                <div class="goods-specification-box">
+                  <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
+                    <div class="specification-name-box">
+                      <span class="name">规格名：</span>
+                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名"/>
+                      <!--v-model.trim="item.name"-->
+                      <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
+                    </div>
+                    <div class="specification-value-box">
+                      <span class="name alignment-top">规格值：</span>
+                      <div class="specification-value-list">
+                        <el-tag
+                          :key="index2"
+                          v-for="(tag, index2) in item.values"
+                          closable
+                          :disable-transitions="false"
+                          @close="alignmentHandleClose(tag,index)">
+                          {{tag.name}}
+                        </el-tag>
+                        <el-input
+                          class="input-new-tag"
+                          v-if="showSpecInputIf(index)"
+                          v-model.trim="inputSpacValue"
+                          ref="saveSpecTagInput"
+                          size="small"
+                          @keyup.enter.native="handleInputSpec(index)"
+                          @blur="handleInputSpec(index)"
+                        >
+                        </el-input>
+                        <el-button v-else @click="showSpecInput(index)" type="primary" size="small">添加规格值</el-button>
+                      </div>
                     </div>
                   </div>
+                  <div class="add-specification-name specification-block">
+                    <el-button :disabled="specificationList.length === 3" @click="addSpecific" class="add-specific-btn" type="primary" size="small">添加规格名</el-button>
+                  </div>
                 </div>
-                <div class="add-specification-name specification-block">
-                  <el-button :disabled="specificationList.length === 3" @click="addSpecific" class="add-specific-btn" type="primary" size="small">添加规格名</el-button>
+              </li>
+              <li v-if="skus[0].values.length>0">
+                <span class="name alignment-top">规格明细：</span>
+                <div class="goods-specific-table">
+                  <!--商品表格-->
+                  <table >
+                    <tr>
+                      <th v-for="(item, index) in specificationList" v-if="item.values.length>0 && item.name" :key="index">{{item.name}}</th>
+                      <th><span class="c_red">*</span>价格</th>
+                      <th><span class="c_red">*</span>库存</th>
+                      <th>规格编码</th>
+                      <th>划线价格</th>
+                      <th>图片</th>
+                    </tr>
+                    <tr v-for="(sku, index) in skus" :key="index">
+                      <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
+                      <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.SkuPrice" maxlength="10"/></td>
+                      <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
+                      <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
+                      <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.linePrice" maxlength="20"/></td>
+                      <td width="50">
+                        <el-upload
+                          class="avatar-uploader"
+                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :show-file-list="false"
+                          :on-change='(value)=>changeUpload(value, index)'
+                          :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
+                          :before-upload="(value)=>beforeAvatarUpload(value, index)">
+                          <img v-if="sku.imgSrc" :src="sku.imgSrc" class="avatar">
+                          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                      </td>
+                    </tr>
+                  </table>
                 </div>
-              </div>
-            </li>
-            <li v-if="skus[0].values.length>0">
-              <span class="name alignment-top">规格明细：</span>
-              <div class="goods-specific-table">
-                <!--商品表格-->
-                <table >
-                  <tr>
-                    <th v-for="(item, index) in specificationList" v-if="item.values.length>0 && item.name" :key="index">{{item.name}}</th>
-                    <th><span class="c_red">*</span>价格</th>
-                    <th><span class="c_red">*</span>库存</th>
-                    <th>规格编码</th>
-                    <th>划线价格</th>
-                    <th>图片</th>
-                  </tr>
-                  <tr v-for="(sku, index) in skus" :key="index">
-                    <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
-                    <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.SkuPrice" maxlength="10"/></td>
-                    <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
-                    <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
-                    <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.linePrice" maxlength="20"/></td>
-                    <td width="50">
-                      <el-upload
-                        class="avatar-uploader"
-                        action="https://jsonplaceholder.typicode.com/posts/"
-                        :show-file-list="false"
-                        :on-change='(value)=>changeUpload(value, index)'
-                        :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
-                        :before-upload="(value)=>beforeAvatarUpload(value, index)">
-                        <img v-if="sku.imgSrc" :src="sku.imgSrc" class="avatar">
-                        <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                      </el-upload>
-                    </td>
-                  </tr>
-                </table>
-              </div>
-            </li>
-            <li>
-              <span class="name required">商品价格：</span>
-              <span class="goods-price">
-                <input type="text" v-model.trim="goodsPrice" placeholder="" :disabled="specificationList.length>0">
-              </span>
-            </li>
-            <li>
-              <span class="name">划线价格：</span>
-              <span class="goods-price">
-                <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
-              </span>
-            </li>
-            <li>
-              <span class="name required">库存：</span>
-              <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
-            </li>
-            <li class="show-stock-btn">
-              <span class="name">库存显示：</span>
-              <el-button type="success" size="small" :class="['show-stock', {'active':showStock}]" @click="showStock=true">显示库存</el-button>
-              <el-button type="success" size="small" :class="['hide-stock', {'active':!showStock}]" @click="showStock=false">不显示剩余库存</el-button>
-            </li>
-          </ul>
+              </li>
+              <li>
+                <span class="name required">商品价格：</span>
+                <span class="goods-price">
+                  <input type="text" v-model.trim="goodsPrice" placeholder="" :disabled="specificationList.length>0">
+                </span>
+              </li>
+              <li>
+                <span class="name">划线价格：</span>
+                <span class="goods-price">
+                  <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+                </span>
+              </li>
+              <li>
+                <span class="name required">库存：</span>
+                <input type="text" v-model.trim="goodStock" placeholder="" :disabled="specificationList.length>0">
+              </li>
+              <li class="show-stock-btn">
+                <span class="name">库存显示：</span>
+                <el-button type="success" size="small" :class="['show-stock', {'active':showStock}]" @click="showStock=true">显示库存</el-button>
+                <el-button type="success" size="small" :class="['hide-stock', {'active':!showStock}]" @click="showStock=false">不显示剩余库存</el-button>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="plate other-info">
+        <div class="plate other-info">
         <div class="plate-top">其他信息</div>
         <div class="other-info-edit">
           <ul>
             <li>
               <span class="name required">快递邮费：</span>
               <span class="express-postage">
-                <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="请输入快递邮费">
-                <el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>
+                <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="">
+                <!--<el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>-->
+                <el-checkbox v-model="postage.freeShipping" class="freeCheckbox" size="small">包邮</el-checkbox>
               </span>
             </li>
             <li>
@@ -249,12 +248,17 @@
             </li>
           </ul>
         </div>
+        <div class="add-goods-btn">
+            <el-button type="success" size="small">保存</el-button>
+          </div>
       </div>
+      </el-form>
     </div>
 </template>
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {goodsEditDetails, goodsCategory} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -280,10 +284,11 @@ export default {
       ['clean']
     ]
     return {
-      goodsType: 0,
-      goodsName: '',
+      goodsType: 0, // 商品类型
+      // 商品图片
       goodsPicUrl: '',
       goodsPicVisible: false,
+      // 商品关键字
       dynamicTags: [],
       inputVisible: false,
       inputValue: '',
@@ -348,15 +353,20 @@ export default {
           label: '日用百货'
         }
       ],
-      value: '食品',
+      selectedOptions: [],
       goodsPrice: '',
       goodsLinePrice: '',
+      goodStock: '',
       showStock: true,
       postage: {
         freeShipping: true,
         money: ''
       },
+      hash: this.$route.query.gid, // 商品id
 
+      // 商品信息
+      goodsName: '',
+      sharingDescription: '',
       grounding: true,
       businessCommitment: {
         refundable: false,
@@ -364,24 +374,26 @@ export default {
         deliverGoods: false
       },
       secondClass: '',
-      quillContent: '',
+      quillContent: '', // 商品卖点
       editorOption: {
         modules: {
           toolbar: {
             container: toolbarOptions
           }
         }
-      },
-      weightUnit: [{
-        value: '1',
-        label: '克'
-      }, {
-        value: '2',
-        label: '千克'
-      }, {
-        value: '3',
-        label: '吨'
-      }],
+      }, // 商品卖点
+      weightUnit: [
+        {
+          value: '1',
+          label: '克'
+        }, {
+          value: '2',
+          label: '千克'
+        }, {
+          value: '3',
+          label: '吨'
+        }
+      ],
       weightUnitValue: '克',
       goodsQuantifier: [
         {
@@ -428,19 +440,67 @@ export default {
           label: '支'
         }
       ],
-      quantifier: '个'
+      quantifier: '个',
+
+      // 表单验证
+      rules: {},
+      ruleForm: {}
     }
   },
-  beforeMount () {
+  created () {
+    this.setRoutePath()
     this.setSkus()
+    this.getGoods(this.hash)
+    this.getGoodsCategory()
   },
   mounted () {
-    this.setRoutePath()
+    // console.log(this.hash)
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 设置路径为商品列表的路径，以便于菜单栏选中
     setRoutePath () {
       this.setMenuLeft('/commodity-management')
+    },
+    // 若存在商品id，获取商品信息
+    getGoods (id) {
+      if (id) {
+        goodsEditDetails(id).then(res => {
+          console.log(res)
+        })
+      }
+    },
+    // 请求商品分类
+    getGoodsCategory () {
+      goodsCategory().then(res => {
+        this.selectStateOptions = []
+        if (res.data.length > 0) {
+          for (let v of res.data) {
+            let option = {
+              label: v.name,
+              value: v.id
+            }
+            if (v.children.length > 0) {
+              option.children = []
+              for (let w of v.children) {
+                option.children.push({
+                  label: w.name,
+                  value: w.id
+                })
+              }
+            }
+            this.selectStateOptions.push(option)
+          }
+        } else {
+          this.setRouter('/category-management')
+        }
+        // console.log(this.selectStateOptions)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    categoryChange (val) {
+      console.log(val)
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
@@ -711,6 +771,12 @@ export default {
       // console.log(file)
       this.skus[index].imgSrc = file.url
     },
+    // 设置路由链接
+    setRouter (link) {
+      this.$router.push({
+        path: link
+      })
+    },
     // 求笛卡尔积
     cartesianProduct (arr) {
       return arr.reduce(function (a, b) {
@@ -784,6 +850,7 @@ export default {
       li {
         padding-top: 20px;
         padding-left: 15px;
+        position: relative;
         span.name {
           display: inline-block;
           vertical-align: middle;
@@ -794,6 +861,12 @@ export default {
         .name.alignment-top {
           vertical-align: top;
           padding-top: 6px;
+        }
+        .err-tips {
+          position: absolute;
+          bottom: -16px;
+          left: 87px;
+          color: @mainC;
         }
       }
       input {
@@ -806,6 +879,9 @@ export default {
         font-size: 12px;
         color: #333;
         border: 1px solid #d5d5d5;
+        &:disabled {
+          background: @bc;
+        }
       }
       .select-state {
         color: #333;
@@ -837,20 +913,20 @@ export default {
           padding-top: 0;
           padding-left: 0;
           display: inline-block;
+          box-sizing: border-box;
           height: 55px;
           line-height: 55px;
           text-align: center;
-          width: 136px;
-          color: #fff;
+          width: 140px;
+          color: @b9;
           font-size: 12px;
-          border-radius: 3px;
-          background: #d5d5d5;
+          border-radius: 2px;
+          border: 1px solid @b5b5;
           cursor: pointer;
-          &:first-child {
-            margin-right: 20px;
-          }
+          margin-right: 20px;
           &.active {
-            background: #DE5B67;
+            border-color: @mainC;
+            color: @mainC;
           }
         }
       }
@@ -862,7 +938,7 @@ export default {
           display: inline-block;
         }
         .upload-img-explain {
-          color: #B5B5B5;
+          color: @b5b5;
           font-size: 12px;
           padding-top: 10px;
           padding-left: 72px;
@@ -872,7 +948,7 @@ export default {
         }
         .rich-text-editor {
           display: inline-block;
-          width: 700px;
+          width: 942px;
         }
         .weight-unit {
           display: inline-block;
@@ -895,7 +971,7 @@ export default {
             vertical-align: middle;
             font-size: 0;
             .keyword-tips {
-              color: #b5b5b5;
+              color: @b5b5;
               font-size: 12px;
               padding-left: 20px;
             }
@@ -1052,12 +1128,14 @@ export default {
           }
           .hide-stock, .show-stock {
             vertical-align: middle;
-            background: #d5d5d5;
-            border-color: #d5d5d5;
+            background: #fff;
+            border-color: @b5b5;
+            color: @b9;
           }
           .hide-stock.active, .show-stock.active {
-            background: #DE5B67;
-            border-color: #DE5B67;
+            background: #fff;
+            border-color: @mainC;
+            color: @mainC;
           }
         }
       }
@@ -1071,11 +1149,29 @@ export default {
           margin-left: 8px;
         }
         .el-button--success {
-          background: #d5d5d5;
-          border-color: #d5d5d5;
+          background: #fff;
+          border-color: @b5b5;
+          color: @b9;
           &.active {
-            background: #DE5B67;
-            border-color: #DE5B67;
+            background: #fff;
+            border-color: @mainC;
+            color: @mainC;
+          }
+        }
+        .freeCheckbox {
+          color: @b9;
+          border: 1px solid @b5b5;
+          display: inline-block;
+          vertical-align: middle;
+          box-sizing: border-box;
+          border-radius: 3px;
+          margin-left: 8px;
+          width: 100px;
+          height: 30px;
+          line-height: 30px;
+          text-align: center;
+          &.is-checked {
+            border-color: @mainC;
           }
         }
         .express-postage {
@@ -1102,11 +1198,23 @@ export default {
     padding: 0;
   }
 </style>
-<style>
-  .el-input__inner {
-    border-radius: 0;
-  }
-  .ql-container .ql-editor p {
-    min-height: 150px;
+<style lang="less">
+  .add-goods-object {
+    .el-input__inner {
+      border-radius: 0;
+    }
+    .ql-container .ql-editor p {
+      min-height: 150px;
+    }
+    .el-checkbox__input.is-checked + .el-checkbox__label {
+      color: @mainC;
+    }
+    .el-checkbox__input.is-checked .el-checkbox__inner {
+      background-color: @mainC;
+      border-color: @mainC;
+    }
+    .el-checkbox__input.is-focus .el-checkbox__inner {
+      border-color: @mainC;
+    }
   }
 </style>
