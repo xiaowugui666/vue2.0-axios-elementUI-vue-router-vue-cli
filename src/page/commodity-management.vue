@@ -10,14 +10,6 @@
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>
-          <!--<el-select v-model.trim="value" size="small" clearable class="select-state">-->
-            <!--<el-option-->
-              <!--v-for="item in selectStateOptions"-->
-              <!--:key="item.id"-->
-              <!--:label="item.id"-->
-              <!--:value="item.name">-->
-            <!--</el-option>-->
-          <!--</el-select>-->
           <el-cascader
             expand-trigger="hover"
             size="small"
