@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import {mapState, mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -308,7 +309,11 @@ export default {
       ]
     }
   },
+  created () {
+    this.setMenuLeft('/category-management')
+  },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     // 关闭一级类目选择框之前的动作
     handleClose (done) {
       this.dialogVisible = false
@@ -378,6 +383,9 @@ export default {
       // console.log(file)
       this.categoryList[index].children[index2].imgSrc = file.url
     }
+  },
+  computed: {
+    ...mapState(['menuLeft'])
   }
 }
 </script>

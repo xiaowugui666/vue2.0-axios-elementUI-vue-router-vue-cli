@@ -327,7 +327,7 @@ export default {
 
     .tradeRecord {
       background: #fff;
-      padding:0 20px 20px;
+      padding: 20px;
       overflow: hidden;
       .tradeList{
         padding-bottom: 30px;
