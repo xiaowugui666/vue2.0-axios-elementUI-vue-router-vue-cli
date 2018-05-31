@@ -27,9 +27,14 @@
                 <span class="required name alignment-top">商品图片：</span>
                 <div class="goods-pic-box">
                   <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :action="goodsImageAction"
+                    :data="upToken"
                     list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
+                    multiple
+                    :limit="10"
+                    :on-progress="uploadQiniu"
+                    :before-upload="beforeUpload"
+                    :on-success="handleAvatarSuccess"
                     :on-remove="handleRemove">
                     <i class="el-icon-plus"></i>
                   </el-upload>
@@ -37,7 +42,7 @@
                     <img width="100%" :src="goodsPicUrl" alt="">
                   </el-dialog>
                 </div>
-                <p class="upload-img-explain">建议尺寸：800*800像素，最多上传15张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
+                <p class="upload-img-explain">建议尺寸：800*800像素，最多上传10张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
               </li>
               <li>
                 <span class="name">商品类目：</span>
@@ -258,7 +263,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {goodsEditDetails, goodsCategory} from '../axios/api'
+import {goodsEditDetails, goodsCategory, imageToken} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -444,7 +449,11 @@ export default {
 
       // 表单验证
       rules: {},
-      ruleForm: {}
+      ruleForm: {},
+      // 图片token
+      imageToken: '',
+      goodsImageAction: '//upload.qiniup.com',
+      upToken: {}
     }
   },
   created () {
@@ -452,6 +461,7 @@ export default {
     this.setSkus()
     this.getGoods(this.hash)
     this.getGoodsCategory()
+    this.getImageToken()
   },
   mounted () {
     // console.log(this.hash)
@@ -467,6 +477,8 @@ export default {
       if (id) {
         goodsEditDetails(id).then(res => {
           console.log(res)
+        }).catch(err => {
+          console.log(err)
         })
       }
     },
@@ -499,11 +511,30 @@ export default {
         console.log(err)
       })
     },
-    categoryChange (val) {
-      console.log(val)
+    // 获取图片上传七牛的token
+    getImageToken () {
+      imageToken().then(res => {
+        // console.log(res)
+        this.imageToken = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 图片上传之前的操作
+    beforeUpload () {
+      const keyName = `merchant-goods-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000)}.jpg`
+      this.upToken.key = keyName
+      this.upToken.token = this.imageToken
+      console.log(this.upToken)
+    },
+    uploadQiniu (event, file, fileList) {
+      // console.log(event)
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
+    },
+    categoryChange (val) {
+      console.log(val)
     },
     // 计算规格属性的笛卡尔积
     setSpeRetData () {
@@ -723,7 +754,6 @@ export default {
         return false
       }
     },
-
     // 关键字操作部分
     handleClose (tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
@@ -1215,6 +1245,25 @@ export default {
     }
     .el-checkbox__input.is-focus .el-checkbox__inner {
       border-color: @mainC;
+    }
+    .el-upload--picture-card {
+      width: 80px;
+      height: 80px;
+      border-color: @bc;
+      background: #fff;
+      i {
+        color: @bc;
+        font-size: 20px;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+    .el-upload-list--picture-card .el-upload-list__item {
+      width: 80px;
+      height: 80px;
     }
   }
 </style>

@@ -108,6 +108,14 @@ export const goodsEditDetails = function (id) {
   })
 }
 
+// 修改商品页，获取商品详情
+export const imageToken = function () {
+  return fetch({
+    url: api.ip + '/management/merchant/upload?type=image',
+    method: 'get' // 请求方法
+  })
+}
+
 // 有新接口的时候像上面那样再来一次
 // //修改昵称接口
 // export function userID(name){
