@@ -32,7 +32,6 @@
                     list-type="picture-card"
                     multiple
                     :limit="10"
-                    :on-progress="uploadQiniu"
                     :before-upload="beforeUpload"
                     :on-success="handleAvatarSuccess"
                     :on-remove="handleRemove">
@@ -71,7 +70,8 @@
               <li>
                 <span class="name">商品重量：</span>
                 <div class="weight-unit">
-                  <input type="tel" placeholder="请输入商品重量(纯数字)" v-model.trim="secondClass" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="30">
+                  <input type="tel" v-validate="'decimal:2'" name="商品重量" placeholder="请输入商品重量" v-model.trim="weightNum" maxlength="20">
+                  <div class="err-tips">{{ errors.first('商品重量') }}</div>
                   <el-select v-model.trim="weightUnitValue" size="small" class="select-state">
                     <el-option
                       v-for="item in weightUnit"
@@ -84,11 +84,11 @@
               </li>
               <li>
                 <span class="name">唯一编码：</span>
-                <input type="text" placeholder="商品的唯一编码" v-model.trim="secondClass" maxlength="30">
+                <input type="text" placeholder="商品的唯一编码" v-model.trim="uniqueCoding" maxlength="30">
               </li>
               <li>
                 <span class="name">商品量词：</span>
-                <el-select v-model.trim="quantifier" size="small" class="select-state">
+                <el-select v-model.trim="quantifier" clearable size="small" class="select-state">
                   <el-option
                     v-for="item in goodsQuantifier"
                     :key="item.value"
@@ -184,7 +184,9 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
-                      <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.SkuPrice" maxlength="10"/></td>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.SkuPrice" v-validate="'required|decimal:2'" name="价格" type="text" maxlength="10"/>
+                        <div>{{ errors.first('价格') }}</div>
+                      </td>
                       <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
                       <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
                       <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.linePrice" maxlength="20"/></td>
@@ -378,7 +380,7 @@ export default {
         qualityGoods: false,
         deliverGoods: false
       },
-      secondClass: '',
+      uniqueCoding: '',
       quillContent: '', // 商品卖点
       editorOption: {
         modules: {
@@ -387,6 +389,7 @@ export default {
           }
         }
       }, // 商品卖点
+      weightNum: '',
       weightUnit: [
         {
           value: '1',
@@ -445,7 +448,7 @@ export default {
           label: '支'
         }
       ],
-      quantifier: '个',
+      quantifier: '',
 
       // 表单验证
       rules: {},
@@ -525,10 +528,7 @@ export default {
       const keyName = `merchant-goods-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000)}.jpg`
       this.upToken.key = keyName
       this.upToken.token = this.imageToken
-      console.log(this.upToken)
-    },
-    uploadQiniu (event, file, fileList) {
-      // console.log(event)
+      // console.log(this.upToken)
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
