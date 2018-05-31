@@ -116,6 +116,30 @@ export const imageToken = function () {
   })
 }
 
+// 添加商品分类
+export const addGoodsCategory = function (data) {
+  return fetch({
+    url: api.ip + '/management/category',
+    method: 'post' // 请求方法
+  })
+}
+
+// 删除商品分类
+export const deleteGoodsCategory = function (data) {
+  return fetch({
+    url: api.ip + '/management/category',
+    method: 'delete' // 请求方法
+  })
+}
+
+// 增加商品分类图片
+export const updateGoodsCategoryPic = function (data) {
+  return fetch({
+    url: api.ip + '/management/category',
+    method: 'put' // 请求方法
+  })
+}
+
 // 有新接口的时候像上面那样再来一次
 // //修改昵称接口
 // export function userID(name){

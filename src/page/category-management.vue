@@ -4,11 +4,11 @@
         <el-button @click="dialogVisible = true" type="primary" size="small" class="first-category-management">一级类目编辑管理</el-button>
         <div class="two-level-category-list">
           <ul>
-            <li v-if="item.active" v-for="(item, index) in categoryList" :key="index">
+            <li v-for="(item, index) in categoryList" :key="index">
               <el-collapse accordion>
                 <el-collapse-item>
                   <template slot="title">
-                    <span class="one-level-category">{{item.label}}</span>
+                    <span class="one-level-category">{{item.name}}</span>
                     <span class="two-level-category">二级分类有 {{item.children?item.children.length:0}} 项</span>
                   </template>
                   <div class="collapse-body clear">
@@ -18,7 +18,7 @@
                       closable
                       :disable-transitions="false"
                       @close="alignmentHandleClose(tag,index)">
-                      <span class="el-tag-bar">{{tag.label}}</span>
+                      <span class="el-tag-bar">{{tag.name}}</span>
                       <div class="tag-img">
                         <el-upload
                           class="avatar-uploader"
@@ -27,7 +27,7 @@
                           :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
                           :before-upload="(value)=>beforeAvatarUpload(value, index)">
-                          <img :src="item.children[index2].imgSrc" class="avatar">
+                          <img :src="item.children[index2].icon_url" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -37,7 +37,7 @@
                       v-model="inputSpacValue"
                       :ref="'saveSpecTagInput'+index"
                       size="small"
-                      @keyup.enter.native="handleInputSpec(index)"
+                      @keyup.enter.native="handleInputSpec(index, item.id)"
                       @blur="handleInputSpec(index)"
                     >
                     </el-input>
@@ -71,64 +71,12 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic} from '../axios/api.js'
 export default {
   data () {
     return {
       dialogVisible: false,
-      categoryList: [
-        {
-          active: true,
-          value: '选项1',
-          label: '黄金糕',
-          'children': [
-            {
-              value: '选项1',
-              label: '黄金糕121',
-              imgSrc: '/static/test/ceshi.png'
-            },
-            {
-              value: '选项1',
-              label: '黄金糕12321',
-              imgSrc: '/static/test/ceshi.png'
-            }
-          ]
-        }, {
-          active: true,
-          value: '选项2',
-          label: '双皮奶',
-          'children': []
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          active: true,
-          value: '选项5',
-          label: '北京烤鸭',
-          'children': []
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }, {
-          active: true,
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
+      categoryList: [],
       inputSpacVisible: [],
       inputSpacValue: '',
       firstCategoryList: [
@@ -311,9 +259,30 @@ export default {
   },
   created () {
     this.setMenuLeft('/category-management')
+    this.getCategoryList()
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 获取商品类目列表
+    getCategoryList () {
+      goodsCategory().then(res => {
+        // console.log(res.data)
+        this.categoryList = res.data
+        this.setFirstCategoryListSelect()
+      })
+    },
+    // 获取一级类目列表,设置被选择的内容
+    setFirstCategoryListSelect () {
+      let self = this
+      this.firstCategoryList.forEach(function (v, k) {
+        self.categoryList.forEach(function (val, key) {
+          if (v.label === val.name) {
+            v.selected = true
+          }
+        })
+      })
+      // console.log(this.firstCategoryList)
+    },
     // 关闭一级类目选择框之前的动作
     handleClose (done) {
       this.dialogVisible = false
@@ -328,8 +297,27 @@ export default {
     confirmationModification () {
       this.dialogVisible = false
       for (let k of this.firstCategoryList) {
+        if (k.changed) {
+          if (k.selected === true) {
+            addGoodsCategory({
+              'name': k.name,
+              'parent_id': 0
+            }).then(res => {
+              console.log('添加分类成功')
+            })
+          } else {
+            // 删除商品分类
+            deleteGoodsCategory({
+              'id': k.id
+            }).then(res => {
+              console.log('删除分类成功')
+            })
+          }
+        }
         k.changed = false
       }
+      // 重新请求接口，获取修改后的页面显示数据
+      this.getCategoryList()
     },
     // 选择一级类目
     selectFirstCategory (index) {
@@ -340,6 +328,12 @@ export default {
     alignmentHandleClose (tag, index) {
       let values = this.categoryList[index].children
       this.categoryList[index].children.splice(values.indexOf(tag), 1)
+      // 删除选择的二级分类
+      deleteGoodsCategory({
+        id: 1
+      }).then(res => {
+        console.log('删除二级分类成功')
+      })
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
@@ -350,7 +344,7 @@ export default {
       })
     },
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
-    handleInputSpec (index) {
+    handleInputSpec (index, id) {
       let inputValue = this.inputSpacValue
       if (inputValue) {
         for (let k of this.categoryList[index].children) {
@@ -365,9 +359,17 @@ export default {
         }
         let children = {
           id: index,
-          'label': inputValue,
-          'imgSrc': '/static/test/ceshi.png'
+          'name': inputValue,
+          'icon_url': '/static/test/ceshi.png'
         }
+        // 请求接口，保存二级商品分类
+        addGoodsCategory({
+          'name': inputValue,
+          'parent_id': id,
+          'icon': '/static/test/ceshi.png'
+        }).then(res => {
+          console.log('添加二级商品分类成功')
+        })
         this.categoryList[index].children.push(children)
       }
       this.$set(this.inputSpacVisible, index, false)
@@ -382,6 +384,13 @@ export default {
     changeUpload (file, index, index2) {
       // console.log(file)
       this.categoryList[index].children[index2].imgSrc = file.url
+      // 修改上传图片地址，修改二级分类图片地址
+      updateGoodsCategoryPic({
+        'id': 1,
+        'icon': file.url
+      }).then(res => {
+        console.log('修改二级商品分类图片成功')
+      })
     }
   },
   computed: {
