@@ -27,9 +27,13 @@
                 <span class="required name alignment-top">商品图片：</span>
                 <div class="goods-pic-box">
                   <el-upload
-                    action="https://jsonplaceholder.typicode.com/posts/"
+                    :action="goodsImageAction"
+                    :data="upToken"
                     list-type="picture-card"
-                    :on-preview="handlePictureCardPreview"
+                    multiple
+                    :limit="10"
+                    :before-upload="beforeUpload"
+                    :on-success="handleAvatarSuccess"
                     :on-remove="handleRemove">
                     <i class="el-icon-plus"></i>
                   </el-upload>
@@ -37,7 +41,7 @@
                     <img width="100%" :src="goodsPicUrl" alt="">
                   </el-dialog>
                 </div>
-                <p class="upload-img-explain">建议尺寸：800*800像素，最多上传15张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
+                <p class="upload-img-explain">建议尺寸：800*800像素，最多上传10张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
               </li>
               <li>
                 <span class="name">商品类目：</span>
@@ -66,7 +70,8 @@
               <li>
                 <span class="name">商品重量：</span>
                 <div class="weight-unit">
-                  <input type="tel" placeholder="请输入商品重量(纯数字)" v-model.trim="secondClass" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="30">
+                  <input type="tel" v-validate="'decimal:2'" name="商品重量" placeholder="请输入商品重量" v-model.trim="weightNum" maxlength="20">
+                  <div class="err-tips">{{ errors.first('商品重量') }}</div>
                   <el-select v-model.trim="weightUnitValue" size="small" class="select-state">
                     <el-option
                       v-for="item in weightUnit"
@@ -79,11 +84,11 @@
               </li>
               <li>
                 <span class="name">唯一编码：</span>
-                <input type="text" placeholder="商品的唯一编码" v-model.trim="secondClass" maxlength="30">
+                <input type="text" placeholder="商品的唯一编码" v-model.trim="uniqueCoding" maxlength="30">
               </li>
               <li>
                 <span class="name">商品量词：</span>
-                <el-select v-model.trim="quantifier" size="small" class="select-state">
+                <el-select v-model.trim="quantifier" clearable size="small" class="select-state">
                   <el-option
                     v-for="item in goodsQuantifier"
                     :key="item.value"
@@ -179,7 +184,9 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
-                      <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.SkuPrice" maxlength="10"/></td>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.SkuPrice" v-validate="'required|decimal:2'" name="价格" type="text" maxlength="10"/>
+                        <div>{{ errors.first('价格') }}</div>
+                      </td>
                       <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
                       <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
                       <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.linePrice" maxlength="20"/></td>
@@ -258,7 +265,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {goodsEditDetails, goodsCategory} from '../axios/api'
+import {goodsEditDetails, goodsCategory, imageToken} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
@@ -373,7 +380,7 @@ export default {
         qualityGoods: false,
         deliverGoods: false
       },
-      secondClass: '',
+      uniqueCoding: '',
       quillContent: '', // 商品卖点
       editorOption: {
         modules: {
@@ -382,6 +389,7 @@ export default {
           }
         }
       }, // 商品卖点
+      weightNum: '',
       weightUnit: [
         {
           value: '1',
@@ -440,11 +448,15 @@ export default {
           label: '支'
         }
       ],
-      quantifier: '个',
+      quantifier: '',
 
       // 表单验证
       rules: {},
-      ruleForm: {}
+      ruleForm: {},
+      // 图片token
+      imageToken: '',
+      goodsImageAction: '//upload.qiniup.com',
+      upToken: {}
     }
   },
   created () {
@@ -452,6 +464,7 @@ export default {
     this.setSkus()
     this.getGoods(this.hash)
     this.getGoodsCategory()
+    this.getImageToken()
   },
   mounted () {
     // console.log(this.hash)
@@ -467,6 +480,8 @@ export default {
       if (id) {
         goodsEditDetails(id).then(res => {
           console.log(res)
+        }).catch(err => {
+          console.log(err)
         })
       }
     },
@@ -499,11 +514,27 @@ export default {
         console.log(err)
       })
     },
-    categoryChange (val) {
-      console.log(val)
+    // 获取图片上传七牛的token
+    getImageToken () {
+      imageToken().then(res => {
+        // console.log(res)
+        this.imageToken = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 图片上传之前的操作
+    beforeUpload () {
+      const keyName = `merchant-goods-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000)}.jpg`
+      this.upToken.key = keyName
+      this.upToken.token = this.imageToken
+      // console.log(this.upToken)
     },
     handleRemove (file, fileList) {
       console.log(file, fileList)
+    },
+    categoryChange (val) {
+      console.log(val)
     },
     // 计算规格属性的笛卡尔积
     setSpeRetData () {
@@ -723,7 +754,6 @@ export default {
         return false
       }
     },
-
     // 关键字操作部分
     handleClose (tag) {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
@@ -1215,6 +1245,25 @@ export default {
     }
     .el-checkbox__input.is-focus .el-checkbox__inner {
       border-color: @mainC;
+    }
+    .el-upload--picture-card {
+      width: 80px;
+      height: 80px;
+      border-color: @bc;
+      background: #fff;
+      i {
+        color: @bc;
+        font-size: 20px;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+    .el-upload-list--picture-card .el-upload-list__item {
+      width: 80px;
+      height: 80px;
     }
   }
 </style>

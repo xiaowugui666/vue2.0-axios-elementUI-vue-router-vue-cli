@@ -42,17 +42,6 @@
                   clearable>
                 </el-input>
               </div>
-              <div class="orderType">
-                <label>订单类型</label>
-                <el-select v-model="OrderType" placeholder="普通订单"  @change="changeType" >
-                  <el-option
-                    v-for="item in optionType"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </div>
               <button @click="searchOrder" class="search">搜索</button>
             </div>
 
@@ -61,57 +50,57 @@
             <div class="title">交易记录</div>
             <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
                 <el-tab-pane label="全部" name="first"></el-tab-pane>
-                <el-tab-pane  label="待付款"  name="second"></el-tab-pane>
-                <el-tab-pane  label="待发货"  name="third"></el-tab-pane>
-                <el-tab-pane  label="已发货"  name="fourth"></el-tab-pane>
-                <el-tab-pane  label="已完成"  name="five"></el-tab-pane>
+                <el-tab-pane  label="待付款" name="second"></el-tab-pane>
+                <el-tab-pane  label="待发货" name="third"></el-tab-pane>
+                <el-tab-pane  label="已发货" name="fourth"></el-tab-pane>
+                <el-tab-pane  label="已完成" name="five"></el-tab-pane>
             </el-tabs>
-            <div class="tradeList">
+            <div class="tradeList" v-for="(item,index) in ordersDetail" :key="index">
               <div class="top">
-                <label>下单时间：2019-23-3 12：23：12</label>
-                <label>订单编号：hz1234124883612</label>
-                <label>商铺名称：金桔小店</label>
-                <label>客户手机：18923821231</label>
+                <label>下单时间：{{item.created_at}}</label>
+                <label>订单编号：{{item.no}}</label>
+                <label>客户手机：{{item.mobile}}</label>
               </div>
-              <div class="content" v-for="(item,index) in tradeList"  :key="index">
+              <div class="content">
                   <div>
-                      <div class="prolist"  v-for="(items,id) in item.list"  :key="id">
+                      <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
                         <div class="proInfo">
-                          <img :src="items.img" alt="">
-                          <div class="desc">{{items.desc}}</div>
+                          <img :src="i.cover_url" alt="">
+                          <div class="desc">{{i.name}}</div>
                         </div>
-                        <div class="proNum">数量 x{{items.num}}</div>
+                        <div class="proNum">数量 x {{i.count}}</div>
                         <div class="price">
-                          <label>￥{{items.prePrice}}</label>
-                          <label>￥{{items.nowPrice}}</label>
+                          <label>￥{{i.price | money}}</label>
                         </div>
                       </div>
                   </div>
-                <div class="orderMon" :style="{height:item.list.length*80+'px'}">
-                  <label>￥{{item.totalPrice}}</label>
-                  <label>运费：23933</label>
+                <div class="orderMon" :style="{height:item.items.length*80+'px'}">
+                  <label>￥{{item.amount | money}}</label>
+                  <label>运费：{{item.express_amount | money}}</label>
                 </div>
-                <div class="orderResult"  :style="{height:item.list.length*80+'px'}">
+                <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
                     <label>交易完成</label>
-                  <router-link :to="{ name:'orderDetail',params:{orderDetail:num }}" tag="label">订单详情</router-link>
+                  <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
                 </div>
               </div>
             </div>
           <el-pagination
+            v-if="totalPagina"
             background
-            :page-size="20"
+            :page-size="15"
             :page-count="6"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
             current-change="currentIndex"
-            :total="1000">
+            :total="totalPagina * 15">
           </el-pagination>
         </div>
       </div>
   </div>
 </template>
 <script>
+import {order} from '@/axios/api'
 export default {
   data () {
     return {
@@ -119,6 +108,10 @@ export default {
       n: '1',
       timeStart: '',
       timeEnd: '',
+      // 分页总页数
+      totalPagina: 0,
+      // 订单请求数据
+      ordersDetail: [],
       // 时间按钮
       timeBtn: false,
       // 搜索时间间隔
@@ -202,6 +195,18 @@ export default {
       console.log(111)
     },
     searchOrder () {
+      // 参数
+      let params = {}
+      params.no = this.keyValue
+      params.name = this.keyName
+      order(params).then(res => {
+        console.log(res)
+        this.totalPagina = res.headers.page_count
+        this.ordersDetail = res.data
+        if (!res.data) {
+          this.$message('没有此类订单！')
+        }
+      })
     },
     timeRange (res, event) {
       let flag = event.target.dataset.id
@@ -213,53 +218,42 @@ export default {
       this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
       // console.log(this.keyTime)
     },
-    handleClick (tab, event) {
+    // 订单分类状态点击
+    handleClick (tab) {
       console.log(tab.index)
+      let statu = 0
+      if (tab.index == 1) {
+        statu = 200
+      } else if (tab.index == 2) {
+        statu = 300
+      } else if (tab.index == 3) {
+        statu = 305
+      } else if (tab.index == 4) {
+        statu = 505
+      }
+      order({status: statu}).then(res => {
+        console.log(res)
+        this.totalPagina = res.headers.page_count
+        this.ordersDetail = res.data
+        if (!res.data) {
+          this.$message('没有此类订单！')
+        }
+      })
     }
   },
-  mounted () {
-    // this.timeRange(7)
+  created () {
+    order().then(res => {
+      console.log(res)
+      this.totalPagina = res.headers.page_count
+      this.ordersDetail = res.data
+      // console.log(this.ordersDetail)
+    })
   }
 
 }
 </script>
 <style lang="less">
   .orderManager{
-  .el-pagination.is-background .el-pager li {
-    background-color: #fff;
-  }
-  .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next {
-    padding: 0 15px;
-  }
-  .el-pagination span:not([class*=suffix]), .el-pagination button {
-    display: inline-block;
-    font-size: 13px;
-    min-width: 30px;
-    height: 30px;
-    line-height: 30px;
-    vertical-align: top;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  .el-pagination .btn-prev, .el-pagination .btn-next {
-    background: center center no-repeat;
-    background-size: 16px;
-    background-color: #fff;
-    height: 30px;
-    line-height: 30px;
-    padding:0 15px;
-    cursor: pointer;
-    margin: 0;
-    color: #303133;
-    border: 1px solid #d5d5d5;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled).active {
-    background-color: #DE5B67;
-    color: #fff;
-  }
-  .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-    color: #fff;
-  }
   .el-pager li {
     padding: 0;
     background: #fff;
@@ -282,8 +276,6 @@ export default {
   .el-pager li.active + li {
     border-left: 1px solid #D5D5D5;
   }
-  .el-pagination.is-background .el-pager li:not(.disabled):hover {
-    color: #DE5B67; }
   .el-tabs__item.is-active {
     font-family: MicrosoftYaHei;
     font-size: 14px;
@@ -466,6 +458,7 @@ export default {
               width: 17%;
               display: flex;
               flex-direction: column;
+              align-items: center;
               justify-content: center;
               border-right: 1px solid #efefef;
               border-bottom: 1px solid #efefef;
@@ -520,12 +513,6 @@ export default {
               flex-direction: column;
               justify-content: center;
               border-right: 1px solid #efefef;
-              label:first-child{
-                font-family: MicrosoftYaHei;
-                font-size: 12px;
-                color: #999999;
-                text-decoration: line-through;
-              }
               label:last-child{
                 font-size: 12px;
                 color: #333333;
@@ -593,6 +580,7 @@ export default {
         float: left;
       }
       .keyName{
+        margin-right: 20px;
         .el-input__inner {
           width: 256px;
         }
