@@ -120,14 +120,15 @@ export const imageToken = function () {
 export const addGoodsCategory = function (data) {
   return fetch({
     url: api.ip + '/management/category',
-    method: 'post' // 请求方法
+    method: 'post', // 请求方法
+    data: data
   })
 }
 
 // 删除商品分类
-export const deleteGoodsCategory = function (data) {
+export const deleteGoodsCategory = function (id) {
   return fetch({
-    url: api.ip + '/management/category',
+    url: api.ip + '/management/category/' + id,
     method: 'delete' // 请求方法
   })
 }
@@ -136,7 +137,8 @@ export const deleteGoodsCategory = function (data) {
 export const updateGoodsCategoryPic = function (data) {
   return fetch({
     url: api.ip + '/management/category',
-    method: 'put' // 请求方法
+    method: 'put', // 请求方法
+    data: data
   })
 }
 

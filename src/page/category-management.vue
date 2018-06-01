@@ -37,7 +37,7 @@
                       v-model="inputSpacValue"
                       :ref="'saveSpecTagInput'+index"
                       size="small"
-                      @keyup.enter.native="handleInputSpec(index, item.id)"
+                      @keyup.enter.native="handleInputSpec(index, item.value)"
                       @blur="handleInputSpec(index)"
                     >
                     </el-input>
@@ -300,24 +300,22 @@ export default {
         if (k.changed) {
           if (k.selected === true) {
             addGoodsCategory({
-              'name': k.name,
+              'name': k.label,
               'parent_id': 0
             }).then(res => {
               console.log('添加分类成功')
+              // 重新请求接口，获取修改后的页面显示数据
+              this.getCategoryList()
             })
           } else {
             // 删除商品分类
-            deleteGoodsCategory({
-              'id': k.id
-            }).then(res => {
+            deleteGoodsCategory(k.value).then(res => {
               console.log('删除分类成功')
             })
           }
         }
         k.changed = false
       }
-      // 重新请求接口，获取修改后的页面显示数据
-      this.getCategoryList()
     },
     // 选择一级类目
     selectFirstCategory (index) {
@@ -345,6 +343,7 @@ export default {
     },
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
     handleInputSpec (index, id) {
+      console.log(id)
       let inputValue = this.inputSpacValue
       if (inputValue) {
         for (let k of this.categoryList[index].children) {
