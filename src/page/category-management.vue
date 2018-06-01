@@ -25,6 +25,7 @@
                           :action="uploadImgApi"
                           :data="upToken"
                           :show-file-list="false"
+                          :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,tag.id)"
                           :before-upload="beforeAvatarUpload">
                           <img :src="item.children[index2].icon_url" class="avatar">
@@ -417,16 +418,18 @@ export default {
       this.upToken.key = keyName
       this.upToken.token = this.imageToken
     },
+    // 更改本地图片显示
+    changeUpload (file, index, index2) {
+      this.categoryList[index].children[index2].icon_url = file.url
+    },
     // 二级分类图片上传
     handleAvatarSuccess (res, file, index) {
       console.log(res)
       console.log(index)
-      this.icon_url = this.STATICDOMAIN + res.key
-      // this.categoryList[index].children[index2].icon_url = file.url
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
         'id': index,
-        'icon': res.key
+        'icon_url': res.key
       }).then(res => {
         console.log('修改二级商品分类图片成功')
       })
