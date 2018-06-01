@@ -17,7 +17,7 @@
                       v-for="(tag, index2) in item.children"
                       closable
                       :disable-transitions="false"
-                      @close="alignmentHandleClose(tag,index)">
+                      @close="alignmentHandleClose(tag, index, tag.id)">
                       <span class="el-tag-bar">{{tag.name}}</span>
                       <div class="tag-img">
                         <el-upload
@@ -37,8 +37,8 @@
                       v-model="inputSpacValue"
                       :ref="'saveSpecTagInput'+index"
                       size="small"
-                      @keyup.enter.native="handleInputSpec(index, item.value)"
-                      @blur="handleInputSpec(index)"
+                      @keyup.enter.native="handleInputSpec(index, item.id)"
+                      @blur="handleInputSpec(index, item.id)"
                     >
                     </el-input>
                     <el-button v-else @click="showSpecInput(index)" type="primary" size="small" class="button-new-tag">添加规格值</el-button>
@@ -266,7 +266,7 @@ export default {
     // 获取商品类目列表
     getCategoryList () {
       goodsCategory().then(res => {
-        // console.log(res.data)
+        console.log(res.data)
         this.categoryList = res.data
         this.setFirstCategoryListSelect()
       })
@@ -323,13 +323,11 @@ export default {
       this.firstCategoryList[index].changed = !this.firstCategoryList[index].changed
     },
     // 删除选中的规则值
-    alignmentHandleClose (tag, index) {
+    alignmentHandleClose (tag, index, id) {
       let values = this.categoryList[index].children
       this.categoryList[index].children.splice(values.indexOf(tag), 1)
       // 删除选择的二级分类
-      deleteGoodsCategory({
-        id: 1
-      }).then(res => {
+      deleteGoodsCategory(id).then(res => {
         console.log('删除二级分类成功')
       })
     },
@@ -368,8 +366,10 @@ export default {
           'icon': '/static/test/ceshi.png'
         }).then(res => {
           console.log('添加二级商品分类成功')
+          // 接口请求成功返回二级分类的id，把id添加到对象上
+          children.id = res.data
+          this.categoryList[index].children.push(children)
         })
-        this.categoryList[index].children.push(children)
       }
       this.$set(this.inputSpacVisible, index, false)
       this.inputSpacValue = ''
@@ -382,13 +382,14 @@ export default {
     beforeAvatarUpload (file, index) {},
     changeUpload (file, index, index2) {
       // console.log(file)
-      this.categoryList[index].children[index2].imgSrc = file.url
+      this.categoryList[index].children[index2].icon_url = file.url
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
         'id': 1,
         'icon': file.url
       }).then(res => {
         console.log('修改二级商品分类图片成功')
+        
       })
     }
   },
