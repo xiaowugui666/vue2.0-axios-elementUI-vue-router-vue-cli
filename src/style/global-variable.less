@@ -1,0 +1,49 @@
+@mainC: #DE5B67;
+@blue: #76AFFF;
+@b3: #333;
+@b6: #666;
+@b9: #999;
+@bc: #d5d5d5;
+@bg: #f7f7f7;
+
+//transform上下左右居中
+.ctt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+//定位上下居中
+.tb {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+//定位左右居中
+.lr {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+//宽高
+.wh(@width, @height){
+  width: @width;
+  height: @height;
+}
+
+//字体大小、行高、字体
+.ft(@size, @line-height) {
+  font-size: @size;
+  line-height:@line-height;
+}
+//字体大小，颜色
+.sc(@size, @color){
+  font-size: @size;
+  color: @color;
+}
+//flex 布局和 子元素 对其方式
+.fj(@type: space-between){
+  display: flex;
+  justify-content: @type;
+}

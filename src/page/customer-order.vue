@@ -4,7 +4,7 @@
       <div class="header">
         <div class="selectInfo">
           <div class="order-number">
-            <label>下单时间</label>
+            <label>订单编号</label>
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
@@ -24,8 +24,8 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div class="timeRange cur" @click="timeRange(7)">最近7天</div>
-          <div class="timeRange" @click="timeRange(30)">最近30天</div>
+          <div class="timeRange" :class="{cur:isWeek}" @click="timeRange(7)">最近7天</div>
+          <div class="timeRange" :class="{cur:isMonth}" @click="timeRange(30)">最近30天</div>
         </div>
         <div class="proName">
           <div class="keyName">
@@ -38,7 +38,7 @@
           </div>
           <div class="orderType">
             <label>订单类型</label>
-            <el-select v-model="OrderType" placeholder="普通订单"  @change="changeType" >
+            <el-select v-model="OrderType" placeholder="普通订单" >
               <el-option
                 v-for="item in optionType"
                 :key="item.value"
@@ -47,76 +47,102 @@
               </el-option>
             </el-select>
           </div>
-          <button @click="searchOrder" class="search">搜索</button>
+          <div @click="searchOrder" class="search">
+            <el-button
+            type="success"
+            size="small">搜索</el-button>
+          </div>
         </div>
 
       </div>
       <div class="tradeRecord">
-        <div class="tradeList">
+        <div class="tradeList" v-for="( item,index ) in tradeList" :key="index">
           <div class="top">
-            <label>下单时间：2019-23-3 12：23：12</label>
-            <label>订单编号：hz1234124883612</label>
+            <label>下单时间：{{ item.paid_at }}</label>
+            <label>订单编号：{{item.no}}</label>
             <label>商铺名称：金桔小店</label>
-            <label>客户手机：18923821231</label>
+            <label>客户手机：{{item.mobile}}</label>
           </div>
-          <div class="content" v-for="(item,index) in tradeList"  :key="index">
+          <div class="content">
             <div>
-              <div class="prolist"  v-for="(items,id) in item.list"  :key="id">
+              <div class="prolist"  v-for="(val,id) in item.items" :key="id">
                 <div class="proInfo">
-                  <img :src="items.img" alt="">
-                  <div class="desc">{{items.desc}}</div>
+                  <img  alt="">
+                  <div class="desc">{{val.name}}</div>
                 </div>
-                <div class="proNum">数量 x{{items.num}}</div>
-                <div class="price">
-                  <label>￥{{items.prePrice}}</label>
-                  <label>￥{{items.nowPrice}}</label>
-                </div>
+                <div class="proNum">数量 x{{val.count}}</div>
+                <div class="price">￥{{val.price}}</div>
               </div>
             </div>
-            <div class="orderMon" :style="{height:item.list.length*80+'px'}">
-              <label>￥{{item.totalPrice}}</label>
-              <label>运费：23933</label>
+            <div class="orderMon" :style="{height:item.length+'px'}">
+              <label>￥{{item.amount}}</label>
+              <label>运费：{{item.express_amount}}</label>
             </div>
-            <div class="orderResult"  :style="{height:item.list.length*80+'px'}">
-              <label>交易完成</label>
-              <label>订单详情</label>
+            <div class="orderResult"  :style="{height:item.length+'px'} " v-if="item.status===405"  >
+                <label>交易完成</label>
+              <router-link  :to="{ name:'orderDetail',params:{id:item.no }}" tag="label">订单详情</router-link>
             </div>
+              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===200">
+                <label>待付款</label>
+                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
+              </div>
+              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===300">
+                <label>待发货</label>
+                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
+              </div>
+              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===400">
+                <label>待收货</label>
+                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
+              </div>
+              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===500">
+                <label>退货中</label>
+                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
+              </div>
+              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===505">
+                <label>退货完成</label>
+                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
+              </div>
           </div>
         </div>
         <el-pagination
           background
-          :page-size="20"
+          :page-size="15"
           :page-count="6"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
           current-change="currentIndex"
-          :total="1000">
+          :total="totalPage">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script>
+import {mapMutations} from 'vuex'
 export default {
   data () {
     return {
+      totalPage: 15,
       n: '1',
       // 搜索时间间隔
-      keyTime: '',
+      keyTime: [],
       // 搜索类别
       keyValue: '',
       // 商品名称
       keyName: '',
+      isWeek: false,
+      isMonth: false,
       // 订单类型
       optionType: [{
-        value: '1',
+        value: '0',
         label: '普通订单'
       }, {
-        value: '2',
+        value: '1',
         label: '外部订单'
       }],
-
+      // 用户id
+      user_id: '',
       // 搜索类型
       options: [{
         value: '1',
@@ -133,110 +159,83 @@ export default {
       }],
       // 搜索类型
       value: '1',
+      // 当前页
+      pages: 0,
       // 订单类型
-      OrderType: '1',
+      OrderType: '0',
       // 交易类型
       tradeType: 'first',
-      tradeList: [
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个伤心的故事',
-              num: 1,
-              prePrice: '12323',
-              nowPrice: '123'
-            },
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 12323,
-          yfPrice: 10
-        },
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 1323,
-          yfPrice: 0
-        }
-      ]
+      tradeList: []
     }
+  },
+  mounted () {
+    this.setMenuLeft('/customerManagement')
+    this.getData()
   },
   computed: {
   },
   methods: {
-    changeType () {
+    ...mapMutations(['setMenuLeft']),
+    getData () {
+      this.user_id = this.$route.params.id
+      this.$http({
+        url: 'http://172.81.209.201:8300/management/user/' + this.user_id + '/orders',
+        method: 'get',
+        params: {
+          no: this.keyValue,
+          name: this.keyName,
+          status: this.OrderType,
+          begin_at: this.keyTime[0],
+          end_at: this.keyTime[1],
+          page: this.pages
+        }}).then(
+        res => {
+          console.log(res)
+          console.log(res.headers.page_count)
+          this.totalPage = parseInt(res.headers.page_count) * 15
+          res.data.forEach(function (v, i) {
+            Object.assign(res.data[i], {length: res.data[i].items.length * 80})
+          })
+          this.tradeList = res.data
+        }
+      )
     },
     changeTime () {
+      let keyTimes = this.keyTime
+      this.isWeek = false
+      this.isMonth = false
+      this.keyTime = [keyTimes[0].getTime(), keyTimes[1].getTime()]
     },
     searchOrder () {
+      this.pages = 0
+      this.getData()
     },
-    timeRange (res) {
-      console.log(res)
-    },
-    handleClick (tab, event) {
-      console.log(tab.index)
+    timeRange (day) {
+      if (day === 7) {
+        if (this.isWeek) {
+          this.isWeek = false
+          this.keyTime = []
+        } else {
+          this.isWeek = true
+          this.isMonth = false
+          this.keyTime = [(new Date().getTime() - day * 24 * 3600 * 1000), (new Date().getTime())]
+        }
+      } else {
+        if (this.isMonth) {
+          this.isMonth = false
+          this.keyTime = []
+        } else {
+          this.isWeek = false
+          this.isMonth = true
+          this.keyTime = [(new Date().getTime() - day * 24 * 3600 * 1000), (new Date().getTime())]
+        }
+      }
     }
   }
 }
 </script>
 <style lang="less">
   .cus-order-container{
-    .el-pagination.is-background{
-      float: right;
-    }
-    .el-pagination button span {
-      padding: 0 16px;
-      border: 1px solid #D5D5D5;
-      font-family: MicrosoftYaHei;
-      font-size: 12px;
-      text-align: center;
-    }
-    .el-pagination.is-background .el-pager li{
-      border: 1px solid #D5D5D5;
-      border-radius: 2px;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active{
-      background-color: #DE5B67;
-      color: #ffffff;
-    }
-    .el-pagination.is-background .el-pager li:not(.active):hover {
-      color: #DE5B67;
-    }
-    .el-pagination button:hover {
-      color: #DE5B67;
-    }
-    .el-pager li {
-      padding: 0;
-      background: #fff;
-      vertical-align: top;
-      display: inline-block;
-      font-size: 13px;
-      min-width: 30px;
-      height: 30px;
-      line-height: 30px;
-      cursor: pointer;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      text-align: center;
-      margin: 0;
-      border: 1px solid #D5D5D5;
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
-      border-radius: 2px;
-    }
     .el-tabs__item.is-active {
       font-family: MicrosoftYaHei;
       font-size: 14px;
@@ -309,6 +308,7 @@ export default {
       .el-input__inner{
         height: 30px;
         line-height: 30px;
+        border-radius: 0;
       }
       .el-input--suffix .el-input__inner {
         padding:0 12px;
@@ -330,6 +330,11 @@ export default {
       .el-select{
         margin-right: 10px;
       }
+      .el-button--small {
+        width: 80px;
+        height: 30px;
+        padding: 0;
+      }
     }
   }
 </style>
@@ -340,11 +345,15 @@ export default {
       padding-top: 20px;
       position: relative;
       min-width: 1000px;
+      .header{
+        label{
+          margin-right: 10px;
+        }
+      }
     }
-
     .tradeRecord {
       background: #fff;
-      padding:0 20px 20px;
+      padding: 20px;
       overflow: hidden;
       .tradeList{
         padding-bottom: 30px;
@@ -370,6 +379,9 @@ export default {
           display: flex;
           justify-content: flex-start;
           align-items: center;
+          >div{
+            width: 66%;
+          }
           .desc{
             font-family: MicrosoftYaHei;
             font-size: 14px;
@@ -385,7 +397,7 @@ export default {
             text-align: center;
           }
           .proInfo{
-            width: 400px;
+            width: 60%;
             display: flex;
             height: 100%;
             justify-content: flex-start;
@@ -396,6 +408,7 @@ export default {
           }
           .prolist{
             height: 80px;
+            width: 100%;
             box-sizing: border-box;
             display: flex;
             align-items: center;
@@ -404,7 +417,7 @@ export default {
           }
           .orderMon,.orderResult{
             height: 100%;
-            width: 170px;
+            width: 17%;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -444,8 +457,8 @@ export default {
               margin-top: 5px;
             }
           }
-          .proNum{
-            width: 190px;
+          .price,.proNum{
+            width: 20%;
             height: 100%;
             line-height: 80px;
             font-family: MicrosoftYaHei;
@@ -453,26 +466,6 @@ export default {
             color: #666666;
             text-align: center;
             border-right: 1px solid #efefef;
-          }
-          .price{
-            height: 100%;
-            width: 190px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-right: 1px solid #efefef;
-            label:first-child{
-              font-family: MicrosoftYaHei;
-              font-size: 12px;
-              color: #999999;
-              text-decoration: line-through;
-            }
-            label:last-child{
-              font-size: 12px;
-              color: #333333;
-              font-family: MicrosoftYaHei;
-              margin-top: 5px;
-            }
           }
         }
       }
@@ -507,11 +500,9 @@ export default {
       .el-input__inner{
         height: 30px;
         line-height: 30px;
-        border-radius: 2px;
       }
       .el-input--suffix{
         height: 30px;
-        border-radius: 2px;
       }
       .selectInfo{
         align-items: center;
@@ -550,13 +541,6 @@ export default {
           position: absolute;
           top: 45px;
           right: 20px;
-          line-height: 30px;
-          width: 80px;
-          background: #DE5B67;
-          color:#fff;
-          text-align: center;
-          line-height: 30px;
-          border-radius: 2px;
         }
         .orderType{
           margin-left: 20px;

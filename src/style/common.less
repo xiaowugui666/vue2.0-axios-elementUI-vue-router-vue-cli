@@ -22,7 +22,7 @@ textarea { -webkit-appearance: none;}
 html,body{
     height: 100%;
     width: 100%;
-    // background-color: #F5F5F5;
+    background: @bg;
 }
 
 .fillcontain{
@@ -44,10 +44,6 @@ html,body{
     background-size: 100% 100%;
 }
 
-.margin{
-    margin: 0 auto;
-}
-
 .left{
     float: left;
 }
@@ -56,12 +52,8 @@ html,body{
     float: right;
 }
 
-.hide{
-    display: none;
-}
-
-.show{
-    display: block;
+.padding-top-20 {
+  padding-top: 20px;
 }
 
 .ellipsis{
@@ -69,3 +61,44 @@ html,body{
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.el-pagination.is-background .el-pager li:hover {
+  color: @mainC;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background: @mainC;
+  border-color: @mainC;
+}
+.reset() {
+  font-weight: normal;
+  color: @b3;
+  background: #fff;
+  border: 1px solid @bc;
+}
+.el-pagination.is-background {
+  padding: 0;
+  .btn-prev {
+    .reset();
+    padding: 0 10px;
+    margin: 0 5px 0 0;
+    &:disabled {
+      color: @bc;
+      border-color: @bc;
+    }
+  }
+  .btn-next {
+    .reset();
+    padding: 0 10px;
+    margin: 0 0 0 5px;
+    &:disabled {
+      color: @bc;
+      border-color: @bc;
+    }
+  }
+  .el-pager li {
+    .reset();
+  }
+}
+.el-pagination.is-background .el-pager li:not(.active):hover {
+  color: @mainC;
+}
+

@@ -3,15 +3,18 @@
 import Vue from 'vue'
 import '../theme/index.css'
 import ElementUI from 'element-ui'
+import './style/common.less'
 // import 'element-ui/lib/theme-chalk/index.css'
 import Vuex from 'vuex'
 import App from './App'
 import router from './router'
 import store from './store/store'
+import axios from 'axios'
 
 Vue.use(Vuex)
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+Vue.prototype.$http = axios
 
 /* eslint-disable no-new */
 new Vue({
@@ -20,4 +23,9 @@ new Vue({
   store,
   components: { App },
   template: '<App/>'
+})
+
+Vue.filter('money', function (val) {
+  val = Number(val) / 100
+  return val.toFixed(2)
 })

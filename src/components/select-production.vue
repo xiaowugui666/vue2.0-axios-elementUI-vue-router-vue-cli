@@ -1,112 +1,74 @@
 <template>
-    <div class="addProduction">
-        <div class="content">
-            <div class="top">
-                <div class="title">选择商品</div>
-                <div class="searchBox">
-                  <label>商品名称</label>
-                  <input type="text" v-model="productionKey">
-                  <button class="search">搜索</button>
-                </div>
-            </div>
-            <div class="productionList">
-                <div class="listHeader">
-                  <label>下单时间：2018-10-10</label>
-                  <label>状态</label>
-                  <label>操作</label>
-                </div>
-                <div class="list">
-                    <div class="select">
-                      <img src="/static/test/ceshi.png" alt="">
-                      <div>
-                        <p  class="desc">
-                            好丽友拍蛋糕
-                        </p>
-                        <p class="info">
-                          <label>标准白；35.5；皮质</label>
-                          <label>￥9999.00</label>
-                        </p>
+    <div class="add-production">
+      <el-dialog
+        title="选择商品"
+        :visible.sync="goodsDialogVisible"
+        width="50%"
+        :before-close="upHandleClose">
+        <div class="add-production-content">
+          <div class="search-box clear">
+            <label>商品名称</label>
+            <input type="text" v-model="productionKey">
+            <el-button class="search" type="success" size="small">搜索</el-button>
+          </div>
+          <div class="select-goods-table">
+            <el-table
+              ref="multipleTable"
+              :data="selectGoodsTableData"
+              tooltip-effect="dark"
+              style="width: 100%"
+              border
+              @selection-change="handleSelectionChange">
+              <el-table-column
+                label="商品"
+                width="400">
+                <template slot-scope="scope">
+                  <div class="goods-info-box">
+                    <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
+                    <div class="goods-info">
+                      <p class="goods-info-name">{{scope.row.goods.name}}</p>
+                      <div class="goods-info-price-category">
+                      <span v-if="scope.row.goods.firstSpecific" class="goods-info-category">
+                        {{showSpecific(scope.$index)}}
+                      </span>
+                        <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
                       </div>
                     </div>
-                    <div class="state">
-                      上架
-                    </div>
-                    <div class="toSelect">
-                      选择
-                    </div>
-                </div>
-              <div class="list">
-                <div class="select">
-                  <img src="/static/test/ceshi.png" alt="">
-                  <div>
-                    <p  class="desc">
-                      好丽友拍蛋糕
-                    </p>
-                    <p class="info">
-                      <label>标准白；35.5；皮质</label>
-                      <label>￥9999.00</label>
-                    </p>
                   </div>
-                </div>
-                <div class="state">
-                  上架
-                </div>
-                <div class="toSelect">
-                  选择
-                </div>
-              </div>
-              <div class="list">
-                <div class="select">
-                  <img src="/static/test/ceshi.png" alt="">
-                  <div>
-                    <p  class="desc">
-                      好丽友拍蛋糕
-                    </p>
-                    <p class="info">
-                      <label>标准白；35.5；皮质</label>
-                      <label>￥9999.00</label>
-                    </p>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="state"
+                label="状态"
+                show-overflow-tooltip>
+                <template slot-scope="scope">
+                  <div :style="[{'color':scope.row.state==1?'#6BA725':(scope.row.state==2?'#676767':'#DE5B67')}]">
+                    {{getActivityState(scope.$index)}}
                   </div>
-                </div>
-                <div class="state">
-                  上架
-                </div>
-                <div class="toSelect">
-                  选择
-                </div>
-              </div>
-              <div class="list">
-                <div class="select">
-                  <img src="/static/test/ceshi.png" alt="">
-                  <div>
-                    <p  class="desc">
-                      好丽友拍蛋糕
-                    </p>
-                    <p class="info">
-                      <label>标准白；35.5；皮质</label>
-                      <label>￥9999.00</label>
-                    </p>
-                  </div>
-                </div>
-                <div class="state">
-                  上架
-                </div>
-                <div class="toSelect">
-                  选择
-                </div>
-              </div>
-            </div>
-          <el-pagination
-            background
-            :page-size="20"
-            :page-count="6"
-            prev-text="< 上一页"
-            next-text="下一页 >"
-            layout="prev, pager, next"
-            current-change="currentIndex"
-            :total="1000">
-          </el-pagination>
+                </template>
+              </el-table-column>
+              <el-table-column
+                label="操作">
+                <template slot-scope="scope">
+                  <el-button @click="selectThisGoods(scope.row.id)" type="text">选择</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <div class="clear pagination">
+            <el-pagination
+              background
+              :page-size="20"
+              :page-count="6"
+              prev-text="< 上一页"
+              next-text="下一页 >"
+              layout="prev, pager, next"
+              current-change="currentIndex"
+              :total="1000">
+            </el-pagination>
+          </div>
         </div>
+      </el-dialog>
     </div>
 </template>
 
@@ -114,107 +76,225 @@
 export default {
   data () {
     return {
-      productionKey: ''
+      productionKey: '',
+      selectGoodsTableData: [
+        {
+          id: 1,
+          goods: {
+            imgSrc: '/static/test/ceshi2.png',
+            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
+            price: 12312.36,
+            firstSpecific: '食品',
+            secondSpecific: '四川火锅',
+            thirdSpecific: 'cxxxxxz'
+          },
+          state: 2
+        },
+        {
+          id: 2,
+          goods: {
+            imgSrc: '/static/test/ceshi3.png',
+            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
+            price: 12312.36,
+            firstSpecific: '食品'
+          },
+          state: 1
+        },
+        {
+          id: 3,
+          goods: {
+            imgSrc: '/static/test/ceshi.png',
+            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
+            price: 12312.36,
+            firstSpecific: '食品',
+            secondSpecific: '四川火锅'
+          },
+          state: 3
+        }
+      ],
+      multipleSelection: ''
+    }
+  },
+  props: {
+    goodsDialogVisible: {
+      type: Boolean,
+      default: false
+    }
+  },
+  methods: {
+    selectThisGoods (id) {
+      this.$emit('goodsId', id)
+      for (let k of this.selectGoodsTableData) {
+        if (k.id === id) {
+          this.$emit('goodsImgSrc', k.goods.imgSrc)
+          break
+        }
+      }
+      this.upHandleClose()
+    },
+    upHandleClose () {
+      this.$emit('handleClose', false)
+    },
+    handleSelectionChange (val) {
+      this.multipleSelection = val
+    },
+    getActivityState (index) {
+      let s = ''
+      if (this.selectGoodsTableData[index].state === 1) {
+        s = '上架中'
+      } else if (this.selectGoodsTableData[index].state === 2) {
+        s = '已下架'
+      } else {
+        s = '已售罄'
+      }
+      return s
+    },
+    showSpecific (index) {
+      let specificList = ''
+      if (this.selectGoodsTableData[index].goods.firstSpecific) {
+        specificList += this.selectGoodsTableData[index].goods.firstSpecific
+        if (this.selectGoodsTableData[index].goods.secondSpecific) {
+          specificList += '；' + this.selectGoodsTableData[index].goods.secondSpecific
+          if (this.selectGoodsTableData[index].goods.thirdSpecific) {
+            specificList += '；' + this.selectGoodsTableData[index].goods.thirdSpecific
+          }
+        }
+      }
+      return specificList
     }
   }
 }
 </script>
-<style lang="less">
-  .addProduction{
-    .el-pagination.is-background .el-pager li {
-      background-color: #fff;
-    }
-    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next {
-      padding: 0 15px;
-    }
-    .el-pagination span:not([class*=suffix]), .el-pagination button {
-      display: inline-block;
-      font-size: 13px;
-      min-width: 30px;
-      height: 30px;
-      line-height: 30px;
-      vertical-align: top;
-      -webkit-box-sizing: border-box;
+<style scoped lang="less">
+  .add-production {
+    .add-production-content{
+      background: #FFFFFF;
       box-sizing: border-box;
-    }
-    .el-pagination .btn-prev, .el-pagination .btn-next {
-      background: center center no-repeat;
-      background-size: 16px;
-      background-color: #fff;
-      height: 30px;
-      line-height: 30px;
-      padding:0 15px;
-      cursor: pointer;
-      margin: 0;
-      color: #303133;
-      border: 1px solid #d5d5d5;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active {
-      background-color: #DE5B67;
-      color: #fff;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-      color: #fff;
-    }
-    .el-pager li {
-      padding: 0;
-      background: #fff;
-      vertical-align: top;
-      display: inline-block;
-      font-size: 13px;
-      min-width: 30px;
-      height: 30px;
-      line-height: 30px;
-      cursor: pointer;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      text-align: center;
-      margin: 0;
-      border: 1px solid #D5D5D5;
-      -webkit-border-radius: 2px;
-      -moz-border-radius: 2px;
-      border-radius: 2px;
-    }
-    .el-pager li.active + li {
-      border-left: 1px solid #D5D5D5;
-    }
-    .el-pagination{
-      margin-top: 30px;
-      text-align: right;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled):hover {
-      color: #DE5B67; }
-    .el-tabs__item.is-active {
-      font-family: MicrosoftYaHei;
-      font-size: 14px;
-      color: #333333;
-      text-align: center;
+      .productionList{
+        width: 100%;
+        margin-top: 30px;
+      }
+      .pagination {
+        padding-top: 30px;
+      }
+      .search-box{
+        label{
+          font-size: 12px;
+          color: #999999;
+          text-align: right;
+          line-height: 15px;
+        }
+        input{
+          border: 1px solid #D5D5D5;
+          border-radius: 2px;
+          width: 256px;
+          height: 30px;
+          line-height: 30px;
+          padding-left: 10px;
+          box-sizing: border-box;
+          margin-left: 10px;
+        }
+        .search{
+          width: 80px;
+          height: 30px;
+          padding: 0;
+          float: right;
+        }
+      }
+      .select-goods-table {
+        text-align: center;
+        padding-top: 30px;
+        .el-table {
+          color: #666;
+          font-size: 12px;
+        }
+        .goods-info-box {
+          text-align: left;
+          font-size: 0;
+          .goods-img {
+            width: 60px;
+            height: 60px;
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            border: 1px solid #d5d5d5;
+            img {
+              width: auto;
+              height: auto;
+              max-width: 100%;
+              max-height: 100%;
+              position: relative;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+          }
+          .goods-info {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: left;
+            font-size: 12px;
+            padding-left: 15px;
+            width: 316px;
+            .goods-info-name {
+              color: #333;
+              font-size: 14px;
+              line-height: 1.3;
+              overflow:hidden;
+              text-overflow:ellipsis;
+              white-space:nowrap;
+            }
+            .goods-info-price-category {
+              padding-top: 10px;
+              line-height: 1.3;
+              .goods-info-category {
+                color: #999;
+                padding-right: 15px;
+              }
+              .goods-info-price {
+                color: #DE5B67;
+                display: inline-block;
+              }
+            }
+          }
+        }
+        .goods-state {
+          color: #59A304;
+        }
+        .operation-paging {
+          text-align: left;
+          padding-top: 30px;
+          div {
+            display: inline-block;
+            vertical-align: middle;
+          }
+        }
+        .edit-btn {}
+        .close-btn, .delete-btn {
+          color: #333;
+          border-color: #333;
+          &:hover {
+            color: #f56c6c;
+            border-color: #f56c6c;
+          }
+        }
+      }
     }
   }
 </style>
-<style scoped lang="less">
-  .select{
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 60%;
-    box-sizing: border-box;
-    border-right: 1px solid #d5d5d5;
-    .desc{
-      padding-left: 5px;
-      font-family: MicrosoftYaHei;
+<style lang="less">
+  .add-production {
+    .el-dialog__title {
       font-size: 14px;
-      color: #333333;
+      color: #333;
+      font-weight: bold;
     }
-    .info{
-      font-family: MicrosoftYaHei;
-      font-size: 14px;
-      padding-left: 5px;
-      margin-top: 20px;
-      color: #999;
-      label:nth-child(2){
-        color:#DE5B67;
-        margin-left: 30px;
+    .el-table {
+      th {
+        color: #333;
+        text-align: center;
+        font-weight: normal;
+        background: #efefef;
+        border-color: #e4e4e4;
       }
     }
   }
