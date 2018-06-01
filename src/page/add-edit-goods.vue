@@ -16,25 +16,31 @@
             <ul>
               <li>
                 <span class="required name">商品名称：</span>
-                <input v-validate="'required'" name="商品名称" v-model.trim="goodsName" maxlength="30" type="text" placeholder="请输入商品名称">
-                <div class="err-tips">{{ errors.first('商品名称') }}</div>
+                <div>
+                  <input v-validate="'required'" name="商品名称" v-model.trim="goodsName" maxlength="30" type="text" placeholder="请输入商品名称">
+                  <div class="err-tips">{{ errors.first('商品名称') }}</div>
+                </div>
               </li>
               <li>
                 <span class="name">分享描述：</span>
-                <input type="text" placeholder="请输入分享描述" v-model.trim="sharingDescription" maxlength="30">
+                <div>
+                  <input type="text" placeholder="请输入分享描述" v-model.trim="sharingDescription" maxlength="30">
+                </div>
               </li>
               <li>
                 <span class="required name alignment-top">商品图片：</span>
                 <div class="goods-pic-box">
+                  <!--上传商品图片-->
                   <el-upload
                     :action="goodsImageAction"
                     :data="upToken"
                     list-type="picture-card"
                     multiple
                     :limit="10"
+                    :file-list="goodsImageShowList"
                     :before-upload="beforeUpload"
-                    :on-success="handleAvatarSuccess"
-                    :on-remove="handleRemove">
+                    :on-success="goodsUploadSuccess"
+                    :on-remove="goodsHandleRemove">
                     <i class="el-icon-plus"></i>
                   </el-upload>
                   <el-dialog :visible.sync="goodsPicVisible">
@@ -45,19 +51,22 @@
               </li>
               <li>
                 <span class="name">商品类目：</span>
-                <el-cascader
-                  expand-trigger="hover"
-                  size="small"
-                  clearable
-                  class="select-state"
-                  :options="selectStateOptions"
-                  v-model="selectedOptions"
-                  @change="categoryChange">
-                </el-cascader>
+                <div>
+                  <el-cascader
+                    expand-trigger="hover"
+                    size="small"
+                    clearable
+                    class="select-state"
+                    :options="selectStateOptions"
+                    v-model="selectedOptions"
+                    @change="categoryChange">
+                  </el-cascader>
+                </div>
               </li>
               <li>
                 <span class="name alignment-top">商品卖点：</span>
                 <div class="rich-text-editor clear">
+                  <!--商品图文详情编辑框-->
                   <quill-editor v-model.trim="quillContent"
                     ref="myQuillEditor"
                     :options="editorOption"
@@ -65,6 +74,14 @@
                     @focus="onEditorFocus($event)"
                     @ready="onEditorReady($event)">
                   </quill-editor>
+                  <!-- 文件上传input 将它隐藏-->
+                  <el-upload :action="goodsImageAction"
+                             :before-upload='beforeUpload'
+                             :data="upToken"
+                             :on-success='quillUpScuccess'
+                             ref="quillUpload" style="display:none">
+                    <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
+                  </el-upload>
                 </div>
               </li>
               <li>
@@ -84,18 +101,22 @@
               </li>
               <li>
                 <span class="name">唯一编码：</span>
-                <input type="text" placeholder="商品的唯一编码" v-model.trim="uniqueCoding" maxlength="30">
+                <div>
+                  <input type="text" placeholder="商品的唯一编码" v-model.trim="uniqueCoding" maxlength="30">
+                </div>
               </li>
               <li>
                 <span class="name">商品量词：</span>
-                <el-select v-model.trim="quantifier" clearable size="small" class="select-state">
-                  <el-option
-                    v-for="item in goodsQuantifier"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
+                <div>
+                  <el-select v-model.trim="quantifier" clearable size="small" class="select-state">
+                    <el-option
+                      v-for="item in goodsQuantifier"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-select>
+                </div>
               </li>
               <li class="keyword-box">
                 <span class="name">关键字：</span>
@@ -184,8 +205,8 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.SkuPrice" v-validate="'required|decimal:2'" name="价格" type="text" maxlength="10"/>
-                        <div>{{ errors.first('价格') }}</div>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.SkuPrice" v-validate="'required|decimal:2'" data-vv-as="价格" :name="index" type="text" maxlength="10"/>
+                        <div>{{ errors.first(index) }}</div>
                       </td>
                       <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
                       <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
@@ -256,7 +277,7 @@
           </ul>
         </div>
         <div class="add-goods-btn">
-            <el-button type="success" size="small">保存</el-button>
+            <el-button @click="submitGoodsInfo" type="success" size="small">保存</el-button>
           </div>
       </div>
       </el-form>
@@ -267,6 +288,7 @@
 import {mapState, mapMutations} from 'vuex'
 import {goodsEditDetails, goodsCategory, imageToken} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
+import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -287,7 +309,7 @@ export default {
       [{'color': []}, {'background': []}],
       [{'font': []}],
       [{'align': []}],
-      ['link'],
+      ['link', 'image'],
       ['clean']
     ]
     return {
@@ -371,6 +393,8 @@ export default {
       },
       hash: this.$route.query.gid, // 商品id
 
+      // 七牛图片预览的域名
+      STATICDOMAIN: 'http://p94iruedm.bkt.clouddn.com/',
       // 商品信息
       goodsName: '',
       sharingDescription: '',
@@ -381,14 +405,16 @@ export default {
         deliverGoods: false
       },
       uniqueCoding: '',
-      quillContent: '', // 商品卖点
+      // 商品卖点
+      quillContent: '',
       editorOption: {
         modules: {
           toolbar: {
             container: toolbarOptions
           }
         }
-      }, // 商品卖点
+      },
+      addRange: '',
       weightNum: '',
       weightUnit: [
         {
@@ -453,10 +479,12 @@ export default {
       // 表单验证
       rules: {},
       ruleForm: {},
-      // 图片token
+      // 图片 token
       imageToken: '',
       goodsImageAction: '//upload.qiniup.com',
-      upToken: {}
+      upToken: {},
+      goodsImageShowList: [],
+      goodsImages: []
     }
   },
   created () {
@@ -467,6 +495,7 @@ export default {
     this.getImageToken()
   },
   mounted () {
+    this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
     // console.log(this.hash)
   },
   methods: {
@@ -523,18 +552,70 @@ export default {
         console.log(err)
       })
     },
-    // 图片上传之前的操作
-    beforeUpload () {
-      const keyName = `merchant-goods-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000)}.jpg`
+    // 商品图片上传之前的操作
+    beforeUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      const isMt10K = file.size / 1024 > 10
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+        return false
+      }
+      if (!isMt10K) {
+        this.$message.error('上传图片大小不能小于 10KB!')
+        return false
+      }
+
+      let suffix = ''
+      if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+        suffix = '.jpg'
+      } else if (file.type === 'image/png') {
+        suffix = '.png'
+      }
+      const keyName = `merchant-goods-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000) + suffix}`
       this.upToken.key = keyName
       this.upToken.token = this.imageToken
-      // console.log(this.upToken)
     },
-    handleRemove (file, fileList) {
-      console.log(file, fileList)
+    // 商品图片上传成功的操作
+    goodsUploadSuccess (response, file, fileList) {
+      // console.log(response.key)
+      this.goodsImages.push(response.key)
+    },
+    // 删除商品图片列表中的图片，删除商品图片的key
+    goodsHandleRemove (file, fileList) {
+      this.goodsImages.splice(file.response.key, 1)
     },
     categoryChange (val) {
       console.log(val)
+    },
+    // 商品卖点详情，图片上传成功后的操作
+    quillUpScuccess (e, file, fileList) {
+      let vm = this
+      let url = this.STATICDOMAIN + e.key
+      if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
+        let value = url
+        // API: https://segmentfault.com/q/1010000008951906
+        // this.$refs.myTextEditor.quillEditor.getSelection();
+        // 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
+        vm.addRange = vm.$refs.myQuillEditor.quill.getSelection()
+        value = value.indexOf('http') !== -1 ? value : 'http:' + value
+        vm.$refs.myQuillEditor.quill.insertEmbed(vm.addRange !== null ? vm.addRange.index : 0, 'image', value, Quill.sources.USER) // 调用编辑器的 insertEmbed 方法，插入URL
+      } else {
+        this.$message.error(`插入失败`)
+      }
+      this.$refs['quillUpload'].clearFiles() // 插入成功后清除input的内容
+    },
+    // 点击图片ICON触发事件
+    imgHandler (state) {
+      this.addRange = this.$refs.myQuillEditor.quill.getSelection()
+      if (state) {
+        let fileInput = this.$refs.quillUploadButton.$el
+        fileInput.click() // 加一个触发事件
+      }
     },
     // 计算规格属性的笛卡尔积
     setSpeRetData () {
@@ -801,6 +882,10 @@ export default {
       // console.log(file)
       this.skus[index].imgSrc = file.url
     },
+    // 保存发送商品信息
+    submitGoodsInfo () {
+      console.log(this.quillContent)
+    },
     // 设置路由链接
     setRouter (link) {
       this.$router.push({
@@ -887,6 +972,11 @@ export default {
           color: #999;
           padding-right: 3px;
           width: 65px;
+          float: left;
+          margin-top: 7px;
+        }
+        >div {
+          margin-left: 70px;
         }
         .name.alignment-top {
           vertical-align: top;
@@ -915,8 +1005,6 @@ export default {
       }
       .select-state {
         color: #333;
-        display: inline-block;
-        vertical-align: middle;
         width: 258px;
       }
     }
@@ -964,9 +1052,6 @@ export default {
     .essential-info {
       .essential-info-edit {
         padding: 10px 5px 20px;
-        .goods-pic-box {
-          display: inline-block;
-        }
         .upload-img-explain {
           color: @b5b5;
           font-size: 12px;
@@ -976,13 +1061,7 @@ export default {
         .select-state {
           padding-right: 15px;
         }
-        .rich-text-editor {
-          display: inline-block;
-          width: 942px;
-        }
         .weight-unit {
-          display: inline-block;
-          vertical-align: middle;
           input {
             width: 148px;
             margin-right: 5px;
@@ -997,28 +1076,28 @@ export default {
             width: 60px;
           }
           .keyword-list {
-            display: inline-block;
-            vertical-align: middle;
             font-size: 0;
             .keyword-tips {
               color: @b5b5;
               font-size: 12px;
               padding-left: 20px;
             }
-            .el-tag + .el-tag {
-              margin-left: 10px;
+            .el-tag {
+              margin-right: 10px;
+              margin-bottom: 10px;
             }
             .button-new-tag {
-              margin-left: 10px;
+              margin-right: 10px;
               height: 32px;
               line-height: 30px;
               padding-top: 0;
               padding-bottom: 0;
+              margin-bottom: 10px;
             }
             .input-new-tag {
               width: 90px;
-              margin-left: 10px;
-              vertical-align: bottom;
+              margin-right: 10px;
+              margin-bottom: 10px;
             }
           }
         }
@@ -1233,8 +1312,8 @@ export default {
     .el-input__inner {
       border-radius: 0;
     }
-    .ql-container .ql-editor p {
-      min-height: 150px;
+    .ql-container, .ql-editor {
+      min-height: 200px;
     }
     .el-checkbox__input.is-checked + .el-checkbox__label {
       color: @mainC;
