@@ -22,11 +22,11 @@
                       <div class="tag-img">
                         <el-upload
                           class="avatar-uploader"
-                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :action="uploadImgApi"
+                          :data="upToken"
                           :show-file-list="false"
-                          :on-change='(value)=>changeUpload(value, index, index2)'
-                          :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
-                          :before-upload="(value)=>beforeAvatarUpload(value, index)">
+                          :on-success="(res,file)=>handleAvatarSuccess(res,file,tag.id)"
+                          :before-upload="beforeAvatarUpload">
                           <img :src="item.children[index2].icon_url" class="avatar">
                         </el-upload>
                       </div>
@@ -71,14 +71,20 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic} from '../axios/api.js'
+import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic, imageToken} from '../axios/api.js'
 export default {
   data () {
     return {
+      uploadImgApi: '//upload.qiniup.com',
       dialogVisible: false,
       categoryList: [],
       inputSpacVisible: [],
       inputSpacValue: '',
+      // 七牛上传图片所需要的token
+      imageToken: '',
+      upToken: {},
+      // 七牛图片预览的域名
+      STATICDOMAIN: 'http://p94iruedm.bkt.clouddn.com/',
       firstCategoryList: [
         {
           value: 1,
@@ -260,6 +266,7 @@ export default {
   created () {
     this.setMenuLeft('/category-management')
     this.getCategoryList()
+    this.getImageToken()
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
@@ -282,6 +289,15 @@ export default {
         })
       })
       // console.log(this.firstCategoryList)
+    },
+    // 获取图片上传七牛的token
+    getImageToken () {
+      imageToken().then(res => {
+        // console.log(res)
+        this.imageToken = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
     },
     // 关闭一级类目选择框之前的动作
     handleClose (done) {
@@ -374,22 +390,45 @@ export default {
       this.$set(this.inputSpacVisible, index, false)
       this.inputSpacValue = ''
     },
+    beforeAvatarUpload (file) {
+      // 上传文件之前对上传内容的验证
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      const isMt10K = file.size / 1024 > 10
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+        return false
+      }
+      if (!isMt10K) {
+        this.$message.error('上传图片大小不能小于 10KB!')
+        return false
+      }
+      let suffix = ''
+      if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+        suffix = '.jpg'
+      } else if (file.type === 'image/png') {
+        suffix = '.png'
+      }
+      const keyName = `category-management-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000) + suffix}`
+      this.upToken.key = keyName
+      this.upToken.token = this.imageToken
+    },
     // 二级分类图片上传
     handleAvatarSuccess (res, file, index) {
-      console.log(res, file, index)
-      // this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload (file, index) {},
-    changeUpload (file, index, index2) {
-      // console.log(file)
-      this.categoryList[index].children[index2].icon_url = file.url
+      console.log(res)
+      console.log(index)
+      this.icon_url = this.STATICDOMAIN + res.key
+      // this.categoryList[index].children[index2].icon_url = file.url
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
-        'id': 1,
-        'icon': file.url
+        'id': index,
+        'icon': res.key
       }).then(res => {
         console.log('修改二级商品分类图片成功')
-        
       })
     }
   },
