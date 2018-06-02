@@ -92,7 +92,7 @@
               <template slot-scope="scope">
                 <el-button type="text" :disabled="getActivityState(scope.$index) !== '未开始' || scope.row.status == 2" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
                 <el-button :disabled="getActivityState(scope.$index) == '已结束' || scope.row.status == 2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
-                <el-button :disabled="getActivityState(scope.$index) == '进行中'" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
+                <el-button :disabled="getActivityState(scope.$index) == '进行中' && scope.status == 1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -220,7 +220,7 @@ export default {
         // 特价商品路由，删除特价商品
         if (this.$route.params.class == 'special-offer') {
           deleteSpecial(data.id).then(res => {
-            this.request(this.curPage).done(() => {
+            this.request(1).done(() => {
               this.$message({
                 type: 'success',
                 message: `删除成功`
@@ -230,7 +230,7 @@ export default {
         } else if (this.$route.params.class == 'recommend') {
         // 推荐商品路由，删除推荐商品
           deleteRecommend(data.id).then(res => {
-            this.request(this.curPage)
+            this.request(1)
             this.$message({
               type: 'success',
               message: `删除成功`
@@ -255,7 +255,7 @@ export default {
       let date = this.timeStamp
       if (this.goodsList[index].begin_at > date) {
         s = '未开始'
-      } else if (this.goodsList[index].begin_at < date && this.goodsList[index].end_at > date) {
+      } else if (this.goodsList[index].begin_at < date && this.goodsList[index].end_at > date && this.goodsList[index].status == 1) {
         s = '进行中'
       } else {
         s = '已结束'
