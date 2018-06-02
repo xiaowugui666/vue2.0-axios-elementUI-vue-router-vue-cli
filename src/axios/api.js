@@ -59,18 +59,96 @@ export function orderExpress (data) {
 // 获取商品列表
 export const goodsList = function (data) {
   return fetch({
-    url: api.ip + '/management/goods',
+    url: api.hqip + '/management/goods',
     method: 'get', // 请求方法
     params: data
   })
 }
 
-// 营销模块：获取商品列表
+/* 营销模块： */
+// 获取商品列表
 export function marketingGoods (router, data) {
   return fetch({
     url: api.xkip + '/management/' + router,
     method: 'GET',
     params: data
+  })
+}
+
+// 新增特价商品
+export function addSpecialGood (data) {
+  return fetch({
+    url: api.xkip + '/management/special_goods',
+    method: 'POST',
+    data: data
+  })
+}
+
+// 编辑特价商品活动
+export function closeGoods (data) {
+  return fetch({
+    url: api.xkip + '/management/special_goods/' + data.id,
+    method: 'PUT',
+    data: data
+  })
+}
+
+// 编辑推荐商品
+export function closeRecommendGood (data) {
+  return fetch({
+    url: api.xkip + '/management/recommend_goods/' + data.id,
+    method: 'PUT',
+    data: data
+  })
+}
+
+// 获取编辑商品信息
+export function editorGoods (id) {
+  return fetch({
+    url: api.xkip + '/management/special_goods/' + id,
+    method: 'GET'
+  })
+}
+
+// 删除特价商品
+export function deleteSpecial (id) {
+  return fetch({
+    url: api.xkip + '/management/special_goods/' + id,
+    method: 'DELETE'
+  })
+}
+
+// 删除推荐商品
+export function deleteRecommend (id) {
+  return fetch({
+    url: api.xkip + '/management/recommend_goods/' + id,
+    method: 'DELETE'
+  })
+}
+
+// 新建特价商品，获取商品列表
+export function newGoodsList (data) {
+  return fetch({
+    url: api.hqip + '/management/goods/sku',
+    method: 'GET',
+    params: data
+  })
+}
+
+// 新建推荐商品，点击分页获取商品列表
+export function paginaGoods (params) {
+  return fetch({
+    url: api.hqip + '/management/goods/sku',
+    params: params
+  })
+}
+
+// 新建推荐商品
+export function newRecommendGoods (data) {
+  return fetch({
+    url: api.xkip + '/management/recommend_goods',
+    method: 'POST',
+    data: data
   })
 }
 
