@@ -56,21 +56,21 @@ export function orderExpress (data) {
   })
 }
 
-// 获取商品列表
-export const goodsList = function (data) {
+// 营销模块：获取商品列表
+export function marketingGoods (router, data) {
   return fetch({
-    url: api.hqip + '/management/goods',
-    method: 'get', // 请求方法
+    url: api.xkip + '/management/' + router,
+    method: 'GET',
     params: data
   })
 }
 
 /* 营销模块： */
 // 获取商品列表
-export function marketingGoods (router, data) {
+export const goodsList = function (data) {
   return fetch({
-    url: api.xkip + '/management/' + router,
-    method: 'GET',
+    url: api.hqip + '/management/goods',
+    method: 'get', // 请求方法
     params: data
   })
 }
@@ -155,7 +155,7 @@ export function newRecommendGoods (data) {
 // 批量商品上下架
 export const goodsStatus = function (data) {
   return fetch({
-    url: api.ip + '/management/goods/batch',
+    url: api.hqip + '/management/goods/batch',
     method: 'put', // 请求方法
     data: data
   })
@@ -164,7 +164,7 @@ export const goodsStatus = function (data) {
 // 批量删除商品
 export const goodsDelete = function (data) {
   return fetch({
-    url: api.ip + '/management/goods/batch',
+    url: api.hqip + '/management/goods/batch',
     method: 'delete', // 请求方法
     data: data
   })
@@ -173,7 +173,7 @@ export const goodsDelete = function (data) {
 // 获取商品分类
 export const goodsCategory = function (data) {
   return fetch({
-    url: api.ip + '/management/category',
+    url: api.hqip + '/management/category',
     method: 'get' // 请求方法
   })
 }
@@ -181,7 +181,15 @@ export const goodsCategory = function (data) {
 // 修改商品页，获取商品详情
 export const goodsEditDetails = function (id) {
   return fetch({
-    url: api.ip + '/management/goods/' + id,
+    url: api.hqip + '/management/goods/' + id,
+    method: 'get' // 请求方法
+  })
+}
+
+// 修改商品页，获取商品详情
+export const imageToken = function () {
+  return fetch({
+    url: api.hqip + '/management/merchant/upload?type=image',
     method: 'get' // 请求方法
   })
 }

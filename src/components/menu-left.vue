@@ -79,7 +79,6 @@ export default {
   },
   mounted () {
     // this.getRoutePath(this.menuLeft)
-    console.log(this.$route.path)
   },
   computed: {
     ...mapState(['menuLeft'])
