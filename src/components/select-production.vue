@@ -9,12 +9,12 @@
           <div class="search-box clear">
             <label>商品名称</label>
             <input type="text" v-model="productionKey">
-            <el-button class="search" type="success" size="small">搜索</el-button>
+            <el-button class="search" type="success" @click="diaSearch" v-model="diaSearchName" size="small">搜索</el-button>
           </div>
           <div class="select-goods-table">
             <el-table
               ref="multipleTable"
-              :data="selectGoodsTableData"
+              :data="newGoods"
               tooltip-effect="dark"
               style="width: 100%"
               border
@@ -24,25 +24,25 @@
                 width="400">
                 <template slot-scope="scope">
                   <div class="goods-info-box">
-                    <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
+                    <span class="goods-img"><img :src="qiniuDomainUrl + scope.row.cover_url" alt=""></span>
                     <div class="goods-info">
-                      <p class="goods-info-name">{{scope.row.goods.name}}</p>
+                      <p class="goods-info-name">{{compGoodsName(scope.row)}}</p>
                       <div class="goods-info-price-category">
-                      <span v-if="scope.row.goods.firstSpecific" class="goods-info-category">
+                      <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                        <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
+                        <span class="goods-info-price">￥{{scope.row.price}}</span>
                       </div>
                     </div>
                   </div>
                 </template>
               </el-table-column>
               <el-table-column
-                prop="state"
+                prop="goods_status"
                 label="状态"
                 show-overflow-tooltip>
                 <template slot-scope="scope">
-                  <div :style="[{'color':scope.row.state==1?'#6BA725':(scope.row.state==2?'#676767':'#DE5B67')}]">
+                  <div :style="[{'color':scope.row.goods_status==1?'#6BA725':(scope.row.goods_status==2?'#676767':'#DE5B67')}]">
                     {{getActivityState(scope.$index)}}
                   </div>
                 </template>
@@ -50,7 +50,7 @@
               <el-table-column
                 label="操作">
                 <template slot-scope="scope">
-                  <el-button @click="selectThisGoods(scope.row.id)" type="text">选择</el-button>
+                  <el-button @click="selectThisGoods(scope.row)" type="text">选择</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -58,13 +58,14 @@
           <div class="clear pagination">
             <el-pagination
               background
-              :page-size="20"
-              :page-count="6"
+              @current-change="currentChange($event)"
+              :page-size="15"
+              :page-count="1"
               prev-text="< 上一页"
               next-text="下一页 >"
               layout="prev, pager, next"
               current-change="currentIndex"
-              :total="1000">
+              :total="newGoods.totalPagina * 15">
             </el-pagination>
           </div>
         </div>
@@ -73,64 +74,35 @@
 </template>
 
 <script>
+import {paginaGoods} from '../axios/api'
 export default {
   data () {
     return {
       productionKey: '',
-      selectGoodsTableData: [
-        {
-          id: 1,
-          goods: {
-            imgSrc: '/static/test/ceshi2.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstSpecific: '食品',
-            secondSpecific: '四川火锅',
-            thirdSpecific: 'cxxxxxz'
-          },
-          state: 2
-        },
-        {
-          id: 2,
-          goods: {
-            imgSrc: '/static/test/ceshi3.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstSpecific: '食品'
-          },
-          state: 1
-        },
-        {
-          id: 3,
-          goods: {
-            imgSrc: '/static/test/ceshi.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstSpecific: '食品',
-            secondSpecific: '四川火锅'
-          },
-          state: 3
-        }
-      ],
-      multipleSelection: ''
+      multipleSelection: '',
+      diaSearchName: '',
+      goods: this.newGoods
     }
   },
-  props: {
-    goodsDialogVisible: {
-      type: Boolean,
-      default: false
-    }
+  props: ['goodsDialogVisible', 'newGoods', 'qiniuDomainUrl'],
+  mounted () {
+    this.goods = this.newGoods
   },
   methods: {
-    selectThisGoods (id) {
-      this.$emit('goodsId', id)
-      for (let k of this.selectGoodsTableData) {
-        if (k.id === id) {
-          this.$emit('goodsImgSrc', k.goods.imgSrc)
-          break
-        }
-      }
+    // 选择当前商品
+    selectThisGoods (value) {
+      this.$emit('goodsId', value)
       this.upHandleClose()
+    },
+    // 点击搜索
+    diaSearch () {
+      paginaGoods({name: this.diaSearchName}).then(res => {
+        console.log(res)
+      })
+    },
+    // 点击分页,通知父组件改变状态
+    currentChange (e) {
+      this.$emit('paginaNum', e)
     },
     upHandleClose () {
       this.$emit('handleClose', false)
@@ -140,9 +112,9 @@ export default {
     },
     getActivityState (index) {
       let s = ''
-      if (this.selectGoodsTableData[index].state === 1) {
+      if (this.newGoods[index].goods_status === 1) {
         s = '上架中'
-      } else if (this.selectGoodsTableData[index].state === 2) {
+      } else if (this.newGoods[index].goods_status === 2) {
         s = '已下架'
       } else {
         s = '已售罄'
@@ -151,17 +123,33 @@ export default {
     },
     showSpecific (index) {
       let specificList = ''
-      if (this.selectGoodsTableData[index].goods.firstSpecific) {
-        specificList += this.selectGoodsTableData[index].goods.firstSpecific
-        if (this.selectGoodsTableData[index].goods.secondSpecific) {
-          specificList += '；' + this.selectGoodsTableData[index].goods.secondSpecific
-          if (this.selectGoodsTableData[index].goods.thirdSpecific) {
-            specificList += '；' + this.selectGoodsTableData[index].goods.thirdSpecific
+      if (this.newGoods[index].spec_a) {
+        specificList += this.newGoods[index].spec_a
+        if (this.newGoods[index].spec_b) {
+          specificList += '；' + this.newGoods[index].spec_b
+          if (this.newGoods[index].spec_c) {
+            specificList += '；' + this.newGoods[index].spec_c
           }
         }
       }
       return specificList
+    },
+    compGoodsName (scope) {
+      if (this.$route.params.class == 'recommend') {
+        return scope.name
+      } else {
+        return scope.goods_name
+      }
+    },
+    specVisible (scope) {
+      if (this.$route.params.class == 'recommend') {
+        return false
+      } else if (scope.spec_a || scope.spec_b || scope.spec_c) {
+        return true
+      }
     }
+  },
+  computed: {
   }
 }
 </script>

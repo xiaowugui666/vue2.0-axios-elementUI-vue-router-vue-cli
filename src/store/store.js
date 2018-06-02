@@ -5,10 +5,12 @@ Vue.use(Vuex)
 
 const state = {
   menuLeft: '',
+  qiniuDomainUrl: 'http://p94iruedm.bkt.clouddn.com/',
   menuShow: true,
   adminInfo: {
     avatar: 'default.jpg'
-  }
+  },
+  huzanDomainUrl: 'http://image.c.51zan.cn/'
 }
 
 const mutations = {

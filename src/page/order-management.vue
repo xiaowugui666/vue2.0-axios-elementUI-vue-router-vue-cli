@@ -79,7 +79,7 @@
                   <label>运费：{{item.express_amount | money}}</label>
                 </div>
                 <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
-                    <label>交易完成</label>
+                    <label>{{orderMessage(item.status)}}</label>
                   <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
                 </div>
               </div>
@@ -193,6 +193,20 @@ export default {
     },
     changeTime (res) {
       console.log(111)
+    },
+    // 订单状态
+    orderMessage (status) {
+      if (status == 200) { // 待付款
+        return '待付款'
+      } else if (status > 200 && status < 305) { // 待发货
+        return '待发货'
+      } else if (status > 300 && status < 405) { // 已发货
+        return '已发货'
+      } else if (status > 400) { // 已完成
+        return '订单已完成'
+      } else {
+        return '这啥状态'
+      }
     },
     searchOrder () {
       // 参数
