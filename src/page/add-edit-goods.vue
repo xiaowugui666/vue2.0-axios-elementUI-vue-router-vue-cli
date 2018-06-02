@@ -38,6 +38,7 @@
                     multiple
                     :limit="10"
                     :file-list="goodsImageShowList"
+                    :on-exceed="beyondNumberLimit"
                     :before-upload="beforeUpload"
                     :on-success="goodsUploadSuccess"
                     :on-remove="goodsHandleRemove">
@@ -134,13 +135,14 @@
                     v-if="inputVisible"
                     v-model.trim="inputValue"
                     ref="saveTagInput"
+                    maxLength="20"
                     size="small"
                     @keyup.enter.native="handleInputConfirm"
                     @blur="handleInputConfirm"
                   >
                   </el-input>
                   <el-button v-else class="button-new-tag" size="small" @click="showInput">+ 关键字</el-button>
-                  <span class="keyword-tips">输入完成后，按“回车键”确认</span>
+                  <span class="keyword-tips">输入完成后，按“回车键”确认，最多设置15个</span>
                 </div>
               </li>
             </ul>
@@ -205,20 +207,24 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.values" v-if="sku.values.length>0" :key="index2">{{item.specificName}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.SkuPrice" v-validate="'required|decimal:2'" data-vv-as="价格" :name="index" type="text" maxlength="10"/>
-                        <div>{{ errors.first(index) }}</div>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.SkuPrice" v-validate="'required|decimal:2'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="10"/>
+                        <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
-                      <td><input type="text" v-model.trim="sku.StockQuantity" class="stock-quantity" maxlength="10"/></td>
+                      <td>
+                        <input type="text" v-model.trim="sku.StockQuantity" v-validate="'required|numeric'" data-vv-as="库存" :name="`stock-${index}`" class="stock-quantity" maxlength="10"/>
+                        <div class="err-tips">{{ errors.first(`stock-${index}`) }}</div>
+                      </td>
                       <td><input type="text" v-model.trim="sku.SkuCode" class="sku-code" maxlength="20"/></td>
                       <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.linePrice" maxlength="20"/></td>
                       <td width="50">
                         <el-upload
                           class="avatar-uploader"
-                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :action="goodsImageAction"
+                          :data="upToken"
                           :show-file-list="false"
                           :on-change='(value)=>changeUpload(value, index)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
-                          :before-upload="(value)=>beforeAvatarUpload(value, index)">
+                          :before-upload="(value)=>beforeUpload(value, index)">
                           <img v-if="sku.imgSrc" :src="sku.imgSrc" class="avatar">
                           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
@@ -229,24 +235,32 @@
               </li>
               <li>
                 <span class="name required">商品价格：</span>
-                <span class="goods-price">
-                  <input type="text" v-model.trim="goodsPrice" placeholder="" :disabled="specificationList.length>0">
-                </span>
+                <div>
+                  <span class="goods-price">
+                    <input type="text" v-model.trim="goodsPrice" placeholder="" :disabled="specificationList.length>0">
+                  </span>
+                </div>
               </li>
               <li>
                 <span class="name">划线价格：</span>
-                <span class="goods-price">
-                  <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
-                </span>
+                <div>
+                  <span class="goods-price">
+                    <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="specificationList.length>0">
+                  </span>
+                </div>
               </li>
               <li>
                 <span class="name required">库存：</span>
-                <input type="text" v-model.trim="goodStock" placeholder="" :disabled="specificationList.length>0">
+                <div>
+                  <input type="text" v-model.trim="goodStock" placeholder="" :disabled="specificationList.length>0">
+                </div>
               </li>
               <li class="show-stock-btn">
                 <span class="name">库存显示：</span>
-                <el-button type="success" size="small" :class="['show-stock', {'active':showStock}]" @click="showStock=true">显示库存</el-button>
-                <el-button type="success" size="small" :class="['hide-stock', {'active':!showStock}]" @click="showStock=false">不显示剩余库存</el-button>
+                <div>
+                  <el-button type="success" size="small" :class="['show-stock', {'active':showStock}]" @click="showStock=true">显示库存</el-button>
+                  <el-button type="success" size="small" :class="['hide-stock', {'active':!showStock}]" @click="showStock=false">不显示剩余库存</el-button>
+                </div>
               </li>
             </ul>
           </div>
@@ -257,22 +271,28 @@
           <ul>
             <li>
               <span class="name required">快递邮费：</span>
-              <span class="express-postage">
-                <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="">
-                <!--<el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>-->
-                <el-checkbox v-model="postage.freeShipping" class="freeCheckbox" size="small">包邮</el-checkbox>
-              </span>
+              <div>
+                <span class="express-postage">
+                  <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="">
+                  <!--<el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>-->
+                  <el-checkbox v-model="postage.freeShipping" class="freeCheckbox" size="small">包邮</el-checkbox>
+                </span>
+              </div>
             </li>
             <li>
               <span class="required name">是否上架：</span>
-              <el-button type="success" size="small" :class="{'active':grounding}" @click="grounding=true" style="margin-left: 0;">立即上架</el-button>
-              <el-button type="success" size="small" :class="{'active':!grounding}" @click="grounding=false">暂不上架</el-button>
+              <div>
+                <el-button type="success" size="small" :class="{'active':grounding}" @click="grounding=true" style="margin-left: 0;">立即上架</el-button>
+                <el-button type="success" size="small" :class="{'active':!grounding}" @click="grounding=false">暂不上架</el-button>
+              </div>
             </li>
             <li>
               <span class="required name">商家承诺：</span>
-              <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
-              <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
-              <el-button type="success" size="small" :class="{'active':businessCommitment.deliverGoods}" @click="businessCommitment.deliverGoods=!businessCommitment.deliverGoods">24小时发货</el-button>
+              <div>
+                <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
+                <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
+                <el-button type="success" size="small" :class="{'active':businessCommitment.deliverGoods}" @click="businessCommitment.deliverGoods=!businessCommitment.deliverGoods">24小时发货</el-button>
+              </div>
             </li>
           </ul>
         </div>
@@ -570,15 +590,11 @@ export default {
         return false
       }
 
-      let suffix = ''
-      if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
-        suffix = '.jpg'
-      } else if (file.type === 'image/png') {
-        suffix = '.png'
-      }
-      const keyName = `merchant-goods-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000) + suffix}`
-      this.upToken.key = keyName
       this.upToken.token = this.imageToken
+    },
+    // 商品图片超出个数限制
+    beyondNumberLimit () {
+      this.$message.error('商品图片超过个数限制！')
     },
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
@@ -587,7 +603,9 @@ export default {
     },
     // 删除商品图片列表中的图片，删除商品图片的key
     goodsHandleRemove (file, fileList) {
-      this.goodsImages.splice(file.response.key, 1)
+      if (file.response && file.response.key) {
+        this.goodsImages.splice(file.response.key, 1)
+      }
     },
     categoryChange (val) {
       console.log(val)
@@ -640,9 +658,43 @@ export default {
         this.skus.push(sku)
       }
     },
+    setSkusKeep () {
+      let [keepArr, ret] = [[], this.setSpeRetData()]
+      for (let k of ret) {
+        let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+        for (let l of k) {
+          sku.values.push({ specificName: l.name })
+        }
+        keepArr.push(sku)
+      }
+      // 去除skus内没填写的项，结果赋值给arr
+      let arr = []
+      for (let v of this.skus) {
+        if (v.SkuPrice !== '' || v.StockQuantity !== '' || v.SkuCode !== '' || v.linePrice !== '' || v.imgSrc !== '') {
+          arr.push(v)
+        }
+      }
+      console.log(arr)
+      // 把arr里的内容，通过比对后赋值给keepArr
+      for (let v of keepArr) {
+        for (let w of arr) {
+          if (JSON.stringify(v.values) === JSON.stringify(w.values)) {
+            v.SkuPrice = w.SkuPrice
+            v.StockQuantity = w.StockQuantity
+            v.SkuCode = w.SkuCode
+            v.linePrice = w.linePrice
+            v.imgSrc = w.imgSrc
+            break
+          }
+        }
+      }
+      // 把新建的规格列表赋值给skus
+      this.skus = keepArr
+    },
     // 删除当前规格
     deleteThis (index) {
       this.specificationList.splice(index, 1)
+      this.setSkus()
     },
     // 添加一个规格
     addSpecific () {
@@ -660,11 +712,11 @@ export default {
       if (f()) {
         // 如果规格名没有重复，触发修改
         this.specificationList[index].name = val
-        if (this.specificationList[index].values.length > 0) {
-          this.specificationList[index].values = []
-          this.setSkus()
-          console.log(this.specificationList[index].name)
-        }
+        // if (this.specificationList[index].values.length > 0) {
+        //   this.specificationList[index].values = []
+        //   this.setSkus()
+        //   console.log(this.specificationList[index].name)
+        // }
       } else {
         // 如果规格名重复，使输入框变回原来的值
         this.$refs.specificV[index].value = this.specificationList[index].name
@@ -677,7 +729,7 @@ export default {
               _this.$message({
                 showClose: true,
                 message: '规格名重复！',
-                type: 'error'
+                type: 'warning'
               })
               return false
             }
@@ -693,6 +745,8 @@ export default {
       if (this.specificationList[index].name) {
         if (this.specificationList[index].values.length === 0) {
           this.setSkus()
+        } else {
+          this.setSkusKeep()
         }
       }
     },
@@ -710,123 +764,130 @@ export default {
     },
     // 获取规则值输入框的内容，赋值给this.specificationList[index].values，清空this.inputSpacValue，为规格表增加此项
     handleInputSpec (index) {
+      let _this = this
       let inputValue = this.inputSpacValue
       if (inputValue) {
-        for (let k of this.specificationList[index].values) {
-          if (inputValue === k.name) {
-            this.$message({
-              showClose: true,
-              message: '规格值重复！',
-              type: 'error'
-            })
-            return false
-          }
-        }
-        this.specificationList[index].values.push({'name': inputValue})
-        if (this.specificationList[index].name) {
-          if (this.specificationList[index].values.length === 1) {
-            this.setSkus()
-          } else {
-            let thisValueName = this.specificationList[index].values
-            if (index === 0) {
-              if (this.verificationSpecific(1)) {
-                if (this.verificationSpecific(2)) {
-                  for (let k of this.specificationList[1].values) {
-                    for (let l of this.specificationList[2].values) {
-                      let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                      sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                      sku.values.push({ specificName: k.name })
-                      sku.values.push({ specificName: l.name })
-                      this.skus.push(sku)
-                    }
-                  }
-                } else {
-                  for (let k of this.specificationList[1].values) {
-                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                    sku.values.push({ specificName: k.name })
-                    this.skus.push(sku)
-                  }
-                }
-              } else {
-                if (this.verificationSpecific(2)) {
-                  for (let k of this.specificationList[2].values) {
-                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                    sku.values.push({ specificName: k.name })
-                    this.skus.push(sku)
-                  }
-                } else {
-                  let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                  sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                  this.skus.push(sku)
-                }
-              }
-              // console.log(thisValueName[thisValueName.length - 1].name)
-            } else if (index === 1) {
-              let thisValueName = this.specificationList[index].values
-              if (this.verificationSpecific(0)) {
-                if (this.verificationSpecific(2)) {
-                  for (let [i, v] of this.specificationList[0].values.entries()) {
-                    for (let [j, w] of this.specificationList[2].values.entries()) {
-                      let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                      sku.values.push({ specificName: v.name })
-                      sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                      sku.values.push({ specificName: w.name })
-                      this.skus.splice((i + 1) * (this.specificationList[2].values.length) + i * this.specificationList[2].values.length + j, 0, sku)
-                    }
-                  }
-                } else {
-                  for (let [i, v] of this.specificationList[0].values.entries()) {
-                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                    sku.values.push({ specificName: v.name })
-                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                    this.skus.splice((i + 1) * (this.specificationList[1].values.length - 1) + i, 0, sku)
-                  }
-                }
-              } else {
-                if (this.verificationSpecific(2)) {
-                  for (let k of this.specificationList[2].values) {
-                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                    sku.values.push({ specificName: k.name })
-                    this.skus.push(sku)
-                  }
-                } else {
-                  let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                  sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                  this.skus.push(sku)
-                }
-              }
-            } else if (index === 2) {
-              let thisValueName = this.specificationList[index].values
-              if (this.verificationSpecific(0)) {
-                if (this.verificationSpecific(1)) {
-                  for (let [i, v] of this.specificationList[0].values.entries()) {
-                    for (let [j, w] of this.specificationList[1].values.entries()) {
-                      let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                      sku.values.push({ specificName: v.name })
-                      sku.values.push({ specificName: w.name })
-                      sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                      console.log((i + 1) * (j + 1) * (this.specificationList[2].values.length - 1) + i * (this.specificationList[1].values.length + this.specificationList[2].values.length) + (i + 1) * j)
-                      // this.skus.splice((i + 1) * (j + 1) * (this.specificationList[2].values.length - 1) + j, 0, sku)
-                    }
-                  }
-                } else {
-                  for (let [i, v] of this.specificationList[0].values.entries()) {
-                    let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
-                    sku.values.push({ specificName: v.name })
-                    sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
-                    this.skus.splice((i + 1) * (this.specificationList[2].values.length - 1) + i, 0, sku)
-                  }
-                }
-              } else {}
+        if (f()) {
+          this.specificationList[index].values.push({'name': inputValue})
+          if (this.specificationList[index].name) {
+            if (this.specificationList[index].values.length === 1) {
+              this.setSkus()
+            } else {
+              this.setSkusKeep()
+              // let thisValueName = this.specificationList[index].values
+              // if (index === 0) {
+              //   if (this.verificationSpecific(1)) {
+              //     if (this.verificationSpecific(2)) {
+              //       for (let k of this.specificationList[1].values) {
+              //         for (let l of this.specificationList[2].values) {
+              //           let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //           sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //           sku.values.push({ specificName: k.name })
+              //           sku.values.push({ specificName: l.name })
+              //           this.skus.push(sku)
+              //         }
+              //       }
+              //     } else {
+              //       for (let k of this.specificationList[1].values) {
+              //         let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //         sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //         sku.values.push({ specificName: k.name })
+              //         this.skus.push(sku)
+              //       }
+              //     }
+              //   } else {
+              //     if (this.verificationSpecific(2)) {
+              //       for (let k of this.specificationList[2].values) {
+              //         let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //         sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //         sku.values.push({ specificName: k.name })
+              //         this.skus.push(sku)
+              //       }
+              //     } else {
+              //       let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //       sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //       this.skus.push(sku)
+              //     }
+              //   }
+              //   // console.log(thisValueName[thisValueName.length - 1].name)
+              // } else if (index === 1) {
+              //   let thisValueName = this.specificationList[index].values
+              //   if (this.verificationSpecific(0)) {
+              //     if (this.verificationSpecific(2)) {
+              //       for (let [i, v] of this.specificationList[0].values.entries()) {
+              //         for (let [j, w] of this.specificationList[2].values.entries()) {
+              //           let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //           sku.values.push({ specificName: v.name })
+              //           sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //           sku.values.push({ specificName: w.name })
+              //           this.skus.splice((i + 1) * (this.specificationList[2].values.length) + i * this.specificationList[2].values.length + j, 0, sku)
+              //         }
+              //       }
+              //     } else {
+              //       for (let [i, v] of this.specificationList[0].values.entries()) {
+              //         let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //         sku.values.push({ specificName: v.name })
+              //         sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //         this.skus.splice((i + 1) * (this.specificationList[1].values.length - 1) + i, 0, sku)
+              //       }
+              //     }
+              //   } else {
+              //     if (this.verificationSpecific(2)) {
+              //       for (let k of this.specificationList[2].values) {
+              //         let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //         sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //         sku.values.push({ specificName: k.name })
+              //         this.skus.push(sku)
+              //       }
+              //     } else {
+              //       let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //       sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //       this.skus.push(sku)
+              //     }
+              //   }
+              // } else if (index === 2) {
+              //   let thisValueName = this.specificationList[index].values
+              //   if (this.verificationSpecific(0)) {
+              //     if (this.verificationSpecific(1)) {
+              //       for (let [i, v] of this.specificationList[0].values.entries()) {
+              //         for (let [j, w] of this.specificationList[1].values.entries()) {
+              //           let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //           sku.values.push({ specificName: v.name })
+              //           sku.values.push({ specificName: w.name })
+              //           sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //           // console.log(i * (this.specificationList[1].values.length * this.specificationList[2].values.length) + this.specificationList[2].values.length * (j + 1) - 1)
+              //           this.skus.splice(i * (this.specificationList[1].values.length * this.specificationList[2].values.length) + this.specificationList[2].values.length * (j + 1) - 1, 0, sku)
+              //         }
+              //       }
+              //     } else {
+              //       for (let [i, v] of this.specificationList[0].values.entries()) {
+              //         let sku = {SkuPrice: '', StockQuantity: '', SkuCode: '', linePrice: '', imgSrc: '', values: []}
+              //         sku.values.push({ specificName: v.name })
+              //         sku.values.push({ specificName: thisValueName[thisValueName.length - 1].name })
+              //         this.skus.splice((i + 1) * (this.specificationList[2].values.length - 1) + i, 0, sku)
+              //       }
+              //     }
+              //   } else {}
+              // }
             }
           }
         }
       }
       this['inputSpacVisible' + index] = false
       this.inputSpacValue = ''
+      function f () {
+        for (let k of _this.specificationList[index].values) {
+          if (inputValue === k.name) {
+            _this.$message({
+              showClose: true,
+              message: '规格值重复！',
+              type: 'warning'
+            })
+            return false
+          }
+        }
+        return true
+      }
     },
     verificationSpecific (i) {
       if (this.specificationList[i] && this.specificationList[i].name && this.specificationList[i].values && this.specificationList[i].values.length !== 0) {
@@ -845,10 +906,15 @@ export default {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
+    // 关键字不重复
     handleInputConfirm () {
       let inputValue = this.inputValue
       if (inputValue) {
-        this.dynamicTags.push(inputValue)
+        if (this.dynamicTags.indexOf(inputValue) < 0) {
+          this.dynamicTags.push(inputValue)
+        } else {
+          this.$message.warning(`关键字重复！`)
+        }
       }
       this.inputVisible = false
       this.inputValue = ''
@@ -875,12 +941,12 @@ export default {
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
       console.log(res, file, index)
+      this.skus[index].imgSrc = this.STATICDOMAIN + res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
     changeUpload (file, index) {
       // console.log(file)
-      this.skus[index].imgSrc = file.url
     },
     // 保存发送商品信息
     submitGoodsInfo () {
@@ -979,8 +1045,6 @@ export default {
           margin-left: 70px;
         }
         .name.alignment-top {
-          vertical-align: top;
-          padding-top: 6px;
         }
         .err-tips {
           position: absolute;
@@ -1019,9 +1083,6 @@ export default {
         .plate-name {
           float: left;
           margin-top: 6px;
-        }
-        .add-goods-btn {
-          float: right;
         }
       }
       .select-goods-type {
@@ -1107,12 +1168,8 @@ export default {
       .price-inventory-edit {
         padding: 10px 5px 20px;
         .goods-specification-box {
-          display: inline-block;
-          vertical-align: middle;
           border: 1px solid #d5d5d5;
           padding: 20px;
-          min-width: 900px;
-          width: 900px;
           .name {
             color: #666;
             width: auto;
@@ -1121,13 +1178,12 @@ export default {
             background: #efefef;
             margin-bottom: 10px;
             padding: 20px;
+            &:last-child {
+              margin-bottom: 0;
+            }
             .delete-specific {
               float: right;
-              display: none;
               cursor: pointer;
-            }
-            &:hover .delete-specific {
-              display: block;
             }
             .specification-name-box {
               margin-bottom: 20px;
@@ -1151,9 +1207,6 @@ export default {
           }
         }
         .goods-specific-table {
-          display: inline-block;
-          vertical-align: middle;
-          width: 942px;
           table {
             width: 100%;
             font-size: 12px;
@@ -1206,6 +1259,9 @@ export default {
                 width: 50px;
                 height: 50px;
                 display: block;
+              }
+              .err-tips {
+                position: static;
               }
             }
           }
@@ -1299,6 +1355,9 @@ export default {
           }
         }
       }
+    }
+    .add-goods-btn {
+      padding: 10px 0 30px 90px;
     }
   }
   .el-button--small {
