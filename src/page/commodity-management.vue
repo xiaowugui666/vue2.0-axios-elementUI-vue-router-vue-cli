@@ -188,7 +188,7 @@ export default {
       // goods_name: this.goods_name,
       goods_name: encodeURIComponent(this.goods_name),
       page: this.page,
-      status: this.managementState
+      status: this.managementState !== 0 ? this.managementState : ''
     }) {
       goodsList(data).then(res => {
         this.tableData = []

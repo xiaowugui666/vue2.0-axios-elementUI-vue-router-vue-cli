@@ -274,7 +274,6 @@ export default {
     // 获取商品类目列表
     getCategoryList () {
       goodsCategory().then(res => {
-        console.log(res.data)
         if (res.data) {
           this.categoryList = res.data
           this.setFirstCategoryListSelect()
@@ -282,7 +281,7 @@ export default {
           this.dialogVisible = true
         }
       }, res => {
-        this.categoryList=[];
+        this.categoryList = []
         this.dialogVisible = true
       })
     },
@@ -297,12 +296,10 @@ export default {
           }
         })
       })
-      // console.log(this.firstCategoryList)
     },
     // 获取图片上传七牛的token
     getImageToken () {
       imageToken().then(res => {
-        // console.log(res)
         this.imageToken = res.data.token
       }).catch(err => {
         console.log(err)
@@ -332,18 +329,17 @@ export default {
               'name': k.label,
               'parent_id': 0
             }).then(res => {
-              console.log('添加分类成功')
+              this.$message.success('添加分类成功！')
             })
           } else {
             // 删除商品分类
             deleteGoodsCategory(k.id).then(res => {
-              console.log('删除分类成功')
+              this.$message('删除分类成功！')
             })
           }
         }
         k.changed = false
       }
-      console.log(validate)
       // 如果有修改分类，则重新获取数据
       if (validate) {
         // 延迟请求接口，等到添加删除接口请求成功
@@ -364,20 +360,18 @@ export default {
       this.categoryList[index].children.splice(values.indexOf(tag), 1)
       // 删除选择的二级分类
       deleteGoodsCategory(id).then(res => {
-        console.log('删除二级分类成功')
+        this.$message('删除二级分类成功！')
       })
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
       this.$set(this.inputSpacVisible, index, true)
       this.$nextTick(_ => {
-        // console.log(this.$refs)
         this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
       })
     },
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
     handleInputSpec (index, id) {
-      console.log(id)
       let inputValue = this.inputSpacValue
       if (inputValue) {
         for (let k of this.categoryList[index].children) {
@@ -401,7 +395,7 @@ export default {
           'parent_id': id,
           'icon': '/static/test/ceshi.png'
         }).then(res => {
-          console.log('添加二级商品分类成功')
+          this.$message.success('添加二级分类成功！')
           // 接口请求成功返回二级分类的id，把id添加到对象上
           children.id = res.data
           this.categoryList[index].children.push(children)
@@ -452,14 +446,13 @@ export default {
           })
         }
       })
-      console.log(res)
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
         'icon_url': res.key,
         'name': children.name,
         'parent_id': parent.id
       }, children.id).then(res => {
-        console.log('修改二级商品分类图片成功')
+        // console.log('修改二级商品分类图片成功')
       })
     }
   },

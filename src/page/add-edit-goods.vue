@@ -876,7 +876,7 @@ export default {
       console.log(data)
       addGoods(data).then(res => {
         console.log(res)
-        this.setRouter('/commodity-management')
+        // this.setRouter('/commodity-management')
       }).catch(err => {
         console.log(err)
       })
