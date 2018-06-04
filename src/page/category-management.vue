@@ -386,7 +386,7 @@ export default {
         let children = {
           id: index,
           'name': inputValue,
-          'icon_url': '/static/test/ceshi.png'
+          'icon_url': ''
         }
         // 请求接口，保存二级商品分类
         addGoodsCategory({
