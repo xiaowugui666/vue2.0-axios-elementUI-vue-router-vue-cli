@@ -4,11 +4,11 @@
         <el-button @click="dialogVisible = true" type="primary" size="small" class="first-category-management">一级类目编辑管理</el-button>
         <div class="two-level-category-list">
           <ul>
-            <li v-if="item.active" v-for="(item, index) in categoryList" :key="index">
+            <li v-for="(item, index) in categoryList" :key="index">
               <el-collapse accordion>
                 <el-collapse-item>
                   <template slot="title">
-                    <span class="one-level-category">{{item.label}}</span>
+                    <span class="one-level-category">{{item.name}}</span>
                     <span class="two-level-category">二级分类有 {{item.children?item.children.length:0}} 项</span>
                   </template>
                   <div class="collapse-body clear">
@@ -17,17 +17,18 @@
                       v-for="(tag, index2) in item.children"
                       closable
                       :disable-transitions="false"
-                      @close="alignmentHandleClose(tag,index)">
-                      <span class="el-tag-bar">{{tag.label}}</span>
+                      @close="alignmentHandleClose(tag, index, tag.id)">
+                      <span class="el-tag-bar">{{tag.name}}</span>
                       <div class="tag-img">
                         <el-upload
                           class="avatar-uploader"
-                          action="https://jsonplaceholder.typicode.com/posts/"
+                          :action="uploadImgApi"
+                          :data="upToken"
                           :show-file-list="false"
                           :on-change='(value)=>changeUpload(value, index, index2)'
-                          :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
-                          :before-upload="(value)=>beforeAvatarUpload(value, index)">
-                          <img :src="item.children[index2].imgSrc" class="avatar">
+                          :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
+                          :before-upload="beforeAvatarUpload">
+                          <img :src="item.children[index2].icon_url ? STATICDOMAIN + item.children[index2].icon_url : '/static/test/ceshi.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -37,11 +38,11 @@
                       v-model="inputSpacValue"
                       :ref="'saveSpecTagInput'+index"
                       size="small"
-                      @keyup.enter.native="handleInputSpec(index)"
-                      @blur="handleInputSpec(index)"
+                      @keyup.enter.native="handleInputSpec(index, item.id)"
+                      @blur="handleInputSpec(index, item.id)"
                     >
                     </el-input>
-                    <el-button v-else @click="showSpecInput(index)" type="primary" size="small" class="button-new-tag">添加规格值</el-button>
+                    <el-button v-else @click="showSpecInput(index)" type="primary" size="small" class="button-new-tag">添加二级分类</el-button>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -71,66 +72,20 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic, imageToken} from '../axios/api.js'
 export default {
   data () {
     return {
+      uploadImgApi: '//upload.qiniup.com',
       dialogVisible: false,
-      categoryList: [
-        {
-          active: true,
-          value: '选项1',
-          label: '黄金糕',
-          'children': [
-            {
-              value: '选项1',
-              label: '黄金糕121',
-              imgSrc: '/static/test/ceshi.png'
-            },
-            {
-              value: '选项1',
-              label: '黄金糕12321',
-              imgSrc: '/static/test/ceshi.png'
-            }
-          ]
-        }, {
-          active: true,
-          value: '选项2',
-          label: '双皮奶',
-          'children': []
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          active: true,
-          value: '选项5',
-          label: '北京烤鸭',
-          'children': []
-        }, {
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }, {
-          active: true,
-          value: '选项3',
-          label: '蚵仔煎'
-        }, {
-          value: '选项4',
-          label: '龙须面'
-        }, {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
+      categoryList: [],
       inputSpacVisible: [],
       inputSpacValue: '',
+      // 七牛上传图片所需要的token
+      imageToken: '',
+      upToken: {},
+      // 七牛图片预览的域名
+      STATICDOMAIN: 'http://p94iruedm.bkt.clouddn.com/',
       firstCategoryList: [
         {
           value: 1,
@@ -311,9 +266,45 @@ export default {
   },
   created () {
     this.setMenuLeft('/category-management')
+    this.getCategoryList()
+    this.getImageToken()
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 获取商品类目列表
+    getCategoryList () {
+      goodsCategory().then(res => {
+        if (res.data) {
+          this.categoryList = res.data
+          this.setFirstCategoryListSelect()
+        } else {
+          this.dialogVisible = true
+        }
+      }, res => {
+        this.categoryList = []
+        this.dialogVisible = true
+      })
+    },
+    // 获取一级类目列表,设置被选择的内容
+    setFirstCategoryListSelect () {
+      let self = this
+      this.firstCategoryList.forEach(function (v, k) {
+        self.categoryList.forEach(function (val, key) {
+          if (v.label === val.name) {
+            v.selected = true
+            v.id = val.id
+          }
+        })
+      })
+    },
+    // 获取图片上传七牛的token
+    getImageToken () {
+      imageToken().then(res => {
+        this.imageToken = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 关闭一级类目选择框之前的动作
     handleClose (done) {
       this.dialogVisible = false
@@ -327,8 +318,35 @@ export default {
     // 确认修改一级类目
     confirmationModification () {
       this.dialogVisible = false
+      let validate = false
       for (let k of this.firstCategoryList) {
+        if (k.changed) {
+          if (!validate) {
+            validate = true
+          }
+          if (k.selected === true) {
+            addGoodsCategory({
+              'name': k.label,
+              'parent_id': 0
+            }).then(res => {
+              this.$message.success('添加分类成功！')
+            })
+          } else {
+            // 删除商品分类
+            deleteGoodsCategory(k.id).then(res => {
+              this.$message('删除分类成功！')
+            })
+          }
+        }
         k.changed = false
+      }
+      // 如果有修改分类，则重新获取数据
+      if (validate) {
+        // 延迟请求接口，等到添加删除接口请求成功
+        setTimeout(() => {
+          // 重新请求接口，获取修改后的页面显示数据
+          this.getCategoryList()
+        }, 500)
       }
     },
     // 选择一级类目
@@ -337,20 +355,23 @@ export default {
       this.firstCategoryList[index].changed = !this.firstCategoryList[index].changed
     },
     // 删除选中的规则值
-    alignmentHandleClose (tag, index) {
+    alignmentHandleClose (tag, index, id) {
       let values = this.categoryList[index].children
       this.categoryList[index].children.splice(values.indexOf(tag), 1)
+      // 删除选择的二级分类
+      deleteGoodsCategory(id).then(res => {
+        this.$message('删除二级分类成功！')
+      })
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
       this.$set(this.inputSpacVisible, index, true)
       this.$nextTick(_ => {
-        // console.log(this.$refs)
         this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
       })
     },
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
-    handleInputSpec (index) {
+    handleInputSpec (index, id) {
       let inputValue = this.inputSpacValue
       if (inputValue) {
         for (let k of this.categoryList[index].children) {
@@ -365,23 +386,74 @@ export default {
         }
         let children = {
           id: index,
-          'label': inputValue,
-          'imgSrc': '/static/test/ceshi.png'
+          'name': inputValue,
+          'icon_url': ''
         }
-        this.categoryList[index].children.push(children)
+        // 请求接口，保存二级商品分类
+        addGoodsCategory({
+          'name': inputValue,
+          'parent_id': id,
+          'icon': '/static/test/ceshi.png'
+        }).then(res => {
+          this.$message.success('添加二级分类成功！')
+          // 接口请求成功返回二级分类的id，把id添加到对象上
+          children.id = res.data
+          this.categoryList[index].children.push(children)
+        })
       }
       this.$set(this.inputSpacVisible, index, false)
       this.inputSpacValue = ''
     },
-    // 二级分类图片上传
-    handleAvatarSuccess (res, file, index) {
-      console.log(res, file, index)
-      // this.imageUrl = URL.createObjectURL(file.raw)
+    beforeAvatarUpload (file) {
+      // 上传文件之前对上传内容的验证
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      const isLt1M = file.size / 1024 / 1024 < 1
+      const isMt10K = file.size / 1024 > 10
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
+        return false
+      }
+      if (!isLt1M) {
+        this.$message.error('上传图片大小不能超过 1MB!')
+        return false
+      }
+      if (!isMt10K) {
+        this.$message.error('上传图片大小不能小于 10KB!')
+        return false
+      }
+      let suffix = ''
+      if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+        suffix = '.jpg'
+      } else if (file.type === 'image/png') {
+        suffix = '.png'
+      }
+      const keyName = `category-management-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000) + suffix}`
+      this.upToken.key = keyName
+      this.upToken.token = this.imageToken
     },
-    beforeAvatarUpload (file, index) {},
+    // 更改本地图片显示
     changeUpload (file, index, index2) {
-      // console.log(file)
-      this.categoryList[index].children[index2].imgSrc = file.url
+      // this.categoryList[index].children[index2].icon_url = file.url
+    },
+    // 二级分类图片上传
+    handleAvatarSuccess (res, file, parent, children) {
+      this.categoryList.forEach((v, k) => {
+        if (v.id === parent.id) {
+          v.children.forEach((val, key) => {
+            if (val.id === children.id) {
+              val.icon_url = res.key
+            }
+          })
+        }
+      })
+      // 修改上传图片地址，修改二级分类图片地址
+      updateGoodsCategoryPic({
+        'icon_url': res.key,
+        'name': children.name,
+        'parent_id': parent.id
+      }, children.id).then(res => {
+        // console.log('修改二级商品分类图片成功')
+      })
     }
   },
   computed: {
@@ -437,6 +509,8 @@ export default {
             .avatar {
               width: 100%;
               height: 100%;
+              min-width: 85px;
+              min-height: 85px;
             }
           }
           .el-tag {
@@ -460,7 +534,7 @@ export default {
               width: 100%;
               background: #fff;
               box-sizing: border-box;
-              padding: 0 10px;
+              padding: 0 15px 0 10px;
             }
           }
         }
@@ -524,6 +598,7 @@ export default {
         position: absolute;
         right: 0;
         top: 0;
+        margin: 8px 0 0 5px;
       }
       .button-new-tag {
         display: inline-block;
