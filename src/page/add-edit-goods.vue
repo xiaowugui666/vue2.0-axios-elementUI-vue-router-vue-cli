@@ -308,7 +308,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {goodsEditDetails, goodsCategory, imageToken, addGoods} from '../axios/api'
+import {goodsEditDetails, goodsCategory, getQnToken, addGoods} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
@@ -510,7 +510,7 @@ export default {
     },
     // 获取图片上传七牛的token
     getImageToken () {
-      imageToken().then(res => {
+      getQnToken('image').then(res => {
         // console.log(res)
         this.imageToken = res.data.token
       }).catch(err => {

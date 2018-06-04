@@ -186,9 +186,9 @@ export const goodsEditDetails = function (id) {
 }
 
 // 修改商品页，获取上传图片到七牛的token
-export const imageToken = function () {
+export const getQnToken = function (param) {
   return fetch({
-    url: api.hqip + '/management/merchant/upload?type=image',
+    url: api.hqip + '/management/merchant/upload?type=' + param,
     method: 'get' // 请求方法
   })
 }
