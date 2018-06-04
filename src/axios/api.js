@@ -186,11 +186,20 @@ export const goodsEditDetails = function (id) {
   })
 }
 
-// 修改商品页，获取商品详情
+// 修改商品页，获取上传图片到七牛的token
 export const imageToken = function () {
   return fetch({
     url: api.hqip + '/management/merchant/upload?type=image',
     method: 'get' // 请求方法
+  })
+}
+
+// 添加商品
+export const addGoods = function (data) {
+  return fetch({
+    url: api.hqip + '/management/goods',
+    method: 'post',
+    data: data
   })
 }
 
