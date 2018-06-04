@@ -28,7 +28,7 @@
                           :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url" class="avatar">
+                          <img :src="item.children[index2].icon_url ? STATICDOMAIN + item.children[index2].icon_url : '/static/test/ceshi.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
