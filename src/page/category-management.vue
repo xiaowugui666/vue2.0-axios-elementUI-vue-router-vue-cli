@@ -42,7 +42,7 @@
                       @blur="handleInputSpec(index, item.id)"
                     >
                     </el-input>
-                    <el-button v-else @click="showSpecInput(index)" type="primary" size="small" class="button-new-tag">添加规格值</el-button>
+                    <el-button v-else @click="showSpecInput(index)" type="primary" size="small" class="button-new-tag">添加二级分类</el-button>
                   </div>
                 </el-collapse-item>
               </el-collapse>
@@ -275,8 +275,15 @@ export default {
     getCategoryList () {
       goodsCategory().then(res => {
         console.log(res.data)
-        this.categoryList = res.data
-        this.setFirstCategoryListSelect()
+        if (res.data) {
+          this.categoryList = res.data
+          this.setFirstCategoryListSelect()
+        } else {
+          this.dialogVisible = true
+        }
+      }, res => {
+        this.categoryList=[];
+        this.dialogVisible = true
       })
     },
     // 获取一级类目列表,设置被选择的内容
@@ -406,14 +413,14 @@ export default {
     beforeAvatarUpload (file) {
       // 上传文件之前对上传内容的验证
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
-      const isLt2M = file.size / 1024 / 1024 < 2
+      const isLt1M = file.size / 1024 / 1024 < 1
       const isMt10K = file.size / 1024 > 10
       if (!isJPG) {
         this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
         return false
       }
-      if (!isLt2M) {
-        this.$message.error('上传图片大小不能超过 2MB!')
+      if (!isLt1M) {
+        this.$message.error('上传图片大小不能超过 1MB!')
         return false
       }
       if (!isMt10K) {
@@ -432,10 +439,19 @@ export default {
     },
     // 更改本地图片显示
     changeUpload (file, index, index2) {
-      this.categoryList[index].children[index2].icon_url = file.url
+      // this.categoryList[index].children[index2].icon_url = file.url
     },
     // 二级分类图片上传
     handleAvatarSuccess (res, file, parent, children) {
+      this.categoryList.forEach((v, k) => {
+        if (v.id === parent.id) {
+          v.children.forEach((val, key) => {
+            if (val.id === children.id) {
+              val.icon_url = res.key
+            }
+          })
+        }
+      })
       console.log(res)
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
@@ -500,6 +516,8 @@ export default {
             .avatar {
               width: 100%;
               height: 100%;
+              min-width: 85px;
+              min-height: 85px;
             }
           }
           .el-tag {
@@ -523,7 +541,7 @@ export default {
               width: 100%;
               background: #fff;
               box-sizing: border-box;
-              padding: 0 10px;
+              padding: 0 15px 0 10px;
             }
           }
         }
@@ -587,6 +605,7 @@ export default {
         position: absolute;
         right: 0;
         top: 0;
+        margin: 8px 0 0 5px;
       }
       .button-new-tag {
         display: inline-block;
