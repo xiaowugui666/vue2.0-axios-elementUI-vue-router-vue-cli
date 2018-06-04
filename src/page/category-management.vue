@@ -26,7 +26,7 @@
                           :data="upToken"
                           :show-file-list="false"
                           :on-change='(value)=>changeUpload(value, index, index2)'
-                          :on-success="(res,file)=>handleAvatarSuccess(res,file,tag.id)"
+                          :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
                           <img :src="item.children[index2].icon_url" class="avatar">
                         </el-upload>
@@ -313,16 +313,18 @@ export default {
     // 确认修改一级类目
     confirmationModification () {
       this.dialogVisible = false
+      let validate = false
       for (let k of this.firstCategoryList) {
         if (k.changed) {
+          if (!validate) {
+            validate = true
+          }
           if (k.selected === true) {
             addGoodsCategory({
               'name': k.label,
               'parent_id': 0
             }).then(res => {
               console.log('添加分类成功')
-              // 重新请求接口，获取修改后的页面显示数据
-              this.getCategoryList()
             })
           } else {
             // 删除商品分类
@@ -332,6 +334,15 @@ export default {
           }
         }
         k.changed = false
+      }
+      console.log(validate)
+      // 如果有修改分类，则重新获取数据
+      if (validate) {
+        // 延迟请求接口，等到添加删除接口请求成功
+        setTimeout(() => {
+          // 重新请求接口，获取修改后的页面显示数据
+          this.getCategoryList()
+        }, 500)
       }
     },
     // 选择一级类目
@@ -423,14 +434,14 @@ export default {
       this.categoryList[index].children[index2].icon_url = file.url
     },
     // 二级分类图片上传
-    handleAvatarSuccess (res, file, index) {
+    handleAvatarSuccess (res, file, parent, children) {
       console.log(res)
-      console.log(index)
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
-        'id': index,
-        'icon_url': res.key
-      }).then(res => {
+        'icon_url': res.key,
+        'name': children.name,
+        'parent_id': parent.id
+      }, children.id).then(res => {
         console.log('修改二级商品分类图片成功')
       })
     }

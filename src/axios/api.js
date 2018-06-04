@@ -134,9 +134,9 @@ export const deleteGoodsCategory = function (id) {
 }
 
 // 增加商品分类图片
-export const updateGoodsCategoryPic = function (data) {
+export const updateGoodsCategoryPic = function (data, id) {
   return fetch({
-    url: api.ip + '/management/category',
+    url: api.ip + '/management/category/' + id,
     method: 'put', // 请求方法
     data: data
   })
