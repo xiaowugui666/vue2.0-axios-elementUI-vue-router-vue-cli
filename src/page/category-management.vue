@@ -286,6 +286,7 @@ export default {
         self.categoryList.forEach(function (val, key) {
           if (v.label === val.name) {
             v.selected = true
+            v.id = val.id
           }
         })
       })
@@ -328,7 +329,7 @@ export default {
             })
           } else {
             // 删除商品分类
-            deleteGoodsCategory(k.value).then(res => {
+            deleteGoodsCategory(k.id).then(res => {
               console.log('删除分类成功')
             })
           }
