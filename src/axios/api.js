@@ -13,6 +13,15 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
   })
 }
 
+/* 首页 */
+// 首页交易额
+export function tradeVolum () {
+  return fetch({
+    url: api.hjip + '/management/merchant/stat/order',
+    method: 'GET'
+  })
+}
+
 /* 订单模块 */
 // 获取订单列表
 export function order (data) {

@@ -18,27 +18,27 @@
       </el-row>
       <ul class="home-survey">
         <li>
-          <div class="up">￥9999999.99</div>
+          <div class="up">￥{{storeDetail.today_trade}}</div>
           <div class="down"><i class="icon-淘宝认证"></i><span>今日交易额</span></div>
         </li>
         <li>
-          <div class="up">￥9999999.99</div>
+          <div class="up">￥{{storeDetail.yesterday_trade}}</div>
           <div class="down"><i class="icon-淘宝认证"></i><span>昨日交易额</span></div>
         </li>
         <li>
-          <div class="up">9999</div>
+          <div class="up">{{storeDetail.today_order}}</div>
           <div class="down"><span>今日订单</span></div>
         </li>
         <li>
-          <div class="up">99</div>
+          <div class="up">{{storeDetail.yesterday_order}}</div>
           <div class="down"><span>昨日订单</span></div>
         </li>
         <li>
-          <div class="up">9</div>
+          <div class="up">{{storeDetail.total_after_sale}}</div>
           <div class="down"><span>维权订单</span></div>
         </li>
         <li>
-          <div class="up">99</div>
+          <div class="up">{{storeDetail.express_order}}</div>
           <div class="down"><span>待发订单</span></div>
         </li>
       </ul>
@@ -59,15 +59,27 @@
 <script>
 import echarts from '@/components/echarts'
 import {mapState, mapMutations} from 'vuex'
-
+import {tradeVolum} from '../axios/api'
 export default {
   data () {
     return {
       shopName: '阿迪达斯旗舰店',
-      tel: '2881778283'
+      tel: '2881778283',
+      storeDetail: {}
     }
   },
   mounted () {
+    tradeVolum().then(res => {
+      console.log(res)
+      if (res.status == 200) {
+        this.storeDetail = res.data
+      } else {
+        this.$message({
+          type: 'error',
+          message: '数据加载失败，请刷新重试'
+        })
+      }
+    })
   },
   components: {
     echarts
