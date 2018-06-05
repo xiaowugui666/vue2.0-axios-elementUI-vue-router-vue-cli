@@ -13,10 +13,20 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
   })
 }
 
+/* 订单模块 */
 // 获取订单列表
 export function order (data) {
   return fetch({
     url: api.ip + '/management/order',
+    method: 'GET',
+    params: data
+  })
+}
+
+// 获取售后订单列表
+export function afterSaleGoods (data) {
+  return fetch({
+    url: api.ip + '/management/aftersale',
     method: 'GET',
     params: data
   })
@@ -150,6 +160,7 @@ export function newRecommendGoods (data) {
     data: data
   })
 }
+/* 营销模块结束 */
 
 // 批量商品上下架
 export const goodsStatus = function (data) {
@@ -186,9 +197,9 @@ export const goodsEditDetails = function (id) {
 }
 
 // 修改商品页，获取上传图片到七牛的token
-export const imageToken = function () {
+export const getQnToken = function (param) {
   return fetch({
-    url: api.hqip + '/management/merchant/upload?type=image',
+    url: api.hqip + '/management/merchant/upload?type=' + param,
     method: 'get' // 请求方法
   })
 }
@@ -198,6 +209,25 @@ export const addGoods = function (data) {
   return fetch({
     url: api.hqip + '/management/goods',
     method: 'post',
+    data: data
+  })
+}
+
+/* 设置模块 */
+// 设置 -> 订单
+export function orderSetting (data) {
+  return fetch({
+    url: api.hqip + '/management/config',
+    method: 'GET',
+    data: data
+  })
+}
+
+// 设置 -> 订单，修改订单设置
+export function orderSettingPut (data) {
+  return fetch({
+    url: api.hqip + '/management/config/' + data.id,
+    method: 'PUT',
     data: data
   })
 }

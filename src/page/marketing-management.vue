@@ -92,7 +92,7 @@
               <template slot-scope="scope">
                 <el-button type="text" :disabled="getActivityState(scope.$index) !== '未开始' || scope.row.status == 2" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
                 <el-button :disabled="getActivityState(scope.$index) == '已结束' || scope.row.status == 2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
-                <el-button :disabled="getActivityState(scope.$index) == '进行中' && scope.status == 1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
+                <el-button :disabled="getActivityState(scope.$index) == '进行中' && scope.row.status == 1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -130,12 +130,12 @@ export default {
     }
   },
   mounted () {
-    this.request(this.curPage)
+    this.request(0)
   },
   watch: {
     '$route' () {
       this.linkClass = this.$route.params.class
-      this.request(this.curPage)
+      this.request(0)
     }
   },
   methods: {
@@ -152,8 +152,8 @@ export default {
       // 获取商品列表
       marketingGoods(router, {
         type: this.managementState,
-        page: this.curPage,
-        per_page: 1
+        page: curPage,
+        per_page: 2
       }).then(res => {
         this.goodsList = res.data
         this.totalPagina = res.headers.page_count
@@ -167,8 +167,9 @@ export default {
     },
     // 点击分页
     currentChange (value) {
+      console.log(value)
       this.curPage = value
-      this.request(value)
+      this.request(this.curPage - 1)
     },
     // 关闭活动
     closingActivity (data) {
@@ -184,7 +185,7 @@ export default {
             id: data.id,
             status: 2
           }).then(res => {
-            _this.request(this.curPage)
+            _this.request(this.curPage - 1)
             _this.$message({
               type: 'success',
               message: `关闭成功`
@@ -196,7 +197,7 @@ export default {
             id: data.id,
             status: 2
           }).then(res => {
-            _this.request(this.curPage)
+            _this.request(this.curPage - 1)
             _this.$message({
               type: 'success',
               message: `关闭成功`
@@ -220,7 +221,7 @@ export default {
         // 特价商品路由，删除特价商品
         if (this.$route.params.class == 'special-offer') {
           deleteSpecial(data.id).then(res => {
-            this.request(1).done(() => {
+            this.request(0).done(() => {
               this.$message({
                 type: 'success',
                 message: `删除成功`
@@ -230,7 +231,7 @@ export default {
         } else if (this.$route.params.class == 'recommend') {
         // 推荐商品路由，删除推荐商品
           deleteRecommend(data.id).then(res => {
-            this.request(1)
+            this.request(0)
             this.$message({
               type: 'success',
               message: `删除成功`

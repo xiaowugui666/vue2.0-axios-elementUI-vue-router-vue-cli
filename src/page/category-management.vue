@@ -72,7 +72,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic, imageToken} from '../axios/api.js'
+import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic, getQnToken} from '../axios/api.js'
 export default {
   data () {
     return {
@@ -299,7 +299,7 @@ export default {
     },
     // 获取图片上传七牛的token
     getImageToken () {
-      imageToken().then(res => {
+      getQnToken().then(res => {
         this.imageToken = res.data.token
       }).catch(err => {
         console.log(err)

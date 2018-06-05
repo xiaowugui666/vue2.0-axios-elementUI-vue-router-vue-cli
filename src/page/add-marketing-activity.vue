@@ -124,7 +124,6 @@ export default {
     if (this.$route.query.id) {
       // 请求编辑订单信息
       editorGoods(this.$route.query.id).then(res => {
-        console.log(res)
         this.good = res.data
         // 赋值商品信息
         this.specialOffer = res.data.price / 100
@@ -140,7 +139,6 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     getHandleClose (msg) {
-      console.log(msg)
       this.goodsDialogVisible = msg
     },
     // 点击选择模态框商品
@@ -149,7 +147,6 @@ export default {
       if (this.$route.params.class == 'special-offer') {
         this.good = value
         this.originalPrice = value.price / 100
-        console.log(this.good)
       } else if (this.$route.params.class == 'recommend') {
         if (this.recommendGoods.length == 0) {
           this.recommendGoods.push(value)
@@ -168,11 +165,9 @@ export default {
         } else {
           this.$message('请勿一次性添加超过7条商品')
         }
-        console.log(this.recommendGoods)
       }
     },
     getGoodsImg (src) {
-      console.log(src)
       this.goodsImgSrc = src
     },
     // 图片框点击处理
@@ -182,8 +177,6 @@ export default {
         // 如果路由为special
         if (this.$route.params.class == 'special-offer') {
           newGoodsList().then(res => {
-            console.log(11111111)
-            console.log(res)
             this.newGoods = res.data
             this.newGoods.totalPagina = res.headers.page_count
             if (this.newGoods.length !== 0) {
@@ -205,14 +198,11 @@ export default {
     paginaChange (value) {
       if (this.$route.params.class == 'special-offer') {
         newGoodsList({page: value}).then(res => {
-          console.log('点击分页')
-          console.log(res)
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
         })
       } else if (this.$route.params.class == 'recommend') {
         goodsList({page: value}).then(res => {
-          console.log(res)
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
           if (this.newGoods.length !== 0) {
@@ -223,9 +213,6 @@ export default {
     },
     // 商品信息更改
     saveEditor () {
-      console.log(111111111111111111111111111111111111111111111111111111111111)
-      console.log(this.activityTime)
-      console.log(this.errors)
       if (!this.errors.items.length && this.activityTime.length) {
         let params = {}
         let _this = this
@@ -238,23 +225,18 @@ export default {
         params.stock_count = this.stock
         // 如果为新建特价商品
         if (JSON.stringify(this.$route.query) == '{}') { // 新建
-          console.log(this.$route.params.class)
           // 如果路由为special
           if (this.$route.params.class == 'special-offer') {
             addSpecialGood(params).then(res => {
-              console.log('新建商品成功！！！！！')
-              console.log(res)
               if (res.data.success) {
                 _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
               } else {
                 this.$message('新增商品失败，请勿重复添加或确认时间段')
               }
             }).catch(err => {
-              console.dir(err.response)
               this.$message(err.response.data.message)
             })
           } else if (this.$route.params.class == 'recommend') {
-            console.log('进来啦！！！')
             let idArray = []
             for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
               idArray.push(this.recommendGoods[i].id)
@@ -262,7 +244,6 @@ export default {
             params.goods_ids = idArray
             newRecommendGoods(params).then(res => {
               if (res.data.success) {
-                console.log('新建推荐商品成功！')
                 _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
               } else {
                 _this.$message(res.data.message)
@@ -272,7 +253,6 @@ export default {
         } else { // 编辑
           // 更改商品信息
           closeGoods(params).then(res => {
-            console.log(res)
             if (res.data == '更新成功') {
               _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
             } else {
