@@ -66,21 +66,20 @@ export function orderExpress (data) {
   })
 }
 
+// 获取商品列表
+export const goodsList = function (data) {
+  return fetch({
+    url: api.hqip + '/management/goods',
+    method: 'get', // 请求方法
+    params: data
+  })
+}
+
 // 营销模块：获取商品列表
 export function marketingGoods (router, data) {
   return fetch({
     url: api.xkip + '/management/' + router,
     method: 'GET',
-    params: data
-  })
-}
-
-/* 营销模块： */
-// 新建商品，获取商品列表
-export const goodsList = function (data) {
-  return fetch({
-    url: api.hqip + '/management/goods',
-    method: 'get', // 请求方法
     params: data
   })
 }
@@ -197,11 +196,20 @@ export const goodsEditDetails = function (id) {
   })
 }
 
-// 修改商品页，获取商品详情
+// 修改商品页，获取上传图片到七牛的token
 export const getQnToken = function (param) {
   return fetch({
     url: api.hqip + '/management/merchant/upload?type=' + param,
     method: 'get' // 请求方法
+  })
+}
+
+// 添加商品
+export const addGoods = function (data) {
+  return fetch({
+    url: api.hqip + '/management/goods',
+    method: 'post',
+    data: data
   })
 }
 
@@ -220,6 +228,32 @@ export function orderSettingPut (data) {
   return fetch({
     url: api.hqip + '/management/config/' + data.id,
     method: 'PUT',
+    data: data
+  })
+}
+
+// 添加商品分类
+export const addGoodsCategory = function (data) {
+  return fetch({
+    url: api.hqip + '/management/category',
+    method: 'post', // 请求方法
+    data: data
+  })
+}
+
+// 删除商品分类
+export const deleteGoodsCategory = function (id) {
+  return fetch({
+    url: api.hqip + '/management/category/' + id,
+    method: 'delete' // 请求方法
+  })
+}
+
+// 增加商品分类图片
+export const updateGoodsCategoryPic = function (data, id) {
+  return fetch({
+    url: api.hqip + '/management/category/' + id,
+    method: 'put', // 请求方法
     data: data
   })
 }
