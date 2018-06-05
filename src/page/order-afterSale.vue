@@ -23,9 +23,9 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div :class="['timeRange', {'cur' : timeId === '0'}]" data-id="0" @click="timeRange(7,$event)">最近7天</div>
-          <div :class="['timeRange', {'cur' : timeId === '1'}]" data-id="1" @click="timeRange(30,$event)">最近30天</div>
-          <div :class="['timeRange', {'cur' : timeId === '2'}]" data-id="2" @click="timeRange(90,$event)">最近90天</div>
+          <div :class="['timeRange', {'cur' : timeBtn1}]" data-id="0" @click="timeRange(7,$event)">最近7天</div>
+          <div :class="['timeRange', {'cur' : timeBtn2}]" data-id="1" @click="timeRange(30,$event)">最近30天</div>
+          <div :class="['timeRange', {'cur' : timeBtn3}]" data-id="2" @click="timeRange(90,$event)">最近90天</div>
         </div>
         <div class="proName">
           <div class="keyName">
@@ -51,7 +51,6 @@
 
       </div>
       <div class="tradeRecord">
-        <div class="title">交易记录</div>
         <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
           <el-tab-pane label="全部" name="first"></el-tab-pane>
           <el-tab-pane  label="退款中"  name="second"></el-tab-pane>
@@ -98,12 +97,17 @@
   </div>
 </template>
 <script>
+import {afterSaleGoods} from '../axios/api'
 export default {
   data () {
     return {
       n: '1',
       // 点击索引，动态类名
       timeId: '0',
+      // 搜索时间
+      timeBtn1: false,
+      timeBtn2: false,
+      timeBtn3: false,
       // 搜索时间间隔
       keyTime: '',
       // 搜索类别
@@ -152,13 +156,42 @@ export default {
     searchOrder () {
     },
     timeRange (res, event) {
-      this.timeId = event.target.dataset.id
-      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
-      console.log(res)
+      let flag = event.target.dataset.id
+      if (flag == '0') {
+        this.timeBtn2 = false
+        this.timeBtn1 = !this.timeBtn1
+        if (this.timeBtn1) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
+      } else if (flag == '1') {
+        this.timeBtn1 = false
+        this.timeBtn2 = !this.timeBtn2
+        if (this.timeBtn2) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
+      } else if (flag == '2') {
+        this.timeBtn1 = false
+        this.timeBtn2 = false
+        this.timeBtn3 = !this.timeBtn3
+        if (this.timeBtn3) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
+      }
     },
     handleClick (tab, event) {
       console.log(tab.index)
     }
+  },
+  mounted () {
+    afterSaleGoods().then(res => {
+      console.log(res)
+    })
   }
 }
 </script>
@@ -329,7 +362,7 @@ export default {
   }
   .tradeRecord {
     background: #fff;
-    padding:0 20px 20px;
+    padding:30px 20px 20px;
     .tradeList {
       padding-bottom: 30px;
       .top:first-child{
@@ -375,22 +408,6 @@ export default {
       }
     }
     }
-  .tradeRecord .title{
-    padding: 20px 0 20px 10px;
-    position: relative;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #333333;
-  }
-  .tradeRecord .title::after{
-    position: absolute;
-    top:24px;
-    left:0;
-    content:'';
-    width: 3px;
-    height: 13px;
-    background: #999;
-  }
   .header{
     background: #fff;
     padding: 20px;

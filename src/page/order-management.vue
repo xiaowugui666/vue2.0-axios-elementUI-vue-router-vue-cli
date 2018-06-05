@@ -30,8 +30,8 @@
                 end-placeholder="结束日期">
               </el-date-picker>
             </div>
-            <div class="timeRange" data-id="0"  :class="{ cur : !timeBtn }" @click="timeRange(7,$event)">最近7天</div>
-            <div class="timeRange" data-id="1" :class="{ cur : timeBtn }" @click="timeRange(30,$event)">最近30天</div>
+            <div class="timeRange" data-id="0"  :class="{ cur : timeBtn1 }" @click="timeRange(7,$event)">最近7天</div>
+            <div class="timeRange" data-id="1" :class="{ cur : timeBtn2 }" @click="timeRange(30,$event)">最近30天</div>
           </div>
             <div class="proName">
               <div class="keyName">
@@ -47,13 +47,13 @@
 
         </div>
         <div class="tradeRecord">
-            <div class="title">交易记录</div>
             <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
                 <el-tab-pane label="全部" name="first"></el-tab-pane>
                 <el-tab-pane  label="待付款" name="second"></el-tab-pane>
                 <el-tab-pane  label="待发货" name="third"></el-tab-pane>
                 <el-tab-pane  label="已发货" name="fourth"></el-tab-pane>
                 <el-tab-pane  label="已完成" name="five"></el-tab-pane>
+                <el-tab-pane  label="已取消" name="six"></el-tab-pane>
             </el-tabs>
             <div class="tradeList" v-for="(item,index) in ordersDetail" :key="index">
               <div class="top">
@@ -87,13 +87,13 @@
           <el-pagination
             v-if="totalPagina"
             background
-            :page-size="15"
+            :page-size="2"
             :page-count="6"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
-            current-change="currentIndex"
-            :total="totalPagina * 15">
+            @current-change="currentIndex"
+            :total="totalPagina * 2">
           </el-pagination>
         </div>
       </div>
@@ -110,10 +110,13 @@ export default {
       timeEnd: '',
       // 分页总页数
       totalPagina: 0,
+      // 当前页数
+      currentPage: 0,
       // 订单请求数据
       ordersDetail: [],
       // 时间按钮
-      timeBtn: false,
+      timeBtn1: false,
+      timeBtn2: false,
       // 搜索时间间隔
       keyTime: [],
       // 搜索类别
@@ -198,21 +201,28 @@ export default {
     orderMessage (status) {
       if (status == 200) { // 待付款
         return '待付款'
-      } else if (status > 200 && status < 305) { // 待发货
+      } else if (status == 205) { // 待发货
         return '待发货'
-      } else if (status > 300 && status < 405) { // 已发货
+      } else if (status == 400) { // 已发货
         return '已发货'
-      } else if (status > 400) { // 已完成
+      } else if (status == 405) { // 已完成
         return '订单已完成'
-      } else {
-        return '这啥状态'
+      } else if (status == 207) {
+        return '已取消'
       }
     },
+    // 点击搜索
     searchOrder () {
       // 参数
       let params = {}
-      params.no = this.keyValue
-      params.name = this.keyName
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.page = 0
+      params.per_page = 2 // 每页数据条数，需修改，确定时删除**************************************************************************************************
       order(params).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
@@ -225,11 +235,22 @@ export default {
     timeRange (res, event) {
       let flag = event.target.dataset.id
       if (flag === '0') {
-        this.timeBtn = false
+        this.timeBtn2 = false
+        this.timeBtn1 = !this.timeBtn1
+        if (this.timeBtn1) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
       } else {
-        this.timeBtn = true
+        this.timeBtn1 = false
+        this.timeBtn2 = !this.timeBtn2
+        if (this.timeBtn2) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
       }
-      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
       // console.log(this.keyTime)
     },
     // 订单分类状态点击
@@ -239,11 +260,13 @@ export default {
       if (tab.index == 1) {
         statu = 200
       } else if (tab.index == 2) {
-        statu = 300
+        statu = 3205
       } else if (tab.index == 3) {
-        statu = 305
+        statu = 400
       } else if (tab.index == 4) {
         statu = 505
+      } else if (tab.index == 5) {
+        statu = 207
       }
       order({status: statu}).then(res => {
         console.log(res)
@@ -253,10 +276,25 @@ export default {
           this.$message('没有此类订单！')
         }
       })
+    },
+    // 分页点击
+    currentIndex (val) {
+      this.currentPage = val
+      order({
+        per_page: 2,
+        page: val - 1
+      }).then(res => {
+        this.totalPagina = res.headers.page_count
+        this.ordersDetail = res.data
+        console.log(res)
+      })
     }
   },
   created () {
-    order().then(res => {
+    order({
+      page: 0,
+      per_page: 2
+    }).then(res => {
       console.log(res)
       this.totalPagina = res.headers.page_count
       this.ordersDetail = res.data
@@ -405,7 +443,7 @@ export default {
 
   .tradeRecord {
     background: #fff;
-    padding:0 20px 20px;
+    padding:30px 20px 20px;
     .tradeList{
           padding-bottom: 30px;
           padding-top: 30px;
@@ -536,22 +574,6 @@ export default {
             }
           }
     }
-  }
-  .tradeRecord .title{
-    padding: 20px 0 20px 10px;
-    position: relative;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #333333;
-  }
-  .tradeRecord .title::after{
-    position: absolute;
-    top:24px;
-    left:0;
-    content:'';
-    width: 3px;
-    height: 13px;
-    background: #999;
   }
   .header{
       background: #fff;
