@@ -27,7 +27,7 @@
             show-overflow-tooltip
             style="width: 100%">
             <el-table-column
-              prop="updated_at"
+              prop="created_at"
               label="订单生成时间">
             </el-table-column>
             <el-table-column
@@ -35,7 +35,7 @@
               label="支付时间">
             </el-table-column>
             <el-table-column
-              prop="no"
+              prop="order_no"
               label="订单编号">
             </el-table-column>
             <el-table-column
@@ -110,25 +110,35 @@ export default {
     this.setMenuLeft('/account')
     this.id = this.$route.params.id
     this.getData()
+    this.getMoney()
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
     toOrderDetail (id) {
       this.$router.push({path: '/orderDetail/' + this.incomeExpenditureData[id].no})
     },
+    getMoney () {
+      this.$http({
+        url: 'http://homestead.yqx.com:8000/management/settlement/' + this.id,
+        method: 'get'
+      }).then(
+        res => {
+          this.totalIncome = res.data.amount
+          this.settlementDate = res.data.end_at.substring(0, 10)
+        }
+      )
+    },
     getData () {
       this.$http({
-        url: 'http://172.81.209.201:8300/management/user/' + this.id + '/orders',
+        url: 'http://172.81.209.201:8300/management/settlement/' + this.id + '/payment',
         method: 'get',
         params: {
           page: this.pages
         }
       }).then(
         res => {
-          console.log(res)
           this.incomeExpenditureData = res.data
           this.totalPage = parseInt(res.headers.page_count) * 15
-          console.log(this.totalPage)
         }
       )
     },

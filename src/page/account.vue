@@ -100,7 +100,7 @@ export default {
       }).then(
         res => {
           this.cumulativeIncome = parseFloat(res.data.total_income).toFixed(2)
-          this.sevenDayIncome = parseFloat(res.data.seven_days_total_income).toFixed(2)
+          this.sevenDayIncome = parseFloat(res.data.week_income).toFixed(2)
         }
       )
     },
