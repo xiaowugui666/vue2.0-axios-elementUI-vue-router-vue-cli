@@ -110,7 +110,7 @@ export default new Router({
       component: orderAfterSale
     },
     {
-      path: '/orderRebate',
+      path: '/order-rebate',
       name: 'orderRebate',
       component: orderRebate
     },

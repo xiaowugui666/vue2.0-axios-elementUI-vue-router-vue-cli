@@ -32,6 +32,14 @@ export function afterSaleGoods (data) {
   })
 }
 
+// 获取售后订单详情
+export function refundDetail (id) {
+  return fetch({
+    url: api.ip + '/management/aftersale/' + id,
+    method: 'GET'
+  })
+}
+
 // 订单详情
 export function orderDetail (id) {
   return fetch({

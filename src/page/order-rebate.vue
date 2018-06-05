@@ -1,6 +1,13 @@
 <template>
     <div class="orderRebate">
-      <div class="title">退款维权 > 处理退款</div>
+      <div class="title">
+        <span>退款维权 > 处理退款</span>
+        <el-steps :active="tradeType" align-center finish-status="success" >
+          <el-step title="买家申请退款"></el-step>
+          <el-step title="商家处理退款"></el-step>
+          <el-step title="退款完成"></el-step>
+        </el-steps>
+      </div>
       <div class="rebateDetail">
           <div class="content">
             <div class="left">
@@ -21,7 +28,7 @@
                 <div><label>退款金额：</label><label>¥ 999.99 （含运费）</label></div>
                 <div><label>退款原因：</label><label>多拍/拍错/不想要</label></div>
               </div>
-              <div class="trade">交易记录</div>
+              <div class="trade">沟通记录</div>
               <div class="dialogue">
                 <p class="user">
                   <label>买家</label>
@@ -105,10 +112,45 @@
 </template>
 
 <script>
+import {mapMutations} from 'vuex'
+import {refundDetail} from '../axios/api'
 export default {
+  data () {
+    return {
+      tradeType: 1
+    }
+  },
+  mounted () {
+    this.setMenuLeft('/orderAfterSale')
+    console.log(this.$route.query)
+    refundDetail(this.$route.query.id).then(res => {
+      console.log(res)
+    })
+  },
+  methods: {
+    ...mapMutations(['setMenuLeft'])
+  }
 }
 </script>
 
+<style lang="less">
+  .orderRebate {
+    .el-steps--horizontal {
+      white-space: nowrap;
+      width: 60%;
+      margin-top: 20px;
+    }
+    .el-input{
+      width: 133px;
+      height: 27px;
+      .el-input__inner{
+        width: 133px;
+        height: 27px;
+        border-radius: 0;
+      }
+    }
+  }
+</style>
 <style scoped lang="less">
   .money{
     margin-top: 30px;
@@ -231,12 +273,10 @@ export default {
     position: relative;
     min-width: 1000px;
     .title{
-      height: 56px;
       font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #333333;
-      line-height: 56px;
-      padding-left: 20px;
+      padding: 20px;
       margin-top: 20px;
       margin-bottom: 20px;
       background: #fff;
