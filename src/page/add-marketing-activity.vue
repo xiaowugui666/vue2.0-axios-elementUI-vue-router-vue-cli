@@ -10,28 +10,36 @@
           <ul>
             <li>
               <span class="name alignment-top required">选择商品：</span>
-              <div class="goods-img-box">
-                <span v-if="goodsImgSrc" @click="goodsDialogVisible = true" class="goods-img">
-                <img :src="goodsImgSrc" alt="">
+              <div class="goods-img-box" v-if="recommendGoods.length == 0">
+                <span v-if="imgVisible(good)" @click="dialogClick" class="goods-img">
+                  <img :src="qiniuDomainUrl + imgUrlCompu(good)" alt="">
                 </span>
-                <i v-else @click="goodsDialogVisible = true" class="select-goods el-icon-plus"></i>
+                <i v-else @click="dialogClick" class="select-goods el-icon-plus"></i>
+              </div>
+              <div class="goods-img-box" v-else>
+                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 5px;">
+                  <img :src="qiniuDomainUrl + imgUrlCompu(item)" alt="">
+                </span>
+                <i @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
             </li>
-            <li>
+            <li v-if="routerIf">
               <span class="name required">特<span class="right">价：</span></span>
               <span class="special-offer goods-price">
-                <input type="text" v-model="specialOffer">
+                <input type="text" v-validate="{decimal:2,required:true,max_value: originalPrice}" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
+                <div class="err-tips" v-if="errors.has('特价价格')" style="color: red;margin-top: 5px;margin-left: 80px;">{{errors.first('特价价格')}}</div>
               </span>
             </li>
-            <li>
+            <li v-if="routerIf">
               <span class="name">原<span class="right">价：</span></span>
               <span class="original-price goods-price">
                 <input type="text" v-model="originalPrice" disabled>
               </span>
             </li>
-            <li>
+            <li v-if="routerIf">
               <span class="name required">库<span class="right">存：</span></span>
-              <input type="text" v-model="stock">
+              <input type="text" v-validate="{required:true,numeric:true,max_value:99999999999}" name="库存" v-model="stock">
+              <div class="err-tips" v-if="errors.has('库存')" style="color: red;margin-top: 5px;margin-left: 80px;">{{errors.first('库存')}}</div>
             </li>
             <li>
               <span class="name required">活动时间：</span>
@@ -47,23 +55,30 @@
                 </el-date-picker>
               </div>
             </li>
+            <li>
+              <el-button
+                type="success"
+                size="small"
+                @click="saveEditor">保存</el-button>
+            </li>
           </ul>
         </div>
       </div>
-      <select-production @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
+      <select-production v-if="newGoods.length" :newGoods="newGoods" :qiniuDomainUrl="qiniuDomainUrl" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
 </template>
 
 <script>
 import {mapState, mapMutations} from 'vuex'
 import selectProduction from '@/components/select-production'
+import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods} from '@/axios/api'
 export default {
   data () {
     return {
-      linkClass: this.$route.params.class,
-      specialOffer: 2222.22,
-      originalPrice: 13213.54,
-      stock: 1000,
+      linkClass: this.$route.query.class || this.$route.params.class,
+      specialOffer: '',
+      originalPrice: '',
+      stock: '',
       pickerOptions: {
         disabledDate (time) {
           return time.getTime() < Date.now() - 8.64e7
@@ -96,27 +111,183 @@ export default {
       },
       activityTime: '',
       goodsImgSrc: '',
+      routerIf: true,
       goodsId: undefined,
-      goodsDialogVisible: false
+      goodsDialogVisible: false,
+      good: {},
+      recommendGoods: [],
+      newGoods: []
     }
   },
   mounted () {
     this.setMenuLeft('/marketing-management/' + this.linkClass)
+    if (this.$route.query.id) {
+      // 请求编辑订单信息
+      editorGoods(this.$route.query.id).then(res => {
+        this.good = res.data
+        // 赋值商品信息
+        this.specialOffer = res.data.price / 100
+        this.originalPrice = res.data.goods_sku.display_price / 100
+        this.stock = res.data.stock_count
+        this.activityTime = [res.data.begin_at, res.data.end_at]
+      })
+    }
+    if (this.$route.params.class == 'recommend') {
+      this.routerIf = false
+    }
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
     getHandleClose (msg) {
       this.goodsDialogVisible = msg
     },
-    getGoodsId (id) {
-      this.goodsId = id
+    // 点击选择模态框商品
+    getGoodsId (value) {
+      // 特价
+      if (this.$route.params.class == 'special-offer') {
+        this.good = value
+        this.originalPrice = value.price / 100
+      } else if (this.$route.params.class == 'recommend') {
+        if (this.recommendGoods.length == 0) {
+          this.recommendGoods.push(value)
+        } else if (this.recommendGoods.length < 8) {
+          let flag = true
+          for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
+            if (this.recommendGoods[i].id == value.id) {
+              flag = false
+            }
+          }
+          if (flag) {
+            this.recommendGoods.push(value)
+          } else {
+            this.$message('请勿重复添加商品')
+          }
+        } else {
+          this.$message('请勿一次性添加超过7条商品')
+        }
+      }
     },
     getGoodsImg (src) {
       this.goodsImgSrc = src
+    },
+    // 图片框点击处理
+    dialogClick () {
+      // 当页面入口为新建
+      if (JSON.stringify(this.$route.query) == '{}') {
+        // 如果路由为special
+        if (this.$route.params.class == 'special-offer') {
+          newGoodsList().then(res => {
+            this.newGoods = res.data
+            this.newGoods.totalPagina = res.headers.page_count
+            if (this.newGoods.length !== 0) {
+              this.goodsDialogVisible = true
+            }
+          })
+        } else if (this.$route.params.class == 'recommend') { // 如果路由为推荐商品 recommend
+          goodsList().then(res => {
+            this.newGoods = res.data
+            this.newGoods.totalPagina = res.headers.page_count
+            if (this.newGoods.length !== 0) {
+              this.goodsDialogVisible = true
+            }
+          })
+        }
+      }
+    },
+    // 当模态框分页改变
+    paginaChange (value) {
+      if (this.$route.params.class == 'special-offer') {
+        newGoodsList({page: value}).then(res => {
+          this.newGoods = res.data
+          this.newGoods.totalPagina = res.headers.page_count
+        })
+      } else if (this.$route.params.class == 'recommend') {
+        goodsList({page: value}).then(res => {
+          this.newGoods = res.data
+          this.newGoods.totalPagina = res.headers.page_count
+          if (this.newGoods.length !== 0) {
+            this.goodsDialogVisible = true
+          }
+        })
+      }
+    },
+    // 商品信息更改
+    saveEditor () {
+      if (!this.errors.items.length && this.activityTime.length) {
+        let params = {}
+        let _this = this
+        params.id = this.good.id
+        params.goods_sku_id = this.good.id
+        params.goods_id = this.good.goods_id
+        params.price = this.specialOffer * 100
+        params.begin_at = this.activityTime[0]
+        params.end_at = this.activityTime[1]
+        params.stock_count = this.stock
+        // 如果为新建特价商品
+        if (JSON.stringify(this.$route.query) == '{}') { // 新建
+          // 如果路由为special
+          if (this.$route.params.class == 'special-offer') {
+            addSpecialGood(params).then(res => {
+              if (res.data.success) {
+                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+              } else {
+                this.$message('新增商品失败，请勿重复添加或确认时间段')
+              }
+            }).catch(err => {
+              this.$message(err.response.data.message)
+            })
+          } else if (this.$route.params.class == 'recommend') {
+            let idArray = []
+            for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
+              idArray.push(this.recommendGoods[i].id)
+            }
+            params.goods_ids = idArray
+            newRecommendGoods(params).then(res => {
+              if (res.data.success) {
+                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+              } else {
+                _this.$message(res.data.message)
+              }
+            })
+          }
+        } else { // 编辑
+          // 更改商品信息
+          closeGoods(params).then(res => {
+            if (res.data == '更新成功') {
+              _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+            } else {
+              _this.$message(res.data.message)
+            }
+          })
+        }
+      } else {
+        this.$message({
+          message: '请确保编辑信息正确',
+          type: 'warning'
+        })
+      }
+    },
+    // 图片v-if判断
+    imgVisible (value) {
+      if (value.goods_sku) {
+        return true
+      } else if (value.cover_url) {
+        return true
+      } else {
+        return false
+      }
+    },
+    // 图片url 计算属性
+    imgUrlCompu (value) {
+      if (value.goods_sku) {
+        return value.goods_sku.cover_url
+      } else if (value.cover_url) {
+        return value.cover_url
+      }
     }
   },
   computed: {
-    ...mapState(['menuLeft'])
+    ...mapState(['menuLeft', 'qiniuDomainUrl'])
   },
   components: {
     selectProduction
@@ -244,6 +415,10 @@ export default {
             border-color: #d5d5d5;
             border-radius: 0;
           }
+        }
+        .el-button{
+          width: 80px;
+          height: 30px;
         }
       }
     }

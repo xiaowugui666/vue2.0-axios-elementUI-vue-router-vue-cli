@@ -5,10 +5,10 @@ Vue.use(Vuex)
 
 const state = {
   menuLeft: '',
+  qiniuDomainUrl: 'http://p94iruedm.bkt.clouddn.com/',
+  qiniuUploadUrl: 'http://upload.qiniup.com',
   menuShow: true,
-  adminInfo: {
-    avatar: 'default.jpg'
-  }
+  yiqixuanDomainUrl: 'http://image.yiqixuan.com/'
 }
 
 const mutations = {

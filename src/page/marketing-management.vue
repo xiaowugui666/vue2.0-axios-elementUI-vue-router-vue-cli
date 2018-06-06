@@ -3,17 +3,17 @@
       <div class="marketing-management-content">
         <div class="marketing-management-state clear">
           <ul>
-            <li :class="{'active':managementState==0}" @click="managementState=0">全部</li>
-            <li :class="{'active':managementState==1}" @click="managementState=1">出售中</li>
-            <li :class="{'active':managementState==2}" @click="managementState=2">已售罄</li>
-            <li :class="{'active':managementState==3}" @click="managementState=3">已下架</li>
+            <li :class="{'active':managementState==1}" @click="changState(1)">全部</li>
+            <li :class="{'active':managementState==2}" @click="changState(2)">未开始</li>
+            <li :class="{'active':managementState==3}" @click="changState(3)">进行中</li>
+            <li :class="{'active':managementState==4}" @click="changState(4)">已结束</li>
           </ul>
           <el-button @click="setRouter({name:'addMarketingActivity',params:{class:linkClass}})" type="primary" size="small" class="newly-build">新建</el-button>
         </div>
         <div class="active-goods-table">
           <el-table
             ref="multipleTable"
-            :data="activeGoodsTableData"
+            :data="goodsList"
             tooltip-effect="dark"
             style="width: 100%"
             border
@@ -23,11 +23,7 @@
               width="75">
               <template slot-scope="scope">
                 <div>
-                  <span>{{scope.row.id}}</span>
-                  <div class="sort-btn">
-                    <div class="el-icon-caret-top"></div>
-                    <div class="el-icon-caret-bottom"></div>
-                  </div>
+                  <input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">
                 </div>
               </template>
             </el-table-column>
@@ -35,15 +31,15 @@
               label="商品"
               width="300">
               <template slot-scope="scope">
-                <div class="goods-info-box">
-                  <span class="goods-img"><img :src="scope.row.goods.imgSrc" alt=""></span>
+                <div class="goods-info-box" v-if="scope.row.goods">
+                  <span class="goods-img"><img :src="scope.row.goods_sku ? qiniuDomainUrl + scope.row.goods_sku.cover_url : qiniuDomainUrl + scope.row.goods.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
                     <div class="goods-info-price-category">
-                      <span v-if="scope.row.goods.firstSpecific" class="goods-info-category">
+                      <span v-if="linkClass == 'special-offer' && scope.row.goods_sku" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                      <span class="goods-info-price">￥{{scope.row.goods.price}}</span>
+                      <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                     </div>
                   </div>
                 </div>
@@ -53,39 +49,39 @@
               label="访问量"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div>访问量：{{scope.row.amountAccess}}</div>
-                <div>浏览量：{{scope.row.browsingVolume}}</div>
+                <div>访问量：11111</div>
+                <div>浏览量：11111</div>
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock"
+              prop="goods_sku.stock_count"
               label="库存"
               width="80"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="totalSales"
+              prop="goods_sku.sales_count"
               label="特价售出"
               width="80"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="startTime"
+              prop="begin_at"
               label="开始时间"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="endTime"
+              prop="end_at"
               label="结束时间"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
-              prop="state"
+              prop="status"
               label="状态"
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div :style="[{'color':scope.row.state==0?'#DE5B67':(scope.row.state==1?'#6BA725':'#676767')}]">
+                <div v-if="goodsList.length" :style="[{'color':scope.row.status==1?'#DE5B67':(scope.row.status==2?'#6BA725':'#676767')}]">
                   {{getActivityState(scope.$index)}}
                 </div>
               </template>
@@ -94,9 +90,9 @@
               label="操作"
               width="180">
               <template slot-scope="scope">
-                <el-button v-if="scope.row.state!==2" type="text" class="edit-btn">编辑</el-button>
-                <el-button v-if="scope.row.state!==2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
-                <el-button v-if="scope.row.state!==1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
+                <el-button type="text" :disabled="getActivityState(scope.$index) !== '未开始' || scope.row.status == 2" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
+                <el-button :disabled="getActivityState(scope.$index) == '已结束' || scope.row.status == 2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
+                <el-button :disabled="getActivityState(scope.$index) == '进行中' && scope.row.status == 1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -104,10 +100,14 @@
         <div class="paging-box clear">
           <el-pagination
             background
+            v-if="goodsList.length"
+            :currentPage="curPage"
+            :page-size="5"
+            @current-change="currentChange($event)"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
-            :total="300">
+            :total="totalPagina * 5">
           </el-pagination>
         </div>
       </div>
@@ -116,86 +116,62 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {marketingGoods, closeGoods, deleteSpecial, deleteRecommend, closeRecommendGood} from '../axios/api'
 export default {
   data () {
     return {
-      managementState: 0,
-      activeGoodsTableData: [
-        {
-          id: 1,
-          goods: {
-            imgSrc: '/static/test/ceshi2.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstSpecific: '食品',
-            secondSpecific: '四川火锅',
-            thirdSpecific: 'cxxxxxz'
-          },
-          amountAccess: 121,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          startTime: '2016-05-03 18:30',
-          endTime: '2016-06-03 18:30',
-          state: 0
-        },
-        {
-          id: 2,
-          goods: {
-            imgSrc: '/static/test/ceshi.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstSpecific: '食品',
-            secondSpecific: '四川火锅'
-          },
-          amountAccess: 121,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          startTime: '2016-05-03 18:30',
-          endTime: '2016-06-03 18:30',
-          state: 1
-        },
-        {
-          id: 3,
-          goods: {
-            imgSrc: '/static/test/ceshi.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36
-          },
-          amountAccess: 121,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          startTime: '2016-05-03 18:30',
-          endTime: '2016-06-03 18:30',
-          state: 1
-        },
-        {
-          id: 4,
-          goods: {
-            imgSrc: '/static/test/ceshi3.png',
-            name: '阿萨德李开复请我诶人；安静；了会计师对方阿斯顿发生大违法水电费水电费爱上对方为二位发到付',
-            price: 12312.36,
-            firstSpecific: '食品'
-          },
-          amountAccess: 121,
-          browsingVolume: 123211,
-          stock: 222,
-          totalSales: 23333,
-          startTime: '2016-05-03 18:30',
-          endTime: '2016-06-03 18:30',
-          state: 2
-        }
-      ],
+      totalPagina: 0,
+      curPage: 1,
+      managementState: 1,
+      goodsList: [],
       multipleSelection: '',
-      linkClass: this.$route.params.class
+      linkClass: this.$route.params.class,
+      timeStamp: ''
     }
   },
   mounted () {
+    this.request(0)
+  },
+  watch: {
+    '$route' () {
+      this.linkClass = this.$route.params.class
+      this.request(0)
+    }
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 页面初始数据加载
+    request (curPage) {
+      // 路由判定
+      let router = 'special-offer'
+      if (this.$route.params.class == 'special-offer') {
+        router = 'special_goods'
+      } else if (this.$route.params.class == 'recommend') {
+        router = 'recommend_goods'
+      }
+      // 获取商品列表
+      marketingGoods(router, {
+        type: this.managementState,
+        page: curPage,
+        per_page: 2
+      }).then(res => {
+        this.goodsList = res.data
+        this.totalPagina = res.headers.page_count
+        this.timeStamp = res.headers.time
+      })
+    },
+    // 点击排序状态
+    changState (value) {
+      this.managementState = value
+      this.request(this.curPage)
+    },
+    // 点击分页
+    currentChange (value) {
+      console.log(value)
+      this.curPage = value
+      this.request(this.curPage - 1)
+    },
+    // 关闭活动
     closingActivity (data) {
       let _this = this
       this.$confirm(`是否关闭该活动`, '提示', {
@@ -203,11 +179,31 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        _this.activeGoodsTableData.splice(data, 1)
-        this.$message({
-          type: 'success',
-          message: `关闭成功`
-        })
+        // 特价商品路由，关闭特价商品活动
+        if (this.$route.params.class == 'special-offer') {
+          closeGoods({
+            id: data.id,
+            status: 2
+          }).then(res => {
+            _this.request(this.curPage - 1)
+            _this.$message({
+              type: 'success',
+              message: `关闭成功`
+            })
+          })
+        } else if (this.$route.params.class == 'recommend') {
+          // 推荐商品路由，关闭该推荐商品
+          closeRecommendGood({
+            id: data.id,
+            status: 2
+          }).then(res => {
+            _this.request(this.curPage - 1)
+            _this.$message({
+              type: 'success',
+              message: `关闭成功`
+            })
+          })
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -215,47 +211,67 @@ export default {
         })
       })
     },
+    // 删除商品
     deleteActivity (data) {
-      let _this = this
       this.$confirm(`是否删除该活动`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        _this.activeGoodsTableData.splice(data, 1)
-        this.$message({
-          type: 'success',
-          message: `删除成功`
-        })
+        // 特价商品路由，删除特价商品
+        if (this.$route.params.class == 'special-offer') {
+          deleteSpecial(data.id).then(res => {
+            this.request(0).done(() => {
+              this.$message({
+                type: 'success',
+                message: `删除成功`
+              })
+            })
+          })
+        } else if (this.$route.params.class == 'recommend') {
+        // 推荐商品路由，删除推荐商品
+          deleteRecommend(data.id).then(res => {
+            this.request(0)
+            this.$message({
+              type: 'success',
+              message: `删除成功`
+            })
+          })
+        }
       }).catch(() => {
         this.$message({
           type: 'info',
           message: `已取消`
         })
       })
+    },
+    // input输入改变排序
+    sorting (e) {
     },
     handleSelectionChange (val) {
       this.multipleSelection = val
     },
     getActivityState (index) {
       let s = ''
-      if (this.activeGoodsTableData[index].state === 0) {
+      let date = this.timeStamp
+      if (this.goodsList[index].begin_at > date) {
         s = '未开始'
-      } else if (this.activeGoodsTableData[index].state === 1) {
+      } else if (this.goodsList[index].begin_at < date && this.goodsList[index].end_at > date && this.goodsList[index].status == 1) {
         s = '进行中'
       } else {
         s = '已结束'
       }
       return s
     },
+    // 商品规格
     showSpecific (index) {
       let specificList = ''
-      if (this.activeGoodsTableData[index].goods.firstSpecific) {
-        specificList += this.activeGoodsTableData[index].goods.firstSpecific
-        if (this.activeGoodsTableData[index].goods.secondSpecific) {
-          specificList += '；' + this.activeGoodsTableData[index].goods.secondSpecific
-          if (this.activeGoodsTableData[index].goods.thirdSpecific) {
-            specificList += '；' + this.activeGoodsTableData[index].goods.thirdSpecific
+      if (this.goodsList[index].goods_sku.spec_a) {
+        specificList += this.goodsList[index].goods_sku.spec_a
+        if (this.goodsList[index].goods_sku.spec_b) {
+          specificList += '；' + this.goodsList[index].goods_sku.spec_b
+          if (this.goodsList[index].goods_sku.spec_c) {
+            specificList += '；' + this.goodsList[index].goods_sku.spec_c
           }
         }
       }
@@ -263,10 +279,18 @@ export default {
     },
     setRouter (link) {
       this.$router.push(link)
+    },
+    // 编辑操作
+    editor (value) {
+      // 活动进行状态
+      let activeStatu = value.status
+      if (activeStatu === 1) {
+        this.$router.push({name: 'addMarketingActivity', query: {class: this.$route.params.class, id: value.id}})
+      }
     }
   },
   computed: {
-    ...mapState(['menuLeft'])
+    ...mapState(['menuLeft', 'qiniuDomainUrl'])
   }
 }
 </script>
@@ -280,6 +304,14 @@ export default {
     .marketing-management-content {
       background: #fff;
       padding-bottom: 30px;
+      .close-btn, .delete-btn {
+        color: #333;
+        border-color: #333;
+        /*&:hover {*/
+          /*color: #f56c6c;*/
+          /*border-color: #f56c6c;*/
+        /*}*/
+      }
       .marketing-management-state {
         border-bottom: 2px solid #fafafa;
         ul {
@@ -315,6 +347,13 @@ export default {
         .el-table {
           color: #666;
           font-size: 12px;
+          .sort-input{
+            width: 27px;
+            height: 23px;
+            padding-left: 18px;
+            background-color: transparent;
+            border: 1px solid @bc;
+          }
           .sort-btn {
             display: inline-block;
             vertical-align: middle;
@@ -393,14 +432,6 @@ export default {
           }
         }
         .edit-btn {}
-        .close-btn, .delete-btn {
-          color: #333;
-          border-color: #333;
-          &:hover {
-            color: #f56c6c;
-            border-color: #f56c6c;
-          }
-        }
       }
       .paging-box {
         padding-top: 10px;
@@ -428,6 +459,9 @@ export default {
         padding: 4px 8px;
         border: 1px solid #63A4FF;
         font-size: 12px;
+        &:disabled {
+          .disabled()
+        }
       }
     }
   }

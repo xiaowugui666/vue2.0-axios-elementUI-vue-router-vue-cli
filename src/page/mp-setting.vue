@@ -25,7 +25,7 @@
           </div>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-            <el-button @click="dialogVisible = false" size="small" type="success">确 定</el-button>
+            <el-button @click="untieBtn" size="small" type="success">确 定</el-button>
           </span>
         </el-dialog>
       </div>
@@ -33,6 +33,7 @@
 </template>
 
 <script>
+import {untieMp} from '../axios/api'
 export default {
   data () {
     return {
@@ -40,7 +41,11 @@ export default {
     }
   },
   methods: {
-    untieBtn () {}
+    untieBtn () {
+      untieMp().then(res => {
+        console.log(res)
+      }).catch()
+    }
   }
 }
 </script>

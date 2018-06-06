@@ -6,10 +6,11 @@
         <i class="icon-淘宝认证"></i>
         <i class="icon-微信认证"></i>
         <i class="icon-公众号认证"></i>
+        <i class="icon-京东认证"></i>
       </div>
       <el-row class="shortcut-entrance">
         <el-col class="li" :span="4"><router-link to="/shopProfile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/commodityManagement"><i class="icon-商品"></i><span>商品管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/commodity-management"><i class="icon-商品"></i><span>商品管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/orderManagement"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/customerManagement"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/account"><i class="icon-账户"></i><span>我的账户</span></router-link></el-col>

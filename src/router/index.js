@@ -22,6 +22,9 @@ import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
 import orderRebate from '@/page/order-rebate'
 import addOrder from '@/page/add-order'
+import login from '@/page/login'
+import err404 from '@/page/404'
+import bindingMp from '@/page/binding-mp'
 
 Vue.use(Router)
 
@@ -34,12 +37,12 @@ export default new Router({
       component: home
     },
     {
-      path: '/initialSetting',
+      path: '/initial-setting',
       name: 'initialSetting',
       component: initialSetting
     },
     {
-      path: '/commodityManagement',
+      path: '/commodity-management',
       name: 'commodityManagement',
       component: commodityManagement
     },
@@ -124,7 +127,7 @@ export default new Router({
       component: oneKeyIntroduction
     },
     {
-      path: '/categoryManagement',
+      path: '/category-management',
       name: 'categoryManagement',
       component: categoryManagement
     },
@@ -137,6 +140,25 @@ export default new Router({
       path: '/mp-setting',
       name: 'mpSetting',
       component: mpSetting
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login
+    },
+    {
+      path: '/binding-mp',
+      name: 'bindingMp',
+      component: bindingMp
+    },
+    {
+      path: '/404',
+      name: 'err404',
+      component: err404
+    },
+    {
+      path: '*',
+      redirect: '/404'
     }
   ]
 })

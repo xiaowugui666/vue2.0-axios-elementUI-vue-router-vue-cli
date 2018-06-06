@@ -5,6 +5,7 @@
 @b9: #999;
 @bc: #d5d5d5;
 @bg: #f7f7f7;
+@b5b5: #b5b5b5;
 
 //transform上下左右居中
 .ctt {
@@ -46,4 +47,9 @@
 .fj(@type: space-between){
   display: flex;
   justify-content: @type;
+}
+
+.disabled() {
+  color: @b9;
+  border-color: @bc;
 }
