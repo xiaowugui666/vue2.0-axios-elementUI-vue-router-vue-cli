@@ -75,6 +75,24 @@ export const goodsList = function (data) {
   })
 }
 
+// 获取客户列表
+export const user = function (data, type) {
+  return fetch({
+    // api.Hallowmas 引用url.js里面的数据
+    url: api.ip + '/management/user',
+    method: type, // 请求方法
+    params: data
+  })
+}
+// 获取账户列表
+export const settlement = function (data) {
+  return fetch({
+    url: api.ip + '/management/settlement',
+    method: 'get', // 请求方法
+    params: data
+  })
+}
+
 // 营销模块：获取商品列表
 export function marketingGoods (router, data) {
   return fetch({
@@ -255,6 +273,14 @@ export const updateGoodsCategoryPic = function (data, id) {
     url: api.hqip + '/management/category/' + id,
     method: 'put', // 请求方法
     data: data
+  })
+}
+
+// 获取是否绑定小程序，初次设置数据
+export const initialSetData = function () {
+  return fetch({
+    url: api.hqip + '/management/manager/merchant',
+    method: 'get' // 请求方法
   })
 }
 

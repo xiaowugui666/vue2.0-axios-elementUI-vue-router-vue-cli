@@ -59,7 +59,7 @@
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
                       <span class="goods-info-price">￥{{scope.row.price | money}}</span>
-                      <span class="goods-info-category">
+                      <span v-if="scope.row.category_name" class="goods-info-category">
                         类目：{{scope.row.category_name}}
                       </span>
                     </div>
@@ -76,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock_total"
+              prop="stock_count"
               label="库存"
               width="80"
               show-overflow-tooltip>
