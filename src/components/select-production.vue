@@ -96,7 +96,8 @@ export default {
     },
     // 点击搜索
     diaSearch () {
-      paginaGoods({name: this.diaSearchName}).then(res => {
+      console.log(this.productionKey)
+      paginaGoods({name: this.productionKey}).then(res => {
         console.log(res)
       })
     },
@@ -112,9 +113,9 @@ export default {
     },
     getActivityState (index) {
       let s = ''
-      if (this.newGoods[index].goods_status === 1) {
+      if (this.newGoods[index].status === 1) {
         s = '上架中'
-      } else if (this.newGoods[index].goods_status === 2) {
+      } else if (this.newGoods[index].status === 2) {
         s = '已下架'
       } else {
         s = '已售罄'

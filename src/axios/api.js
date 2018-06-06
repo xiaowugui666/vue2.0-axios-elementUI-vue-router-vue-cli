@@ -22,6 +22,30 @@ export function tradeVolum () {
   })
 }
 
+/* 店铺 */
+// 商品总数
+export function storeGoodsAmount () {
+  return fetch({
+    url: api.ip + '/management/statistics/good_sku_count',
+    method: 'GET'
+  })
+}
+
+// 昨日pv,uv
+export function yesterdayPvUv () {
+  return fetch({
+    url: api.ip + '/management/statistics/yesterday_pv_uv',
+    method: 'GET'
+  })
+}
+// 七日界面排行榜
+export function pagePvUv () {
+  return fetch({
+    url: api.ip + '/management/statistics/page_pv_uv',
+    method: 'GET'
+  })
+}
+
 /* 订单模块 */
 // 获取订单列表
 export function order (data) {

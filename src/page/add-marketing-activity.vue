@@ -185,10 +185,12 @@ export default {
           })
         } else if (this.$route.params.class == 'recommend') { // 如果路由为推荐商品 recommend
           goodsList().then(res => {
-            this.newGoods = res.data
-            this.newGoods.totalPagina = res.headers.page_count
-            if (this.newGoods.length !== 0) {
-              this.goodsDialogVisible = true
+            if (res.status == 200) {
+              this.newGoods = res.data
+              this.newGoods.totalPagina = res.headers.page_count
+              if (this.newGoods.length !== 0) {
+                this.goodsDialogVisible = true
+              }
             }
           })
         }

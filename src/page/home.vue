@@ -52,6 +52,19 @@
           <el-button slot="reference">在<br>线<br>咨<br>询</el-button>
         </el-popover>
       </div>
+      <div class="QR-code">
+        <el-popover
+          placement="left"
+          width="200"
+          trigger="hover">
+          <div class="code">
+            <span>店铺预览码</span>
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528264769927&di=b4ac63a8eeeb4dbf8edcd19773be1bc1&imgtype=0&src=http%3A%2F%2Fimg1.cache.netease.com%2Fcatchpic%2F8%2F81%2F81603D35CDC37D6C82AE9256039DB086.jpg" />
+            <span>微信扫描预览店铺</span>
+          </div>
+          <el-button slot="reference">店<br>铺<br>预<br>览<br></el-button>
+        </el-popover>
+      </div>
     </div>
   </div>
 </template>
@@ -227,11 +240,51 @@ export default {
       }
     }
   }
+  .QR-code{
+    top: 220px;
+    position: fixed;
+    z-index: 99;
+    right: 0;
+    background: #fff;
+    text-align: center;
+    writing-mode: vertical-rl;
+    .el-button {
+      padding: 22px 13px;
+      border: none;
+      margin-left: -10px;
+      color: #333;
+      font-size: 12px;
+      line-height: 1.4;
+      &:hover {
+        background: #fff;
+        color: #333;
+      }
+    }
+  }
   .detailed-consultation {
     font-size: 12px;
-    color: #666;
+    color: #999999;
     span {
       color: #63A4FF;
+    }
+  }
+  .code {
+    font-size: 12px;
+    color: #999999;
+    height: 202px;
+    width: 198px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    img {
+      width: 90px;
+      height: 90px;
+    }
+    span:first-child {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333333;
     }
   }
 </style>
