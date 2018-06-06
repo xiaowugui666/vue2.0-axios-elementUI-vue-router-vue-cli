@@ -26,7 +26,7 @@
             <li v-if="routerIf">
               <span class="name required">特<span class="right">价：</span></span>
               <span class="special-offer goods-price">
-                <input type="text" v-validate="{decimal:2,required:true,max_value: originalPrice}" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
+                <input type="text" v-validate="{decimal:2,required:true,min_value: 0,max_value:99999999999}" maxlength="11" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
                 <div class="err-tips" v-if="errors.has('特价价格')" style="color: red;margin-top: 5px;margin-left: 80px;">{{errors.first('特价价格')}}</div>
               </span>
             </li>
@@ -38,7 +38,7 @@
             </li>
             <li v-if="routerIf">
               <span class="name required">库<span class="right">存：</span></span>
-              <input type="text" v-validate="{required:true,numeric:true,max_value:99999999999}" name="库存" v-model="stock">
+              <input type="text" v-validate="{required:true,numeric:true,min_value: 1,max_value:99999999999}" maxlength="11" name="库存" v-model="stock">
               <div class="err-tips" v-if="errors.has('库存')" style="color: red;margin-top: 5px;margin-left: 80px;">{{errors.first('库存')}}</div>
             </li>
             <li>
@@ -177,10 +177,17 @@ export default {
         // 如果路由为special
         if (this.$route.params.class == 'special-offer') {
           newGoodsList().then(res => {
-            this.newGoods = res.data
-            this.newGoods.totalPagina = res.headers.page_count
-            if (this.newGoods.length !== 0) {
-              this.goodsDialogVisible = true
+            if (res.status == 200) {
+              this.newGoods = res.data
+              this.newGoods.totalPagina = res.headers.page_count
+              if (this.newGoods.length !== 0) {
+                this.goodsDialogVisible = true
+              }
+            } else {
+              this.$message({
+                message: '数据请求错误，请稍后重试',
+                type: 'error'
+              })
             }
           })
         } else if (this.$route.params.class == 'recommend') { // 如果路由为推荐商品 recommend
@@ -215,7 +222,7 @@ export default {
     },
     // 商品信息更改
     saveEditor () {
-      if (!this.errors.items.length && this.activityTime.length) {
+      if (!this.errors.items.length && this.activityTime.length && this.specialOffer < this.originalPrice) {
         let params = {}
         let _this = this
         params.id = this.good.id
@@ -262,6 +269,11 @@ export default {
             }
           })
         }
+      } else if (this.specialOffer > this.originalPrice) {
+        this.$message({
+          message: '请确保商品特价小于原价',
+          type: 'error'
+        })
       } else {
         this.$message({
           message: '请确保编辑信息正确',

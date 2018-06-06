@@ -42,7 +42,7 @@
                 label="状态"
                 show-overflow-tooltip>
                 <template slot-scope="scope">
-                  <div :style="[{'color':scope.row.goods_status==1?'#6BA725':(scope.row.goods_status==2?'#676767':'#DE5B67')}]">
+                  <div :style="[{'color': (scope.row.goods_status==1 || scope.row.status==1) ? '#6BA725' :((scope.row.goods_status == 2 || scope.row.status == 2) ?'#676767':'#DE5B67')}]">
                     {{getActivityState(scope.$index)}}
                   </div>
                 </template>
@@ -97,7 +97,7 @@ export default {
     // 点击搜索
     diaSearch () {
       console.log(this.productionKey)
-      paginaGoods({name: this.productionKey}).then(res => {
+      paginaGoods({name: encodeURI(this.productionKey)}).then(res => {
         console.log(res)
       })
     },
@@ -113,12 +113,22 @@ export default {
     },
     getActivityState (index) {
       let s = ''
-      if (this.newGoods[index].status === 1) {
-        s = '上架中'
-      } else if (this.newGoods[index].status === 2) {
-        s = '已下架'
-      } else {
-        s = '已售罄'
+      if (this.$route.params.class == 'special-offer') {
+        if (this.newGoods[index].goods_status == 1) {
+          s = '上架中'
+        } else if (this.newGoods[index].goods_status == 2) {
+          s = '已下架'
+        } else {
+          s = '已售罄'
+        }
+      } else if (this.$route.params.class == 'recommend') {
+        if (this.newGoods[index].status == 1) {
+          s = '上架中'
+        } else if (this.newGoods[index].status == 2) {
+          s = '已下架'
+        } else {
+          s = '已售罄'
+        }
       }
       return s
     },
