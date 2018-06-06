@@ -57,7 +57,7 @@ export default new Router({
       component: customerManagement
     },
     {
-      path: '/customerOrder',
+      path: '/customerOrder/:id',
       name: 'customerOrder',
       component: customerOrder
     },
@@ -67,7 +67,7 @@ export default new Router({
       component: account
     },
     {
-      path: '/account-details',
+      path: '/account-details/:id',
       name: 'accountDetails',
       component: accountDetails
     },
