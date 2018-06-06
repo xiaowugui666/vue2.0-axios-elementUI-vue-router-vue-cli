@@ -72,7 +72,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import { settlement } from '@/axios/api'
+// import { settlement } from '@/axios/api'
 export default {
   data () {
     return {
