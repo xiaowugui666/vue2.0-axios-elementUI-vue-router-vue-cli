@@ -872,8 +872,8 @@ export default {
         data.sku = this.skus
       } else {
         data.display_price = this.goodsLinePrice
-        data.price = this.price
-        data.stock_count = this.stock_count
+        data.price = this.goodsPrice
+        data.stock_count = this.goodStock
       }
 
       console.log(data)
