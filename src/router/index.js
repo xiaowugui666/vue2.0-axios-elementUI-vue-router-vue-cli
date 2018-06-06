@@ -22,7 +22,6 @@ import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
 import orderRebate from '@/page/order-rebate'
 import addOrder from '@/page/add-order'
-import select from '@/components/select-production'
 import login from '@/page/login'
 import err404 from '@/page/404'
 import bindingMp from '@/page/binding-mp'
@@ -41,11 +40,6 @@ export default new Router({
       path: '/initial-setting',
       name: 'initialSetting',
       component: initialSetting
-    },
-    {
-      path: '/select',
-      name: 'select',
-      component: select
     },
     {
       path: '/commodity-management',

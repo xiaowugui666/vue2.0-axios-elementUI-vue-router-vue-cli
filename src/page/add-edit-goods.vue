@@ -529,7 +529,6 @@ export default {
     },
     // 图片上传之前的验证
     beforeUpload (file) {
-      console.log(file)
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt2M = file.size / 1024 / 1024 < 2
       const isMt = file.size > 100
@@ -792,6 +791,10 @@ export default {
     },
     onEditorReady (quill) {
       // console.log('editor ready!', quill)
+    },
+    // 每种规格图片上传不重复
+    avatarBeforeUpload (file, index) {
+      this.beforeUpload(file)
     },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
