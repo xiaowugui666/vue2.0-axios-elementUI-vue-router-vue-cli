@@ -1,10 +1,16 @@
 import axios from 'axios'
-
+// let key = JSON.parse(localStorage.getItem('api-key'))
+// let secret = JSON.parse(localStorage.getItem('api-secret'))
+//
+// console.log(secret)
+// console.log(key)
 export function fetch (options) {
   return new Promise((resolve, reject) => {
     const instance = axios.create({ // instance创建一个axios实例，可以自定义配置，可在 axios文档中查看详情
       // 所有的请求都会带上这些配置，比如全局都要用的身份信息等。
       headers: {
+        // 'api-key': key,
+        // 'api-secret': secret
         // 'Content-Type': 'application/json'
         // 'token_in_header': global_.token,//token从全局变量那里传过来
       },

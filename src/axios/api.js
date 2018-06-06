@@ -258,6 +258,22 @@ export const updateGoodsCategoryPic = function (data, id) {
   })
 }
 
+// 绑定小程序
+export const bindingMp = function (data) {
+  return fetch({
+    url: api.cjip + '/management/wx/get_auth_url',
+    method: 'get' // 请求方法
+  })
+}
+
+// 解绑小程序
+export const untieMp = function (data) {
+  return fetch({
+    url: api.cjip + '/management/wx/unbundle',
+    method: 'delete' // 请求方法
+  })
+}
+
 // 有新接口的时候像上面那样再来一次
 // //修改昵称接口
 // export function userID(name){

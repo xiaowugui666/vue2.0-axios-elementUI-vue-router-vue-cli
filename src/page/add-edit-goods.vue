@@ -77,7 +77,7 @@
                   </quill-editor>
                   <!-- 文件上传input 将它隐藏-->
                   <el-upload :action="qiniuUploadUrl"
-                             :before-upload='beforeUpload'
+                             :before-upload='goodsImageBeforeUpload'
                              :data="upToken"
                              :on-success='quillUpScuccess'
                              ref="quillUpload" style="display:none">
@@ -289,7 +289,7 @@
               </div>
             </li>
             <li>
-              <span class="required name">商家承诺：</span>
+              <span class="name">商家承诺：</span>
               <div>
                 <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
                 <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
@@ -447,7 +447,6 @@ export default {
       rules: {},
       ruleForm: {},
       // 图片 token
-      imageToken: '',
       upToken: {},
       goodsImageShowList: [],
       goodsImages: []
@@ -512,13 +511,13 @@ export default {
     getImageToken () {
       getQnToken('image').then(res => {
         // console.log(res)
-        this.imageToken = res.data.token
+        this.upToken.token = res.data.token
       }).catch(err => {
         console.log(err)
       })
     },
-    // 商品图片上传之前的操作
-    beforeUpload (file) {
+    // 商品图片验证是否重复
+    goodsImageBeforeUpload (file) {
       // 判断是否重复上传图片
       for (let v of this.goodsImageShowList) {
         if (file.name === v.modified) {
@@ -526,9 +525,14 @@ export default {
           return false
         }
       }
+      this.beforeUpload(file)
+    },
+    // 图片上传之前的验证
+    beforeUpload (file) {
+      console.log(file)
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt2M = file.size / 1024 / 1024 < 2
-      const isMt10K = file.size / 1024 > 10
+      const isMt = file.size > 100
       if (!isJPG) {
         this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
         return false
@@ -537,12 +541,10 @@ export default {
         this.$message.error('上传图片大小不能超过 2MB!')
         return false
       }
-      if (!isMt10K) {
-        this.$message.error('上传图片大小不能小于 10KB!')
+      if (!isMt) {
+        this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
-
-      this.upToken.token = this.imageToken
     },
     // 商品图片超出个数限制
     beyondNumberLimit () {
@@ -655,14 +657,12 @@ export default {
       newS.splice(index, 1)
       // 判断原来的输入框内是否有内容，再确定是否渲染sku
       if (this.specificationList[index].name) {
-        console.log(val)
         if (!val) {
           this.specificationList[index].name = val
           this.setSkus()
           return false
         }
       } else {
-        console.log(val)
         if (val) {
           this.specificationList[index].name = val
           this.setSkus()
@@ -795,7 +795,7 @@ export default {
     },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
-      this.skus[index].imgSrc = this.qiniuDomainUrl + res.key
+      this.skus[index].cover_url = this.qiniuDomainUrl + res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
