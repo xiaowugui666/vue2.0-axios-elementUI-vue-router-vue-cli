@@ -276,6 +276,14 @@ export const updateGoodsCategoryPic = function (data, id) {
   })
 }
 
+// 获取是否绑定小程序，初次设置数据
+export const initialSetData = function () {
+  return fetch({
+    url: api.hqip + '/management/manager/merchant',
+    method: 'get' // 请求方法
+  })
+}
+
 // 绑定小程序
 export const bindingMp = function (data) {
   return fetch({

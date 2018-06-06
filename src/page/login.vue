@@ -4,6 +4,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {initialSetData} from '../axios/api'
 import api from '../axios/url'
 export default {
   data () {
@@ -22,9 +23,9 @@ export default {
     ...mapMutations(['setMenuShow']),
     // 通过url上携带的token判断是否登录，并获取api-key，api-secret
     loginState (userToken) {
-      // 307a503d-66b6-4002-9667-817883202489
+      // 5146ae05-25e6-45b4-80f7-a0842859b4d2
       if (userToken) {
-        this.$http.post(api.hqip8080 + '/management/login', {token: userToken})
+        this.$http.post(api.cjip83 + '/management/login', {token: userToken})
           .then(function (res) {
             console.log(res.headers)
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
@@ -33,6 +34,10 @@ export default {
             console.log(error)
             // location.href = 'http://www.51zan.cn/login.html'
           })
+      } else {
+        initialSetData().then(res => {
+          console.log(res)
+        })
       }
     }
   }

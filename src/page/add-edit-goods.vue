@@ -472,7 +472,7 @@ export default {
     getGoods (id) {
       if (id) {
         goodsEditDetails(id).then(res => {
-          console.log(res)
+          console.log(res.data)
         }).catch(err => {
           console.log(err)
         })
@@ -847,41 +847,46 @@ export default {
     },
     // 保存发送商品信息
     submitGoodsInfo () {
-      this.getGoodsImages()
-      if (this.goodsImages.length === 0) {}
-      let data = {
-        type: this.goodsType,
-        name: this.goodsName,
-        description: this.sharingDescription,
-        goods_images: this.goodsImages,
-        category_id: this.selectedOptions[this.selectedOptions.length - 1],
-        content: this.quillContent,
-        weight: this.getWeightGram(),
-        no: this.uniqueCoding,
-        unit: this.getGoodsQuantifier(),
-        keywords: this.dynamicTags,
-        stock_shown: this.showStock ? 1 : 2,
-        is_free_express: this.postage.freeShipping ? 1 : 2,
-        free_express_price: this.postage.money,
-        status: this.grounding ? 1 : 2
-      }
-      // 判断是否存在商品规格
-      if (this.skus.length > 0) {
-        this.getSpecs()
-        data.specs = this.specs
-        data.sku = this.skus
-      } else {
-        data.display_price = this.goodsLinePrice
-        data.price = this.goodsPrice
-        data.stock_count = this.goodStock
-      }
+      this.$validator.validateAll().then((msg) => {
+        console.log(msg)
+        if (msg) {
+          this.getGoodsImages()
+          if (this.goodsImages.length === 0) {}
+          let data = {
+            type: this.goodsType,
+            name: this.goodsName,
+            description: this.sharingDescription,
+            goods_images: this.goodsImages,
+            category_id: this.selectedOptions[this.selectedOptions.length - 1],
+            content: this.quillContent,
+            weight: this.getWeightGram(),
+            no: this.uniqueCoding,
+            unit: this.getGoodsQuantifier(),
+            keywords: this.dynamicTags,
+            stock_shown: this.showStock ? 1 : 2,
+            is_free_express: this.postage.freeShipping ? 1 : 2,
+            free_express_price: this.postage.money,
+            status: this.grounding ? 1 : 2
+          }
+          // 判断是否存在商品规格
+          if (this.skus.length > 0) {
+            this.getSpecs()
+            data.specs = this.specs
+            data.sku = this.skus
+          } else {
+            data.display_price = this.goodsLinePrice
+            data.price = this.goodsPrice
+            data.stock_count = this.goodStock
+          }
 
-      console.log(data)
-      addGoods(data).then(res => {
-        console.log(res)
-        // this.setRouter('/commodity-management')
-      }).catch(err => {
-        console.log(err)
+          console.log(data)
+          addGoods(data).then(res => {
+            // console.log(res)
+            // this.setRouter('/commodity-management')
+          }).catch(err => {
+            console.log(err)
+          })
+        }
       })
     },
     // 设置路由链接
