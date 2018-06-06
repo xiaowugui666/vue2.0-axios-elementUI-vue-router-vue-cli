@@ -10,7 +10,8 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+    },
 
     // Various Dev Server settings
     host: '192.168.10.95', // can be overwritten by process.env.HOST
