@@ -54,7 +54,7 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="'http://image.c.51zan.cn/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="qiniuDomainUrl+'/'+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import menuLeft from '@/components/menu-left'
+import {mapState, mapMutations} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
   data () {
@@ -142,24 +142,7 @@ export default {
       goods_name: '',
       searchComName: '',
       page_count: 0, // 总页数
-      selectStateOptions: [
-        {
-          value: '1',
-          label: '食品'
-        }, {
-          value: '2',
-          label: '数码家电'
-        }, {
-          value: '3',
-          label: '女装'
-        }, {
-          value: '4',
-          label: '美妆'
-        }, {
-          value: '5',
-          label: '日用百货'
-        }
-      ],
+      selectStateOptions: [],
       selectedOptions: [],
       tableData: [], // 商品列表数组
       multipleSelection: [],
@@ -174,14 +157,16 @@ export default {
   created () {
     this.getGoodsList()
     this.getGoodsCategory()
+    this.setMenuLeft('/commodity-management')
   },
   mounted () {
     // console.log(this.selectStateOptions)
   },
-  components: {
-    menuLeft
+  computed: {
+    ...mapState(['menuLeft', 'qiniuDomainUrl'])
   },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     // 获取商品列表
     getGoodsList (data = {
       cat_id: this.cat_id,

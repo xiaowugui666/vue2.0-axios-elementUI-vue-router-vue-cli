@@ -82,7 +82,6 @@ export default {
       inputSpacVisible: [],
       inputSpacValue: '',
       // 七牛上传图片所需要的token
-      imageToken: '',
       upToken: {},
       // 七牛图片预览的域名
       STATICDOMAIN: 'http://p94iruedm.bkt.clouddn.com/',
@@ -299,8 +298,8 @@ export default {
     },
     // 获取图片上传七牛的token
     getImageToken () {
-      getQnToken().then(res => {
-        this.imageToken = res.data.token
+      getQnToken('image').then(res => {
+        this.upToken.token = res.data.token
       }).catch(err => {
         console.log(err)
       })
@@ -360,7 +359,7 @@ export default {
       this.categoryList[index].children.splice(values.indexOf(tag), 1)
       // 删除选择的二级分类
       deleteGoodsCategory(id).then(res => {
-        this.$message('删除二级分类成功！')
+        // this.$message('删除二级分类成功！')
       })
     },
     // 显示 规则值输入框，使输入框获取焦点
@@ -395,7 +394,7 @@ export default {
           'parent_id': id,
           'icon': '/static/test/ceshi.png'
         }).then(res => {
-          this.$message.success('添加二级分类成功！')
+          // this.$message.success('添加二级分类成功！')
           // 接口请求成功返回二级分类的id，把id添加到对象上
           children.id = res.data
           this.categoryList[index].children.push(children)
@@ -408,7 +407,7 @@ export default {
       // 上传文件之前对上传内容的验证
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt1M = file.size / 1024 / 1024 < 1
-      const isMt10K = file.size / 1024 > 10
+      const isMt10K = file.size > 100
       if (!isJPG) {
         this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
         return false
@@ -418,18 +417,9 @@ export default {
         return false
       }
       if (!isMt10K) {
-        this.$message.error('上传图片大小不能小于 10KB!')
+        this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
-      let suffix = ''
-      if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
-        suffix = '.jpg'
-      } else if (file.type === 'image/png') {
-        suffix = '.png'
-      }
-      const keyName = `category-management-${new Date().getTime()}-${parseInt((Math.random() + 1) * 100000) + suffix}`
-      this.upToken.key = keyName
-      this.upToken.token = this.imageToken
     },
     // 更改本地图片显示
     changeUpload (file, index, index2) {

@@ -23,6 +23,9 @@ import orderDetail from '@/page/order-detail'
 import orderRebate from '@/page/order-rebate'
 import addOrder from '@/page/add-order'
 import select from '@/components/select-production'
+import login from '@/page/login'
+import err404 from '@/page/404'
+import bindingMp from '@/page/binding-mp'
 
 Vue.use(Router)
 
@@ -143,6 +146,25 @@ export default new Router({
       path: '/mp-setting',
       name: 'mpSetting',
       component: mpSetting
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: login
+    },
+    {
+      path: '/binding-mp',
+      name: 'bindingMp',
+      component: bindingMp
+    },
+    {
+      path: '/404',
+      name: 'err404',
+      component: err404
+    },
+    {
+      path: '*',
+      redirect: '/404'
     }
   ]
 })
