@@ -95,7 +95,7 @@ export default {
   methods: {
     getMoney () {
       this.$http({
-        url: 'http://192.168.20.140/management/settlement/income',
+        url: 'http://192.168.20.140/management/settlement/stat/income',
         method: 'get'
       }).then(
         res => {
