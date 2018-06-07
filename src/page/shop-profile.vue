@@ -19,7 +19,7 @@
             <div class="down"><span>昨日商品访客数</span></div>
           </li>
           <li>
-            <div class="up">9</div>
+            <div class="up">{{goodsCounts}}</div>
             <div class="down"><span>商铺商品总数</span></div>
           </li>
         </ul>
@@ -34,97 +34,54 @@
               <div>分享访问次数</div>
               <div>分享访问人数</div>
             </div>
-            <div class="list">
-              <div>商铺首页</div>
-              <div>123</div>
-              <div>234324</div>
-              <div>234234234</div>
-              <div>234234324</div>
-            </div>
-            <div class="list">
-              <div>商铺首页</div>
-              <div>123</div>
-              <div>234324</div>
-              <div>234234234</div>
-              <div>234234324</div>
-            </div>
-            <div class="list">
-              <div>商铺首页</div>
-              <div>123</div>
-              <div>234324</div>
-              <div>234234234</div>
-              <div>234234324</div>
+            <div class="list" v-for="(item,index) in pagePv" :key="index">
+              <div>{{item.page_info}}</div>
+              <div>{{item.page_visit_pv}}</div>
+              <div>{{item.page_visit_uv}}</div>
+              <div>{{item.page_share_pv}}</div>
+              <div>{{item.page_share_uv}}</div>
             </div>
           </div>
-          <el-pagination
-            background
-            :page-size="20"
-            :page-count="6"
-            prev-text="< 上一页"
-            next-text="下一页 >"
-            layout="prev, pager, next"
-            current-change="currentIndex"
-            :total="1000">
-          </el-pagination>
         </div>
       </div>
-
     </div>
 </template>
 
 <script>
 import echarts from '@/components/echarts'
-import {mapState, mapMutations} from 'vuex'
+// import {mapState, mapMutations} from 'vuex'
+import {storeGoodsAmount, yesterdayPvUv, pagePvUv} from '../axios/api'
 export default {
   data () {
     return {
+      goodsCounts: 0,
+      pagePv: []
     }
   },
   components: {
     echarts
   },
   computed: {
-    ...mapState(['menuLeft'])
+  },
+  mounted () {
+    storeGoodsAmount().then(res => {
+      console.log(res)
+      this.goodsCounts = res.data
+    })
+    yesterdayPvUv().then(res => {
+      console.log(res)
+    })
+    pagePvUv().then(res => {
+      console.log(res)
+      this.pagePv = res.data
+    })
   },
   methods: {
-    ...mapMutations(['setMenuLeft'])
   }
 }
 </script>
 <style lang="less">
   .orderProfile {
-    .el-pagination.is-background .btn-prev, .el-pagination.is-background .btn-next {
-      padding: 0 15px;
-    }
-    .el-pagination span:not([class*=suffix]), .el-pagination button {
-      display: inline-block;
-      font-size: 13px;
-      min-width: 30px;
-      height: 30px;
-      line-height: 30px;
-      vertical-align: top;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-    }
-    .el-pagination .btn-prev, .el-pagination .btn-next {
-      background: center center no-repeat;
-      background-size: 16px;
-      background-color: #fff;
-      height: 30px;
-      line-height: 30px;
-      padding: 0 15px;
-      cursor: pointer;
-      margin: 0;
-      color: #303133;
-      border: 1px solid #d5d5d5;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active {
-      background-color: #DE5B67;
-      color: #fff;
-    }
-    .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
-      color: #fff;
-    }
     .el-pager li {
       padding: 0;
       background: #fff;
@@ -147,17 +104,9 @@ export default {
     .el-pager li.active + li {
       border-left: 1px solid #D5D5D5;
     }
-    .el-pagination.is-background .el-pager li:not(.disabled):hover {
-      color: #DE5B67;
-    }
   }
 </style>
 <style scoped lang="less">
-
-  .el-pagination{
-    margin:30px 0;
-    text-align: right;
-  }
   .contentTist{
     box-sizing: border-box;
     padding:20px 20px 0;

@@ -4,7 +4,7 @@
       <ul>
         <li>
           <span class="pay-info-title">服务商商户号：</span>
-          <span class="pay-info-txt">{{busiInformation.merchant_cert}}</span>
+          <span class="pay-info-txt">{{busiInformation && busiInformation.merchant_no}}</span>
           <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
         </li>
@@ -16,12 +16,14 @@
         </li>
         <li>
           <span class="pay-info-title">服务商P12证书：</span>
-          <span class="pay-info-txt">{{busiInformation.merchant_no}}</span>
+          <span class="pay-info-txt">{{busiInformation.merchant_cert}}</span>
           <el-upload
             v-if="token !== ''"
             :data="token"
             accept=".p12"
-            action="http://upload.qiniup.com">
+            :show-file-list="false"
+            action="http://upload.qiniup.com"
+            :on-success="qiniuImage">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API安全 > 下载证书。<br>得到的 apiclient_cert.p12 文件后，点击右侧的上传按钮进行上传即可。</span>
@@ -108,23 +110,9 @@ export default {
         })
       })
     },
-    setMerchantNo () {
-      this.$prompt('设置P12证书', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(({ value }) => {
-        console.log(value)
-        this.$emit('changeSetting', value, 3)
-        this.$message({
-          type: 'success',
-          message: '证书设置成功'
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
+    qiniuImage (response) {
+      console.log(response)
+      this.$emit('changeSetting', response.key, 3)
     }
   }
 }
@@ -152,21 +140,15 @@ export default {
         width: 250px;
         color: #333;
         padding-right: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .el-button--small {
         margin-right: 25px;
       }
       &:nth-child(3) {
-        overflow: hidden;
-        >span {
-          float: left;
-          &:nth-child(2) {
-            width: 250px;
-            height: 16px;
-          }
-        }
         >div {
-          float: left;
+          display: inline-block;
         }
       }
     }
