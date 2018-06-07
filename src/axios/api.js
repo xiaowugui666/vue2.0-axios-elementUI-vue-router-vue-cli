@@ -274,9 +274,13 @@ export const getQnToken = function (param) {
 
 // 添加商品
 export const addEditGoods = function (id, data) {
+  let method = 'post'
+  if (id) {
+    method = 'put'
+  }
   return fetch({
-    url: api.hqip + '/management/goods',
-    method: 'post',
+    url: api.hqip + '/management/goods/' + id,
+    method: method,
     data: data
   })
 }

@@ -28,7 +28,7 @@
                           :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url ? STATICDOMAIN + item.children[index2].icon_url : '/static/test/ceshi.png'" class="avatar">
+                          <img :src="item.children[index2].icon_url ? STATICDOMAIN + item.children[index2].icon_url : '/static/test/secondary-classification-default.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -38,6 +38,7 @@
                       v-model="inputSpacValue"
                       :ref="'saveSpecTagInput'+index"
                       size="small"
+                      maxlength="20"
                       @keyup.enter.native="handleInputSpec(index, item.id)"
                       @blur="handleInputSpec(index, item.id)"
                     >

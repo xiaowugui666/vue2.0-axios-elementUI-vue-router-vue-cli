@@ -22,8 +22,8 @@ export function fetch (options) {
         resolve(response)// 把请求到的数据发到引用请求的地方
       })
       .catch(error => {
-        console.dir(error, 'asdasasdsadasdsadasdads')
-        // console.log('请求异常信息：' + error)
+        // console.dir(error)
+        console.log('请求异常信息：' + error)
         // reject(error)
       })
   })

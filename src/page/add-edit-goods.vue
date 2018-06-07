@@ -135,7 +135,7 @@
                     v-if="inputVisible"
                     v-model.trim="inputValue"
                     ref="saveTagInput"
-                    maxLength="16"
+                    maxLength="20"
                     size="small"
                     @keyup.enter.native="handleInputConfirm"
                     @blur="handleInputConfirm"
@@ -158,7 +158,7 @@
                   <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
                     <div class="specification-name-box">
                       <span class="name">规格名：</span>
-                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名" maxlength="16"/>
+                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名" maxlength="20"/>
                       <!--v-model.trim="item.name"-->
                       <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
                     </div>
@@ -181,7 +181,7 @@
                           size="small"
                           @keyup.enter.native="handleInputSpec(index)"
                           @blur="handleInputSpec(index)"
-                          maxlength="16"
+                          maxlength="20"
                         >
                         </el-input>
                         <el-button v-else @click="showSpecInput(index)" type="primary" size="small">添加规格值</el-button>
@@ -302,7 +302,7 @@
           </ul>
         </div>
         <div class="add-goods-btn">
-            <el-button @click="submitGoodsInfo" type="success" size="small">保存</el-button>
+            <el-button @click="submitGoodsInfo(hash)" type="success" size="small">保存</el-button>
           </div>
       </div>
       </el-form>
@@ -455,7 +455,11 @@ export default {
       goodsImages: [],
       // 控制是否验证表单选项
       stockValidate: true,
-      goodsImageValidate: false
+      goodsImageValidate: false,
+      // 隐形验证字段
+      old_sku_ids: false,
+      image_ids: [],
+      sku_ids: []
     }
   },
   created () {
@@ -618,7 +622,7 @@ export default {
       for (let k of ret) {
         let sku = {id: '', price: '', stock_count: '', sku_no: '', display_price: '', cover_url: '', specs: []}
         for (let l of k) {
-          sku.specs.push({ spec: k.name, property: l.name })
+          sku.specs.push({ spec: l.parent, property: l.name })
         }
         keepArr.push(sku)
       }
@@ -646,7 +650,9 @@ export default {
         // 把新建的规格列表赋值给skus
         this.skus = keepArr
       } else {
+        // 完全重建skus，去除id等原本已有的数据
         this.skus = keepArr
+        this.old_sku_ids = true
       }
     },
     // 删除当前规格
@@ -738,7 +744,7 @@ export default {
       let inputValue = this.inputSpacValue
       if (inputValue) {
         if (f()) {
-          this.specificationList[index].values.push({'name': inputValue})
+          this.specificationList[index].values.push({'name': inputValue, 'parent': this.specificationList[index].name})
           if (this.specificationList[index].name) {
             if (this.specificationList[index].values.length === 1) {
               this.setSkus()
@@ -903,6 +909,13 @@ export default {
             data.display_price = this.goodsLinePrice
             data.price = this.goodsPrice
             data.stock_count = this.goodStock
+          }
+          // 修改商品添加的参数
+          if (id) {
+            data.id = id
+            data.old_sku_ids = this.old_sku_ids
+            data.image_ids = this.image_ids
+            data.sku_ids = this.sku_ids
           }
 
           console.log(data)
