@@ -131,8 +131,6 @@
 </template>
 
 <script>
-// import menuLeft from '@/components/menu-left'
-// import { goodsList } from '@/axios/api'
 import {mapState, mapMutations} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
