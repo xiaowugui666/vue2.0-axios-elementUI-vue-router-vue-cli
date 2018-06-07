@@ -3,10 +3,10 @@
     <div class="home-content">
       <div class="shop-info">
         <span>{{shopName}}</span>
-        <i class="icon-淘宝认证"></i>
-        <i class="icon-微信认证"></i>
-        <i class="icon-公众号认证"></i>
-        <i class="icon-京东认证"></i>
+        <!--<i class="icon-淘宝认证"></i>-->
+        <!--<i class="icon-微信认证"></i>-->
+        <!--<i class="icon-公众号认证"></i>-->
+        <!--<i class="icon-京东认证"></i>-->
       </div>
       <el-row class="shortcut-entrance">
         <el-col class="li" :span="4"><router-link to="/shopProfile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>

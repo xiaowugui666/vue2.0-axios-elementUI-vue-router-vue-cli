@@ -73,6 +73,15 @@ export function refundDetail (id) {
   })
 }
 
+// 编辑售后订单
+export function editorRefundDetail (params) {
+  return fetch({
+    url: api.ip + '/management/aftersale/' + params.id,
+    method: 'PUT',
+    data: params
+  })
+}
+
 // 订单详情
 export function orderDetail (id) {
   return fetch({
@@ -179,7 +188,7 @@ export function deleteRecommend (id) {
 // 新建特价商品，获取商品列表
 export function newGoodsList (data) {
   return fetch({
-    url: api.hqip + '/management/goods/sku',
+    url: api.hqip + '/management/goods_sku/search',
     method: 'GET',
     params: data
   })
@@ -188,7 +197,7 @@ export function newGoodsList (data) {
 // 新建推荐商品，点击分页获取商品列表
 export function paginaGoods (params) {
   return fetch({
-    url: api.hqip + '/management/goods/sku',
+    url: api.hqip + '/management/goods_sku/search',
     params: params
   })
 }

@@ -9,7 +9,7 @@
           <div class="search-box clear">
             <label>商品名称</label>
             <input type="text" v-model="productionKey">
-            <el-button class="search" type="success" @click="diaSearch" v-model="diaSearchName" size="small">搜索</el-button>
+            <el-button class="search" type="success" @click="diaSearch" size="small">搜索</el-button>
           </div>
           <div class="select-goods-table">
             <el-table
@@ -42,7 +42,7 @@
                 label="状态"
                 show-overflow-tooltip>
                 <template slot-scope="scope">
-                  <div :style="[{'color': (scope.row.goods_status==1 || scope.row.status==1) ? '#6BA725' :((scope.row.goods_status == 2 || scope.row.status == 2) ?'#676767':'#DE5B67')}]">
+                  <div :style="[{'color': (scope.row.status == 1 || scope.row.goods.status == 1) ? '#6BA725' :((scope.row.status == 2 || scope.row.goods.status == 2) ?'#676767':'#DE5B67')}]">
                     {{getActivityState(scope.$index)}}
                   </div>
                 </template>
@@ -74,13 +74,11 @@
 </template>
 
 <script>
-import {paginaGoods} from '../axios/api'
 export default {
   data () {
     return {
       productionKey: '',
       multipleSelection: '',
-      diaSearchName: '',
       goods: this.newGoods
     }
   },
@@ -96,10 +94,14 @@ export default {
     },
     // 点击搜索
     diaSearch () {
-      console.log(this.productionKey)
-      paginaGoods({name: encodeURI(this.productionKey)}).then(res => {
-        console.log(res)
-      })
+      if (this.productionKey !== '') {
+        this.$emit('modalSearch', this.productionKey)
+      } else {
+        this.$message({
+          message: '请输入要搜索的商品名称',
+          type: 'warning'
+        })
+      }
     },
     // 点击分页,通知父组件改变状态
     currentChange (e) {
@@ -114,14 +116,14 @@ export default {
     getActivityState (index) {
       let s = ''
       if (this.$route.params.class == 'special-offer') {
-        if (this.newGoods[index].goods_status == 1) {
+        if (this.newGoods[index].goods.status == 1) {
           s = '上架中'
-        } else if (this.newGoods[index].goods_status == 2) {
+        } else if (this.newGoods[index].goods.status == 2) {
           s = '已下架'
         } else {
           s = '已售罄'
         }
-      } else if (this.$route.params.class == 'recommend') {
+      } else {
         if (this.newGoods[index].status == 1) {
           s = '上架中'
         } else if (this.newGoods[index].status == 2) {
@@ -149,7 +151,7 @@ export default {
       if (this.$route.params.class == 'recommend') {
         return scope.name
       } else {
-        return scope.goods_name
+        return scope.goods.name
       }
     },
     specVisible (scope) {

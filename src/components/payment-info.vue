@@ -4,7 +4,7 @@
       <ul>
         <li>
           <span class="pay-info-title">服务商商户号：</span>
-          <span class="pay-info-txt">{{busiInformation.merchant_no}}</span>
+          <span class="pay-info-txt">{{busiInformation && busiInformation.merchant_no}}</span>
           <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
         </li>

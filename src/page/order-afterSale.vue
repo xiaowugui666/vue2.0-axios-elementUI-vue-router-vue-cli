@@ -224,8 +224,11 @@ export default {
         }
       }
     },
-    handleClick (tab, event) {
+    handleClick (tab) {
       console.log(tab.index)
+      afterSaleGoods({status: tab.index}).then(res => {
+        console.log(res)
+      })
     },
     refundStatu (value) {
       if (value == 1) {
@@ -251,7 +254,42 @@ export default {
 }
 </script>
 <style lang="less">
-  .orderAfterSale{
+.orderAfterSale{
+  .el-table{
+    font-size: 12px;
+    color: #666666;
+    .el-button{
+      font-size: 12px;
+    }
+  }
+  .el-table__header-wrapper thead{
+    color: #333333;
+  }
+  .el-table::before{
+    background-color: #D5D5D5;
+  }
+  .el-table--border::after{
+    background-color: #D5D5D5;
+  }
+  .el-table__header-wrapper thead tr th{
+    background: #EFEFEF;
+  }
+  .el-table__body-wrapper,.el-table__header-wrapper tr th div{
+    text-align: center;
+  }
+  .el-table--group, .el-table--border {
+    border: 1px solid #D5D5D5;
+  }
+  .el-table--border {
+    border-right: none;
+    border-bottom: none;
+  }
+  .el-table th.is-leaf, .el-table td {
+    border-bottom: 1px solid #D5D5D5;
+  }
+  .el-table--border th, .el-table--border td {
+    border-right: 1px solid #D5D5D5;
+  }
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -406,7 +444,7 @@ export default {
       margin-right: 10px;
     }
   }
-  }
+}
 </style>
 <style scoped lang="less">
   .orderAfterSale{

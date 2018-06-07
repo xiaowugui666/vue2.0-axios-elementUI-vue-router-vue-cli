@@ -49,7 +49,7 @@
 
 <script>
 import echarts from '@/components/echarts'
-import {mapState, mapMutations} from 'vuex'
+// import {mapState, mapMutations} from 'vuex'
 import {storeGoodsAmount, yesterdayPvUv, pagePvUv} from '../axios/api'
 export default {
   data () {
@@ -62,7 +62,6 @@ export default {
     echarts
   },
   computed: {
-    ...mapState(['menuLeft'])
   },
   mounted () {
     storeGoodsAmount().then(res => {
@@ -78,7 +77,6 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(['setMenuLeft'])
   }
 }
 </script>

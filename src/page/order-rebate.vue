@@ -12,27 +12,24 @@
           <div class="content">
             <div class="left">
               <div class="rebateInfo">
-                <div><label>订单编号：</label><label>HZ236483468</label></div>
-                <div><label>创建时间：</label><label>2018-08-22    12:33</label></div>
-                <div><label>付款时间：</label><label>2018-08-22    12:33</label></div>
-                <div><label>退款编号：</label><label>HZ236483468</label></div>
-                <div><label>创建时间：</label><label>2018-08-23    15:33</label></div>
+                <div><label>订单编号：</label><label>{{rebateDetail.order_no}}</label></div>
+                <div><label>创建时间：</label><label>{{rebateDetail.created_at}}</label></div>
+                <div v-if="rebateDetail.order"><label>付款时间：</label><label>{{rebateDetail.order.paid_at}}</label></div>
+                <div><label>退款编号：</label><label>{{rebateDetail.no}}</label></div>
               </div>
-              <div class="buyer">
-                <div><label>买家微信号：</label><label>248773573799</label></div>
-                <div><label>买家手机号：</label><label>13566774466</label></div>
-                <div><label>卖家商铺号：</label><label>商品名称</label></div>
+              <div class="buyer" v-if="rebateDetail.order">
+                <div><label>买家手机号：</label><label>{{rebateDetail.order.mobile}}</label></div>
               </div>
               <div class="buyer">
                 <div><label>期望结果：</label><label>退货退款</label></div>
-                <div><label>退款金额：</label><label>¥ 999.99 （含运费）</label></div>
-                <div><label>退款原因：</label><label>多拍/拍错/不想要</label></div>
+                <div><label>退款金额：</label><label>¥ {{rebateDetail.refund_amount}} （含运费）</label></div>
+                <div><label>退款原因：</label><label>{{rebateDetail.reason}}</label></div>
               </div>
               <div class="trade">沟通记录</div>
-              <div class="dialogue">
+              <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: }">
                 <p class="user">
-                  <label>买家</label>
-                  <label>2018-12-12   18:18</label>
+                  <label>{{index % 2 == 0 ? '卖家' : '买家'}}</label>
+                  <label>{{item.created_at}}</label>
                 </p>
                 <div>
                   <label>操作行为：</label>
@@ -40,58 +37,27 @@
                 </div>
                 <div>
                   <label>退款金额：</label>
-                  <label>¥ 999.99</label>
+                  <label>¥ {{rebateDetail.refund_amount}}</label>
                 </div>
                 <div>
                   <label>留&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;言：</label>
-                  <label>买家留言理由</label>
-                </div>
-              </div>
-              <div class="dialogue" style="background: #efefef">
-                <p class="user">
-                  <label>买家</label>
-                  <label>2018-12-12   18:18</label>
-                </p>
-                <div>
-                  <label>操作行为：</label>
-                  <label>发起退款  I  退货退款</label>
-                </div>
-                <div>
-                  <label>退款金额：</label>
-                  <label>¥ 999.99</label>
-                </div>
-                <div>
-                  <label>留&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;言：</label>
-                  <label>买家留言理由</label>
-                </div>
-              </div>
-              <div class="dialogue">
-                <p class="user">
-                  <label>买家</label>
-                  <label>2018-12-12   18:18</label>
-                </p>
-                <div>
-                  <label>操作行为：</label>
-                  <label>发起退款  I  退货退款</label>
-                </div>
-                <div>
-                  <label>退款金额：</label>
-                  <label>¥ 999.99</label>
-                </div>
-                <div>
-                  <label>留&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;言：</label>
-                  <label>买家留言理由</label>
+                  <label>{{item.remark}}</label>
                 </div>
               </div>
             </div>
             <div class="right">
-                <div class="top">
-                  <label  class="agree">同意</label>
-                  <label  class="disagree">拒绝</label>
+                <div class="top" v-if="tradeType == 0">
+                  <label  class="agree" @click="editorDetail(3)">同意</label>
+                  <label  class="disagree" @click="editorDetail(2)">拒绝</label>
                 </div>
-                <div class="tip">留言：</div>
-                <textarea  id="tips" cols="30" rows="10">
+                <div class="tip" v-if="tradeType == 0">留言：</div>
+                <textarea v-if="tradeType == 0" id="tips" cols="30" rows="10">
                 </textarea>
+                <div v-else class="refund-step-end">
+                  <img v-if="tradeType == 1" src="/static/test/sand%20clock@3x.png">
+                  <i v-else class="icon-成功 green"></i>
+                  <span :style="{color: (tradeType == 1 ? '#FFAC5A' : '#2CBA4A')}">{{tradeType == 1 ? '处理中' : '退款完成'}}</span>
+                </div>
                 <div class="money">
                   <label>退款金额：</label>
                   <label>￥999.00</label>
@@ -113,27 +79,38 @@
 
 <script>
 import {mapMutations} from 'vuex'
-import {refundDetail} from '../axios/api'
+import {refundDetail, editorRefundDetail} from '../axios/api'
 export default {
   data () {
     return {
-      tradeType: 1
+      tradeType: 0,
+      rebateDetail: {}
     }
   },
   mounted () {
     this.setMenuLeft('/orderAfterSale')
-    console.log(this.$route.query)
     refundDetail(this.$route.query.id).then(res => {
       console.log(res)
+      this.rebateDetail = res.data
+      this.tradeType = res.data.status - 1
     })
   },
   methods: {
-    ...mapMutations(['setMenuLeft'])
+    ...mapMutations(['setMenuLeft']),
+    editorDetail (value) {
+      let params = {}
+      params.status = value
+      params.id = this.rebateDetail.id
+      editorRefundDetail(params).then(res => {
+        console.log(res)
+      })
+    }
   }
 }
 </script>
 
 <style lang="less">
+  @import '../fonts/icomoon.css';
   .orderRebate {
     .el-steps--horizontal {
       white-space: nowrap;
@@ -237,6 +214,31 @@ export default {
         color:#333;
         line-height: 28px;
         text-align: center;
+      }
+    }
+    .refund-step-end {
+      display: flex;
+      flex-direction: column;
+      height: 256px;
+      align-items: center;
+      justify-content: center;
+      i {
+        font-size: 100px;
+        padding-right: 10px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      i.yellow::before {
+        color: rgba(44, 186, 74, 1.0);
+      }
+      i.green::before {
+        color: rgba(44, 186, 74, 1.0)
+      }
+      span {
+        font-size: 14px;
+        margin-top: 10px;
+        letter-spacing: 1px;
+        font-weight: 600;
       }
     }
   }

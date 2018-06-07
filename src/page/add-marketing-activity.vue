@@ -64,7 +64,7 @@
           </ul>
         </div>
       </div>
-      <select-production v-if="newGoods.length" :newGoods="newGoods" :qiniuDomainUrl="qiniuDomainUrl" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
+      <select-production v-if="newGoods.length" :newGoods="newGoods" :qiniuDomainUrl="qiniuDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
 </template>
 
@@ -148,6 +148,7 @@ export default {
         this.good = value
         this.originalPrice = value.price / 100
       } else if (this.$route.params.class == 'recommend') {
+        // 推荐
         if (this.recommendGoods.length == 0) {
           this.recommendGoods.push(value)
         } else if (this.recommendGoods.length < 8) {
@@ -191,7 +192,7 @@ export default {
             }
           })
         } else if (this.$route.params.class == 'recommend') { // 如果路由为推荐商品 recommend
-          goodsList().then(res => {
+          goodsList({status: 1}).then(res => {
             if (res.status == 200) {
               this.newGoods = res.data
               this.newGoods.totalPagina = res.headers.page_count
@@ -212,6 +213,23 @@ export default {
         })
       } else if (this.$route.params.class == 'recommend') {
         goodsList({page: value}).then(res => {
+          this.newGoods = res.data
+          this.newGoods.totalPagina = res.headers.page_count
+          if (this.newGoods.length !== 0) {
+            this.goodsDialogVisible = true
+          }
+        })
+      }
+    },
+    // 模态框搜索商品
+    searchChange (value) {
+      if (this.$route.params.class == 'special-offer') {
+        newGoodsList({name: value}).then(res => {
+          this.newGoods = res.data
+          this.newGoods.totalPagina = res.headers.page_count
+        })
+      } else if (this.$route.params.class == 'recommend') {
+        goodsList({name: value}).then(res => {
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
           if (this.newGoods.length !== 0) {
