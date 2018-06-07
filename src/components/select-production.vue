@@ -299,4 +299,136 @@ export default {
       }
     }
   }
+  .state{
+    width: 20%;
+    box-sizing: border-box;
+    text-align: center;
+    height: 80px;
+    line-height: 80px;
+    border-right: 1px solid #d5d5d5;
+    font-size: 14px;
+    color: #333;
+  }
+  .toSelect{
+    box-sizing: border-box;
+    text-align: center;
+    width: 20%;
+    height: 80px;
+    line-height: 80px;
+    font-size:14px;
+    border-right: 1px solid #d5d5d5;
+    color:#63A4FF;
+  }
+  .list{
+    height: 80px;
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    align-items: center;
+    border-left:1px solid  #d5d5d5;
+    border-bottom: 1px solid  #d5d5d5;
+    img{
+      width: 60px;
+      height: 60px;
+      padding: 10px;
+    }
+  }
+  .listHeader{
+    background: #EFEFEF;
+    height: 40px;
+    line-height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    border: 1px solid #d5d5d5;
+    label{
+      font-family: MicrosoftYaHei;
+      font-size: 12px;
+      color: #333333;
+      display: block;
+    }
+    label:nth-child(1){
+      width: 60%;
+      box-sizing: border-box;
+      padding-left: 20px;
+      border-right: 1px solid  #D5D5D5;
+    }
+    label:nth-child(2){
+      width: 20%;
+      text-align: center;
+      border-right: 1px solid  #D5D5D5;
+    }
+    label:nth-child(3){
+      width: 20%;
+      text-align: center;
+    }
+  }
+  .title{
+    font-family: MicrosoftYaHei-Bold;
+    font-size: 14px;
+    color: #333333;
+    font-weight: bold;
+  }
+  .searchBox{
+    margin-top: 39px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    label{
+      font-family: MicrosoftYaHei;
+      font-size: 12px;
+      color: #999999;
+      text-align: right;
+      line-height: 15px;
+    }
+    input{
+      border: 1px solid #D5D5D5;
+      border-radius: 2px;
+      width: 256px;
+      height: 30px;
+      line-height: 30px;
+      padding-left: 7px;
+      box-sizing: border-box;
+      margin-right: 150px;
+    }
+    .search{
+      background: #DE5B67;
+      border-radius: 2px;
+      width: 80px;
+      height: 30px;
+      line-height: 30px;
+      font-family: MicrosoftYaHei;
+      font-size: 12px;
+      color: #FFFFFF;
+      text-align: center;
+    }
+  }
+  .addProduction{
+    background: rgba(51,51,51,0.60);
+    position: fixed;
+    width:100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .content{
+    padding:20px;
+    background: #FFFFFF;
+    border: 1px solid #979797;
+    border-radius: 7px;
+    width: 600px;
+    box-sizing: border-box;
+    .productionList{
+      width: 100%;
+      margin-top: 30px;
+    }
+  }
+  .top{
+    padding-left: 5px;
+  }
 </style>

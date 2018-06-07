@@ -26,7 +26,7 @@
                 <div><label>退款原因：</label><label>{{rebateDetail.reason}}</label></div>
               </div>
               <div class="trade">沟通记录</div>
-              <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: }">
+              <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: (index % 2 == 0 ? '#F4F4F4' : '#FFFFFF')}">
                 <p class="user">
                   <label>{{index % 2 == 0 ? '卖家' : '买家'}}</label>
                   <label>{{item.created_at}}</label>
@@ -203,6 +203,7 @@ export default {
         font-size: 12px;
         line-height: 30px;
         text-align: center;
+        cursor: pointer;
       }
       label:nth-child(2){
         border:1px solid #333;
@@ -214,6 +215,7 @@ export default {
         color:#333;
         line-height: 28px;
         text-align: center;
+        cursor: pointer;
       }
     }
     .refund-step-end {

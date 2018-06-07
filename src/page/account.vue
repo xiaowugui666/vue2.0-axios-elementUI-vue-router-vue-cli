@@ -34,18 +34,18 @@
               show-overflow-tooltip
               style="width: 100%">
               <el-table-column
-                prop="date"
+                prop="end_at"
                 label="结算时间">
               </el-table-column>
               <el-table-column
-                prop="name"
+                prop="title"
                 label="商铺名称">
               </el-table-column>
               <el-table-column
-                prop="money"
+                prop="amount"
                 label="盈利金额（￥）">
                 <template slot-scope="scope">
-                  <div :class="[{'profit':scope.row.money>=0},{'loss':scope.row.money<0}]">{{scope.row.money>0?'+'+scope.row.money:scope.row.money}}</div>
+                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{scope.row.amount>0?'+'+scope.row.amount:scope.row.amount}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -60,9 +60,11 @@
               <el-pagination
                 background
                 prev-text="< 上一页"
+                :page-size="15"
                 next-text="下一页 >"
+                @current-change="changePage"
                 layout="prev, pager, next"
-                :total="300">
+                :total="totalPage">
               </el-pagination>
             </div>
           </div>
@@ -72,32 +74,60 @@
 </template>
 
 <script>
+import { settlement } from '@/axios/api'
 export default {
   data () {
     return {
+      pages: 0,
+      totalPage: 15,
       cumulativeIncome: 233333.01,
       cumulativeIncomeShow: true,
       sevenDayIncome: 2368993.12,
       sevenDayIncomeShow: true,
       incomeExpenditureData: [
-        {
-          id: 1,
-          date: '2018-05-22',
-          name: '小山沟小商铺',
-          money: 222333.22
-        },
-        {
-          id: 2,
-          date: '2018-05-22',
-          name: '小山沟小商铺',
-          money: 222333.22
-        }
       ]
     }
   },
+  mounted () {
+    this.getInfo()
+    this.getMoney()
+  },
   methods: {
+    getMoney () {
+      this.$http({
+        url: 'http://192.168.20.140/management/settlement/stat/income',
+        method: 'get'
+      }).then(
+        res => {
+          this.cumulativeIncome = parseFloat(res.data.total_income).toFixed(2)
+          this.sevenDayIncome = parseFloat(res.data.week_income).toFixed(2)
+        }
+      )
+    },
+    getInfo () {
+      settlement({
+        page: this.pages
+      }).then(
+        res => {
+          let datas = []
+          console.log(res)
+          this.pages = res.headers.page_count * 15
+          res.data.forEach(function (v, i) {
+            v.end_at = v.end_at.substring(0, 11)
+            datas.push(v)
+          })
+          this.incomeExpenditureData = datas
+        }
+      )
+    },
+    changePage (val) {
+      this.pages = val
+      this.getInfo()
+    },
     detailsLink (link) {
-      this.$router.push({ path: '/account-details' })
+      this.$router.push({
+        name: 'accountDetails', params: { id: link }
+      })
     }
   }
 }

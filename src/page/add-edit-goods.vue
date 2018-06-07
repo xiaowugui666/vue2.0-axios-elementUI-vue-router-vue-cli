@@ -47,7 +47,7 @@
                   <el-dialog :visible.sync="goodsPicVisible">
                     <img width="100%" :src="goodsPicUrl" alt="">
                   </el-dialog>
-                  <span class="err-tips" style="display: none;">请先上传图片！</span>
+                  <div class="err-tips" :style="{'display':goodsImageValidate?'block':'none'}">请先上传商品图片！</div>
                 </div>
                 <p class="upload-img-explain">建议尺寸：800*800像素，最多上传10张，图片大小请控制在2MB以内，支持jpg、jpeg、png格式的图片</p>
               </li>
@@ -77,7 +77,7 @@
                   </quill-editor>
                   <!-- 文件上传input 将它隐藏-->
                   <el-upload :action="qiniuUploadUrl"
-                             :before-upload='beforeUpload'
+                             :before-upload='goodsImageBeforeUpload'
                              :data="upToken"
                              :on-success='quillUpScuccess'
                              ref="quillUpload" style="display:none">
@@ -135,7 +135,7 @@
                     v-if="inputVisible"
                     v-model.trim="inputValue"
                     ref="saveTagInput"
-                    maxLength="20"
+                    maxLength="16"
                     size="small"
                     @keyup.enter.native="handleInputConfirm"
                     @blur="handleInputConfirm"
@@ -158,7 +158,7 @@
                   <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
                     <div class="specification-name-box">
                       <span class="name">规格名：</span>
-                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名" maxlength="20"/>
+                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名" maxlength="16"/>
                       <!--v-model.trim="item.name"-->
                       <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
                     </div>
@@ -181,7 +181,7 @@
                           size="small"
                           @keyup.enter.native="handleInputSpec(index)"
                           @blur="handleInputSpec(index)"
-                          maxlength="20"
+                          maxlength="16"
                         >
                         </el-input>
                         <el-button v-else @click="showSpecInput(index)" type="primary" size="small">添加规格值</el-button>
@@ -239,22 +239,25 @@
                 <span class="name required">商品价格：</span>
                 <div>
                   <span class="goods-price">
-                    <input type="text" v-model.trim="goodsPrice" placeholder="" :disabled="verificationSpec()" maxlength="20">
+                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
                   </span>
+                  <div class="err-tips">{{ errors.first('商品价格') }}</div>
                 </div>
               </li>
               <li>
                 <span class="name">划线价格：</span>
                 <div>
                   <span class="goods-price">
-                    <input type="text" v-model.trim="goodsLinePrice" placeholder="" :disabled="verificationSpec()" maxlength="20">
+                    <input type="text" v-model.trim="goodsLinePrice" v-validate="{decimal: 2}" name="划线价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
                   </span>
+                  <div class="err-tips">{{ errors.first('划线价格') }}</div>
                 </div>
               </li>
               <li>
                 <span class="name required">库存：</span>
                 <div>
-                  <input type="text" v-model.trim="goodStock" placeholder="" :disabled="verificationSpec()" maxlength="20">
+                  <input type="text" v-model.trim="goodStock" placeholder="" :disabled="verificationSpec()" v-validate="{required: !verificationSpec(),numeric: true,max_value: 1000000}" name="库存" maxlength="12">
+                  <div class="err-tips">{{ errors.first('库存') }}</div>
                 </div>
               </li>
               <li class="show-stock-btn">
@@ -275,11 +278,11 @@
               <span class="name required">快递邮费：</span>
               <div>
                 <span class="express-postage">
-                  <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" placeholder="">
-                  <!--<el-button type="success" size="small" :class="{'active':postage.freeShipping}" @click="postage.freeShipping=!postage.freeShipping">包邮</el-button>-->
+                  <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" v-validate="{required: !postage.freeShipping,decimal: 2}" name="快递邮费" placeholder="">
                   <el-checkbox v-model="postage.freeShipping" class="freeCheckbox" size="small">包邮</el-checkbox>
                 </span>
               </div>
+              <div class="err-tips" style="margin-left: 0;">{{ errors.first('快递邮费') }}</div>
             </li>
             <li>
               <span class="required name">是否上架：</span>
@@ -289,7 +292,7 @@
               </div>
             </li>
             <li>
-              <span class="required name">商家承诺：</span>
+              <span class="name">商家承诺：</span>
               <div>
                 <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
                 <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
@@ -308,7 +311,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-import {goodsEditDetails, goodsCategory, getQnToken, addGoods} from '../axios/api'
+import {goodsEditDetails, goodsCategory, getQnToken, addEditGoods} from '../axios/api'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
@@ -360,7 +363,7 @@ export default {
         freeShipping: true,
         money: ''
       }, // 包邮和邮费
-      hash: this.$route.query.gid, // 商品id
+      hash: this.$route.query.gid ? this.$route.query.gid : '', // 商品id
 
       // 商品信息
       goodsName: '',
@@ -447,10 +450,12 @@ export default {
       rules: {},
       ruleForm: {},
       // 图片 token
-      imageToken: '',
       upToken: {},
       goodsImageShowList: [],
-      goodsImages: []
+      goodsImages: [],
+      // 控制是否验证表单选项
+      stockValidate: true,
+      goodsImageValidate: false
     }
   },
   created () {
@@ -473,7 +478,10 @@ export default {
     getGoods (id) {
       if (id) {
         goodsEditDetails(id).then(res => {
-          console.log(res)
+          console.log(res.data)
+          if (res.data) {
+            console.log(11)
+          }
         }).catch(err => {
           console.log(err)
         })
@@ -512,13 +520,13 @@ export default {
     getImageToken () {
       getQnToken('image').then(res => {
         // console.log(res)
-        this.imageToken = res.data.token
+        this.upToken.token = res.data.token
       }).catch(err => {
         console.log(err)
       })
     },
-    // 商品图片上传之前的操作
-    beforeUpload (file) {
+    // 商品图片验证是否重复
+    goodsImageBeforeUpload (file) {
       // 判断是否重复上传图片
       for (let v of this.goodsImageShowList) {
         if (file.name === v.modified) {
@@ -526,9 +534,13 @@ export default {
           return false
         }
       }
+      this.beforeUpload(file)
+    },
+    // 图片上传之前的验证
+    beforeUpload (file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt2M = file.size / 1024 / 1024 < 2
-      const isMt10K = file.size / 1024 > 10
+      const isMt = file.size > 100
       if (!isJPG) {
         this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
         return false
@@ -537,12 +549,10 @@ export default {
         this.$message.error('上传图片大小不能超过 2MB!')
         return false
       }
-      if (!isMt10K) {
-        this.$message.error('上传图片大小不能小于 10KB!')
+      if (!isMt) {
+        this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
-
-      this.upToken.token = this.imageToken
     },
     // 商品图片超出个数限制
     beyondNumberLimit () {
@@ -551,6 +561,7 @@ export default {
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
       this.goodsImageShowList.push({id: '', url: this.qiniuDomainUrl + response.key, key: response.key, modified: file.name})
+      this.goodsImageValidate = false
     },
     // 删除商品图片列表中的图片，删除商品图片的key
     goodsHandleRemove (file, fileList) {
@@ -558,6 +569,9 @@ export default {
         for (let [i, v] of this.goodsImageShowList.entries()) {
           if (v.key === file.key) {
             this.goodsImageShowList.splice(i, 1)
+            if (this.goodsImageShowList.length <= 0) {
+              this.goodsImageValidate = true
+            }
           }
         }
       }
@@ -655,14 +669,12 @@ export default {
       newS.splice(index, 1)
       // 判断原来的输入框内是否有内容，再确定是否渲染sku
       if (this.specificationList[index].name) {
-        console.log(val)
         if (!val) {
           this.specificationList[index].name = val
           this.setSkus()
           return false
         }
       } else {
-        console.log(val)
         if (val) {
           this.specificationList[index].name = val
           this.setSkus()
@@ -707,6 +719,10 @@ export default {
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
+      if (this.specificationList[index].values.length >= 30) {
+        this.$message.warning(`规格值不能超过30个！`)
+        return false
+      }
       this['inputSpacVisible' + index] = true
       this.$nextTick(_ => {
         this.$refs.saveSpecTagInput[0].$refs.input.focus()
@@ -765,12 +781,16 @@ export default {
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
     },
     showInput () {
+      if (this.dynamicTags.length >= 15) {
+        this.$message.warning(`关键字标签不能超过15个！`)
+        return false
+      }
       this.inputVisible = true
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
-    // 关键字不重复
+    // 关键字不重复,限制个数
     handleInputConfirm () {
       let inputValue = this.inputValue
       if (inputValue) {
@@ -793,9 +813,13 @@ export default {
     onEditorReady (quill) {
       // console.log('editor ready!', quill)
     },
+    // 每种规格图片上传不重复
+    avatarBeforeUpload (file, index) {
+      this.beforeUpload(file)
+    },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
-      this.skus[index].imgSrc = this.qiniuDomainUrl + res.key
+      this.skus[index].cover_url = this.qiniuDomainUrl + res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
@@ -843,42 +867,59 @@ export default {
       }
     },
     // 保存发送商品信息
-    submitGoodsInfo () {
+    submitGoodsInfo (id) {
       this.getGoodsImages()
-      if (this.goodsImages.length === 0) {}
-      let data = {
-        type: this.goodsType,
-        name: this.goodsName,
-        description: this.sharingDescription,
-        goods_images: this.goodsImages,
-        category_id: this.selectedOptions[this.selectedOptions.length - 1],
-        content: this.quillContent,
-        weight: this.getWeightGram(),
-        no: this.uniqueCoding,
-        unit: this.getGoodsQuantifier(),
-        keywords: this.dynamicTags,
-        stock_shown: this.showStock ? 1 : 2,
-        is_free_express: this.postage.freeShipping ? 1 : 2,
-        free_express_price: this.postage.money,
-        status: this.grounding ? 1 : 2
-      }
-      // 判断是否存在商品规格
-      if (this.skus.length > 0) {
-        this.getSpecs()
-        data.specs = this.specs
-        data.sku = this.skus
-      } else {
-        data.display_price = this.goodsLinePrice
-        data.price = this.price
-        data.stock_count = this.stock_count
-      }
+      this.$validator.validateAll().then((msg) => {
+        if (msg) {
+          if (this.goodsImages.length <= 0) {
+            this.goodsImageValidate = true
+            this.$message.error('请正确填写表单信息！')
+            return false
+          } else {
+            this.goodsImageValidate = false
+          }
+          let data = {
+            type: this.goodsType,
+            name: this.goodsName,
+            description: this.sharingDescription,
+            goods_images: this.goodsImages,
+            category_id: this.selectedOptions[this.selectedOptions.length - 1],
+            content: this.quillContent,
+            weight: this.getWeightGram(),
+            no: this.uniqueCoding,
+            unit: this.getGoodsQuantifier(),
+            keywords: this.dynamicTags,
+            stock_shown: this.showStock ? 1 : 2,
+            is_free_express: this.postage.freeShipping ? 1 : 2,
+            free_express_price: this.postage.money,
+            status: this.grounding ? 1 : 2
+          }
+          // 判断是否存在商品规格
+          if (this.skus.length > 0) {
+            this.getSpecs()
+            data.specs = this.specs
+            data.sku = this.skus
+          } else {
+            data.display_price = this.goodsLinePrice
+            data.price = this.goodsPrice
+            data.stock_count = this.goodStock
+          }
 
-      console.log(data)
-      addGoods(data).then(res => {
-        console.log(res)
-        // this.setRouter('/commodity-management')
-      }).catch(err => {
-        console.log(err)
+          console.log(data)
+          addEditGoods(id, data).then(res => {
+            // console.log(res)
+            // this.setRouter('/commodity-management')
+          }).catch(err => {
+            console.log(err)
+          })
+        } else {
+          if (this.goodsImages.length <= 0) {
+            this.goodsImageValidate = true
+          } else {
+            this.goodsImageValidate = false
+          }
+          this.$message.error('请正确填写表单信息！')
+        }
       })
     },
     // 设置路由链接
@@ -1332,6 +1373,9 @@ export default {
     }
     .el-select {
       vertical-align: middle;
+    }
+    .el-input__inner {
+      border-color: @bc;
     }
   }
 </style>

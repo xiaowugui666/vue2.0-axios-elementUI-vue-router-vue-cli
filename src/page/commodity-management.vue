@@ -5,8 +5,8 @@
         <ul class="commodity-management-state clear">
           <li :class="{'active':managementState==0}" @click="changeManagementState(0)">全部</li>
           <li :class="{'active':managementState==1}" @click="changeManagementState(1)">出售中</li>
-          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已售罄</li>
-          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已下架</li>
+          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已售罄</li>
+          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已下架</li>
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>
@@ -54,12 +54,12 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="'http://image.c.51zan.cn/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="qiniuDomainUrl+'/'+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
                       <span class="goods-info-price">￥{{scope.row.price | money}}</span>
-                      <span class="goods-info-category">
+                      <span v-if="scope.row.category_name" class="goods-info-category">
                         类目：{{scope.row.category_name}}
                       </span>
                     </div>
@@ -76,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock_total"
+              prop="stock_count"
               label="库存"
               width="80"
               show-overflow-tooltip>
@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import menuLeft from '@/components/menu-left'
+import {mapState, mapMutations} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
   data () {
@@ -142,24 +142,7 @@ export default {
       goods_name: '',
       searchComName: '',
       page_count: 0, // 总页数
-      selectStateOptions: [
-        {
-          value: '1',
-          label: '食品'
-        }, {
-          value: '2',
-          label: '数码家电'
-        }, {
-          value: '3',
-          label: '女装'
-        }, {
-          value: '4',
-          label: '美妆'
-        }, {
-          value: '5',
-          label: '日用百货'
-        }
-      ],
+      selectStateOptions: [],
       selectedOptions: [],
       tableData: [], // 商品列表数组
       multipleSelection: [],
@@ -174,14 +157,16 @@ export default {
   created () {
     this.getGoodsList()
     this.getGoodsCategory()
+    this.setMenuLeft('/commodity-management')
   },
   mounted () {
     // console.log(this.selectStateOptions)
   },
-  components: {
-    menuLeft
+  computed: {
+    ...mapState(['menuLeft', 'qiniuDomainUrl'])
   },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     // 获取商品列表
     getGoodsList (data = {
       cat_id: this.cat_id,
