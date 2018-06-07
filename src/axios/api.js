@@ -223,7 +223,7 @@ export const getQnToken = function (param) {
 }
 
 // 添加商品
-export const addGoods = function (data) {
+export const addEditGoods = function (id, data) {
   return fetch({
     url: api.hqip + '/management/goods',
     method: 'post',
@@ -279,13 +279,13 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据
 export const initialSetData = function () {
   return fetch({
-    url: api.hqip + '/management/manager/merchant',
+    url: api.cjip83 + '/management/merchant',
     method: 'get' // 请求方法
   })
 }
 
 // 绑定小程序
-export const bindingMp = function (data) {
+export const bindingMp = function () {
   return fetch({
     url: api.cjip + '/management/wx/get_auth_url',
     method: 'get' // 请求方法
@@ -293,10 +293,18 @@ export const bindingMp = function (data) {
 }
 
 // 解绑小程序
-export const untieMp = function (data) {
+export const untieMp = function () {
   return fetch({
     url: api.cjip + '/management/wx/unbundle',
     method: 'delete' // 请求方法
+  })
+}
+
+// 验证小程序是否授权成功
+export const checkAuth = function () {
+  return fetch({
+    url: api.cjip + '/management/wx/check_auth',
+    method: 'get' // 请求方法
   })
 }
 

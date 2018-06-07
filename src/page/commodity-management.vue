@@ -5,8 +5,8 @@
         <ul class="commodity-management-state clear">
           <li :class="{'active':managementState==0}" @click="changeManagementState(0)">全部</li>
           <li :class="{'active':managementState==1}" @click="changeManagementState(1)">出售中</li>
-          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已售罄</li>
-          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已下架</li>
+          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已售罄</li>
+          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已下架</li>
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>

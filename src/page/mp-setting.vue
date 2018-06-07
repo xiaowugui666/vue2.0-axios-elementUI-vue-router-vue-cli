@@ -44,7 +44,10 @@ export default {
     untieBtn () {
       untieMp().then(res => {
         console.log(res)
-      }).catch()
+      }).catch(err => {
+        console.log(12312321)
+        console.dir(err.request, '失败')
+      })
     }
   }
 }
