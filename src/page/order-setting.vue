@@ -92,8 +92,7 @@ export default {
       this.configData = res.data
       this.cancellationTime = res.data.order_expire_time
       console.log(this.cancellationTime)
-      this.receiptTime = res.data.confirm_goods_time
-      console.log(this.receiptTime)
+      this.receiptTime = res.data.order_auto_confirm_days
     })
   }
 }

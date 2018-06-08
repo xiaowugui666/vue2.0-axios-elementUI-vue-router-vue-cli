@@ -29,15 +29,14 @@ export default {
   },
   methods: {
     configSetting (value, type) {
-      console.log(value)
-      console.log(type)
       let params = this.busiInformation
       if (type == 1) {
-        params.merchant_cert = value
+        params.merchant_no = value
       } else if (type == 2) {
         params.merchant_key = value
-      } else {
-        params.merchant_no = value
+      } else if (type == 3) {
+        console.log(value)
+        params.merchant_cert = value
       }
       orderSettingPut(params).then(res => {
         console.log(res)

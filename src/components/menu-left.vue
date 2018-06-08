@@ -99,7 +99,8 @@ export default {
       if (m) {
         return m
       } else {
-        return this.$route.path
+        let _this = this
+        return _this.$route.path
       }
     }
   }

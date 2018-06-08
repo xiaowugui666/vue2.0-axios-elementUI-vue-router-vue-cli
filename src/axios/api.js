@@ -13,6 +13,39 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
   })
 }
 
+/* 首页 */
+// 首页交易额
+export function tradeVolum () {
+  return fetch({
+    url: api.hjip + '/management/merchant/stat/order',
+    method: 'GET'
+  })
+}
+
+/* 店铺 */
+// 商品总数
+export function storeGoodsAmount () {
+  return fetch({
+    url: api.ip + '/management/statistics/good_sku_count',
+    method: 'GET'
+  })
+}
+
+// 昨日pv,uv
+export function yesterdayPvUv () {
+  return fetch({
+    url: api.ip + '/management/statistics/yesterday_pv_uv',
+    method: 'GET'
+  })
+}
+// 七日界面排行榜
+export function pagePvUv () {
+  return fetch({
+    url: api.ip + '/management/statistics/page_pv_uv',
+    method: 'GET'
+  })
+}
+
 /* 订单模块 */
 // 获取订单列表
 export function order (data) {
@@ -29,6 +62,23 @@ export function afterSaleGoods (data) {
     url: api.ip + '/management/aftersale',
     method: 'GET',
     params: data
+  })
+}
+
+// 获取售后订单详情
+export function refundDetail (id) {
+  return fetch({
+    url: api.ip + '/management/aftersale/' + id,
+    method: 'GET'
+  })
+}
+
+// 编辑售后订单
+export function editorRefundDetail (params) {
+  return fetch({
+    url: api.ip + '/management/aftersale/' + params.id,
+    method: 'PUT',
+    data: params
   })
 }
 
@@ -156,7 +206,7 @@ export function deleteRecommend (id) {
 // 新建特价商品，获取商品列表
 export function newGoodsList (data) {
   return fetch({
-    url: api.hqip + '/management/goods/sku',
+    url: api.hqip + '/management/goods_sku/search',
     method: 'GET',
     params: data
   })
@@ -165,7 +215,7 @@ export function newGoodsList (data) {
 // 新建推荐商品，点击分页获取商品列表
 export function paginaGoods (params) {
   return fetch({
-    url: api.hqip + '/management/goods/sku',
+    url: api.hqip + '/management/goods_sku/search',
     params: params
   })
 }
@@ -223,10 +273,14 @@ export const getQnToken = function (param) {
 }
 
 // 添加商品
-export const addGoods = function (data) {
+export const addEditGoods = function (id, data) {
+  let method = 'post'
+  if (id) {
+    method = 'put'
+  }
   return fetch({
-    url: api.hqip + '/management/goods',
-    method: 'post',
+    url: api.hqip + '/management/goods/' + id,
+    method: method,
     data: data
   })
 }
@@ -279,13 +333,13 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据
 export const initialSetData = function () {
   return fetch({
-    url: api.hqip + '/management/manager/merchant',
+    url: api.hqip8080 + '/management/merchant',
     method: 'get' // 请求方法
   })
 }
 
 // 绑定小程序
-export const bindingMp = function (data) {
+export const bindingMp = function () {
   return fetch({
     url: api.cjip + '/management/wx/get_auth_url',
     method: 'get' // 请求方法
@@ -293,10 +347,18 @@ export const bindingMp = function (data) {
 }
 
 // 解绑小程序
-export const untieMp = function (data) {
+export const untieMp = function () {
   return fetch({
     url: api.cjip + '/management/wx/unbundle',
     method: 'delete' // 请求方法
+  })
+}
+
+// 验证小程序是否授权成功
+export const checkAuth = function () {
+  return fetch({
+    url: api.cjip + '/management/wx/check_auth',
+    method: 'get' // 请求方法
   })
 }
 

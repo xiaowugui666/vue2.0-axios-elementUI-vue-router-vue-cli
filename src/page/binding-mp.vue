@@ -31,8 +31,8 @@ export default {
     },
     authorizationMp () {
       bindingMp().then(res => {
-        console.log(res.data)
-        // location.href = res.data.auth_url
+        // console.log(res.data)
+        location.href = res.data.auth_url
       }).catch(err => {
         console.log(err)
       })

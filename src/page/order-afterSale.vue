@@ -59,38 +59,71 @@
           <el-tab-pane  label="退款关闭"  name="five"></el-tab-pane>
         </el-tabs>
         <div class="tradeList">
-          <div class="top">
-          <label>订单编号</label>
-          <label>退款编号</label>
-          <label>退款方式</label>
-          <label>商品名称</label>
-          <label>订单金额</label>
-          <label>退款金额</label>
-          <label>申请时间</label>
-          <label>退款状态</label>
-          <label>操作</label>
-        </div>
-          <div class="top">
-            <label>H236642879997799264</label>
-            <label>H236642287999779</label>
-            <label>退货退款</label>
-            <label>花王纸尿裤</label>
-            <label>¥ 200.00</label>
-            <label>¥ 190.00</label>
-            <label>2018-12-12  12:30</label>
-            <label>买家申请退款</label>
-            <label>处理退款</label>
-          </div>
+          <el-table
+            :data="refunds"
+            border>
+            <el-table-column
+              prop="order_no"
+              label="订单编号"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="no"
+              label="退款编号"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              label="退款方式">
+              <template slot-scope="scope">
+                <div>退货退款</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              props="items"
+              label="商品名称">
+              <template slot-scope="scope">
+                <div class="goodsName" v-for="(item,index) in scope.row.items" :key="index">{{item.name}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="order_amount"
+              label="订单金额">
+            </el-table-column>
+            <el-table-column
+              prop="refund_amount"
+              label="退款金额">
+            </el-table-column>
+            <el-table-column
+              prop="created_at"
+              label="申请时间">
+            </el-table-column>
+            <el-table-column
+              prop="status"
+              label="退款状态">
+              <template slot-scope="scope">
+                <div>{{refundStatu(scope.row.status)}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="address"
+              width="168"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button type="text" @click="refundsDetails(scope.row.id)">订单详情</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
         <el-pagination
           background
-          :page-size="20"
+          v-if="totalPagina !== 0"
+          :page-size="2"
           :page-count="6"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
           current-change="currentIndex"
-          :total="1000">
+          :total="totalPagina">
         </el-pagination>
       </div>
     </div>
@@ -145,10 +178,17 @@ export default {
       // 订单类型
       OrderType: '1',
       // 交易类型
-      tradeType: 'first'
+      tradeType: 'first',
+      // 订单详情
+      refunds: [],
+      // 总页数
+      totalPagina: 0
     }
   },
   methods: {
+    refundsDetails (value) {
+      this.$router.push({path: '/order-rebate', query: {id: value}})
+    },
     changeType () {
     },
     changeTime () {
@@ -184,19 +224,72 @@ export default {
         }
       }
     },
-    handleClick (tab, event) {
+    handleClick (tab) {
       console.log(tab.index)
+      afterSaleGoods({status: tab.index}).then(res => {
+        console.log(res)
+      })
+    },
+    refundStatu (value) {
+      if (value == 1) {
+        return '待处理'
+      } else if (value == 2) {
+        return '处理中'
+      } else if (value == 3) {
+        return '处理完毕'
+      } else if (value == 4) {
+        return '取消退货'
+      }
     }
+  },
+  computed: {
   },
   mounted () {
     afterSaleGoods().then(res => {
       console.log(res)
+      this.totalPagina = parseInt(res.headers.page_count)
+      this.refunds = res.data
     })
   }
 }
 </script>
 <style lang="less">
-  .orderAfterSale{
+.orderAfterSale{
+  .el-table{
+    font-size: 12px;
+    color: #666666;
+    .el-button{
+      font-size: 12px;
+    }
+  }
+  .el-table__header-wrapper thead{
+    color: #333333;
+  }
+  .el-table::before{
+    background-color: #D5D5D5;
+  }
+  .el-table--border::after{
+    background-color: #D5D5D5;
+  }
+  .el-table__header-wrapper thead tr th{
+    background: #EFEFEF;
+  }
+  .el-table__body-wrapper,.el-table__header-wrapper tr th div{
+    text-align: center;
+  }
+  .el-table--group, .el-table--border {
+    border: 1px solid #D5D5D5;
+  }
+  .el-table--border {
+    border-right: none;
+    border-bottom: none;
+  }
+  .el-table th.is-leaf, .el-table td {
+    border-bottom: 1px solid #D5D5D5;
+  }
+  .el-table--border th, .el-table--border td {
+    border-right: 1px solid #D5D5D5;
+  }
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -351,7 +444,7 @@ export default {
       margin-right: 10px;
     }
   }
-  }
+}
 </style>
 <style scoped lang="less">
   .orderAfterSale{
@@ -365,49 +458,13 @@ export default {
     padding:30px 20px 20px;
     .tradeList {
       padding-bottom: 30px;
-      .top:first-child{
-        background: #EFEFEF;
-        line-height: 40px;
-        height: 40px;
-      }
-      .top:last-child{
-        border-bottom:1px solid #D5D5D5;
-      }
-      .top{
-        border-top: 1px solid #D5D5D5;
-        border-left: 1px solid #D5D5D5;
+      .goodsName{
         height: 50px;
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
         line-height: 50px;
-        label {
-          font-size: 12px;
-          color: #333333;
-          text-align: center;
-          border-right: 1px solid #D5D5D5;
-        }
-        label:first-child,label:nth-child(2),label:nth-child(7),label:nth-child(4) {
-          width: 14%;
-        }
-        label:nth-child(3),label:nth-child(8){
-          width:10%;
-        }
-        label:nth-child(5),label:nth-child(6),label:nth-child(9) {
-          width:8%;
-        }
-      }
-      .content {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        label {
-          display: block;
-          text-align: center;
-        }
+        text-align: center;
       }
     }
-    }
+  }
   .header{
     background: #fff;
     padding: 20px;

@@ -5,8 +5,8 @@
         <ul class="commodity-management-state clear">
           <li :class="{'active':managementState==0}" @click="changeManagementState(0)">全部</li>
           <li :class="{'active':managementState==1}" @click="changeManagementState(1)">出售中</li>
-          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已售罄</li>
-          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已下架</li>
+          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已售罄</li>
+          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已下架</li>
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>
@@ -76,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock_count"
+              prop="stock_total"
               label="库存"
               width="80"
               show-overflow-tooltip>
@@ -137,7 +137,7 @@ export default {
   data () {
     return {
       managementState: 0, // 商品状态tab
-      page: 1,
+      page: 0,
       cat_id: '',
       goods_name: '',
       searchComName: '',
@@ -214,7 +214,7 @@ export default {
       if (typeof status !== 'undefined') {
         this.managementState = status
       }
-      this.page = 1
+      this.page = 0
       if (this.selectedOptions) {
         this.cat_id = this.selectedOptions[this.selectedOptions.length - 1]
       }
@@ -368,7 +368,7 @@ export default {
     // 点击分页数
     currentChange (page) {
       // console.log(page)
-      this.page = page
+      this.page = page - 1
       this.getGoodsList()
     },
     categoryChange (val) {

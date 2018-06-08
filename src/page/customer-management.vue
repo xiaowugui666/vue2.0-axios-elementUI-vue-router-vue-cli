@@ -184,20 +184,23 @@ export default {
   methods: {
     search () {
       const reg = /^[1][3,4,5,7,8][0-9]{9}$/
-      if (reg.test(this.phoneNum)) {
-        user({
-          mobile: this.phoneNum,
-          order_count: this.value,
-          page: this.pages
-        }, 'get').then(
-          res => {
-            this.tableData = res.data
-            this.totalPage = parseInt(res.headers.page_count) * 15
-          }
-        )
-      } else {
-        this.$message.error('这不是一个正确的手机号码')
+      if (this.phoneNum) {
+        if (reg.test(this.phoneNum)) {
+        } else {
+          this.$message.error('这不是一个正确的手机号码')
+          return false
+        }
       }
+      user({
+        mobile: this.phoneNum,
+        order_count: this.value,
+        page: this.pages
+      }, 'get').then(
+        res => {
+          this.tableData = res.data
+          this.totalPage = parseInt(res.headers.page_count) * 15
+        }
+      )
     },
     handleClose (done) {
       this.$confirm('are you sure?')

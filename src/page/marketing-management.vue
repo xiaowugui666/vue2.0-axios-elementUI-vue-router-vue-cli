@@ -163,7 +163,7 @@ export default {
     // 点击排序状态
     changState (value) {
       this.managementState = value
-      this.request(this.curPage)
+      this.request(0)
     },
     // 点击分页
     currentChange (value) {
