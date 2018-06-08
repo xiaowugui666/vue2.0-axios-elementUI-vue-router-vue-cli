@@ -3,7 +3,7 @@ export default {
   // 接口代理配置
   ip: 'https://develop.yiqixuan.com', // 张思建 http://192.168.20.159:8000
   // hqip: 'http://172.81.209.201:8302', // 吴慧卿 192.168.20.176
-  hqip: 'http://192.168.20.176', // 吴慧卿 192.168.20.176
+  hqip: 'https://develop.yiqixuan.com', // 吴慧卿 192.168.20.176
   hqip8080: 'http://192.168.20.176:8080', // 吴慧卿 192.168.20.176
   xkip: 'https://develop.yiqixuan.com', // 徐凯
   cjip: 'http://192.168.20.198', // 将纯吉

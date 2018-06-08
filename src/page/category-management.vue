@@ -497,8 +497,8 @@ export default {
             .avatar {
               width: 100%;
               height: 100%;
-              min-width: 85px;
-              min-height: 85px;
+              max-width: 85px;
+              max-height: 85px;
             }
           }
           .el-tag {
