@@ -22,7 +22,7 @@
                 <span class="name required">主营类目：</span>
                 <el-select v-model="value" size="small" class="select-state">
                   <el-option
-                    v-for="item in selectStateOptions"
+                    v-for="item in mainCategory"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -70,7 +70,7 @@
                   :show-file-list="false"
                   :auto-upload="false"
                   :on-success="handleAvatarSuccess">
-                  <img :src="imageUrl2" class="avatar avatar2">
+                  <img :src="bannerImageUrl" class="avatar avatar2">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
@@ -130,8 +130,7 @@
 <script>
 import firstSettingMenu from '@/components/first-setting-menu'
 import paymentInfo from '@/components/payment-info'
-import ceshi from '../assets/ceshi.png'
-import ceshi2 from '../assets/ceshi2.png'
+import {initialSetData} from '../axios/api'
 import { regionData, CodeToText } from 'element-china-area-data'
 import {mapState, mapMutations} from 'vuex'
 export default {
@@ -143,23 +142,7 @@ export default {
       businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
       p12Certificate: 'apiclient_cert.p12',
       checked: true,
-      selectStateOptions: [{
-        value: '1',
-        label: '食品'
-      }, {
-        value: '2',
-        label: '数码家电'
-      }, {
-        value: '3',
-        label: '女装'
-      }, {
-        value: '4',
-        label: '美妆'
-      }, {
-        value: '5',
-        label: '日用百货'
-      }],
-      value: '食品',
+      value: 1,
       shopNum: 321354656454,
       creationTime: '2018-01-02 10:05',
       shopChiefName: '',
@@ -167,14 +150,17 @@ export default {
       contactWeChat: '',
       customerServiceNum: '',
       editState: false,
-      imageUrl: ceshi,
-      imageUrl2: ceshi2,
-      textArea: 'wqetrwqerwesdfdfasldkfjalsejtlaweflsadkjflwe',
+      imageUrl: '/static/default-img/shops-default-logo.png',
+      bannerImageUrl: '',
+      textArea: 'wqetrwqerwesdfkjflwe',
       options: regionData,
       selectedOptions: [],
       contactAddress: '',
       readingProtocol: false
     }
+  },
+  created () {
+    this.getInitialSetData()
   },
   mounted () {
     this.setMenuShow(false)
@@ -185,10 +171,24 @@ export default {
     paymentInfo
   },
   computed: {
-    ...mapState(['menuShow'])
+    ...mapState(['menuShow', 'mainCategory'])
   },
   methods: {
     ...mapMutations(['setMenuShow']),
+    getInitialSetData () {
+      initialSetData().then(res => {
+        console.log(res.data)
+        let data = res.data
+        if (data.name && data.type) {
+          this.active = 2
+        } else {
+          this.shopName = data.name
+          if (data.type) {
+            this.value = data.type
+          }
+        }
+      })
+    },
     setStepActive () {
       this.active++
     },

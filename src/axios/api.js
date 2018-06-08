@@ -333,7 +333,7 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据
 export const initialSetData = function () {
   return fetch({
-    url: api.cjip83 + '/management/merchant',
+    url: api.hqip8080 + '/management/merchant',
     method: 'get' // 请求方法
   })
 }

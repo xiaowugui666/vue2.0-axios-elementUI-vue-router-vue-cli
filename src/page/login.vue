@@ -25,7 +25,7 @@ export default {
     loginState (userToken) {
       // 2afd51e0-8650-474a-81f3-f51ff2761f59
       if (userToken) {
-        this.$http.post(api.cjip83 + '/management/login', {token: userToken})
+        this.$http.post(api.hqip8080 + '/management/login', {token: userToken})
           .then(res => {
             console.log(res.headers)
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))

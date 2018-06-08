@@ -22,13 +22,13 @@
                       <div class="tag-img">
                         <el-upload
                           class="avatar-uploader"
-                          :action="uploadImgApi"
+                          :action="qiniuUploadUrl"
                           :data="upToken"
                           :show-file-list="false"
                           :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url ? STATICDOMAIN + item.children[index2].icon_url : '/static/test/secondary-classification-default.png'" class="avatar">
+                          <img :src="item.children[index2].icon_url ? qiniuDomainUrl + item.children[index2].icon_url : '/static/test/secondary-classification-default.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -77,15 +77,12 @@ import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategor
 export default {
   data () {
     return {
-      uploadImgApi: '//upload.qiniup.com',
       dialogVisible: false,
       categoryList: [],
       inputSpacVisible: [],
       inputSpacValue: '',
       // 七牛上传图片所需要的token
       upToken: {},
-      // 七牛图片预览的域名
-      STATICDOMAIN: 'http://p94iruedm.bkt.clouddn.com/',
       firstCategoryList: [
         {
           value: 1,
@@ -448,7 +445,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft'])
+    ...mapState(['menuLeft', 'qiniuDomainUrl', 'qiniuUploadUrl'])
   }
 }
 </script>

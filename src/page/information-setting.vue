@@ -138,8 +138,6 @@
 </template>
 
 <script>
-import ceshi from '../assets/ceshi.png'
-import ceshi2 from '../assets/ceshi2.png'
 import { regionData, CodeToText } from 'element-china-area-data'
 export default {
   data () {
@@ -152,9 +150,9 @@ export default {
       contactWeChat: 'asdasq2134141',
       customerServiceNum: '021-65465400',
       editState: false,
-      imageUrl: ceshi,
-      imageUrl2: ceshi2,
-      textarea: 'wqetrwqerwesdfdfasldkfjalsejtlaweflsadkjflwe',
+      imageUrl: '/static/default-img/shops-default-logo.png',
+      imageUrl2: '',
+      textarea: 'wqetrwqerwwe',
       options: regionData,
       selectedOptions: [ '350000', '350100', '350102' ],
       contactAddress: '永康路99弄9号909室',
@@ -322,6 +320,7 @@ export default {
         line-height: 1.5;
         padding: 10px;
         border: 1px solid #d5d5d5;
+        width: 236px;
         min-height: 80px;
       }
       .shop-description-textarea {

@@ -76,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock_count"
+              prop="stock_total"
               label="库存"
               width="80"
               show-overflow-tooltip>
@@ -137,7 +137,7 @@ export default {
   data () {
     return {
       managementState: 0, // 商品状态tab
-      page: 1,
+      page: 0,
       cat_id: '',
       goods_name: '',
       searchComName: '',
@@ -214,7 +214,7 @@ export default {
       if (typeof status !== 'undefined') {
         this.managementState = status
       }
-      this.page = 1
+      this.page = 0
       if (this.selectedOptions) {
         this.cat_id = this.selectedOptions[this.selectedOptions.length - 1]
       }
@@ -368,7 +368,7 @@ export default {
     // 点击分页数
     currentChange (page) {
       // console.log(page)
-      this.page = page
+      this.page = page - 1
       this.getGoodsList()
     },
     categoryChange (val) {
