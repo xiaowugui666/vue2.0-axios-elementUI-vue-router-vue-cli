@@ -120,6 +120,7 @@
 </template>
 <script>
 import {mapMutations} from 'vuex'
+import {customerOrder} from '../axios/api'
 export default {
   data () {
     return {
@@ -170,6 +171,7 @@ export default {
   },
   mounted () {
     this.setMenuLeft('/customerManagement')
+    console.log(this.$route.params.id)
     this.getData()
   },
   computed: {
@@ -177,28 +179,23 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     getData () {
-      this.user_id = this.$route.params.id
-      this.$http({
-        url: 'http://172.81.209.201:8300/management/user/' + this.user_id + '/orders',
-        method: 'get',
-        params: {
-          no: this.keyValue,
-          name: this.keyName,
-          status: this.OrderType,
-          begin_at: this.keyTime[0],
-          end_at: this.keyTime[1],
-          page: this.pages
-        }}).then(
-        res => {
-          console.log(res)
-          console.log(res.headers.page_count)
-          this.totalPage = parseInt(res.headers.page_count) * 15
-          res.data.forEach(function (v, i) {
-            Object.assign(res.data[i], {length: res.data[i].items.length * 80})
-          })
-          this.tradeList = res.data
-        }
-      )
+      let params = {}
+      params.no = this.keyValue
+      params.name = this.keyName
+      params.status = this.OrderType
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
+      params.page = this.pages
+      params.id = this.$route.params.id
+      customerOrder(params).then(res => {
+        console.log(res)
+        console.log(res.headers.page_count)
+        this.totalPage = parseInt(res.headers.page_count) * 15
+        res.data.forEach(function (v, i) {
+          Object.assign(res.data[i], {length: res.data[i].items.length * 80})
+        })
+        this.tradeList = res.data
+      })
     },
     changeTime () {
       let keyTimes = this.keyTime

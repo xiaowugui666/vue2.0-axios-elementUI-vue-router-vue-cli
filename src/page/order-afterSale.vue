@@ -194,6 +194,13 @@ export default {
     changeTime () {
     },
     searchOrder () {
+      let params = {}
+      params.order_no = this.keyValue
+      afterSaleGoods(params).then(res => {
+        console.log(res)
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
+      })
     },
     timeRange (res, event) {
       let flag = event.target.dataset.id

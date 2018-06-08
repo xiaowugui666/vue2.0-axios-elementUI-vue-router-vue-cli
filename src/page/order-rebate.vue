@@ -51,7 +51,7 @@
                   <label  class="disagree" @click="editorDetail(2)">拒绝</label>
                 </div>
                 <div class="tip" v-if="tradeType == 0">留言：</div>
-                <textarea v-if="tradeType == 0" id="tips" cols="30" rows="10">
+                <textarea v-if="tradeType == 0" id="tips" v-model="resRemark" cols="30" rows="10">
                 </textarea>
                 <div v-else class="refund-step-end">
                   <img v-if="tradeType == 1" src="/static/test/sand%20clock@3x.png">
@@ -84,6 +84,7 @@ export default {
   data () {
     return {
       tradeType: 0,
+      resRemark: '',
       rebateDetail: {}
     }
   },
@@ -100,9 +101,16 @@ export default {
     editorDetail (value) {
       let params = {}
       params.status = value
+      params.remark = this.resRemark
       params.id = this.rebateDetail.id
       editorRefundDetail(params).then(res => {
-        console.log(res)
+        if (res.status == 200) {
+          refundDetail(this.$route.query.id).then(res => {
+            console.log(res)
+            this.rebateDetail = res.data
+            this.tradeType = value - 1
+          })
+        }
       })
     }
   }

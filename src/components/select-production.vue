@@ -105,7 +105,7 @@ export default {
     },
     // 点击分页,通知父组件改变状态
     currentChange (e) {
-      this.$emit('paginaNum', e)
+      this.$emit('paginaNum', e - 1)
     },
     upHandleClose () {
       this.$emit('handleClose', false)

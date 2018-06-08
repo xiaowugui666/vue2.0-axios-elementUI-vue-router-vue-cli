@@ -190,6 +190,12 @@ export default {
                 type: 'error'
               })
             }
+          }).catch(() => {
+            console.log(111111)
+            this.$message({
+              message: '数据请求错误，请稍后重试',
+              type: 'error'
+            })
           })
         } else if (this.$route.params.class == 'recommend') { // 如果路由为推荐商品 recommend
           goodsList({status: 1}).then(res => {
@@ -224,12 +230,12 @@ export default {
     // 模态框搜索商品
     searchChange (value) {
       if (this.$route.params.class == 'special-offer') {
-        newGoodsList({name: value}).then(res => {
+        newGoodsList({goods_name: value}).then(res => {
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
         })
       } else if (this.$route.params.class == 'recommend') {
-        goodsList({name: value}).then(res => {
+        goodsList({goods_name: value}).then(res => {
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
           if (this.newGoods.length !== 0) {
@@ -262,6 +268,7 @@ export default {
                   this.$message('新增商品失败，请勿重复添加或确认时间段')
                 }
               }).catch(err => {
+                console.log(err.response.data)
                 this.$message(err.response.data.message)
               })
             } else {

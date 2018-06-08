@@ -74,15 +74,15 @@
 </template>
 
 <script>
-import { settlement } from '@/axios/api'
+import { settlement, incomeInfo } from '@/axios/api'
 export default {
   data () {
     return {
       pages: 0,
       totalPage: 15,
-      cumulativeIncome: 233333.01,
+      cumulativeIncome: '',
       cumulativeIncomeShow: true,
-      sevenDayIncome: 2368993.12,
+      sevenDayIncome: '',
       sevenDayIncomeShow: true,
       incomeExpenditureData: [
       ]
@@ -94,10 +94,7 @@ export default {
   },
   methods: {
     getMoney () {
-      this.$http({
-        url: 'http://192.168.20.140/management/settlement/stat/income',
-        method: 'get'
-      }).then(
+      incomeInfo().then(
         res => {
           this.cumulativeIncome = parseFloat(res.data.total_income).toFixed(2)
           this.sevenDayIncome = parseFloat(res.data.week_income).toFixed(2)
