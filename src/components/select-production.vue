@@ -31,7 +31,7 @@
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                        <span class="goods-info-price">￥{{scope.row.price}}</span>
+                        <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                       </div>
                     </div>
                   </div>

@@ -206,7 +206,7 @@ export function deleteRecommend (id) {
 // 新建特价商品，获取商品列表
 export function newGoodsList (data) {
   return fetch({
-    url: api.hqip + '/management/goods_sku/search',
+    url: 'https://develop.yiqixuan.com' + '/management/goods_sku/search',
     method: 'GET',
     params: data
   })

@@ -15,7 +15,7 @@ export function fetch (options) {
         // 'Content-Type': 'application/json'
         // 'token_in_header': global_.token,//token从全局变量那里传过来
       },
-      timeout: 30 * 1000 // 30秒超时
+      timeout: 300 * 1000 // 30秒超时
     })
     instance(options)
       .then(response => { // then 请求成功之后进行什么操作

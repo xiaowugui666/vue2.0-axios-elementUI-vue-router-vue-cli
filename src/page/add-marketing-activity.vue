@@ -240,7 +240,7 @@ export default {
     },
     // 商品信息更改
     saveEditor () {
-      if (!this.errors.items.length && this.activityTime.length && this.specialOffer < this.originalPrice) {
+      if (!this.errors.items.length && this.activityTime.length) {
         let params = {}
         let _this = this
         params.id = this.good.id
@@ -254,15 +254,22 @@ export default {
         if (JSON.stringify(this.$route.query) == '{}') { // 新建
           // 如果路由为special
           if (this.$route.params.class == 'special-offer') {
-            addSpecialGood(params).then(res => {
-              if (res.data.success) {
-                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-              } else {
-                this.$message('新增商品失败，请勿重复添加或确认时间段')
-              }
-            }).catch(err => {
-              this.$message(err.response.data.message)
-            })
+            if (this.specialOffer < this.originalPrice) {
+              addSpecialGood(params).then(res => {
+                if (res.data.success) {
+                  _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+                } else {
+                  this.$message('新增商品失败，请勿重复添加或确认时间段')
+                }
+              }).catch(err => {
+                this.$message(err.response.data.message)
+              })
+            } else {
+              this.$message({
+                message: '请确保特价小于原价',
+                type: 'warning'
+              })
+            }
           } else if (this.$route.params.class == 'recommend') {
             let idArray = []
             for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
@@ -287,14 +294,9 @@ export default {
             }
           })
         }
-      } else if (this.specialOffer > this.originalPrice) {
-        this.$message({
-          message: '请确保商品特价小于原价',
-          type: 'error'
-        })
       } else {
         this.$message({
-          message: '请确保编辑信息正确',
+          message: '请确保编辑信息完善',
           type: 'warning'
         })
       }
