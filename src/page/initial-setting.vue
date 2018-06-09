@@ -120,7 +120,7 @@
         <div v-if="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
-            <payment-info></payment-info>
+            <payment-info :busiInformation="busiInformation" :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
             <div class="next-step">
               <el-button type="success" size="small" :disabled="true" @click="setStepActive">完成</el-button>
             </div>
