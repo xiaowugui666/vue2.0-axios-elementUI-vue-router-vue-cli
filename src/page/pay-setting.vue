@@ -1,20 +1,19 @@
 <template>
     <div class="pay-setting-object">
       <div class="pay-setting-content">
-        <payment-info :busiInformation="busiInformation" :token="token" :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
+        <payment-info :busiInformation="busiInformation" :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
       </div>
     </div>
 </template>
 
 <script>
 import paymentInfo from '@/components/payment-info'
-import {orderSetting, orderSettingPut, getQnToken} from '../axios/api'
+import {orderSetting, orderSettingPut} from '../axios/api'
 export default {
   data () {
     return {
       agreementShow: false,
-      busiInformation: {},
-      token: ''
+      busiInformation: {}
     }
   },
   components: {
@@ -25,7 +24,6 @@ export default {
       console.log(res)
       this.busiInformation = res.data
     })
-    this.getToken()
   },
   methods: {
     configSetting (value, type) {
@@ -40,12 +38,6 @@ export default {
       }
       orderSettingPut(params).then(res => {
         console.log(res)
-      })
-    },
-    getToken () {
-      getQnToken('document').then(res => {
-        console.log(res)
-        this.token = res.data
       })
     }
   }

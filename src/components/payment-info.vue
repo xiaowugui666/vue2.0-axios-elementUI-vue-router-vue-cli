@@ -18,11 +18,9 @@
           <span class="pay-info-title">服务商P12证书：</span>
           <span class="pay-info-txt">{{busiInformation.merchant_cert}}</span>
           <el-upload
-            v-if="token !== ''"
             :data="token"
-            accept=".p12"
             :show-file-list="false"
-            action="http://upload.qiniup.com"
+            :action="qiniuUploadUrl"
             :on-success="qiniuImage">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
@@ -55,6 +53,8 @@
 </template>
 
 <script>
+import {orderSetting, orderSettingPut, getQnToken} from '../axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -62,16 +62,12 @@ export default {
       businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
       p12Certificate: 'apiclient_cert.p12',
       checked: true,
-      readingProtocol: false
+      readingProtocol: false,
+      token: ''
     }
   },
-  props: ['agreementShow', 'busiInformation', 'token'],
+  props: ['agreementShow', 'busiInformation'],
   watch: {
-    token (value) {
-      console.log('监听属性')
-      console.log(value)
-      return value
-    }
   },
   methods: {
     setMerchantCert () {
@@ -113,7 +109,16 @@ export default {
     qiniuImage (response) {
       console.log(response)
       this.$emit('changeSetting', response.key, 3)
+    },
+    getToken () {
+      getQnToken('document').then(res => {
+        console.log(res)
+        this.token = res.data
+      })
     }
+  },
+  computed: {
+    ...mapState(['qiniuDomainUrl', 'qiniuUploadUrl'])
   }
 }
 </script>
