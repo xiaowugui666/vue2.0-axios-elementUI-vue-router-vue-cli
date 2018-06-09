@@ -153,12 +153,8 @@ export default {
         label: '全部'
       }, {
         value: '2',
-        label: '仅退款'
-      }, {
-        value: '3',
         label: '退货退款'
       }],
-
       // 搜索类型
       options: [{
         value: '1',
@@ -195,7 +191,12 @@ export default {
     },
     searchOrder () {
       let params = {}
-      params.order_no = this.keyValue
+      if (this.keyValue != '') {
+        params.order_no = this.keyValue
+      }
+      if (this.keyName != '') {
+        params.no = this.keyName
+      }
       afterSaleGoods(params).then(res => {
         console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
@@ -235,6 +236,8 @@ export default {
       console.log(tab.index)
       afterSaleGoods({status: tab.index}).then(res => {
         console.log(res)
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
       })
     },
     refundStatu (value) {

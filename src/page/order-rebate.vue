@@ -2,7 +2,7 @@
     <div class="orderRebate">
       <div class="title">
         <span>退款维权 > 处理退款</span>
-        <el-steps :active="tradeType" align-center finish-status="success" >
+        <el-steps :active="tradeType" v-if="tradeType !== 4" align-center finish-status="success" >
           <el-step title="买家申请退款"></el-step>
           <el-step title="商家处理退款"></el-step>
           <el-step title="退款完成"></el-step>

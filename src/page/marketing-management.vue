@@ -135,6 +135,7 @@ export default {
   watch: {
     '$route' () {
       this.linkClass = this.$route.params.class
+      this.managementState = 1
       this.request(0)
     }
   },

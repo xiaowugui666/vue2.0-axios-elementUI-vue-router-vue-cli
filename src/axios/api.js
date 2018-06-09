@@ -143,6 +143,23 @@ export const settlement = function (data) {
   })
 }
 
+// 获取账户账单金额
+export function settlementTotal (id) {
+  return fetch({
+    url: api.ip + '/management/settlement/' + id,
+    method: 'GET'
+  })
+}
+
+// 获取账户账单详情
+export function settlementDetail (params) {
+  return fetch({
+    url: api.ip + '/management/settlement/' + params.id + '/payment',
+    method: 'GET',
+    params: params
+  })
+}
+
 // 客户
 // 客户订单详情
 export function customerOrder (params) {
@@ -303,7 +320,7 @@ export const addEditGoods = function (id, data) {
 // 设置 -> 订单
 export function orderSetting (data) {
   return fetch({
-    url: api.ip + '/management/config',
+    url: api.ip + '/management/mpa',
     method: 'GET',
     data: data
   })
@@ -312,7 +329,7 @@ export function orderSetting (data) {
 // 设置 -> 订单，修改订单设置
 export function orderSettingPut (data) {
   return fetch({
-    url: api.ip + '/management/config/' + data.id,
+    url: api.ip + '/management/mpa/' + data.id,
     method: 'PUT',
     data: data
   })

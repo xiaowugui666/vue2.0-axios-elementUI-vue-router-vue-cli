@@ -8,7 +8,7 @@
         <div class="add-production-content">
           <div class="search-box clear">
             <label>商品名称</label>
-            <input type="text" v-model="productionKey">
+            <input type="text" v-model="productionKey" maxlength="40">
             <el-button class="search" type="success" @click="diaSearch" size="small">搜索</el-button>
           </div>
           <div class="select-goods-table">

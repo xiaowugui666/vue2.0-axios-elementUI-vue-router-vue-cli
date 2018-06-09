@@ -72,7 +72,7 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
-// import { settlement } from '@/axios/api'
+import {settlementTotal, settlementDetail} from '@/axios/api'
 export default {
   data () {
     return {
@@ -115,13 +115,10 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     toOrderDetail (id) {
-      this.$router.push({path: '/orderDetail/' + this.incomeExpenditureData[id].no})
+      this.$router.push({path: '/orderDetail/' + id})
     },
     getMoney () {
-      this.$http({
-        url: 'http://homestead.yqx.com:8000/management/settlement/' + this.id,
-        method: 'get'
-      }).then(
+      settlementTotal(this.id).then(
         res => {
           this.totalIncome = res.data.amount
           this.settlementDate = res.data.end_at.substring(0, 10)
@@ -129,12 +126,9 @@ export default {
       )
     },
     getData () {
-      this.$http({
-        url: 'http://172.81.209.201:8300/management/settlement/' + this.id + '/payment',
-        method: 'get',
-        params: {
-          page: this.pages
-        }
+      settlementDetail({
+        id: this.id,
+        page: this.pages
       }).then(
         res => {
           this.incomeExpenditureData = res.data

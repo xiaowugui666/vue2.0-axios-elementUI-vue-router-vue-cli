@@ -71,7 +71,7 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 import selectProduction from '@/components/select-production'
-import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods} from '@/axios/api'
+import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods, closeRecommendGood} from '@/axios/api'
 export default {
   data () {
     return {
@@ -127,7 +127,7 @@ export default {
         this.good = res.data
         // 赋值商品信息
         this.specialOffer = res.data.price / 100
-        this.originalPrice = res.data.goods_sku.display_price / 100
+        this.originalPrice = (res.data.goods_sku.display_price / 100).toFixed(2)
         this.stock = res.data.stock_count
         this.activityTime = [res.data.begin_at, res.data.end_at]
       })
@@ -146,7 +146,9 @@ export default {
       // 特价
       if (this.$route.params.class == 'special-offer') {
         this.good = value
-        this.originalPrice = value.price / 100
+        console.log(value.price / 100)
+        this.originalPrice = (value.price / 100).toFixed(2)
+        console.log(this.originalPrice)
       } else if (this.$route.params.class == 'recommend') {
         // 推荐
         if (this.recommendGoods.length == 0) {
@@ -190,7 +192,8 @@ export default {
                 type: 'error'
               })
             }
-          }).catch(() => {
+          }).catch(res => {
+            console.log(res)
             console.log(111111)
             this.$message({
               message: '数据请求错误，请稍后重试',
@@ -260,7 +263,8 @@ export default {
         if (JSON.stringify(this.$route.query) == '{}') { // 新建
           // 如果路由为special
           if (this.$route.params.class == 'special-offer') {
-            if (this.specialOffer < this.originalPrice) {
+            console.log(this.originalPrice)
+            if (parseFloat(this.specialOffer) < this.originalPrice) {
               addSpecialGood(params).then(res => {
                 if (res.data.success) {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
@@ -293,13 +297,21 @@ export default {
           }
         } else { // 编辑
           // 更改商品信息
-          closeGoods(params).then(res => {
-            if (res.data == '更新成功') {
+          if (this.$route.params.class == 'special-offer') {
+            closeGoods(params).then(res => {
+              if (res.data == '更新成功') {
+                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+              } else {
+                console.log(res)
+                _this.$message(res.data.message)
+              }
+            })
+          } else if (this.$route.params.class == 'recommend') {
+            closeRecommendGood(params).then(res => {
+              console.log('更新推荐商品成功')
               _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-            } else {
-              _this.$message(res.data.message)
-            }
-          })
+            })
+          }
         }
       } else {
         this.$message({
