@@ -60,7 +60,6 @@
           <div class="top">
             <label>下单时间：{{ item.paid_at }}</label>
             <label>订单编号：{{item.no}}</label>
-            <label>商铺名称：金桔小店</label>
             <label>客户手机：{{item.mobile}}</label>
           </div>
           <div class="content">
@@ -78,30 +77,10 @@
               <label>￥{{item.amount}}</label>
               <label>运费：{{item.express_amount}}</label>
             </div>
-            <div class="orderResult"  :style="{height:item.length+'px'} " v-if="item.status===405"  >
-                <label>交易完成</label>
-              <router-link  :to="{ name:'orderDetail',params:{id:item.no }}" tag="label">订单详情</router-link>
+            <div class="orderResult"  :style="{height:item.length+'px'} ">
+                <label>{{tradeStatus(item.status)}}</label>
+              <router-link  :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
             </div>
-              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===200">
-                <label>待付款</label>
-                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
-              </div>
-              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===300">
-                <label>待发货</label>
-                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
-              </div>
-              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===400">
-                <label>待收货</label>
-                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
-              </div>
-              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===500">
-                <label>退货中</label>
-                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
-              </div>
-              <div class="orderResult"  :style="{height:item.length+'px'} " v-else-if="item.status===505">
-                <label>退货完成</label>
-                <router-link  :to="{ name:'orderDetail',params:{id:item.no }}"  tag="label">订单详情</router-link>
-              </div>
           </div>
         </div>
         <el-pagination
@@ -120,6 +99,7 @@
 </template>
 <script>
 import {mapMutations} from 'vuex'
+import {customerOrder} from '../axios/api'
 export default {
   data () {
     return {
@@ -170,35 +150,46 @@ export default {
   },
   mounted () {
     this.setMenuLeft('/customerManagement')
+    console.log(this.$route.params.id)
     this.getData()
   },
   computed: {
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    tradeStatus (value) {
+      if (value == 200) {
+        return '待付款'
+      } else if (value == 205) {
+        return '待发货'
+      } else if (value == 207) {
+        return '已取消'
+      } else if (value == 400) {
+        return '待收货'
+      } else if (value == 405) {
+        return '确认收货'
+      } else {
+        return '这是啥状态呀。是九阴白骨爪！'
+      }
+    },
     getData () {
-      this.user_id = this.$route.params.id
-      this.$http({
-        url: 'http://172.81.209.201:8300/management/user/' + this.user_id + '/orders',
-        method: 'get',
-        params: {
-          no: this.keyValue,
-          name: this.keyName,
-          status: this.OrderType,
-          begin_at: this.keyTime[0],
-          end_at: this.keyTime[1],
-          page: this.pages
-        }}).then(
-        res => {
-          console.log(res)
-          console.log(res.headers.page_count)
-          this.totalPage = parseInt(res.headers.page_count) * 15
-          res.data.forEach(function (v, i) {
-            Object.assign(res.data[i], {length: res.data[i].items.length * 80})
-          })
-          this.tradeList = res.data
-        }
-      )
+      let params = {}
+      params.no = this.keyValue
+      params.name = this.keyName
+      params.status = this.OrderType
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
+      params.page = this.pages
+      params.id = this.$route.params.id
+      customerOrder(params).then(res => {
+        console.log(res)
+        console.log(res.headers.page_count)
+        this.totalPage = parseInt(res.headers.page_count) * 15
+        res.data.forEach(function (v, i) {
+          Object.assign(res.data[i], {length: res.data[i].items.length * 80})
+        })
+        this.tradeList = res.data
+      })
     },
     changeTime () {
       let keyTimes = this.keyTime

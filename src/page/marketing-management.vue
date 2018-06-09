@@ -135,6 +135,7 @@ export default {
   watch: {
     '$route' () {
       this.linkClass = this.$route.params.class
+      this.managementState = 1
       this.request(0)
     }
   },
@@ -152,8 +153,7 @@ export default {
       // 获取商品列表
       marketingGoods(router, {
         type: this.managementState,
-        page: curPage,
-        per_page: 2
+        page: curPage
       }).then(res => {
         this.goodsList = res.data
         this.totalPagina = res.headers.page_count

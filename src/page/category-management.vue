@@ -25,7 +25,6 @@
                           :action="qiniuUploadUrl"
                           :data="upToken"
                           :show-file-list="false"
-                          :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
                           <img :src="item.children[index2].icon_url ? qiniuDomainUrl + item.children[index2].icon_url : '/static/test/secondary-classification-default.png'" class="avatar">
@@ -401,8 +400,8 @@ export default {
       this.$set(this.inputSpacVisible, index, false)
       this.inputSpacValue = ''
     },
+    // 上传文件之前对上传内容的验证
     beforeAvatarUpload (file) {
-      // 上传文件之前对上传内容的验证
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt1M = file.size / 1024 / 1024 < 1
       const isMt10K = file.size > 100
@@ -418,10 +417,6 @@ export default {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
-    },
-    // 更改本地图片显示
-    changeUpload (file, index, index2) {
-      // this.categoryList[index].children[index2].icon_url = file.url
     },
     // 二级分类图片上传
     handleAvatarSuccess (res, file, parent, children) {

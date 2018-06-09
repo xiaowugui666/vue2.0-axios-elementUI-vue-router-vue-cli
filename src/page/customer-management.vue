@@ -118,56 +118,7 @@ export default {
         value: '6',
         label: '100+'
       }],
-      tableData: [{
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 1,
-        user_id: 100
-      }, {
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 0,
-        user_id: 2
-      }, {
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 0,
-        user_id: 3
-      }, {
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 0,
-        user_id: 4
-      }, {
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 0,
-        user_id: 5
-      }, {
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 0,
-        user_id: 6
-      }, {
-        name: '王小虎',
-        mobile: '13577884567',
-        nick_name: 'skakjshdkhakh',
-        order_count: 18,
-        flag: 0,
-        user_id: 7
-      }]
+      tableData: []
     }
   },
   mounted () {
