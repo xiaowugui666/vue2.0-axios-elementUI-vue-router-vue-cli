@@ -8,7 +8,7 @@
         <div class="add-production-content">
           <div class="search-box clear">
             <label>商品名称</label>
-            <input type="text" v-model="productionKey">
+            <input type="text" v-model="productionKey" maxlength="40">
             <el-button class="search" type="success" @click="diaSearch" size="small">搜索</el-button>
           </div>
           <div class="select-goods-table">
@@ -31,7 +31,7 @@
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                        <span class="goods-info-price">￥{{scope.row.price}}</span>
+                        <span class="goods-info-price">￥{{scope.row.price | money}}</span>
                       </div>
                     </div>
                   </div>
@@ -105,7 +105,7 @@ export default {
     },
     // 点击分页,通知父组件改变状态
     currentChange (e) {
-      this.$emit('paginaNum', e)
+      this.$emit('paginaNum', e - 1)
     },
     upHandleClose () {
       this.$emit('handleClose', false)

@@ -75,7 +75,7 @@ export default {
       } else if (s > max) {
         s = max
       }
-      return parseInt(s.trim())
+      return parseInt(s.replace(/(^\s*)|(\s*$)/g, ''))
     }
   },
   watch: {

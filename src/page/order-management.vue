@@ -65,12 +65,12 @@
                   <div>
                       <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
                         <div class="proInfo">
-                          <img :src="i.cover_url" alt="">
+                          <img :src="orderImageUrl(i.cover_url)" alt="">
                           <div class="desc">{{i.name}}</div>
                         </div>
                         <div class="proNum">数量 x {{i.count}}</div>
                         <div class="price">
-                          <label>￥{{i.price | money}}</label>
+                          <label>￥{{item.amount | money}}</label>
                         </div>
                       </div>
                   </div>
@@ -85,7 +85,7 @@
               </div>
             </div>
           <el-pagination
-            v-if="totalPagina"
+            v-if="totalPagina != 0"
             background
             :page-size="2"
             :page-count="6"
@@ -101,6 +101,7 @@
 </template>
 <script>
 import {order} from '@/axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -139,12 +140,6 @@ export default {
       }, {
         value: '2',
         label: '外部订单'
-      }, {
-        value: '3',
-        label: '收货人姓名'
-      }, {
-        value: '4',
-        label: '收货人手机号'
       }],
       // 搜索类型
       value: '1',
@@ -190,8 +185,12 @@ export default {
     }
   },
   computed: {
+    ...mapState(['qiniuDomainUrl'])
   },
   methods: {
+    orderImageUrl (value) {
+      return this.qiniuDomainUrl + value
+    },
     changeType () {
     },
     changeTime (res) {
@@ -222,7 +221,7 @@ export default {
         params.name = this.keyName
       }
       params.page = 0
-      params.per_page = 2 // 每页数据条数，需修改，确定时删除**************************************************************************************************
+      params.per_page = 15 // 每页数据条数，需修改，确定时删除**************************************************************************************************
       order(params).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
@@ -260,11 +259,11 @@ export default {
       if (tab.index == 1) {
         statu = 200
       } else if (tab.index == 2) {
-        statu = 3205
+        statu = 205
       } else if (tab.index == 3) {
         statu = 400
       } else if (tab.index == 4) {
-        statu = 505
+        statu = 405
       } else if (tab.index == 5) {
         statu = 207
       }
@@ -272,18 +271,23 @@ export default {
         console.log(res)
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
-        if (!res.data) {
+        if (res.data == '') {
           this.$message('没有此类订单！')
         }
       })
     },
     // 分页点击
     currentIndex (val) {
+      let params = {}
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.page = val - 1
       this.currentPage = val
-      order({
-        per_page: 2,
-        page: val - 1
-      }).then(res => {
+      order(params).then(res => {
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
         console.log(res)
@@ -292,8 +296,7 @@ export default {
   },
   created () {
     order({
-      page: 0,
-      per_page: 2
+      page: 0
     }).then(res => {
       console.log(res)
       this.totalPagina = res.headers.page_count
@@ -492,6 +495,7 @@ export default {
               height: 100%;
               justify-content: flex-start;
               align-items: center;
+              padding-right: 5px;
               border-right: 1px solid #efefef;
               border-right: 1px solid #efefef;
               border-left: 1px solid #efefef;

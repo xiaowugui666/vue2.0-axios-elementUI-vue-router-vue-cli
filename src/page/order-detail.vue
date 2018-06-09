@@ -3,7 +3,7 @@
       <div class="orderDetail">
         <div class="top">
           <div class="title">订单管理 > 订单详情</div>
-          <el-steps :active="tradeType" align-center  finish-status="success" >
+          <el-steps :active="tradeType" v-if="tradeType < 4" align-center  finish-status="success" >
             <el-step title="待付款"></el-step>
             <el-step title="已付款"></el-step>
             <el-step title="已发货"></el-step>
@@ -25,7 +25,7 @@
                         <label><i>收货人手机号：</i>13566774466</label>
                       </div>
                       <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
-                      <div v-if="tradeType == 1 || tradeType > 1">
+                      <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
                         <label>
                           <i>快递公司：</i>
                           <el-select
@@ -41,7 +41,7 @@
                         </label>
                         <label>
                             <i>快递单号：</i>
-                              <input v-if="isCompile" type="text"  v-model.trim="expressNo">
+                              <input v-if="isCompile" type="text" maxlength="20" v-model.trim="expressNo">
                               <label v-else>{{tradeList.express_no}}</label>
                         </label>
                         <el-button v-if="isCompile" @click="commitTrade" size="small" type="success">提交</el-button>
@@ -52,9 +52,9 @@
                       <label><i>创建时间：</i>2018-08-22    12:33</label>
                       <label v-if="tradeType>1"><i>付款时间：</i>2018-08-22    12:35</label>
                     </div>
-                    <div>
-                      <label v-if="tradeType>2"><i>发货时间：</i>2018-08-23    10:38</label>
-                      <label v-if="tradeType>3"><i>收货时间：</i>2018-08-27    20:17</label>
+                    <div :style="{marginTop: (tradeType > 2) ? '30px' : 0}">
+                      <label v-if="tradeType > 2"><i>发货时间：</i>2018-08-23    10:38</label>
+                      <label v-if="tradeType > 3"><i>收货时间：</i>2018-08-27    20:17</label>
                     </div>
                   </div>
 
@@ -69,7 +69,7 @@
                   <div class="proNum">数量 x{{item.count}}</div>
                   <div class="price">
                     <label>￥</label>
-                    <label>{{item.price | money }}</label>
+                    <label>{{tradeList.amount | money }}</label>
                   </div>
                 </div>
               </div>
@@ -90,6 +90,7 @@
 </template>
 <script>
 import {orderDetail, transComp, orderPrice, orderExpress} from '@/axios/api'
+import {mapMutations} from 'vuex'
 export default {
   data () {
     return {
@@ -108,10 +109,13 @@ export default {
       transComp: {},
       transCompValue: '',
       // 订单详情
-      tradeList: {}
+      tradeList: {},
+      // 快递单号
+      expressNo: ''
     }
   },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     changeCompile () {
       this.isPrice = false
       this.isPrices = false
@@ -128,6 +132,12 @@ export default {
         amount: this.tradeList.amount
       }).then(res => {
         console.log(res)
+        if (res.status == 200) {
+          this.$message({
+            message: '修改价格成功！',
+            type: 'success'
+          })
+        }
       })
     },
     getParams () {
@@ -159,9 +169,9 @@ export default {
           if (res.status == 200) {
             // 提交快递信息成功，请求订单信息，改变可视状态
             orderDetail(this.$route.params.id).then(res => {
+              this.tradeList = res.data
               this.tradeType = 2
               this.isCompile = false
-              this.tradeList = res.data
             })
           }
         })
@@ -171,6 +181,7 @@ export default {
     }
   },
   mounted () {
+    this.setMenuLeft('/orderManagement')
     // 请求订单信息
     orderDetail(this.$route.params.id).then(res => {
       console.log(this.$route.params.id)
@@ -181,21 +192,28 @@ export default {
         this.tradeType = 0
         // 显示编辑订单按钮
         this.isPrices = true
-      } else if (res.data.status > 200 && res.data.status < 305) { // 已付款
+      } else if (res.data.status == 205) { // 已付款
         this.tradeType = 1
         // 显示物流公司选择框，显示订单编号输入框
         this.isCompile = true
-      } else if (res.data.status > 300 && res.data.status < 405) { // 已发货
+      } else if (res.data.status == 400) { // 已发货
         this.tradeType = 2
-      } else if (res.data.status > 400) { // 已收货
+      } else if (res.data.status == 405) { // 已收货
         this.tradeType = 3
+      } else {
+        this.tradeType = 4
       }
       console.log(this.tradeType)
       // 如果订单状态不为待付款，即tradeType > 0,请求快递公司信息
-      if (this.tradeType > 0) {
+      if (this.tradeType > 0 && this.tradeType < 4) {
         transComp().then(res => {
           console.log(res)
           this.transComp = res.data
+        }).catch(() => {
+          this.$message({
+            message: '快递信息加载出错',
+            type: 'error'
+          })
         })
       }
     })
@@ -236,7 +254,6 @@ export default {
 </style>
 <style scoped lang="less">
   .orderInfo{
-    padding:12px 0;
     display: flex;
     align-items: center;
     border-bottom: 1px solid #EFEFEF;
@@ -249,6 +266,7 @@ export default {
     }
     .left{
       border-right: 1px solid #EFEFEF;
+      padding:12px 0;
       input{
         border: 1px solid #efefef;
         height: 25px;
@@ -283,7 +301,7 @@ export default {
           padding-left: 20px;
         }
         label{
-          width: 50%;
+          width: 340px;
           text-align: left;
           font-family: MicrosoftYaHei;
           font-size: 12px;
