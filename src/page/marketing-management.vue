@@ -81,7 +81,7 @@
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div v-if="goodsList.length" :style="[{'color':scope.row.status==1?'#DE5B67':(scope.row.status==2?'#6BA725':'#676767')}]">
+                <div v-if="goodsList.length" :style="[{'color':getActivityState(scope.$index)=='未开始'?'#DE5B67':(getActivityState(scope.$index)=='活动中'?'#6BA725':'#676767')}]">
                   {{getActivityState(scope.$index)}}
                 </div>
               </template>
@@ -254,7 +254,7 @@ export default {
     getActivityState (index) {
       let s = ''
       let date = this.timeStamp
-      if (this.goodsList[index].begin_at > date) {
+      if (this.goodsList[index].begin_at > date && this.goodsList[index].status == 1) {
         s = '未开始'
       } else if (this.goodsList[index].begin_at < date && this.goodsList[index].end_at > date && this.goodsList[index].status == 1) {
         s = '进行中'

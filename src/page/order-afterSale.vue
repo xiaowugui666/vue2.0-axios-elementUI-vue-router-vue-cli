@@ -124,7 +124,7 @@
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
-          current-change="currentIndex"
+          @current-change="currentIndex"
           :total="totalPagina">
         </el-pagination>
       </div>
@@ -201,6 +201,21 @@ export default {
       }
       afterSaleGoods(params).then(res => {
         console.log(res)
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
+      })
+    },
+    // 分页点击
+    currentIndex (val) {
+      let params = {}
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.page = val - 1
+      afterSaleGoods(params).then(res => {
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
       })

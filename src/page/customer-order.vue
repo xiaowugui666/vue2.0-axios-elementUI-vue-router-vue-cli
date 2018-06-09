@@ -68,7 +68,7 @@
             <div>
               <div class="prolist"  v-for="(val,id) in item.items" :key="id">
                 <div class="proInfo">
-                  <img  alt="">
+                  <img :src="orderImageUrl(val.cover_url)" alt="">
                   <div class="desc">{{val.name}}</div>
                 </div>
                 <div class="proNum">数量 x{{val.count}}</div>
@@ -92,7 +92,7 @@
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
-          current-change="currentIndex"
+          @current-change="currentIndex"
           :total="totalPage">
         </el-pagination>
       </div>
@@ -100,7 +100,7 @@
   </div>
 </template>
 <script>
-import {mapMutations} from 'vuex'
+import {mapMutations, mapState} from 'vuex'
 import {customerOrder} from '../axios/api'
 export default {
   data () {
@@ -156,9 +156,18 @@ export default {
     this.getData()
   },
   computed: {
+    ...mapState(['qiniuDomainUrl'])
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    orderImageUrl (value) {
+      return this.qiniuDomainUrl + value
+    },
+    // 分页点击
+    currentIndex (val) {
+      this.pages = val - 1
+      this.getData()
+    },
     tradeStatus (value) {
       if (value == 200) {
         return '待付款'

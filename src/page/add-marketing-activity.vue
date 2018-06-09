@@ -249,7 +249,7 @@ export default {
     },
     // 商品信息更改
     saveEditor () {
-      if (!this.errors.items.length && this.activityTime.length) {
+      if (!this.errors.items.length && this.activityTime.length && this.stock.length) {
         let params = {}
         let _this = this
         params.id = this.good.id
