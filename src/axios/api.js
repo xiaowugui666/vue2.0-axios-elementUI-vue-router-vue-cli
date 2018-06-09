@@ -331,10 +331,11 @@ export const updateGoodsCategoryPic = function (data, id) {
 }
 
 // 获取是否绑定小程序，初次设置数据
-export const initialSetData = function () {
+export const initialSetData = function (type, data) {
   return fetch({
     url: api.hqip8080 + '/management/merchant',
-    method: 'get' // 请求方法
+    method: type, // 请求方法
+    data: data
   })
 }
 
