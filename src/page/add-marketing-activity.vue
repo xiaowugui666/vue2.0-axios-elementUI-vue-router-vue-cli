@@ -290,9 +290,10 @@ export default {
             newRecommendGoods(params).then(res => {
               if (res.data.success) {
                 _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-              } else {
-                _this.$message(res.data.message)
               }
+            }).catch(err => {
+              console.log(1111)
+              _this.$message(err.response.data.message)
             })
           }
         } else { // 编辑

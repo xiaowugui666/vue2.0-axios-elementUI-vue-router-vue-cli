@@ -79,7 +79,7 @@
                   <label>{{tradeList.express_amount | money }}</label>
                 </label>
                 <label v-if="isPrice">￥{{tradeList.amount | money }}</label>
-                <label v-else>￥<input type="tel" v-model.trim="inputPrice"></label>
+                <label v-else>￥<input type="tel" maxlength="11" v-model.trim="inputPrice"></label>
                 <label @click="changeCompile" v-if="isPrices">编辑订单</label>
                 <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
               </div>

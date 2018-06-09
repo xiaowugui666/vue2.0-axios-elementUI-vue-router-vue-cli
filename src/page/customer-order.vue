@@ -8,6 +8,7 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
+              maxlength="40"
               clearable>
             </el-input>
           </div>
@@ -33,6 +34,7 @@
             <el-input
               placeholder="请输入商品名称"
               v-model="keyName"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
@@ -119,7 +121,7 @@ export default {
         label: '普通订单'
       }, {
         value: '1',
-        label: '外部订单'
+        label: '内部订单'
       }],
       // 用户id
       user_id: '',
@@ -433,6 +435,7 @@ export default {
               font-size: 12px;
               margin: 0 auto;
               margin-top: 10px;
+              cursor: pointer;
             }
           }
           .orderMon{
@@ -513,6 +516,7 @@ export default {
           border: 1px solid #eeeeee;
           color:#B5B5B5;
           margin-left: 20px;
+          cursor: pointer;
         }
         .cur{
           border: 1px solid #DE5B67;

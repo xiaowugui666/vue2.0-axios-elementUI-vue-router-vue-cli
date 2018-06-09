@@ -14,6 +14,9 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
+              maxlength="20"
+              v-validate="'decimal'"
+              name="orderNumber"
               clearable>
             </el-input>
             <div class="block">
@@ -39,6 +42,7 @@
                 <el-input
                   placeholder="请输入商品名称"
                   v-model="keyName"
+                  maxlength="20"
                   clearable>
                 </el-input>
               </div>
@@ -124,22 +128,13 @@ export default {
       keyValue: '',
       // 商品名称
       keyName: '',
-      // 订单类型
-      optionType: [{
-        value: '1',
-        label: '普通订单'
-      }, {
-        value: '2',
-        label: '外部订单'
-      }],
-
       // 搜索类型
       options: [{
         value: '1',
         label: '订单号'
       }, {
         value: '2',
-        label: '外部订单'
+        label: '内部订单'
       }],
       // 搜索类型
       value: '1',
@@ -537,6 +532,7 @@ export default {
                 font-size: 12px;
                 margin: 0 auto;
                 margin-top: 10px;
+                cursor: pointer;
               }
             }
             .orderMon{
