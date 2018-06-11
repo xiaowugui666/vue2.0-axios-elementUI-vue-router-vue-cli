@@ -16,12 +16,12 @@
             <ul>
               <li>
                 <span class="name required">商铺名称：</span>
-                <input type="text" v-validate="'required'" v-model="shopName" name="店铺名称" placeholder="请输入店铺名称 (20个字符以内)" maxlength="20"/>
+                <input type="text" v-validate="'required'" v-model.trim="shopName" name="店铺名称" placeholder="请输入店铺名称 (20个字符以内)" maxlength="20"/>
                 <div class="err-tips">{{ errors.first('店铺名称') }}</div>
               </li>
               <li>
                 <span class="name required">主营类目：</span>
-                <el-select v-model="categoryValue" size="small" class="select-state">
+                <el-select v-model.trim="categoryValue" size="small" class="select-state">
                   <el-option
                     v-for="item in mainCategory"
                     :key="item.value"
@@ -58,7 +58,7 @@
               </li>
               <li>
                 <span class="name alignment-top required">商铺描述：</span>
-                <textarea v-validate="'required'" v-model="textArea" name="商铺描述" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
+                <textarea v-validate="'required'" v-model.trim="textArea" name="商铺描述" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
                 <div class="err-tips">{{ errors.first('商铺描述') }}</div>
               </li>
               <li>
@@ -81,7 +81,7 @@
               </li>
               <li>
                 <span class="name required">店长姓名：</span>
-                <input type="text" v-validate="'required'" name="店长姓名" v-model="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
+                <input type="text" v-validate="'required'" name="店长姓名" v-model.trim="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
                 <div class="err-tips">{{ errors.first('店长姓名') }}</div>
               </li>
               <li>
@@ -90,12 +90,12 @@
               </li>
               <li>
                 <span class="name">联系微信：</span>
-                <input type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+                <input type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model.trim="contactWeChat" placeholder="请输入联系微信号"/>
                 <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
                 <span class="name">客服电话：</span>
-                <input type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
+                <input type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
                 <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
               <li>
@@ -104,11 +104,11 @@
                   <el-cascader
                     size="small"
                     :options="options"
-                    v-model="selectedOptions"
+                    v-model.trim="selectedOptions"
                     placeholder="省 / 市 / 区"
                     @change="handleChange">
                   </el-cascader>
-                  <input class="contact-address-input" type="text" v-model="contactAddress" placeholder="请输入详细地址" maxlength="50"/>
+                  <input class="contact-address-input" type="text" v-model.trim="contactAddress" placeholder="请输入详细地址" maxlength="50"/>
                 </div>
               </li>
             </ul>
@@ -120,7 +120,7 @@
         <div v-if="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
-            <payment-info :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
+            <payment-info @changeSetting="configSetting"></payment-info>
             <div class="next-step">
               <el-button type="success" size="small" :disabled="true" @click="setStepActive">完成</el-button>
             </div>
@@ -162,8 +162,7 @@ export default {
       textArea: '',
       options: regionData,
       selectedOptions: [],
-      contactAddress: '',
-      agreementShow: true
+      contactAddress: ''
     }
   },
   created () {
@@ -308,7 +307,8 @@ export default {
       if (province && city && region) {
         this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
       }
-    }
+    },
+    configSetting () {}
   }
 }
 </script>

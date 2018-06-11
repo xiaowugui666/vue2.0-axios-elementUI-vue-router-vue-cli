@@ -27,7 +27,7 @@
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url ? qiniuDomainUrl + item.children[index2].icon_url : '/static/test/secondary-classification-default.png'" class="avatar">
+                          <img :src="item.children[index2].icon_url ? qiniuDomainUrl + item.children[index2].icon_url : '/static/default-img/secondary-classification-default.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -389,7 +389,7 @@ export default {
         addGoodsCategory({
           'name': inputValue,
           'parent_id': id,
-          'icon': '/static/test/ceshi.png'
+          'icon': ''
         }).then(res => {
           // this.$message.success('添加二级分类成功！')
           // 接口请求成功返回二级分类的id，把id添加到对象上

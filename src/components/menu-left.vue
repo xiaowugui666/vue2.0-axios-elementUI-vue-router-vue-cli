@@ -86,10 +86,10 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     handleOpen (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     handleClose (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     getClientHeight () {
       let height = document.documentElement.clientHeight + 'px'
@@ -115,6 +115,7 @@ export default {
   z-index: 99;
   width: 180px;
   min-height: 600px;
+  overflow-y: auto;
   background: #fff;
   position: fixed;
   box-shadow: 3px 0 2px #eee;
