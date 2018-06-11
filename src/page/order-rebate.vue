@@ -19,6 +19,7 @@
               </div>
               <div class="buyer" v-if="rebateDetail.order">
                 <div><label>买家手机号：</label><label>{{rebateDetail.order.mobile}}</label></div>
+                <div><label>商品名称：</label><label>{{rebateGoodsDetail}}</label></div>
               </div>
               <div class="buyer">
                 <div><label>期望结果：</label><label>退货退款</label></div>
@@ -112,6 +113,21 @@ export default {
           })
         }
       })
+    }
+  },
+  computed: {
+    rebateGoodsDetail () {
+      let name = ''
+      if (this.rebateDetail.items.length == 1) {
+        name = this.rebateDetail.items[0].name
+      } else {
+        let len = this.rebateDetail.items.length
+        for (let i = 0; i < len - 1; i++) {
+          name = this.rebateDetail.items[i].name + '/'
+        }
+        name += this.rebateDetail.items[len - 1]
+      }
+      return name
     }
   }
 }

@@ -3,7 +3,7 @@
       <div class="header">
         <div class="number">
           <span>手机号码</span>
-          <input type="text" v-model="phoneNum">
+          <input type="text" v-model="phoneNum" maxlength="11">
         </div>
         <div class="screen">
           <span>购物次数</span>
@@ -72,11 +72,10 @@
           title="编辑"
           :show-close="false"
           :visible.sync="dialogVisible"
-          width="30%"
-          :before-close="handleClose">
+          width="30%">
           <hr style="color: #EFEFEF;border: 1px solid #EFEFEF;border-bottom: 0;"/>
           <div>
-            <span class="dialog_name">姓名</span><input type="text" v-model="name" clearable>
+            <span class="dialog_name">姓名</span><input type="text" maxlength="20" v-model="name" clearable>
           </div>
           <div slot="footer" class="dialog-footer">
             <el-button @click="saveInfo" type="success" style="border: 0;color: #ffffff;" size="small">保存</el-button>
@@ -152,12 +151,6 @@ export default {
           this.totalPage = parseInt(res.headers.page_count) * 15
         }
       )
-    },
-    handleClose (done) {
-      this.$confirm('are you sure?')
-        .then(_ => {
-          done()
-        })
     },
     // 编辑列表
     editDetails (detail) {
@@ -236,7 +229,7 @@ export default {
       width: 80px;
       height: 30px;
       float: left;
-      margin-left: 384px;
+      margin-left: 30px;
     }
   }
   .table{

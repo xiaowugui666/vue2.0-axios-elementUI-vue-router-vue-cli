@@ -14,6 +14,9 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
+              maxlength="20"
+              v-validate="'decimal'"
+              name="orderNumber"
               clearable>
             </el-input>
             <div class="block">
@@ -39,6 +42,7 @@
                 <el-input
                   placeholder="请输入商品名称"
                   v-model="keyName"
+                  maxlength="20"
                   clearable>
                 </el-input>
               </div>
@@ -124,22 +128,13 @@ export default {
       keyValue: '',
       // 商品名称
       keyName: '',
-      // 订单类型
-      optionType: [{
-        value: '1',
-        label: '普通订单'
-      }, {
-        value: '2',
-        label: '外部订单'
-      }],
-
       // 搜索类型
       options: [{
         value: '1',
         label: '订单号'
       }, {
         value: '2',
-        label: '外部订单'
+        label: '内部订单'
       }],
       // 搜索类型
       value: '1',
@@ -221,7 +216,7 @@ export default {
         params.name = this.keyName
       }
       params.page = 0
-      params.per_page = 15 // 每页数据条数，需修改，确定时删除**************************************************************************************************
+      params.per_page = 15
       order(params).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
@@ -450,6 +445,8 @@ export default {
     .tradeList{
           padding-bottom: 30px;
           padding-top: 30px;
+          display: block;
+          width: 100%;
           .top{
             background: #EFEFEF;
             border: 1px solid #D5D5D5;
@@ -459,7 +456,6 @@ export default {
             box-sizing: border-box;
             line-height: 40px;
             label{
-              font-family: MicrosoftYaHei;
               font-size: 12px;
               color: #333333;
               margin-left: 80px;
@@ -476,7 +472,6 @@ export default {
               width: 66%;
             }
             .desc{
-              font-family: MicrosoftYaHei;
               font-size: 14px;
               color: #333333;
             }
@@ -537,6 +532,8 @@ export default {
                 font-size: 12px;
                 margin: 0 auto;
                 margin-top: 10px;
+                cursor: pointer;
+                border-radius: 4px;
               }
             }
             .orderMon{

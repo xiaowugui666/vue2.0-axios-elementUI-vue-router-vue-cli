@@ -8,6 +8,7 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
+              maxlength="40"
               clearable>
             </el-input>
           </div>
@@ -33,6 +34,7 @@
             <el-input
               placeholder="请输入商品名称"
               v-model="keyName"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
@@ -66,7 +68,7 @@
             <div>
               <div class="prolist"  v-for="(val,id) in item.items" :key="id">
                 <div class="proInfo">
-                  <img  alt="">
+                  <img :src="orderImageUrl(val.cover_url)" alt="">
                   <div class="desc">{{val.name}}</div>
                 </div>
                 <div class="proNum">数量 x{{val.count}}</div>
@@ -90,7 +92,7 @@
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
-          current-change="currentIndex"
+          @current-change="currentIndex"
           :total="totalPage">
         </el-pagination>
       </div>
@@ -98,7 +100,7 @@
   </div>
 </template>
 <script>
-import {mapMutations} from 'vuex'
+import {mapMutations, mapState} from 'vuex'
 import {customerOrder} from '../axios/api'
 export default {
   data () {
@@ -119,7 +121,7 @@ export default {
         label: '普通订单'
       }, {
         value: '1',
-        label: '外部订单'
+        label: '内部订单'
       }],
       // 用户id
       user_id: '',
@@ -154,9 +156,18 @@ export default {
     this.getData()
   },
   computed: {
+    ...mapState(['qiniuDomainUrl'])
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    orderImageUrl (value) {
+      return this.qiniuDomainUrl + value
+    },
+    // 分页点击
+    currentIndex (val) {
+      this.pages = val - 1
+      this.getData()
+    },
     tradeStatus (value) {
       if (value == 200) {
         return '待付款'
@@ -433,6 +444,7 @@ export default {
               font-size: 12px;
               margin: 0 auto;
               margin-top: 10px;
+              cursor: pointer;
             }
           }
           .orderMon{
@@ -513,6 +525,7 @@ export default {
           border: 1px solid #eeeeee;
           color:#B5B5B5;
           margin-left: 20px;
+          cursor: pointer;
         }
         .cur{
           border: 1px solid #DE5B67;

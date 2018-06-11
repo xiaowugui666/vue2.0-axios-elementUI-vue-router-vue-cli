@@ -21,7 +21,7 @@
           <div class="confirmation-receipt-time-set plate-inner">
             <div>
               <span>发货后</span>
-              <input v-model="receiptTime" :disabled="!editState" type="tel" maxlength="2" @blur="limitInput(2)" onkeyup="value=value.replace(/[^\d]/g,'')" min="20" max="1440">
+              <input v-model.trim="receiptTime" :disabled="!editState" type="tel" maxlength="2" @blur="limitInput(2)" onkeyup="value=value.replace(/[^\d]/g,'')" min="20" max="1440">
               <span>天，自动确认收货</span>
             </div>
             <p>自动确认收货时间必须在7-30天之间</p>
@@ -75,7 +75,7 @@ export default {
       } else if (s > max) {
         s = max
       }
-      return parseInt(s.replace(/(^\s*)|(\s*$)/g, ''))
+      return s
     }
   },
   watch: {
