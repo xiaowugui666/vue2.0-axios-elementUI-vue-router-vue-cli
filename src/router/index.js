@@ -29,7 +29,7 @@ import bindingMp from '@/page/binding-mp'
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
+  // mode: 'history',
   routes: [
     {
       path: '/',
@@ -82,12 +82,12 @@ export default new Router({
       component: addMarketingActivity
     },
     {
-      path: '/informationSetting',
+      path: '/information-setting',
       name: 'informationSetting',
       component: informationSetting
     },
     {
-      path: '/orderSetting',
+      path: '/order-setting',
       name: 'orderSetting',
       component: orderSetting
     },

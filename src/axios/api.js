@@ -320,21 +320,11 @@ export const addEditGoods = function (id, data) {
   })
 }
 
-/* 设置模块 */
-// 设置 -> 订单
-export function orderSetting (data) {
+// 设置 -> 支付设置
+export function paySetting (type, data) {
   return fetch({
-    url: api.ip + '/management/mpa',
-    method: 'GET',
-    data: data
-  })
-}
-
-// 设置 -> 订单，修改订单设置
-export function orderSettingPut (data) {
-  return fetch({
-    url: api.ip + '/management/mpa/' + data.id,
-    method: 'PUT',
+    url: api.hqip8080 + '/management/mpa',
+    method: type,
     data: data
   })
 }
@@ -365,10 +355,10 @@ export const updateGoodsCategoryPic = function (data, id) {
   })
 }
 
-// 获取是否绑定小程序，初次设置数据
+// 获取是否绑定小程序，初次设置数据，支付设置
 export const initialSetData = function (type, data) {
   return fetch({
-    url: api.cjip + '/management/merchant',
+    url: api.hqip8080 + '/management/merchant',
     method: type, // 请求方法
     data: data
   })
@@ -406,15 +396,6 @@ export const mpInfo = function () {
     method: 'get' // 请求方法
   })
 }
-
-
-
-
-
-
-
-
-
 
 // 有新接口的时候像上面那样再来一次
 // //修改昵称接口

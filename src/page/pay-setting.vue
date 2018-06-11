@@ -1,29 +1,23 @@
 <template>
     <div class="pay-setting-object">
       <div class="pay-setting-content">
-        <payment-info :busiInformation="busiInformation" :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
+        <payment-info :agreement-show="agreementShow"></payment-info>
       </div>
     </div>
 </template>
 
 <script>
 import paymentInfo from '@/components/payment-info'
-import {orderSetting, orderSettingPut} from '../axios/api'
 export default {
   data () {
     return {
-      agreementShow: false,
-      busiInformation: {}
+      agreementShow: false
     }
   },
   components: {
     paymentInfo
   },
   mounted () {
-    orderSetting().then(res => {
-      console.log(res)
-      this.busiInformation = res.data
-    })
   },
   methods: {
     configSetting (value, type) {
@@ -36,9 +30,6 @@ export default {
         console.log(value)
         params.merchant_cert = value
       }
-      orderSettingPut(params).then(res => {
-        console.log(res)
-      })
     }
   }
 }
