@@ -1,5 +1,6 @@
 <template>
     <div>
+      <menu-left routeIndex="2"></menu-left>
       <div class="orderProfile">
         <ul class="home-survey">
           <li>
@@ -49,6 +50,7 @@
 
 <script>
 import echarts from '@/components/echarts'
+import menuLeft from '@/components/menu-left'
 // import {mapState, mapMutations} from 'vuex'
 import {storeGoodsAmount, yesterdayPvUv, pagePvUv} from '../axios/api'
 export default {
@@ -59,11 +61,12 @@ export default {
     }
   },
   components: {
-    echarts
+    echarts,
+    menuLeft
   },
   computed: {
   },
-  mounted () {
+  created () {
     storeGoodsAmount().then(res => {
       console.log(res)
       this.goodsCounts = res.data

@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="3-2"></menu-left>
     <div class="category-management-object">
       <div class="category-management-content">
         <el-button @click="dialogVisible = true" type="primary" size="small" class="first-category-management">一级类目编辑管理</el-button>
@@ -68,9 +70,11 @@
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
+import menuLeft from '@/components/menu-left'
 import {mapState, mapMutations} from 'vuex'
 import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic, getQnToken} from '../axios/api.js'
 export default {
@@ -441,6 +445,9 @@ export default {
   },
   computed: {
     ...mapState(['menuLeft', 'qiniuDomainUrl', 'qiniuUploadUrl'])
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

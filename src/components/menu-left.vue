@@ -5,18 +5,18 @@
       <span>一起选·商城</span>
     </div>
     <el-menu
-      :default-active="getRoutePath(menuLeft)"
+      :default-active="routeIndex"
       @open="handleOpen"
       @close="handleClose"
       text-color="#666"
       active-text-color="#333"
       router
       >
-      <el-menu-item index="/">
+      <el-menu-item index="1" route="/">
         <i class="icon-概况"></i>
         <span>概况</span>
       </el-menu-item>
-      <el-menu-item index="/shopProfile">
+      <el-menu-item index="2" route="/shop-profile">
         <i class="icon-店铺"></i>
         <span>店铺</span>
       </el-menu-item>
@@ -25,23 +25,23 @@
           <i class="icon-商品"></i>
           <span>商品</span>
         </template>
-          <el-menu-item index="/commodity-management">商品管理</el-menu-item>
+          <el-menu-item index="3-1" route="/commodity-management">商品管理</el-menu-item>
           <!--<el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>-->
-          <el-menu-item index="/category-management">类目管理</el-menu-item>
+          <el-menu-item index="3-2" route="/category-management">类目管理</el-menu-item>
       </el-submenu>
       <el-submenu index="4">
         <template slot="title">
           <i class="icon-订单"></i>
           <span>订单</span>
         </template>
-          <el-menu-item index="/orderManagement">订单管理</el-menu-item>
-          <el-menu-item index="/orderAfterSale">订单售后</el-menu-item>
+          <el-menu-item index="4-1" route="/order-management">订单管理</el-menu-item>
+          <el-menu-item index="4-2" route="/order-afterSale">订单售后</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/customerManagement">
+      <el-menu-item index="5" route="/customer-management">
         <i class="icon-客户"></i>
         <span>客户</span>
       </el-menu-item>
-      <el-menu-item index="/account">
+      <el-menu-item index="6" route="/account">
         <i class="icon-账户"></i>
         <span>账户</span>
       </el-menu-item>
@@ -50,18 +50,18 @@
           <i class="icon-营销"></i>
           <span>营销管理</span>
         </template>
-          <el-menu-item index="/marketing-management/special-offer" :route="{name:'marketingManagement',params:{class:'special-offer'}}">特价</el-menu-item>
-          <el-menu-item index="/marketing-management/recommend" :route="{name:'marketingManagement',params:{class:'recommend'}}">推荐</el-menu-item>
+          <el-menu-item index="7-1" :route="{name:'marketingManagement',params:{class:'special-offer'}}">特价</el-menu-item>
+          <el-menu-item index="7-2" :route="{name:'marketingManagement',params:{class:'recommend'}}">推荐</el-menu-item>
       </el-submenu>
       <el-submenu index="8">
         <template slot="title">
           <i class="icon-设置"></i>
           <span>设置</span>
         </template>
-          <el-menu-item index="/information-setting">信息设置</el-menu-item>
-          <el-menu-item index="/order-setting">订单设置</el-menu-item>
-          <el-menu-item index="/pay-setting">支付设置</el-menu-item>
-          <el-menu-item index="/mp-setting">小程序设置</el-menu-item>
+          <el-menu-item index="8-1" route="/information-setting">信息设置</el-menu-item>
+          <el-menu-item index="8-2" route="/order-setting">订单设置</el-menu-item>
+          <el-menu-item index="8-3" route="/pay-setting">支付设置</el-menu-item>
+          <el-menu-item index="8-4" route="/mp-setting">小程序设置</el-menu-item>
       </el-submenu>
     </el-menu>
     <div class="menu-left-bottom-logo">- 虎赞科技 -</div>
@@ -77,6 +77,7 @@ export default {
       clientHeight: this.getClientHeight()
     }
   },
+  props: ['routeIndex'],
   mounted () {
     // this.getRoutePath(this.menuLeft)
   },

@@ -7,7 +7,6 @@ const state = {
   menuLeft: '',
   qiniuDomainUrl: 'http://p94iruedm.bkt.clouddn.com/',
   qiniuUploadUrl: 'http://upload.qiniup.com',
-  menuShow: true,
   yiqixuanDomainUrl: 'http://image.yiqixuan.com/',
   mainCategory: [
     {
@@ -132,9 +131,6 @@ const state = {
 const mutations = {
   setMenuLeft (state, i) {
     state.menuLeft = i
-  },
-  setMenuShow (state, i) {
-    state.menuShow = i
   }
 }
 

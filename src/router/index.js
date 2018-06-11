@@ -21,7 +21,6 @@ import shopProfile from '@/page/shop-profile'
 import orderAfterSale from '@/page/order-afterSale'
 import orderDetail from '@/page/order-detail'
 import orderRebate from '@/page/order-rebate'
-import addOrder from '@/page/add-order'
 import login from '@/page/login'
 import err404 from '@/page/404'
 import bindingMp from '@/page/binding-mp'
@@ -47,17 +46,17 @@ export default new Router({
       component: commodityManagement
     },
     {
-      path: '/orderManagement',
+      path: '/order-management',
       name: 'orderManagement',
       component: orderManagement
     },
     {
-      path: '/customerManagement',
+      path: '/customer-management',
       name: 'customerManagement',
       component: customerManagement
     },
     {
-      path: '/customerOrder/:id',
+      path: '/customer-order/:id',
       name: 'customerOrder',
       component: customerOrder
     },
@@ -92,17 +91,12 @@ export default new Router({
       component: orderSetting
     },
     {
-      path: '/orderDetail/:id',
+      path: '/order-detail/:id',
       name: 'orderDetail',
       component: orderDetail
     },
     {
-      path: '/addOrder',
-      name: 'addOrder',
-      component: addOrder
-    },
-    {
-      path: '/orderAfterSale',
+      path: '/order-afterSale',
       name: 'orderAfterSale',
       component: orderAfterSale
     },
@@ -112,7 +106,7 @@ export default new Router({
       component: orderRebate
     },
     {
-      path: '/shopProfile',
+      path: '/shop-profile',
       name: 'shopProfile',
       component: shopProfile
     },
@@ -122,7 +116,7 @@ export default new Router({
       component: addEditGoods
     },
     {
-      path: '/oneKeyIntroduction',
+      path: '/one-key-introduction',
       name: 'oneKeyIntroduction',
       component: oneKeyIntroduction
     },

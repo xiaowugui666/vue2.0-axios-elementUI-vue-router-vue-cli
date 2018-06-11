@@ -152,7 +152,7 @@ import firstSettingMenu from '@/components/first-setting-menu'
 import paymentInfo from '@/components/payment-info'
 import {initialSetData, getQnToken, paySetting} from '../axios/api'
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -185,7 +185,6 @@ export default {
     this.getInitialSetData()
   },
   mounted () {
-    this.setMenuShow(false)
   },
   components: {
     firstSettingMenu,
@@ -196,7 +195,6 @@ export default {
     ...mapState(['menuShow', 'mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
   },
   methods: {
-    ...mapMutations(['setMenuShow']),
     // 获取图片上传七牛的token
     getImageToken () {
       getQnToken('image').then(res => {
