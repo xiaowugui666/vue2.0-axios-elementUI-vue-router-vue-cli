@@ -120,9 +120,25 @@
         <div v-if="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
-            <payment-info @changeSetting="configSetting"></payment-info>
+            <payment-info></payment-info>
+
+            <div class="checked-protocol">
+              <el-checkbox v-model.trim="checked">
+                <span class="checked-protocol-text">我已同意并阅读</span>
+                <el-button type="text" @click="readingProtocol = true">《授权协议》</el-button>
+              </el-checkbox>
+              <el-dialog
+                title="授权协议"
+                :visible.sync="readingProtocol"
+                width="60%">
+                <div>casasd</div>
+                <span slot="footer" class="dialog-footer">
+            <el-button type="primary" size="small" @click="readingProtocol = false">确 定</el-button>
+          </span>
+              </el-dialog>
+            </div>
             <div class="next-step">
-              <el-button type="success" size="small" :disabled="true" @click="setStepActive">完成</el-button>
+              <el-button type="success" size="small" @click="setStepActive(3)">完成</el-button>
             </div>
           </div>
         </div>
@@ -134,7 +150,7 @@
 <script>
 import firstSettingMenu from '@/components/first-setting-menu'
 import paymentInfo from '@/components/payment-info'
-import {initialSetData, getQnToken} from '../axios/api'
+import {initialSetData, getQnToken, paySetting} from '../axios/api'
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {mapState, mapMutations} from 'vuex'
 export default {
@@ -144,11 +160,10 @@ export default {
       shopName: '',
       // 图片上传需要的token
       upToken: {},
-      // 传值到支付部分
-      merchantNumber: '--',
-      businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
-      p12Certificate: 'apiclient_cert.p12',
+      // 支付部分
+      readingProtocol: false,
       checked: true,
+      // 商家主营类目
       categoryValue: 1,
       shopChiefName: '',
       telNum: '',
@@ -244,6 +259,9 @@ export default {
           region: CodeToText[this.selectedOptions[2]],
           address: this.contactAddress
         }
+      } else if (step === 3) {
+        this.paySettingVerification()
+        return false
       }
       this.$validator.validateAll().then((msg) => {
         if (msg) {
@@ -308,7 +326,38 @@ export default {
         this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
       }
     },
-    configSetting () {}
+    // 验证支付信息是否完全设置，跳转到首页
+    paySettingVerification () {
+      paySetting('get').then(res => {
+        console.log(res.data)
+        let data = res.data
+        if (!data.merchant_no) {
+          this.$message.error('请先设置商户号！')
+          return false
+        }
+        if (!data.merchant_key) {
+          this.$message.error('请先设置商户秘钥！')
+          return false
+        }
+        if (!data.merchant_cert) {
+          this.$message.error('请先上传证书！')
+          return false
+        }
+        if (!this.checked) {
+          this.$message.error('请先选择同意授权协议！')
+          return false
+        }
+
+        this.active = 3
+        this.setRouter('/')
+      })
+    },
+    // 设置路由链接
+    setRouter (link) {
+      this.$router.push({
+        path: link
+      })
+    }
   }
 }
 </script>
@@ -480,6 +529,21 @@ export default {
         color: @b5b5;
         padding-top: 10px;
       }
+    }
+  }
+  .checked-protocol {
+    padding-left: 74px;
+    padding-top: 40px;
+    .checked-protocol-text {
+      color: #999;
+    }
+    .el-button--text {
+      padding: 0;
+      border: none;
+    }
+    .dialog-footer {
+      text-align: center;
+      display: block;
     }
   }
   .el-button--small {

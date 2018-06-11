@@ -1,7 +1,7 @@
 <template>
     <div class="pay-setting-object">
       <div class="pay-setting-content">
-        <payment-info :agreement-show="false"></payment-info>
+        <payment-info></payment-info>
       </div>
     </div>
 </template>
@@ -15,17 +15,6 @@ export default {
   mounted () {
   },
   methods: {
-    configSetting (value, type) {
-      // let params = this.busiInformation
-      // if (type == 1) {
-      //   params.merchant_no = value
-      // } else if (type == 2) {
-      //   params.merchant_key = value
-      // } else if (type == 3) {
-      //   console.log(value)
-      //   params.merchant_cert = value
-      // }
-    }
   },
   components: {
     paymentInfo
