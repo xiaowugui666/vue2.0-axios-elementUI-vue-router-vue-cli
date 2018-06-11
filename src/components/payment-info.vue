@@ -4,7 +4,7 @@
       <ul>
         <li>
           <span class="pay-info-title">服务商商户号：</span>
-          <span class="pay-info-txt">{{busiInformation && busiInformation.merchant_no}}</span>
+          <span class="pay-info-txt">{{busiInformation.merchant_no}}</span>
           <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
         </li>
@@ -53,39 +53,43 @@
 </template>
 
 <script>
-import {orderSetting, orderSettingPut, getQnToken} from '../axios/api'
+import {getQnToken, paySetting} from '../axios/api'
 import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      merchantNumber: '--',
-      businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
-      p12Certificate: 'apiclient_cert.p12',
       checked: true,
       readingProtocol: false,
-      token: ''
+      token: '',
+      busiInformation: {
+        merchant_no: '--',
+        merchant_key: '--',
+        merchant_cert: '--',
+        merchantNumber: '--'
+      }
     }
   },
-  props: ['agreementShow', 'busiInformation'],
+  props: ['agreementShow'],
   watch: {
   },
+  created () {
+    this.getPaySetting()
+  },
   methods: {
+    getPaySetting () {
+      paySetting('get').then(res => {
+        console.log(res)
+      })
+    },
     setMerchantCert () {
       this.$prompt('设置商户号', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(({ value }) => {
         console.log(value)
-        this.$emit('changeSetting', value, 1)
-        this.$message({
-          type: 'success',
-          message: '商户号设置成功'
-        })
+        this.busiInformation.merchant_no = value
+        // this.$emit('changeSetting', value, 1)
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
       })
     },
     setMerchantKey () {
@@ -94,21 +98,13 @@ export default {
         cancelButtonText: '取消'
       }).then(({ value }) => {
         console.log(value)
-        this.$emit('changeSetting', value, 2)
-        this.$message({
-          type: 'success',
-          message: '密钥设置成功'
-        })
+        // this.$emit('changeSetting', value, 2)
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
       })
     },
     qiniuImage (response) {
       console.log(response)
-      this.$emit('changeSetting', response.key, 3)
+      // this.$emit('changeSetting', response.key, 3)
     },
     getToken () {
       getQnToken('document').then(res => {

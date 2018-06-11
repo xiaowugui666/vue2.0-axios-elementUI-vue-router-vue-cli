@@ -58,8 +58,8 @@
           <i class="icon-设置"></i>
           <span>设置</span>
         </template>
-          <el-menu-item index="/informationSetting">信息设置</el-menu-item>
-          <el-menu-item index="/orderSetting">订单设置</el-menu-item>
+          <el-menu-item index="/information-setting">信息设置</el-menu-item>
+          <el-menu-item index="/order-setting">订单设置</el-menu-item>
           <el-menu-item index="/pay-setting">支付设置</el-menu-item>
           <el-menu-item index="/mp-setting">小程序设置</el-menu-item>
       </el-submenu>

@@ -120,7 +120,7 @@
         <div v-if="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
-            <payment-info :busiInformation="busiInformation" :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
+            <payment-info :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
             <div class="next-step">
               <el-button type="success" size="small" :disabled="true" @click="setStepActive">完成</el-button>
             </div>
@@ -140,7 +140,7 @@ import {mapState, mapMutations} from 'vuex'
 export default {
   data () {
     return {
-      active: 0,
+      active: -1,
       shopName: '',
       // 图片上传需要的token
       upToken: {},
@@ -162,7 +162,8 @@ export default {
       textArea: '',
       options: regionData,
       selectedOptions: [],
-      contactAddress: ''
+      contactAddress: '',
+      agreementShow: true
     }
   },
   created () {
@@ -217,8 +218,9 @@ export default {
         } else {
           this.shopName = data.name
           if (data.type) {
-            this.value = data.type
+            this.categoryValue = data.type
           }
+          this.active = 0
         }
       })
     },
@@ -297,9 +299,11 @@ export default {
         return false
       }
     },
+    // 省市区三级联动改变时的操作
     handleChange (value) {
       // console.log(CodeToText[value[0]], CodeToText[value[1]], CodeToText[value[2]])
     },
+    // 获取省市区信息，赋值给 selectedOptions 变量
     getRegionCode (province, city, region) {
       if (province && city && region) {
         this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
@@ -467,13 +471,13 @@ export default {
       position: relative;
       margin-left: 17px;
       .el-upload__tip {
-        color: #b5b5b5;
+        color: @b5b5;
         position: absolute;
         width: 100%;
         bottom: 0;
       }
       .banner-tip {
-        color: #b5b5b5;
+        color: @b5b5;
         padding-top: 10px;
       }
     }
