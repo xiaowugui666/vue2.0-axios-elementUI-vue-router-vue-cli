@@ -63,7 +63,7 @@
               <div>
                 <div class="prolist" v-for="(item,index) in tradeList.items" :key="index">
                   <div class="proInfo">
-                    <img :src="item.cover_url" alt="">
+                    <img :src="qiniuDomainUrl + item.cover_url" alt="">
                     <div class="desc">{{item.name}}</div>
                   </div>
                   <div class="proNum">数量 x{{item.count}}</div>
@@ -90,7 +90,7 @@
 </template>
 <script>
 import {orderDetail, transComp, orderPrice, orderExpress} from '@/axios/api'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -219,6 +219,7 @@ export default {
     })
   },
   computed: {
+    ...mapState(['qiniuDomainUrl']),
     inputPrice: {
       get () {
         return this.tradeList.amount / 100
