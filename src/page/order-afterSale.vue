@@ -7,6 +7,7 @@
             <label>订单编号</label>
             <el-input
               v-model="keyValue"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
@@ -32,6 +33,7 @@
             <label>退款编号</label>
             <el-input
               v-model="keyName"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
@@ -122,7 +124,7 @@
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
-          current-change="currentIndex"
+          @current-change="currentIndex"
           :total="totalPagina">
         </el-pagination>
       </div>
@@ -199,6 +201,21 @@ export default {
       }
       afterSaleGoods(params).then(res => {
         console.log(res)
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
+      })
+    },
+    // 分页点击
+    currentIndex (val) {
+      let params = {}
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.page = val - 1
+      afterSaleGoods(params).then(res => {
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
       })
@@ -400,6 +417,10 @@ export default {
     color: #303133;
     position: relative;
   }
+  .el-table__body-wrapper tr td .el-button--text{
+    border: 1px solid #63A4FF;
+    padding: 4px 8px;
+  }
   .header{
     .el-date-editor .el-range__icon {
       display: none;
@@ -506,6 +527,7 @@ export default {
         border: 1px solid #eeeeee;
         color:#B5B5B5;
         margin-left: 20px;
+        cursor: pointer;
       }
       .cur{
         border: 1px solid #DE5B67;

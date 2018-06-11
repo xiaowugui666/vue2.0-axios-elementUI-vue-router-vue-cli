@@ -63,7 +63,7 @@
               <div>
                 <div class="prolist" v-for="(item,index) in tradeList.items" :key="index">
                   <div class="proInfo">
-                    <img :src="item.cover_url" alt="">
+                    <img :src="qiniuDomainUrl + item.cover_url" alt="">
                     <div class="desc">{{item.name}}</div>
                   </div>
                   <div class="proNum">数量 x{{item.count}}</div>
@@ -79,7 +79,7 @@
                   <label>{{tradeList.express_amount | money }}</label>
                 </label>
                 <label v-if="isPrice">￥{{tradeList.amount | money }}</label>
-                <label v-else>￥<input type="tel" v-model.trim="inputPrice"></label>
+                <label v-else>￥<input type="tel" maxlength="11" v-model.trim="inputPrice"></label>
                 <label @click="changeCompile" v-if="isPrices">编辑订单</label>
                 <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
               </div>
@@ -90,7 +90,7 @@
 </template>
 <script>
 import {orderDetail, transComp, orderPrice, orderExpress} from '@/axios/api'
-import {mapMutations} from 'vuex'
+import {mapMutations, mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -219,6 +219,7 @@ export default {
     })
   },
   computed: {
+    ...mapState(['qiniuDomainUrl']),
     inputPrice: {
       get () {
         return this.tradeList.amount / 100

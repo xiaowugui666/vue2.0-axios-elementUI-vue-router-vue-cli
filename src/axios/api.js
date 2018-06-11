@@ -165,7 +165,8 @@ export function settlementDetail (params) {
 export function customerOrder (params) {
   return fetch({
     url: api.ip + '/management/user/' + params.id + '/orders',
-    method: 'GET'
+    method: 'GET',
+    params: params
   })
 }
 

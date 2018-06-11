@@ -249,73 +249,93 @@ export default {
     },
     // 商品信息更改
     saveEditor () {
-      if (!this.errors.items.length && this.activityTime.length) {
-        let params = {}
-        let _this = this
-        params.id = this.good.id
-        params.goods_sku_id = this.good.id
-        params.goods_id = this.good.goods_id
-        params.price = this.specialOffer * 100
-        params.begin_at = this.activityTime[0]
-        params.end_at = this.activityTime[1]
-        params.stock_count = this.stock
-        // 如果为新建特价商品
-        if (JSON.stringify(this.$route.query) == '{}') { // 新建
-          // 如果路由为special
-          if (this.$route.params.class == 'special-offer') {
-            console.log(this.originalPrice)
-            if (parseFloat(this.specialOffer) < this.originalPrice) {
-              addSpecialGood(params).then(res => {
+      if (JSON.stringify(this.good) !== '{}' || this.recommendGoods.length !== 0) {
+        if (!this.errors.items.length && this.activityTime.length) {
+          let params = {}
+          let _this = this
+          params.id = this.good.id
+          params.goods_sku_id = this.good.id
+          params.goods_id = this.good.goods_id
+          params.price = this.specialOffer * 100
+          params.begin_at = this.activityTime[0]
+          params.end_at = this.activityTime[1]
+          params.stock_count = this.stock
+          // 如果为新建商品
+          if (JSON.stringify(this.$route.query) == '{}') { // 新建
+            // 如果路由为special
+            if (this.$route.params.class == 'special-offer' && this.stock.length) {
+              console.log(this.originalPrice)
+              if (parseFloat(this.specialOffer) < this.originalPrice) {
+                addSpecialGood(params).then(res => {
+                  if (res.data.success) {
+                    _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+                  } else {
+                    this.$message('新增商品失败，请勿重复添加或确认时间段')
+                  }
+                }).catch(err => {
+                  console.log(err.response.data)
+                  this.$message(err.response.data.message)
+                })
+              } else {
+                this.$message({
+                  message: '请确保特价小于原价',
+                  type: 'warning'
+                })
+              }
+            } else if (this.$route.params.class == 'recommend' && !this.stock.length) { // 路由为recommend
+              let idArray = []
+              for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
+                idArray.push(this.recommendGoods[i].id)
+              }
+              params.goods_ids = idArray
+              newRecommendGoods(params).then(res => {
                 if (res.data.success) {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-                } else {
-                  this.$message('新增商品失败，请勿重复添加或确认时间段')
                 }
               }).catch(err => {
-                console.log(err.response.data)
-                this.$message(err.response.data.message)
+                console.log(1111)
+                if (err.status == 403) {
+                  _this.$message(err.response.data.message)
+                } else {
+                  _this.$message({
+                    message: '添加商品失败',
+                    type: 'error'
+                  })
+                }
               })
             } else {
               this.$message({
-                message: '请确保特价小于原价',
+                message: '请确保编辑信息完善',
                 type: 'warning'
               })
             }
-          } else if (this.$route.params.class == 'recommend') {
-            let idArray = []
-            for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
-              idArray.push(this.recommendGoods[i].id)
+          } else { // 编辑
+            // 更改商品信息
+            if (this.$route.params.class == 'special-offer') {
+              closeGoods(params).then(res => {
+                if (res.data == '更新成功') {
+                  _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+                } else {
+                  console.log(res)
+                  _this.$message(res.data.message)
+                }
+              })
+            } else if (this.$route.params.class == 'recommend') {
+              closeRecommendGood(params).then(res => {
+                console.log('更新推荐商品成功')
+                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+              })
             }
-            params.goods_ids = idArray
-            newRecommendGoods(params).then(res => {
-              if (res.data.success) {
-                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-              } else {
-                _this.$message(res.data.message)
-              }
-            })
           }
-        } else { // 编辑
-          // 更改商品信息
-          if (this.$route.params.class == 'special-offer') {
-            closeGoods(params).then(res => {
-              if (res.data == '更新成功') {
-                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-              } else {
-                console.log(res)
-                _this.$message(res.data.message)
-              }
-            })
-          } else if (this.$route.params.class == 'recommend') {
-            closeRecommendGood(params).then(res => {
-              console.log('更新推荐商品成功')
-              _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-            })
-          }
+        } else {
+          this.$message({
+            message: '请确保编辑信息完善',
+            type: 'warning'
+          })
         }
       } else {
         this.$message({
-          message: '请确保编辑信息完善',
+          message: '请选择商品',
           type: 'warning'
         })
       }

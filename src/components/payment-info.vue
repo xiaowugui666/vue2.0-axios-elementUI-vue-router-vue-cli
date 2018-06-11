@@ -34,21 +34,6 @@
           <!--<span>如果您是特约支付商户，创建社交立减金前需要完成接口升级</span>-->
         <!--</li>-->
       </ul>
-      <div class="checked-protocol" v-if="agreementShow">
-        <el-checkbox v-model.trim="checked">
-          <span class="checked-protocol-text">我已同意并阅读</span>
-          <el-button type="text" @click="readingProtocol = true">《协议》</el-button>
-        </el-checkbox>
-        <el-dialog
-          title="提示"
-          :visible.sync="readingProtocol"
-          width="60%">
-          <span>这里是协议内容这里是协议内容这里是协是协议内容</span>
-          <span slot="footer" class="dialog-footer">
-            <el-button type="primary" size="small" @click="readingProtocol = false">确 定</el-button>
-          </span>
-        </el-dialog>
-      </div>
     </div>
   </div>
 </template>
@@ -59,21 +44,13 @@ import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      checked: true,
-      readingProtocol: false,
-      token: '',
+      token: {},
       busiInformation: {
-        merchant_no: '',
+        merchant_no: '--',
         merchant_key: '--',
         merchant_cert: '--',
         merchantNumber: '--'
       }
-    }
-  },
-  props: {
-    agreementShow: {
-      type: Boolean,
-      default: true
     }
   },
   created () {
@@ -108,7 +85,6 @@ export default {
         cancelButtonText: '取消'
       }).then(({ value }) => {
         paySetting('put', {merchant_key: value}).then(res => {
-          console.log(res.data)
           this.busiInformation.merchant_key = value
           // this.$emit('changeSetting', value, 2)
         })
@@ -117,7 +93,6 @@ export default {
     },
     qnUploadSuccess (res, file) {
       paySetting('put', {merchant_cert: res.key}).then(resp => {
-        console.log(res)
         this.busiInformation.merchant_cert = res.key
         // this.$emit('changeSetting', response.key, 3)
       })
