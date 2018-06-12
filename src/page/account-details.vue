@@ -115,7 +115,7 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     toOrderDetail (id) {
-      this.$router.push({path: '/orderDetail/' + id})
+      this.$router.push({path: '/order-detail/' + id})
     },
     getMoney () {
       settlementTotal(this.id).then(
