@@ -193,7 +193,7 @@ export default {
     paymentInfo
   },
   computed: {
-    ...mapState(['menuShow', 'mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
+    ...mapState(['menuShow', 'mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
   },
   methods: {
     ...mapMutations(['setMenuShow']),
@@ -215,11 +215,11 @@ export default {
             this.active = 2
           } else {
             if (data.logo_url) {
-              this.logoImageUrl = this.qiniuDomainUrl + data.logo_url
+              this.logoImageUrl = this.yiqixuanDomainUrl + data.logo_url
             }
             this.textArea = data.description
             if (data.banner) {
-              this.bannerImageUrl = this.qiniuDomainUrl + data.banner
+              this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner
             }
             this.shopChiefName = data.owner_name
             this.telNum = data.mobile

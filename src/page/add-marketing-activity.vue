@@ -12,13 +12,13 @@
               <span class="name alignment-top required">选择商品：</span>
               <div class="goods-img-box" v-if="recommendGoods.length == 0">
                 <span v-if="imgVisible(good)" @click="dialogClick" class="goods-img">
-                  <img :src="qiniuDomainUrl + imgUrlCompu(good)" alt="">
+                  <img :src="yiqixuanDomainUrl + imgUrlCompu(good)" alt="">
                 </span>
                 <i v-else @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
               <div class="goods-img-box" v-else>
                 <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 5px;">
-                  <img :src="qiniuDomainUrl + imgUrlCompu(item)" alt="">
+                  <img :src="yiqixuanDomainUrl + imgUrlCompu(item)" alt="">
                 </span>
                 <i @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
@@ -64,7 +64,7 @@
           </ul>
         </div>
       </div>
-      <select-production v-if="newGoods.length" :newGoods="newGoods" :qiniuDomainUrl="qiniuDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
+      <select-production v-if="newGoods.length" :newGoods="newGoods" :yiqixuanDomainUrl="yiqixuanDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
 </template>
 
@@ -360,7 +360,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
   },
   components: {
     selectProduction

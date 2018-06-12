@@ -196,10 +196,10 @@ export default {
         this.categoryValue = data.type
         this.creationTime = data.created_at
         if (data.logo_url) {
-          this.logoImageUrl = this.qiniuDomainUrl + data.logo_url
+          this.logoImageUrl = this.yiqixuanDomainUrl + data.logo_url
         }
         if (data.banner) {
-          this.bannerImageUrl = this.qiniuDomainUrl + data.banner
+          this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner
         }
         this.textArea = data.description
         this.shopChiefName = data.owner_name
@@ -268,7 +268,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
+    ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
   }
 }
 </script>

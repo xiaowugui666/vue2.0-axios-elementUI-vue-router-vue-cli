@@ -156,12 +156,12 @@ export default {
     this.getData()
   },
   computed: {
-    ...mapState(['qiniuDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
     orderImageUrl (value) {
-      return this.qiniuDomainUrl + value
+      return this.yiqixuanDomainUrl + value
     },
     // 分页点击
     currentIndex (val) {
