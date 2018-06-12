@@ -83,7 +83,6 @@ export default {
   },
   mounted () {
     this.setMenuShow(true)
-    this.setMenuLeft('/')
     tradeVolum().then(res => {
       console.log(res)
       if (res.status == 200) {

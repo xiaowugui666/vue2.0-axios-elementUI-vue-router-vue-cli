@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapMutations} from 'vuex'
 import error from '../components/error'
 export default {
   data () {
@@ -18,7 +18,6 @@ export default {
     ...mapMutations(['setMenuShow'])
   },
   computed: {
-    ...mapState(['menuShow'])
   },
   components: {
     error

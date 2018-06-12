@@ -7,11 +7,17 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
-import {mapState} from 'vuex'
+import {mapState, mapMutations} from 'vuex'
 export default {
   name: 'App',
   components: {
     menuLeft
+  },
+  beforeUpdate () {
+    this.setMenuLeft('')
+  },
+  methods: {
+    ...mapMutations(['setMenuLeft', 'setMenuShow'])
   },
   computed: {
     ...mapState(['menuShow'])
