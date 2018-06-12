@@ -23,7 +23,12 @@
               width="75">
               <template slot-scope="scope">
                 <div>
-                  <input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">
+                  <!--<input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">-->
+                  <span>{{scope.$index + 1}}</span>
+                  <div class="sort-btn">
+                    <div class="el-icon-caret-top" @click="handleClick(1)"></div>
+                    <div class="el-icon-caret-bottom" @click="handleClick(2)"></div>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -141,6 +146,10 @@ export default {
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 排序点击
+    handleClick (value) {
+      console.log(value)
+    },
     // 页面初始数据加载
     request (curPage) {
       // 路由判定
@@ -164,6 +173,7 @@ export default {
     changState (value) {
       this.managementState = value
       this.request(0)
+      this.curPage = 1
     },
     // 点击分页
     currentChange (value) {
@@ -347,13 +357,13 @@ export default {
         .el-table {
           color: #666;
           font-size: 12px;
-          .sort-input{
+          /*.sort-input{
             width: 27px;
             height: 23px;
             padding-left: 18px;
             background-color: transparent;
             border: 1px solid @bc;
-          }
+          }*/
           .sort-btn {
             display: inline-block;
             vertical-align: middle;
@@ -364,10 +374,11 @@ export default {
               cursor: pointer;
             }
             .el-icon-caret-top {
-              margin-top: -3px;
+              font-size: 12px;
             }
             .el-icon-caret-bottom {
-              margin-top: -9px;
+              margin-top: -2px;
+              font-size: 12px;
             }
           }
         }

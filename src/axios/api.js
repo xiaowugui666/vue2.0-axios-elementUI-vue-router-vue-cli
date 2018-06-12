@@ -26,23 +26,34 @@ export function tradeVolum () {
 // 商品总数
 export function storeGoodsAmount () {
   return fetch({
-    url: api.ip + '/management/statistics/good_sku_count',
+    url: api.ip + '/management/statistics/summary',
     method: 'GET'
   })
 }
 
-// 昨日pv,uv
-export function yesterdayPvUv () {
+// 7日浏览量
+export function sevenDaysPv () {
   return fetch({
-    url: api.ip + '/management/statistics/yesterday_pv_uv',
+    url: api.ip + '/management/statistics/page',
     method: 'GET'
   })
 }
-// 七日界面排行榜
-export function pagePvUv () {
+
+/* 表格数据 */
+// 计算表格起止时间
+export function endBegins () {
   return fetch({
-    url: api.ip + '/management/statistics/page_pv_uv',
+    url: api.ip + '/management/statistics/nav',
     method: 'GET'
+  })
+}
+
+// 走势图表格数据
+export function tableData (params) {
+  return fetch({
+    url: api.ip + '/management/statistics',
+    method: 'GET',
+    params: params
   })
 }
 

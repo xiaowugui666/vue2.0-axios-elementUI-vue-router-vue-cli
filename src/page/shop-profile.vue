@@ -3,23 +3,23 @@
       <div class="orderProfile">
         <ul class="home-survey">
           <li>
-            <div class="up">9999.99</div>
+            <div class="up">{{goodsCounts.pv_mpa}}</div>
             <div class="down"><span>昨日浏览量</span></div>
           </li>
           <li>
-            <div class="up">999.99</div>
+            <div class="up">{{goodsCounts.uv_mpa}}</div>
             <div class="down"><span>昨日访客数</span></div>
           </li>
           <li>
-            <div class="up">9999</div>
+            <div class="up">{{goodsCounts.pv_goods}}</div>
             <div class="down"><span>昨日商品浏览量</span></div>
           </li>
+          <!--<li>-->
+            <!--<div class="up">99</div>-->
+            <!--<div class="down"><span>昨日商品访客数</span></div>-->
+          <!--</li>-->
           <li>
-            <div class="up">99</div>
-            <div class="down"><span>昨日商品访客数</span></div>
-          </li>
-          <li>
-            <div class="up">{{goodsCounts}}</div>
+            <div class="up">{{goodsCounts.goods_sku_count}}</div>
             <div class="down"><span>商铺商品总数</span></div>
           </li>
         </ul>
@@ -34,12 +34,12 @@
               <div>分享访问次数</div>
               <div>分享访问人数</div>
             </div>
-            <div class="list" v-for="(item,index) in pagePv" :key="index">
-              <div>{{item.page_info}}</div>
-              <div>{{item.page_visit_pv}}</div>
-              <div>{{item.page_visit_uv}}</div>
-              <div>{{item.page_share_pv}}</div>
-              <div>{{item.page_share_uv}}</div>
+            <div class="list" v-for="(item,index) in sevenDays" :key="index">
+              <div>{{item.name}}</div>
+              <div>{{item.pv_sum}}</div>
+              <div>{{item.uv_sum}}</div>
+              <div>{{item.pv_share_sum}}</div>
+              <div>{{item.uv_share_sum}}</div>
             </div>
           </div>
         </div>
@@ -50,12 +50,12 @@
 <script>
 import echarts from '@/components/echarts'
 import {mapMutations} from 'vuex'
-import {storeGoodsAmount, yesterdayPvUv, pagePvUv} from '../axios/api'
+import {storeGoodsAmount, sevenDaysPv} from '../axios/api'
 export default {
   data () {
     return {
-      goodsCounts: 0,
-      pagePv: []
+      goodsCounts: {},
+      sevenDays: []
     }
   },
   components: {
@@ -66,15 +66,10 @@ export default {
   mounted () {
     this.setMenuLeft('/shop-profile')
     storeGoodsAmount().then(res => {
-      console.log(res)
       this.goodsCounts = res.data
     })
-    yesterdayPvUv().then(res => {
-      console.log(res)
-    })
-    pagePvUv().then(res => {
-      console.log(res)
-      this.pagePv = res.data
+    sevenDaysPv().then(res => {
+      this.sevenDays = res.data
     })
   },
   methods: {
