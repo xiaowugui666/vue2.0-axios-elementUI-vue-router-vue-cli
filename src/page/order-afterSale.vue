@@ -7,7 +7,7 @@
             <label>订单编号</label>
             <el-input
               v-model="keyValue"
-              maxlength="20"
+              maxlength="50"
               clearable>
             </el-input>
           </div>
@@ -33,7 +33,7 @@
             <label>退款编号</label>
             <el-input
               v-model="keyName"
-              maxlength="20"
+              maxlength="50"
               clearable>
             </el-input>
           </div>
@@ -200,8 +200,10 @@ export default {
       if (this.keyName != '') {
         params.no = this.keyName
       }
-      params.begin_at = this.keyTime[0]
-      params.end_at = this.keyTime[1]
+      if (this.keyTime.length !== 0) {
+        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+      }
       afterSaleGoods(params).then(res => {
         console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
@@ -226,6 +228,7 @@ export default {
     timeRange (res, event) {
       let flag = event.target.dataset.id
       if (flag == '0') {
+        this.timeBtn3 = false
         this.timeBtn2 = false
         this.timeBtn1 = !this.timeBtn1
         if (this.timeBtn1) {
@@ -235,6 +238,7 @@ export default {
         }
       } else if (flag == '1') {
         this.timeBtn1 = false
+        this.timeBtn3 = false
         this.timeBtn2 = !this.timeBtn2
         if (this.timeBtn2) {
           this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]

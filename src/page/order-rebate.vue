@@ -19,7 +19,7 @@
               </div>
               <div class="buyer" v-if="rebateDetail.order">
                 <div><label>买家手机号：</label><label>{{rebateDetail.order.mobile}}</label></div>
-                <div><label>商品名称：</label><label>{{rebateGoodsDetail}}</label></div>
+                <div style="display: flex"><label style="display: inline-block;width: 80px;">商品名称：</label><label style="display: inline-block">{{rebateGoodsDetail}}</label></div>
               </div>
               <div class="buyer">
                 <div><label>期望结果：</label><label>退货退款</label></div>

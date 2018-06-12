@@ -125,7 +125,7 @@ export default {
       mobile: this.phoneNum,
       order_count: this.value,
       page: this.pages
-    }, 'get').then(
+    }, 'GET').then(
       res => {
         this.tableData = res.data
       }
@@ -145,7 +145,7 @@ export default {
         mobile: this.phoneNum,
         order_count: this.value,
         page: this.pages
-      }, 'get').then(
+      }, 'PUT').then(
         res => {
           this.tableData = res.data
           this.totalPage = parseInt(res.headers.page_count) * 15
