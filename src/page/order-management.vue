@@ -215,6 +215,8 @@ export default {
       if (this.keyName !== '') {
         params.name = this.keyName
       }
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
       params.page = 0
       params.per_page = 15
       order(params).then(res => {
