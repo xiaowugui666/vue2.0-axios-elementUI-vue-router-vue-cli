@@ -5,8 +5,8 @@
         <ul class="commodity-management-state clear">
           <li :class="{'active':managementState==0}" @click="changeManagementState(0)">全部</li>
           <li :class="{'active':managementState==1}" @click="changeManagementState(1)">出售中</li>
-          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已售罄</li>
-          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已下架</li>
+          <li :class="{'active':managementState==3}" @click="changeManagementState(3)">已售罄</li>
+          <li :class="{'active':managementState==2}" @click="changeManagementState(2)">已下架</li>
         </ul>
         <div class="commodity-management-search">
           <span class="name required">商品类目：</span>
@@ -16,7 +16,7 @@
             clearable
             class="select-state"
             :options="selectStateOptions"
-            v-model="selectedOptions"
+            v-model.trim="selectedOptions"
             @change="categoryChange">
           </el-cascader>
           <span>商品名称：</span>
@@ -54,12 +54,12 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="'http://image.c.51zan.cn/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="qiniuDomainUrl+'/'+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
                       <span class="goods-info-price">￥{{scope.row.price | money}}</span>
-                      <span class="goods-info-category">
+                      <span v-if="scope.row.category_name" class="goods-info-category">
                         类目：{{scope.row.category_name}}
                       </span>
                     </div>
@@ -104,11 +104,11 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              width="180">
+              width="140">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="setRouter('/add-edit-goods?gid='+scope.row.id)">编辑</el-button>
                 <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
-                <el-button type="text" size="small" class="black-btn">浏览</el-button>
+                <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
               </template>
             </el-table-column>
           </el-table>
@@ -131,35 +131,18 @@
 </template>
 
 <script>
-import menuLeft from '@/components/menu-left'
+import {mapState, mapMutations} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
   data () {
     return {
       managementState: 0, // 商品状态tab
-      page: 1,
+      page: 0,
       cat_id: '',
       goods_name: '',
       searchComName: '',
       page_count: 0, // 总页数
-      selectStateOptions: [
-        {
-          value: '1',
-          label: '食品'
-        }, {
-          value: '2',
-          label: '数码家电'
-        }, {
-          value: '3',
-          label: '女装'
-        }, {
-          value: '4',
-          label: '美妆'
-        }, {
-          value: '5',
-          label: '日用百货'
-        }
-      ],
+      selectStateOptions: [],
       selectedOptions: [],
       tableData: [], // 商品列表数组
       multipleSelection: [],
@@ -174,21 +157,23 @@ export default {
   created () {
     this.getGoodsList()
     this.getGoodsCategory()
+    this.setMenuLeft('/commodity-management')
   },
   mounted () {
     // console.log(this.selectStateOptions)
   },
-  components: {
-    menuLeft
+  computed: {
+    ...mapState(['menuLeft', 'qiniuDomainUrl'])
   },
   methods: {
+    ...mapMutations(['setMenuLeft']),
     // 获取商品列表
     getGoodsList (data = {
       cat_id: this.cat_id,
       // goods_name: this.goods_name,
       goods_name: encodeURIComponent(this.goods_name),
       page: this.page,
-      status: this.managementState
+      status: this.managementState !== 0 ? this.managementState : ''
     }) {
       goodsList(data).then(res => {
         this.tableData = []
@@ -229,7 +214,7 @@ export default {
       if (typeof status !== 'undefined') {
         this.managementState = status
       }
-      this.page = 1
+      this.page = 0
       if (this.selectedOptions) {
         this.cat_id = this.selectedOptions[this.selectedOptions.length - 1]
       }
@@ -273,19 +258,17 @@ export default {
           }
           goodsStatus({'ids': statusArr, 'status': status}).then(res => {
             // console.log(res)
-            if (res.status === 204) {
-              for (let w of _this.tableData) {
-                if (statusArr.indexOf(w.id) > -1) {
-                  w.status = status
-                }
+            for (let w of _this.tableData) {
+              if (statusArr.indexOf(w.id) > -1) {
+                w.status = status
               }
-              this.toggleSelection()
-              this.$message({
-                showClose: true,
-                type: 'success',
-                message: `${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
-              })
             }
+            this.toggleSelection()
+            this.$message({
+              showClose: true,
+              type: 'success',
+              message: `批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
+            })
           }).catch(err => {
             console.log(err)
           })
@@ -295,15 +278,12 @@ export default {
           }
           goodsDelete({'ids': statusArr}).then(res => {
             console.log(res)
-            if (res.status === 204) {
-              this.getGoodsList()
-              // this.toggleSelection()
-              this.$message({
-                showClose: true,
-                type: 'success',
-                message: `${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
-              })
-            }
+            this.getGoodsList()
+            this.$message({
+              showClose: true,
+              type: 'success',
+              message: `批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
+            })
           }).catch(err => {
             console.log(err)
           })
@@ -383,7 +363,7 @@ export default {
     // 点击分页数
     currentChange (page) {
       // console.log(page)
-      this.page = page
+      this.page = page - 1
       this.getGoodsList()
     },
     categoryChange (val) {

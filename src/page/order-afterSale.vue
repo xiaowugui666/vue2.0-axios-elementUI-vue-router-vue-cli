@@ -7,6 +7,7 @@
             <label>订单编号</label>
             <el-input
               v-model="keyValue"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
@@ -23,15 +24,16 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div :class="['timeRange', {'cur' : timeId === '0'}]" data-id="0" @click="timeRange(7,$event)">最近7天</div>
-          <div :class="['timeRange', {'cur' : timeId === '1'}]" data-id="1" @click="timeRange(30,$event)">最近30天</div>
-          <div :class="['timeRange', {'cur' : timeId === '2'}]" data-id="2" @click="timeRange(90,$event)">最近90天</div>
+          <div :class="['timeRange', {'cur' : timeBtn1}]" data-id="0" @click="timeRange(7,$event)">最近7天</div>
+          <div :class="['timeRange', {'cur' : timeBtn2}]" data-id="1" @click="timeRange(30,$event)">最近30天</div>
+          <div :class="['timeRange', {'cur' : timeBtn3}]" data-id="2" @click="timeRange(90,$event)">最近90天</div>
         </div>
         <div class="proName">
           <div class="keyName">
             <label>退款编号</label>
             <el-input
               v-model="keyName"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
@@ -51,7 +53,6 @@
 
       </div>
       <div class="tradeRecord">
-        <div class="title">交易记录</div>
         <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
           <el-tab-pane label="全部" name="first"></el-tab-pane>
           <el-tab-pane  label="退款中"  name="second"></el-tab-pane>
@@ -60,50 +61,88 @@
           <el-tab-pane  label="退款关闭"  name="five"></el-tab-pane>
         </el-tabs>
         <div class="tradeList">
-          <div class="top">
-          <label>订单编号</label>
-          <label>退款编号</label>
-          <label>退款方式</label>
-          <label>商品名称</label>
-          <label>订单金额</label>
-          <label>退款金额</label>
-          <label>申请时间</label>
-          <label>退款状态</label>
-          <label>操作</label>
-        </div>
-          <div class="top">
-            <label>H236642879997799264</label>
-            <label>H236642287999779</label>
-            <label>退货退款</label>
-            <label>花王纸尿裤</label>
-            <label>¥ 200.00</label>
-            <label>¥ 190.00</label>
-            <label>2018-12-12  12:30</label>
-            <label>买家申请退款</label>
-            <label>处理退款</label>
-          </div>
+          <el-table
+            :data="refunds"
+            border>
+            <el-table-column
+              prop="order_no"
+              label="订单编号"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              prop="no"
+              label="退款编号"
+              width="180">
+            </el-table-column>
+            <el-table-column
+              label="退款方式">
+              <template slot-scope="scope">
+                <div>退货退款</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              props="items"
+              label="商品名称">
+              <template slot-scope="scope">
+                <div class="goodsName" v-for="(item,index) in scope.row.items" :key="index">{{item.name}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="order_amount"
+              label="订单金额">
+            </el-table-column>
+            <el-table-column
+              prop="refund_amount"
+              label="退款金额">
+            </el-table-column>
+            <el-table-column
+              prop="created_at"
+              label="申请时间">
+            </el-table-column>
+            <el-table-column
+              prop="status"
+              label="退款状态">
+              <template slot-scope="scope">
+                <div>{{refundStatu(scope.row.status)}}</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              prop="address"
+              width="168"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button type="text" @click="refundsDetails(scope.row.id)">订单详情</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
         <el-pagination
           background
-          :page-size="20"
+          v-if="totalPagina !== 0"
+          :page-size="2"
           :page-count="6"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
-          current-change="currentIndex"
-          :total="1000">
+          @current-change="currentIndex"
+          :total="totalPagina">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script>
+import {afterSaleGoods} from '../axios/api'
 export default {
   data () {
     return {
       n: '1',
       // 点击索引，动态类名
       timeId: '0',
+      // 搜索时间
+      timeBtn1: false,
+      timeBtn2: false,
+      timeBtn3: false,
       // 搜索时间间隔
       keyTime: '',
       // 搜索类别
@@ -116,12 +155,8 @@ export default {
         label: '全部'
       }, {
         value: '2',
-        label: '仅退款'
-      }, {
-        value: '3',
         label: '退货退款'
       }],
-
       // 搜索类型
       options: [{
         value: '1',
@@ -141,29 +176,150 @@ export default {
       // 订单类型
       OrderType: '1',
       // 交易类型
-      tradeType: 'first'
+      tradeType: 'first',
+      // 订单详情
+      refunds: [],
+      // 总页数
+      totalPagina: 0
     }
   },
   methods: {
+    refundsDetails (value) {
+      this.$router.push({path: '/order-rebate', query: {id: value}})
+    },
     changeType () {
     },
     changeTime () {
     },
+    // 点击搜索
     searchOrder () {
+      let params = {}
+      if (this.keyValue != '') {
+        params.order_no = this.keyValue
+      }
+      if (this.keyName != '') {
+        params.no = this.keyName
+      }
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
+      afterSaleGoods(params).then(res => {
+        console.log(res)
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
+      })
+    },
+    // 分页点击
+    currentIndex (val) {
+      let params = {}
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.page = val - 1
+      afterSaleGoods(params).then(res => {
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
+      })
     },
     timeRange (res, event) {
-      this.timeId = event.target.dataset.id
-      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
-      console.log(res)
+      let flag = event.target.dataset.id
+      if (flag == '0') {
+        this.timeBtn2 = false
+        this.timeBtn1 = !this.timeBtn1
+        if (this.timeBtn1) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
+      } else if (flag == '1') {
+        this.timeBtn1 = false
+        this.timeBtn2 = !this.timeBtn2
+        if (this.timeBtn2) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
+      } else if (flag == '2') {
+        this.timeBtn1 = false
+        this.timeBtn2 = false
+        this.timeBtn3 = !this.timeBtn3
+        if (this.timeBtn3) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
+      }
     },
-    handleClick (tab, event) {
+    handleClick (tab) {
       console.log(tab.index)
+      afterSaleGoods({status: tab.index}).then(res => {
+        console.log(res)
+        this.totalPagina = parseInt(res.headers.page_count)
+        this.refunds = res.data
+      })
+    },
+    refundStatu (value) {
+      if (value == 1) {
+        return '待处理'
+      } else if (value == 2) {
+        return '处理中'
+      } else if (value == 3) {
+        return '处理完毕'
+      } else if (value == 4) {
+        return '取消退货'
+      }
     }
+  },
+  computed: {
+  },
+  mounted () {
+    afterSaleGoods().then(res => {
+      console.log(res)
+      this.totalPagina = parseInt(res.headers.page_count)
+      this.refunds = res.data
+    })
   }
 }
 </script>
 <style lang="less">
-  .orderAfterSale{
+.orderAfterSale{
+  .el-table{
+    font-size: 12px;
+    color: #666666;
+    .el-button{
+      font-size: 12px;
+    }
+  }
+  .el-table__header-wrapper thead{
+    color: #333333;
+  }
+  .el-table::before{
+    background-color: #D5D5D5;
+  }
+  .el-table--border::after{
+    background-color: #D5D5D5;
+  }
+  .el-table__header-wrapper thead tr th{
+    background: #EFEFEF;
+  }
+  .el-table__body-wrapper,.el-table__header-wrapper tr th div{
+    text-align: center;
+  }
+  .el-table--group, .el-table--border {
+    border: 1px solid #D5D5D5;
+  }
+  .el-table--border {
+    border-right: none;
+    border-bottom: none;
+  }
+  .el-table th.is-leaf, .el-table td {
+    border-bottom: 1px solid #D5D5D5;
+  }
+  .el-table--border th, .el-table--border td {
+    border-right: 1px solid #D5D5D5;
+  }
   .el-pagination.is-background .el-pager li {
     background-color: #fff;
   }
@@ -264,6 +420,10 @@ export default {
     color: #303133;
     position: relative;
   }
+  .el-table__body-wrapper tr td .el-button--text{
+    border: 1px solid #63A4FF;
+    padding: 4px 8px;
+  }
   .header{
     .el-date-editor .el-range__icon {
       display: none;
@@ -318,7 +478,7 @@ export default {
       margin-right: 10px;
     }
   }
-  }
+}
 </style>
 <style scoped lang="less">
   .orderAfterSale{
@@ -329,67 +489,15 @@ export default {
   }
   .tradeRecord {
     background: #fff;
-    padding:0 20px 20px;
+    padding:30px 20px 20px;
     .tradeList {
       padding-bottom: 30px;
-      .top:first-child{
-        background: #EFEFEF;
-        line-height: 40px;
-        height: 40px;
-      }
-      .top:last-child{
-        border-bottom:1px solid #D5D5D5;
-      }
-      .top{
-        border-top: 1px solid #D5D5D5;
-        border-left: 1px solid #D5D5D5;
+      .goodsName{
         height: 50px;
-        display: flex;
-        align-items: center;
-        box-sizing: border-box;
         line-height: 50px;
-        label {
-          font-size: 12px;
-          color: #333333;
-          text-align: center;
-          border-right: 1px solid #D5D5D5;
-        }
-        label:first-child,label:nth-child(2),label:nth-child(7),label:nth-child(4) {
-          width: 14%;
-        }
-        label:nth-child(3),label:nth-child(8){
-          width:10%;
-        }
-        label:nth-child(5),label:nth-child(6),label:nth-child(9) {
-          width:8%;
-        }
-      }
-      .content {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        label {
-          display: block;
-          text-align: center;
-        }
+        text-align: center;
       }
     }
-    }
-  .tradeRecord .title{
-    padding: 20px 0 20px 10px;
-    position: relative;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #333333;
-  }
-  .tradeRecord .title::after{
-    position: absolute;
-    top:24px;
-    left:0;
-    content:'';
-    width: 3px;
-    height: 13px;
-    background: #999;
   }
   .header{
     background: #fff;
@@ -422,6 +530,7 @@ export default {
         border: 1px solid #eeeeee;
         color:#B5B5B5;
         margin-left: 20px;
+        cursor: pointer;
       }
       .cur{
         border: 1px solid #DE5B67;

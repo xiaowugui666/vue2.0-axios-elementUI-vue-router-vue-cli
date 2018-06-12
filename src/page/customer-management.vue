@@ -3,7 +3,7 @@
       <div class="header">
         <div class="number">
           <span>手机号码</span>
-          <input type="text" v-model="phoneNum">
+          <input type="text" v-model="phoneNum" maxlength="11">
         </div>
         <div class="screen">
           <span>购物次数</span>
@@ -16,7 +16,7 @@
             </el-option>
           </el-select>
         </div>
-        <div class="search">
+        <div class="search" @click="search">
           <el-button
           size="small"
           type="success"
@@ -34,25 +34,17 @@
               width="180">
             </el-table-column>
             <el-table-column
-              prop="phoneNumber"
+              prop="mobile"
               label="手机号码"
               width="180">
             </el-table-column>
             <el-table-column
-              prop="wechat"
-              label="微信号">
+              prop="nick_name"
+              label="微信昵称">
             </el-table-column>
             <el-table-column
-              prop="orders"
+              prop="order_count"
               label="拥有订单数">
-            </el-table-column>
-            <el-table-column
-              prop="from"
-              label="来源渠道">
-            </el-table-column>
-            <el-table-column
-              prop="methods"
-              label="来源方式">
             </el-table-column>
             <el-table-column
               prop="address"
@@ -70,19 +62,20 @@
             background
             prev-text="<上一页"
             next-text="下一页>"
+            :page-size="15"
+            @current-change="changePage"
             layout="prev, pager, next"
-            :total="1000">
+            :total="totalPage">
           </el-pagination>
         </div>
         <el-dialog
           title="编辑"
           :show-close="false"
           :visible.sync="dialogVisible"
-          width="30%"
-          :before-close="handleClose">
+          width="30%">
           <hr style="color: #EFEFEF;border: 1px solid #EFEFEF;border-bottom: 0;"/>
           <div>
-            <span class="dialog_name">姓名</span><input type="text" v-model="name" clearable>
+            <span class="dialog_name">姓名</span><input type="text" maxlength="20" v-model="name" clearable>
           </div>
           <div slot="footer" class="dialog-footer">
             <el-button @click="saveInfo" type="success" style="border: 0;color: #ffffff;" size="small">保存</el-button>
@@ -94,95 +87,70 @@
 </template>
 
 <script>
+import { user } from '@/axios/api'
 export default {
   data () {
     return {
       name: '',
+      totalPage: 15,
       dialogVisible: false,
       phoneNum: '',
       wechatNum: '',
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
-      }],
       value: '',
-      tableData: [{
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 1
+      pages: 0,
+      options: [{
+        value: '1',
+        label: '1+'
       }, {
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 0
+        value: '2',
+        label: '5+'
       }, {
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 0
+        value: '3',
+        label: '10+'
       }, {
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 0
+        value: '4',
+        label: '20+'
       }, {
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 0
+        value: '5',
+        label: '50+'
       }, {
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 0
-      }, {
-        name: '王小虎',
-        phoneNumber: '13577884567',
-        wechat: 'skakjshdkhakh',
-        orders: 18,
-        from: '微信',
-        methods: '普通下单',
-        flag: 0
-      }]
+        value: '6',
+        label: '100+'
+      }],
+      tableData: []
     }
   },
+  mounted () {
+    user({
+      mobile: this.phoneNum,
+      order_count: this.value,
+      page: this.pages
+    }, 'get').then(
+      res => {
+        this.tableData = res.data
+      }
+    )
+  },
   methods: {
-    handleClose (done) {
-      this.$confirm('are you sure?')
-        .then(_ => {
-          done()
-        })
+    search () {
+      const reg = /^[1][3,4,5,7,8][0-9]{9}$/
+      if (this.phoneNum) {
+        if (reg.test(this.phoneNum)) {
+        } else {
+          this.$message.error('这不是一个正确的手机号码')
+          return false
+        }
+      }
+      user({
+        mobile: this.phoneNum,
+        order_count: this.value,
+        page: this.pages
+      }, 'get').then(
+        res => {
+          this.tableData = res.data
+          this.totalPage = parseInt(res.headers.page_count) * 15
+        }
+      )
     },
     // 编辑列表
     editDetails (detail) {
@@ -193,12 +161,33 @@ export default {
     // 保存姓名 关闭模态框
     saveInfo () {
       let that = this
-      that.tableData[that.detail].name = that.name
-      that.dialogVisible = false
-      that.name = ''
+      user({
+        id: this.tableData[this.detail].user_id,
+        name: this.name
+      }, 'GET').then(
+        res => {
+          console.log(res)
+          if (res.status === 200) {
+            that.tableData[that.detail].name = that.name
+            that.dialogVisible = false
+            that.name = ''
+            this.$message({
+              message: '修改成功',
+              type: 'success'
+            })
+          } else {
+            this.$message.error('修改失败')
+          }
+        }
+      )
     },
-    orderDetails () {
-      this.$router.push({path: '/customerOrder'})
+    orderDetails (link) {
+      this.$router.push({name: 'customerOrder', params: {id: this.tableData[link].id}})
+      // this.$router.push({name: 'customerOrder', params: {id: 1}})
+    },
+    changePage (val) {
+      this.pages = val
+      this.search()
     }
   }
 }
@@ -240,7 +229,7 @@ export default {
       width: 80px;
       height: 30px;
       float: left;
-      margin-left: 384px;
+      margin-left: 30px;
     }
   }
   .table{

@@ -3,41 +3,42 @@
     <div class="home-content">
       <div class="shop-info">
         <span>{{shopName}}</span>
-        <i class="icon-淘宝认证"></i>
-        <i class="icon-微信认证"></i>
-        <i class="icon-公众号认证"></i>
+        <!--<i class="icon-淘宝认证"></i>-->
+        <!--<i class="icon-微信认证"></i>-->
+        <!--<i class="icon-公众号认证"></i>-->
+        <!--<i class="icon-京东认证"></i>-->
       </div>
       <el-row class="shortcut-entrance">
-        <el-col class="li" :span="4"><router-link to="/shopProfile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/commodityManagement"><i class="icon-商品"></i><span>商品管理</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/orderManagement"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/customerManagement"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/shop-profile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/commodity-management"><i class="icon-商品"></i><span>商品管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/order-management"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/customer-management"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/account"><i class="icon-账户"></i><span>我的账户</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/collageManagement"><i class="icon-拼团"></i><span>拼团管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/collage-management"><i class="icon-拼团"></i><span>拼团管理</span></router-link></el-col>
       </el-row>
       <ul class="home-survey">
         <li>
-          <div class="up">￥9999999.99</div>
+          <div class="up">￥{{storeDetail.today_trade}}</div>
           <div class="down"><i class="icon-淘宝认证"></i><span>今日交易额</span></div>
         </li>
         <li>
-          <div class="up">￥9999999.99</div>
+          <div class="up">￥{{storeDetail.yesterday_trade}}</div>
           <div class="down"><i class="icon-淘宝认证"></i><span>昨日交易额</span></div>
         </li>
         <li>
-          <div class="up">9999</div>
+          <div class="up">{{storeDetail.today_order}}</div>
           <div class="down"><span>今日订单</span></div>
         </li>
         <li>
-          <div class="up">99</div>
+          <div class="up">{{storeDetail.yesterday_order}}</div>
           <div class="down"><span>昨日订单</span></div>
         </li>
         <li>
-          <div class="up">9</div>
+          <div class="up">{{storeDetail.total_after_sale}}</div>
           <div class="down"><span>维权订单</span></div>
         </li>
         <li>
-          <div class="up">99</div>
+          <div class="up">{{storeDetail.express_order}}</div>
           <div class="down"><span>待发订单</span></div>
         </li>
       </ul>
@@ -51,6 +52,19 @@
           <el-button slot="reference">在<br>线<br>咨<br>询</el-button>
         </el-popover>
       </div>
+      <div class="QR-code">
+        <el-popover
+          placement="left"
+          width="200"
+          trigger="hover">
+          <div class="code">
+            <span>店铺预览码</span>
+            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528264769927&di=b4ac63a8eeeb4dbf8edcd19773be1bc1&imgtype=0&src=http%3A%2F%2Fimg1.cache.netease.com%2Fcatchpic%2F8%2F81%2F81603D35CDC37D6C82AE9256039DB086.jpg" />
+            <span>微信扫描预览店铺</span>
+          </div>
+          <el-button slot="reference">店<br>铺<br>预<br>览<br></el-button>
+        </el-popover>
+      </div>
     </div>
   </div>
 </template>
@@ -58,15 +72,28 @@
 <script>
 import echarts from '@/components/echarts'
 import {mapState, mapMutations} from 'vuex'
-
+import {tradeVolum} from '../axios/api'
 export default {
   data () {
     return {
       shopName: '阿迪达斯旗舰店',
-      tel: '2881778283'
+      tel: '2881778283',
+      storeDetail: {}
     }
   },
   mounted () {
+    this.setMenuShow(true)
+    tradeVolum().then(res => {
+      console.log(res)
+      if (res.status == 200) {
+        this.storeDetail = res.data
+      } else {
+        this.$message({
+          type: 'error',
+          message: '数据加载失败，请刷新重试'
+        })
+      }
+    })
   },
   components: {
     echarts
@@ -75,7 +102,7 @@ export default {
     ...mapState(['menuShow'])
   },
   methods: {
-    ...mapMutations(['setMenuShow'])
+    ...mapMutations(['setMenuShow', 'setMenuLeft'])
   }
 }
 </script>
@@ -214,11 +241,51 @@ export default {
       }
     }
   }
+  .QR-code{
+    top: 220px;
+    position: fixed;
+    z-index: 99;
+    right: 0;
+    background: #fff;
+    text-align: center;
+    writing-mode: vertical-rl;
+    .el-button {
+      padding: 22px 13px;
+      border: none;
+      margin-left: -10px;
+      color: #333;
+      font-size: 12px;
+      line-height: 1.4;
+      &:hover {
+        background: #fff;
+        color: #333;
+      }
+    }
+  }
   .detailed-consultation {
     font-size: 12px;
-    color: #666;
+    color: #999999;
     span {
       color: #63A4FF;
+    }
+  }
+  .code {
+    font-size: 12px;
+    color: #999999;
+    height: 202px;
+    width: 198px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    img {
+      width: 90px;
+      height: 90px;
+    }
+    span:first-child {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333333;
     }
   }
 </style>

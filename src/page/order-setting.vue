@@ -8,7 +8,7 @@
           <div class="order-cancellation-set plate-inner">
             <div>
               <span>拍下未付款订单</span>
-              <input v-model="cancellationTime" :disabled="!editState" type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" min="20" max="1440">
+              <input v-model="cancellationTime" :disabled="!editState" type="tel" @blur="limitInput(1)" maxlength="4" onkeyup="value=value.replace(/[^\d]/g,'')" min="20" max="1440">
               <span>分钟内未付款，自动取消订单</span>
             </div>
             <p>订单取消时间必须在20-1440分钟之间</p>
@@ -21,7 +21,7 @@
           <div class="confirmation-receipt-time-set plate-inner">
             <div>
               <span>发货后</span>
-              <input v-model="receiptTime" :disabled="!editState" type="tel" onkeyup="value=value.replace(/[^\d]/g,'')" min="20" max="1440">
+              <input v-model.trim="receiptTime" :disabled="!editState" type="tel" maxlength="2" @blur="limitInput(2)" onkeyup="value=value.replace(/[^\d]/g,'')" min="20" max="1440">
               <span>天，自动确认收货</span>
             </div>
             <p>自动确认收货时间必须在7-30天之间</p>
@@ -29,26 +29,45 @@
         </div>
         <div class="edit-btn">
           <el-button v-show="!editState" type="primary" size="small" @click="editClick" style="padding-left: 25px;padding-right: 25px;">编辑</el-button>
-          <el-button v-show="editState" type="success" size="small" @click="editClick" style="padding-left: 25px;padding-right: 25px;">保存</el-button>
+          <el-button v-show="editState" type="success" size="small" @click="saveClick" style="padding-left: 25px;padding-right: 25px;">保存</el-button>
         </div>
       </div>
     </div>
 </template>
 
 <script>
+import {initialSetData} from '../axios/api'
 export default {
   data () {
     return {
       editState: false,
       cancellationTime: 20,
-      receiptTime: 7
+      receiptTime: 7,
+      configData: {}
     }
   },
   components: {
   },
   methods: {
+    // 限制输入
+    limitInput (val) {
+      if (val == 1) {
+        this.cancellationTime = this.watchInput(this.cancellationTime, 20, 1440)
+      } else if (val == 2) {
+        this.receiptTime = this.watchInput(this.receiptTime, 7, 30)
+      }
+    },
     editClick () {
       this.editState = !this.editState
+    },
+    saveClick () {
+      this.editState = !this.editState
+      let params = this.configData
+      params.order_expire_time = Number(this.cancellationTime)
+      params.confirm_goods_time = Number(this.receiptTime)
+      initialSetData('put', params).then(res => {
+        console.log(res)
+      })
     },
     watchInput (s, mix, max) {
       if (s < mix) {
@@ -60,12 +79,20 @@ export default {
     }
   },
   watch: {
-    cancellationTime: function () {
-      this.cancellationTime = this.watchInput(this.cancellationTime, 20, 1440)
+    cancellationTime: function (value) {
+      this.cancellationTime = value
     },
-    receiptTime: function () {
-      this.receiptTime = this.watchInput(this.receiptTime, 7, 30)
+    receiptTime: function (value) {
+      this.receiptTime = value
     }
+  },
+  mounted () {
+    initialSetData('get').then(res => {
+      console.log(res.data)
+      this.configData = res.data
+      this.cancellationTime = res.data.order_expire_time
+      this.receiptTime = res.data.order_auto_confirm_days
+    })
   }
 }
 </script>

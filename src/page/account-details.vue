@@ -27,22 +27,22 @@
             show-overflow-tooltip
             style="width: 100%">
             <el-table-column
-              prop="orderGenerationTime"
+              prop="created_at"
               label="订单生成时间">
             </el-table-column>
             <el-table-column
-              prop="paymentTime"
+              prop="paid_at"
               label="支付时间">
             </el-table-column>
             <el-table-column
-              prop="orderNum"
+              prop="order_no"
               label="订单编号">
             </el-table-column>
             <el-table-column
-              prop="money"
+              prop="amount"
               label="盈利金额（￥）">
               <template slot-scope="scope">
-                <div :class="[{'profit':scope.row.money>=0},{'loss':scope.row.money<0}]">{{scope.row.money>=0?'+'+scope.row.money:scope.row.money}}</div>
+                <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{scope.row.amount>=0?'+'+scope.row.amount:scope.row.amount}}</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -58,8 +58,10 @@
               background
               prev-text="< 上一页"
               next-text="下一页 >"
+              :page-size="15"
+              @current-change="changePage"
               layout="prev, pager, next"
-              :total="300">
+              :total="totalPage">
             </el-pagination>
           </div>
         </div>
@@ -70,9 +72,13 @@
 
 <script>
 import {mapState, mapMutations} from 'vuex'
+import {settlementTotal, settlementDetail} from '@/axios/api'
 export default {
   data () {
     return {
+      id: '',
+      pages: 0,
+      totalPage: 15,
       settlementDate: '2018-05-22',
       totalIncome: 2368993.12,
       incomeExpenditureData: [
@@ -102,11 +108,37 @@ export default {
   },
   mounted () {
     this.setMenuLeft('/account')
+    this.id = this.$route.params.id
+    this.getData()
+    this.getMoney()
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
     toOrderDetail (id) {
-      this.$router.push({path: '/orderDetail/:' + id})
+      this.$router.push({path: '/order-detail/' + id})
+    },
+    getMoney () {
+      settlementTotal(this.id).then(
+        res => {
+          this.totalIncome = res.data.amount
+          this.settlementDate = res.data.end_at.substring(0, 10)
+        }
+      )
+    },
+    getData () {
+      settlementDetail({
+        id: this.id,
+        page: this.pages
+      }).then(
+        res => {
+          this.incomeExpenditureData = res.data
+          this.totalPage = parseInt(res.headers.page_count) * 15
+        }
+      )
+    },
+    changePage (val) {
+      this.pages = val
+      this.getData()
     }
   },
   computed: {

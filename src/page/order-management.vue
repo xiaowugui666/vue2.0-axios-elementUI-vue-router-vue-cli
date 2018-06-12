@@ -14,6 +14,9 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
+              maxlength="20"
+              v-validate="'decimal'"
+              name="orderNumber"
               clearable>
             </el-input>
             <div class="block">
@@ -30,8 +33,8 @@
                 end-placeholder="结束日期">
               </el-date-picker>
             </div>
-            <div class="timeRange" data-id="0"  :class="{ cur : !timeBtn }" @click="timeRange(7,$event)">最近7天</div>
-            <div class="timeRange" data-id="1" :class="{ cur : timeBtn }" @click="timeRange(30,$event)">最近30天</div>
+            <div class="timeRange" data-id="0"  :class="{ cur : timeBtn1 }" @click="timeRange(7,$event)">最近7天</div>
+            <div class="timeRange" data-id="1" :class="{ cur : timeBtn2 }" @click="timeRange(30,$event)">最近30天</div>
           </div>
             <div class="proName">
               <div class="keyName">
@@ -39,6 +42,7 @@
                 <el-input
                   placeholder="请输入商品名称"
                   v-model="keyName"
+                  maxlength="20"
                   clearable>
                 </el-input>
               </div>
@@ -47,13 +51,13 @@
 
         </div>
         <div class="tradeRecord">
-            <div class="title">交易记录</div>
             <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
                 <el-tab-pane label="全部" name="first"></el-tab-pane>
                 <el-tab-pane  label="待付款" name="second"></el-tab-pane>
                 <el-tab-pane  label="待发货" name="third"></el-tab-pane>
                 <el-tab-pane  label="已发货" name="fourth"></el-tab-pane>
                 <el-tab-pane  label="已完成" name="five"></el-tab-pane>
+                <el-tab-pane  label="已取消" name="six"></el-tab-pane>
             </el-tabs>
             <div class="tradeList" v-for="(item,index) in ordersDetail" :key="index">
               <div class="top">
@@ -65,12 +69,12 @@
                   <div>
                       <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
                         <div class="proInfo">
-                          <img :src="i.cover_url" alt="">
+                          <img :src="orderImageUrl(i.cover_url)" alt="">
                           <div class="desc">{{i.name}}</div>
                         </div>
                         <div class="proNum">数量 x {{i.count}}</div>
                         <div class="price">
-                          <label>￥{{i.price | money}}</label>
+                          <label>￥{{item.amount | money}}</label>
                         </div>
                       </div>
                   </div>
@@ -79,21 +83,21 @@
                   <label>运费：{{item.express_amount | money}}</label>
                 </div>
                 <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
-                    <label>交易完成</label>
+                    <label>{{orderMessage(item.status)}}</label>
                   <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
                 </div>
               </div>
             </div>
           <el-pagination
-            v-if="totalPagina"
+            v-if="totalPagina != 0"
             background
-            :page-size="15"
+            :page-size="2"
             :page-count="6"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
-            current-change="currentIndex"
-            :total="totalPagina * 15">
+            @current-change="currentIndex"
+            :total="totalPagina * 2">
           </el-pagination>
         </div>
       </div>
@@ -101,6 +105,7 @@
 </template>
 <script>
 import {order} from '@/axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -110,38 +115,26 @@ export default {
       timeEnd: '',
       // 分页总页数
       totalPagina: 0,
+      // 当前页数
+      currentPage: 0,
       // 订单请求数据
       ordersDetail: [],
       // 时间按钮
-      timeBtn: false,
+      timeBtn1: false,
+      timeBtn2: false,
       // 搜索时间间隔
       keyTime: [],
       // 搜索类别
       keyValue: '',
       // 商品名称
       keyName: '',
-      // 订单类型
-      optionType: [{
-        value: '1',
-        label: '普通订单'
-      }, {
-        value: '2',
-        label: '外部订单'
-      }],
-
       // 搜索类型
       options: [{
         value: '1',
         label: '订单号'
       }, {
         value: '2',
-        label: '外部订单'
-      }, {
-        value: '3',
-        label: '收货人姓名'
-      }, {
-        value: '4',
-        label: '收货人手机号'
+        label: '内部订单'
       }],
       // 搜索类型
       value: '1',
@@ -187,18 +180,45 @@ export default {
     }
   },
   computed: {
+    ...mapState(['qiniuDomainUrl'])
   },
   methods: {
+    orderImageUrl (value) {
+      return this.qiniuDomainUrl + value
+    },
     changeType () {
     },
     changeTime (res) {
       console.log(111)
     },
+    // 订单状态
+    orderMessage (status) {
+      if (status == 200) { // 待付款
+        return '待付款'
+      } else if (status == 205) { // 待发货
+        return '待发货'
+      } else if (status == 400) { // 已发货
+        return '已发货'
+      } else if (status == 405) { // 已完成
+        return '订单已完成'
+      } else if (status == 207) {
+        return '已取消'
+      }
+    },
+    // 点击搜索
     searchOrder () {
       // 参数
       let params = {}
-      params.no = this.keyValue
-      params.name = this.keyName
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
+      params.page = 0
+      params.per_page = 15
       order(params).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
@@ -211,11 +231,22 @@ export default {
     timeRange (res, event) {
       let flag = event.target.dataset.id
       if (flag === '0') {
-        this.timeBtn = false
+        this.timeBtn2 = false
+        this.timeBtn1 = !this.timeBtn1
+        if (this.timeBtn1) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
       } else {
-        this.timeBtn = true
+        this.timeBtn1 = false
+        this.timeBtn2 = !this.timeBtn2
+        if (this.timeBtn2) {
+          this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
+        } else {
+          this.keyTime = []
+        }
       }
-      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
       // console.log(this.keyTime)
     },
     // 订单分类状态点击
@@ -225,24 +256,45 @@ export default {
       if (tab.index == 1) {
         statu = 200
       } else if (tab.index == 2) {
-        statu = 300
+        statu = 205
       } else if (tab.index == 3) {
-        statu = 305
+        statu = 400
       } else if (tab.index == 4) {
-        statu = 505
+        statu = 405
+      } else if (tab.index == 5) {
+        statu = 207
       }
       order({status: statu}).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
-        if (!res.data) {
+        if (res.data == '') {
           this.$message('没有此类订单！')
         }
+      })
+    },
+    // 分页点击
+    currentIndex (val) {
+      let params = {}
+      if (this.keyValue !== '') {
+        params.no = this.keyValue
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      params.page = val - 1
+      this.currentPage = val
+      order(params).then(res => {
+        this.totalPagina = res.headers.page_count
+        this.ordersDetail = res.data
+        console.log(res)
       })
     }
   },
   created () {
-    order().then(res => {
+    order({
+      page: 0
+    }).then(res => {
       console.log(res)
       this.totalPagina = res.headers.page_count
       this.ordersDetail = res.data
@@ -391,10 +443,12 @@ export default {
 
   .tradeRecord {
     background: #fff;
-    padding:0 20px 20px;
+    padding:30px 20px 20px;
     .tradeList{
           padding-bottom: 30px;
           padding-top: 30px;
+          display: block;
+          width: 100%;
           .top{
             background: #EFEFEF;
             border: 1px solid #D5D5D5;
@@ -404,7 +458,6 @@ export default {
             box-sizing: border-box;
             line-height: 40px;
             label{
-              font-family: MicrosoftYaHei;
               font-size: 12px;
               color: #333333;
               margin-left: 80px;
@@ -421,7 +474,6 @@ export default {
               width: 66%;
             }
             .desc{
-              font-family: MicrosoftYaHei;
               font-size: 14px;
               color: #333333;
             }
@@ -440,6 +492,7 @@ export default {
               height: 100%;
               justify-content: flex-start;
               align-items: center;
+              padding-right: 5px;
               border-right: 1px solid #efefef;
               border-right: 1px solid #efefef;
               border-left: 1px solid #efefef;
@@ -481,6 +534,8 @@ export default {
                 font-size: 12px;
                 margin: 0 auto;
                 margin-top: 10px;
+                cursor: pointer;
+                border-radius: 4px;
               }
             }
             .orderMon{
@@ -522,22 +577,6 @@ export default {
             }
           }
     }
-  }
-  .tradeRecord .title{
-    padding: 20px 0 20px 10px;
-    position: relative;
-    font-family: MicrosoftYaHei;
-    font-size: 14px;
-    color: #333333;
-  }
-  .tradeRecord .title::after{
-    position: absolute;
-    top:24px;
-    left:0;
-    content:'';
-    width: 3px;
-    height: 13px;
-    background: #999;
   }
   .header{
       background: #fff;

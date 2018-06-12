@@ -1,7 +1,7 @@
 <template>
     <div class="pay-setting-object">
       <div class="pay-setting-content">
-        <payment-info :agreement-show="agreementShow"></payment-info>
+        <payment-info></payment-info>
       </div>
     </div>
 </template>
@@ -10,9 +10,11 @@
 import paymentInfo from '@/components/payment-info'
 export default {
   data () {
-    return {
-      agreementShow: false
-    }
+    return {}
+  },
+  mounted () {
+  },
+  methods: {
   },
   components: {
     paymentInfo

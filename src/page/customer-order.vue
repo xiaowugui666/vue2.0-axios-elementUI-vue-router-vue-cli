@@ -4,10 +4,11 @@
       <div class="header">
         <div class="selectInfo">
           <div class="order-number">
-            <label>下单时间</label>
+            <label>订单编号</label>
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
+              maxlength="40"
               clearable>
             </el-input>
           </div>
@@ -24,8 +25,8 @@
               end-placeholder="结束日期">
             </el-date-picker>
           </div>
-          <div class="timeRange cur" @click="timeRange(7,$event)">最近7天</div>
-          <div class="timeRange" @click="timeRange(30,$event)">最近30天</div>
+          <div class="timeRange" :class="{cur:isWeek}" @click="timeRange(7)">最近7天</div>
+          <div class="timeRange" :class="{cur:isMonth}" @click="timeRange(30)">最近30天</div>
         </div>
         <div class="proName">
           <div class="keyName">
@@ -33,12 +34,13 @@
             <el-input
               placeholder="请输入商品名称"
               v-model="keyName"
+              maxlength="20"
               clearable>
             </el-input>
           </div>
           <div class="orderType">
             <label>订单类型</label>
-            <el-select v-model="OrderType" placeholder="普通订单"  @change="changeType" >
+            <el-select v-model="OrderType" placeholder="普通订单" >
               <el-option
                 v-for="item in optionType"
                 :key="item.value"
@@ -56,72 +58,73 @@
 
       </div>
       <div class="tradeRecord">
-        <div class="tradeList">
+        <div class="tradeList" v-for="( item,index ) in tradeList" :key="index">
           <div class="top">
-            <label>下单时间：2019-23-3 12：23：12</label>
-            <label>订单编号：hz1234124883612</label>
-            <label>商铺名称：金桔小店</label>
-            <label>客户手机：18923821231</label>
+            <label>下单时间：{{ item.paid_at }}</label>
+            <label>订单编号：{{item.no}}</label>
+            <label>客户手机：{{item.mobile}}</label>
           </div>
-          <div class="content" v-for="(item,index) in tradeList"  :key="index">
+          <div class="content">
             <div>
-              <div class="prolist"  v-for="(items,id) in item.list"  :key="id">
+              <div class="prolist"  v-for="(val,id) in item.items" :key="id">
                 <div class="proInfo">
-                  <img :src="items.img" alt="">
-                  <div class="desc">{{items.desc}}</div>
+                  <img :src="orderImageUrl(val.cover_url)" alt="">
+                  <div class="desc">{{val.name}}</div>
                 </div>
-                <div class="proNum">数量 x{{items.num}}</div>
-                <div class="price">
-                  <label>￥{{items.prePrice}}</label>
-                  <label>￥{{items.nowPrice}}</label>
-                </div>
+                <div class="proNum">数量 x{{val.count}}</div>
+                <div class="price">￥{{val.price}}</div>
               </div>
             </div>
-            <div class="orderMon" :style="{height:item.list.length*80+'px'}">
-              <label>￥{{item.totalPrice}}</label>
-              <label>运费：23933</label>
+            <div class="orderMon" :style="{height:item.length+'px'}">
+              <label>￥{{item.amount}}</label>
+              <label>运费：{{item.express_amount}}</label>
             </div>
-            <div class="orderResult"  :style="{height:item.list.length*80+'px'}">
-              <label>交易完成</label>
-              <label>订单详情</label>
+            <div class="orderResult"  :style="{height:item.length+'px'} ">
+                <label>{{tradeStatus(item.status)}}</label>
+              <router-link  :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
             </div>
           </div>
         </div>
         <el-pagination
           background
-          :page-size="20"
+          :page-size="15"
           :page-count="6"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
-          current-change="currentIndex"
-          :total="1000">
+          @current-change="currentIndex"
+          :total="totalPage">
         </el-pagination>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {mapMutations} from 'vuex'
+import {mapMutations, mapState} from 'vuex'
+import {customerOrder} from '../axios/api'
 export default {
   data () {
     return {
+      totalPage: 15,
       n: '1',
       // 搜索时间间隔
-      keyTime: '',
+      keyTime: [],
       // 搜索类别
       keyValue: '',
       // 商品名称
       keyName: '',
+      isWeek: false,
+      isMonth: false,
       // 订单类型
       optionType: [{
-        value: '1',
+        value: '0',
         label: '普通订单'
       }, {
-        value: '2',
-        label: '外部订单'
+        value: '1',
+        label: '内部订单'
       }],
-
+      // 用户id
+      user_id: '',
       // 搜索类型
       options: [{
         value: '1',
@@ -138,71 +141,97 @@ export default {
       }],
       // 搜索类型
       value: '1',
+      // 当前页
+      pages: 0,
       // 订单类型
-      OrderType: '1',
+      OrderType: '0',
       // 交易类型
       tradeType: 'first',
-      tradeList: [
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个伤心的故事',
-              num: 1,
-              prePrice: '12323',
-              nowPrice: '123'
-            },
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 12323,
-          yfPrice: 10
-        },
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 1323,
-          yfPrice: 0
-        }
-      ]
+      tradeList: []
     }
   },
   mounted () {
-    this.setMenuLeft('/customer')
+    this.setMenuLeft('/customer-management')
+    console.log(this.$route.params.id)
+    this.getData()
   },
   computed: {
+    ...mapState(['qiniuDomainUrl'])
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
-    changeType () {
+    orderImageUrl (value) {
+      return this.qiniuDomainUrl + value
+    },
+    // 分页点击
+    currentIndex (val) {
+      this.pages = val - 1
+      this.getData()
+    },
+    tradeStatus (value) {
+      if (value == 200) {
+        return '待付款'
+      } else if (value == 205) {
+        return '待发货'
+      } else if (value == 207) {
+        return '已取消'
+      } else if (value == 400) {
+        return '待收货'
+      } else if (value == 405) {
+        return '确认收货'
+      } else {
+        return '这是啥状态呀。是九阴白骨爪！'
+      }
+    },
+    getData () {
+      let params = {}
+      params.no = this.keyValue
+      params.name = this.keyName
+      params.status = this.OrderType
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
+      params.page = this.pages
+      params.id = this.$route.params.id
+      customerOrder(params).then(res => {
+        console.log(res)
+        console.log(res.headers.page_count)
+        this.totalPage = parseInt(res.headers.page_count) * 15
+        res.data.forEach(function (v, i) {
+          Object.assign(res.data[i], {length: res.data[i].items.length * 80})
+        })
+        this.tradeList = res.data
+      })
     },
     changeTime () {
+      let keyTimes = this.keyTime
+      this.isWeek = false
+      this.isMonth = false
+      this.keyTime = [keyTimes[0].getTime(), keyTimes[1].getTime()]
     },
     searchOrder () {
+      this.pages = 0
+      this.getData()
     },
-    timeRange (res, event) {
-      let flag = event.target.dataset.id
-      if (flag === '0') {
-        this.timeBtn = false
+    timeRange (day) {
+      if (day === 7) {
+        if (this.isWeek) {
+          this.isWeek = false
+          this.keyTime = []
+        } else {
+          this.isWeek = true
+          this.isMonth = false
+          this.keyTime = [(new Date().getTime() - day * 24 * 3600 * 1000), (new Date().getTime())]
+        }
       } else {
-        this.timeBtn = true
+        if (this.isMonth) {
+          this.isMonth = false
+          this.keyTime = []
+        } else {
+          this.isWeek = false
+          this.isMonth = true
+          this.keyTime = [(new Date().getTime() - day * 24 * 3600 * 1000), (new Date().getTime())]
+        }
       }
-      this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
-    },
-    handleClick (tab, event) {
-      console.log(tab.index)
     }
   }
 }
@@ -324,7 +353,6 @@ export default {
         }
       }
     }
-
     .tradeRecord {
       background: #fff;
       padding: 20px;
@@ -416,6 +444,7 @@ export default {
               font-size: 12px;
               margin: 0 auto;
               margin-top: 10px;
+              cursor: pointer;
             }
           }
           .orderMon{
@@ -431,7 +460,7 @@ export default {
               margin-top: 5px;
             }
           }
-          .proNum{
+          .price,.proNum{
             width: 20%;
             height: 100%;
             line-height: 80px;
@@ -440,26 +469,6 @@ export default {
             color: #666666;
             text-align: center;
             border-right: 1px solid #efefef;
-          }
-          .price{
-            height: 100%;
-            width: 20%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-right: 1px solid #efefef;
-            label:first-child{
-              font-family: MicrosoftYaHei;
-              font-size: 12px;
-              color: #999999;
-              text-decoration: line-through;
-            }
-            label:last-child{
-              font-size: 12px;
-              color: #333333;
-              font-family: MicrosoftYaHei;
-              margin-top: 5px;
-            }
           }
         }
       }
@@ -516,6 +525,7 @@ export default {
           border: 1px solid #eeeeee;
           color:#B5B5B5;
           margin-left: 20px;
+          cursor: pointer;
         }
         .cur{
           border: 1px solid #DE5B67;
