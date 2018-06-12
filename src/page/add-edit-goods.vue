@@ -479,8 +479,9 @@ export default {
     getGoods (id) {
       if (id) {
         goodsEditDetails(id).then(res => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data) {
+            console.log(1231231231321)
             let data = res.data
             this.goodsType = data.type
             this.goodsName = data.name
@@ -500,7 +501,7 @@ export default {
             this.renderingStatus(data.status)
           }
         }).catch(err => {
-          console.dir(err)
+          console.log(err)
         })
       }
     },
@@ -583,12 +584,14 @@ export default {
         for (let v of this.selectStateOptions) {
           if (v.value === id) {
             this.selectedOptions = [id]
-            break
+            return false
           } else {
-            for (let w of v.children) {
-              if (w.value === id) {
-                this.selectedOptions = [v.value, id]
-                break
+            if (v.children.length > 0) {
+              for (let w of v.children) {
+                if (w.value === id) {
+                  this.selectedOptions = [v.value, id]
+                  return false
+                }
               }
             }
           }
