@@ -10,7 +10,7 @@
           <ul>
             <li>
               <span class="name alignment-top required">选择商品：</span>
-              <div class="goods-img-box" v-if="recommendGoods.length == 0">
+              <div class="goods-img-box" v-if="recommendGoods.length == 0" data-id="111">
                 <span v-if="imgVisible(good)" @click="dialogClick" class="goods-img">
                   <img :src="qiniuDomainUrl + imgUrlCompu(good)" alt="">
                 </span>
@@ -71,7 +71,7 @@
 <script>
 import {mapState, mapMutations} from 'vuex'
 import selectProduction from '@/components/select-production'
-import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods, closeRecommendGood} from '@/axios/api'
+import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods, closeRecommendGood, singleRecommendGood} from '@/axios/api'
 export default {
   data () {
     return {
@@ -121,7 +121,7 @@ export default {
   },
   mounted () {
     this.setMenuLeft('/marketing-management/' + this.linkClass)
-    if (this.$route.query.id) {
+    if (this.$route.query.id && this.linkClass == 'special-offer') {
       // 请求编辑订单信息
       editorGoods(this.$route.query.id).then(res => {
         this.good = res.data
@@ -131,9 +131,16 @@ export default {
         this.stock = res.data.stock_count
         this.activityTime = [res.data.begin_at, res.data.end_at]
       })
-    }
-    if (this.$route.params.class == 'recommend') {
+    } else if (this.linkClass == 'recommend') {
       this.routerIf = false
+      if (this.$route.query.id) {
+        // 请求编辑推荐商品详情
+        singleRecommendGood(this.$route.query.id).then(res => {
+          console.log(res)
+          this.good = res.data
+          this.activityTime = [res.data.begin_at, res.data.end_at]
+        })
+      }
     }
   },
   methods: {
@@ -247,7 +254,7 @@ export default {
         })
       }
     },
-    // 商品信息更改
+    // 点击保存
     saveEditor () {
       if (JSON.stringify(this.good) !== '{}' || this.recommendGoods.length !== 0) {
         if (!this.errors.items.length && this.activityTime.length) {
@@ -257,8 +264,10 @@ export default {
           params.goods_sku_id = this.good.id
           params.goods_id = this.good.goods_id
           params.price = this.specialOffer * 100
-          params.begin_at = this.activityTime[0]
-          params.end_at = this.activityTime[1]
+          console.log(new Date(this.activityTime[0]).getTime())
+          params.begin_at = new Date(new Date(this.activityTime[0]).getTime() + 8 * 3600 * 1000)
+          console.log(params.begin_at)
+          params.end_at = new Date(new Date(this.activityTime[1]).getTime() + 8 * 3600 * 1000)
           params.stock_count = this.stock
           // 如果为新建商品
           if (JSON.stringify(this.$route.query) == '{}') { // 新建
@@ -310,10 +319,11 @@ export default {
               })
             }
           } else { // 编辑
-            // 更改商品信息
+            // 更改特价商品信息
             if (this.$route.params.class == 'special-offer') {
               closeGoods(params).then(res => {
-                if (res.data == '更新成功') {
+                console.log(res)
+                if (res.status == 200) {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
                 } else {
                   console.log(res)
@@ -321,6 +331,8 @@ export default {
                 }
               })
             } else if (this.$route.params.class == 'recommend') {
+              // 推荐
+              console.log(params)
               closeRecommendGood(params).then(res => {
                 console.log('更新推荐商品成功')
                 _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
@@ -346,6 +358,8 @@ export default {
         return true
       } else if (value.cover_url) {
         return true
+      } else if (value.goods) {
+        return true
       } else {
         return false
       }
@@ -356,6 +370,8 @@ export default {
         return value.goods_sku.cover_url
       } else if (value.cover_url) {
         return value.cover_url
+      } else if (value.goods.cover_url) {
+        return value.goods.cover_url
       }
     }
   },

@@ -35,7 +35,7 @@
           <span>订单</span>
         </template>
           <el-menu-item index="/order-management">订单管理</el-menu-item>
-          <el-menu-item index="/orderAfterSale">订单售后</el-menu-item>
+          <el-menu-item index="/order-afterSale">订单售后</el-menu-item>
       </el-submenu>
       <el-menu-item index="/customer-management">
         <i class="icon-客户"></i>

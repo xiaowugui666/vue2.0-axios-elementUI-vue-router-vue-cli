@@ -206,6 +206,14 @@ export function closeGoods (data) {
   })
 }
 
+// 获取单一推荐商品
+export function singleRecommendGood (id) {
+  return fetch({
+    url: api.ip + '/management/recommend_goods/' + id,
+    method: 'GET'
+  })
+}
+
 // 编辑推荐商品
 export function closeRecommendGood (data) {
   return fetch({
@@ -215,7 +223,7 @@ export function closeRecommendGood (data) {
   })
 }
 
-// 获取编辑商品信息
+// 获取编辑特价商品信息
 export function editorGoods (id) {
   return fetch({
     url: api.ip + '/management/special_goods/' + id,
