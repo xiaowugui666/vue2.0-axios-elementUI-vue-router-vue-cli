@@ -1,9 +1,7 @@
 // 有些不能用ip地址直接访问，先修改hosts文件
 export default {
   // 接口代理配置
-  ip: 'https://develop.yiqixuan.com', // 张思建 http://192.168.20.159:8000
-  hqip8080: 'http://192.168.20.176:8080', // 吴慧卿 192.168.20.176
-  cjip: 'http://192.168.20.198' // 将纯吉
+  ip: 'https://test.yiqixuan.com'
 }
 
 // 也可以像下面这样，区分环境或者区分服务器等等
