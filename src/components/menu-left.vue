@@ -16,7 +16,7 @@
         <i class="icon-概况"></i>
         <span>概况</span>
       </el-menu-item>
-      <el-menu-item index="/shopProfile">
+      <el-menu-item index="/shop-profile">
         <i class="icon-店铺"></i>
         <span>店铺</span>
       </el-menu-item>
@@ -34,10 +34,10 @@
           <i class="icon-订单"></i>
           <span>订单</span>
         </template>
-          <el-menu-item index="/orderManagement">订单管理</el-menu-item>
+          <el-menu-item index="/order-management">订单管理</el-menu-item>
           <el-menu-item index="/orderAfterSale">订单售后</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/customerManagement">
+      <el-menu-item index="/customer-management">
         <i class="icon-客户"></i>
         <span>客户</span>
       </el-menu-item>
@@ -96,6 +96,8 @@ export default {
       return height
     },
     getRoutePath (m) {
+      console.log(111111)
+      console.log(m)
       if (m) {
         return m
       } else {
