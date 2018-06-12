@@ -1,5 +1,6 @@
 <template>
   <div>
+    <menu-left routeIndex="3-1"></menu-left>
     <div class="commodity-management-subject">
       <div class="commodity-management-state-search">
         <ul class="commodity-management-state clear">
@@ -119,7 +120,7 @@
               prev-text="< 上一页"
               next-text="下一页 >"
               layout="prev, pager, next"
-              :current-page="page"
+              :current-page="page+1"
               @current-change="currentChange"
               :total="page_count*10">
             </el-pagination>
@@ -131,7 +132,8 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
   data () {
@@ -157,21 +159,18 @@ export default {
   created () {
     this.getGoodsList()
     this.getGoodsCategory()
-    this.setMenuLeft('/commodity-management')
   },
   mounted () {
     // console.log(this.selectStateOptions)
   },
   computed: {
-    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     // 获取商品列表
     getGoodsList (data = {
-      cat_id: this.cat_id,
-      // goods_name: this.goods_name,
-      goods_name: encodeURIComponent(this.goods_name),
+      category_id: this.cat_id,
+      goods_name: this.goods_name,
       page: this.page,
       status: this.managementState !== 0 ? this.managementState : ''
     }) {
@@ -346,6 +345,7 @@ export default {
         })
       })
     },
+    // 初始化表格选中状态
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -362,7 +362,7 @@ export default {
     },
     // 点击分页数
     currentChange (page) {
-      // console.log(page)
+      console.log(page)
       this.page = page - 1
       this.getGoodsList()
     },
@@ -374,6 +374,9 @@ export default {
         path: link
       })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
 import {initialSetData, checkAuth} from '../axios/api'
 import api from '../axios/url'
 export default {
@@ -13,16 +12,12 @@ export default {
     }
   },
   created () {
-    this.setMenuShow(false)
     this.loginState(this.userToken)
   },
-  computed: {
-    ...mapState(['menuShow'])
-  },
   methods: {
-    ...mapMutations(['setMenuShow']),
     // 通过url上携带的token判断是否登录，并获取api-key，api-secret
     loginState (userToken) {
+      // 如果url上有携带token参数
       if (userToken.token) {
         this.$http.post(api.cjip + '/management/login', {token: userToken.token})
           .then(res => {
@@ -35,6 +30,7 @@ export default {
             // location.href = 'http://www.51zan.cn/login.html'
           })
       } else if (userToken.appid) {
+        // 绑定小程序回来后，url上会带有appid参数
         checkAuth({app_id: userToken.appid}).then(res => {
           this.getInitialSetData()
         }).catch()

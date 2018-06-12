@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="3-1"></menu-left>
     <div class="add-goods-object">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <div class="add-goods-type plate">
@@ -307,11 +309,13 @@
       </div>
       </el-form>
     </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 import {goodsEditDetails, goodsCategory, getQnToken, addEditGoods} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
@@ -463,7 +467,6 @@ export default {
     }
   },
   created () {
-    this.setRoutePath()
     this.getGoodsCategory()
     this.getImageToken()
   },
@@ -472,11 +475,6 @@ export default {
     // console.log(this.hash)
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
-    // 设置路径为商品列表的路径，以便于菜单栏选中
-    setRoutePath () {
-      this.setMenuLeft('/commodity-management')
-    },
     // 若存在商品id，获取商品信息
     getGoods (id) {
       if (id) {
@@ -1054,16 +1052,15 @@ export default {
       }, [[]])
     }
   },
-  watch: {
-  },
   computed: {
-    ...mapState(['menuLeft', 'yiqixuanDomainUrl', 'qiniuUploadUrl']),
+    ...mapState(['yiqixuanDomainUrl', 'qiniuUploadUrl']),
     editor () {
       return this.$refs.myQuillEditor.quill
     }
   },
   components: {
-    quillEditor
+    quillEditor,
+    menuLeft
   }
 }
 </script>

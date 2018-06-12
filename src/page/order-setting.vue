@@ -1,5 +1,6 @@
 <template>
     <div>
+      <menu-left routeIndex="8-2"></menu-left>
       <div class="time-setting-subject">
         <div class="order-cancellation-time plate">
           <div class="plate-top">
@@ -37,6 +38,7 @@
 
 <script>
 import {initialSetData} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -47,6 +49,7 @@ export default {
     }
   },
   components: {
+    menuLeft
   },
   methods: {
     // 限制输入

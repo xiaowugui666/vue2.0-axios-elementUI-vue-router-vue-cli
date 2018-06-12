@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="5"></menu-left>
     <div class="cus-container">
       <div class="header">
         <div class="number">
@@ -84,10 +86,12 @@
         </el-dialog>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { user } from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -98,25 +102,27 @@ export default {
       wechatNum: '',
       value: '',
       pages: 0,
-      options: [{
-        value: '1',
-        label: '1+'
-      }, {
-        value: '2',
-        label: '5+'
-      }, {
-        value: '3',
-        label: '10+'
-      }, {
-        value: '4',
-        label: '20+'
-      }, {
-        value: '5',
-        label: '50+'
-      }, {
-        value: '6',
-        label: '100+'
-      }],
+      options: [
+        {
+          value: '1',
+          label: '1+'
+        }, {
+          value: '2',
+          label: '5+'
+        }, {
+          value: '3',
+          label: '10+'
+        }, {
+          value: '4',
+          label: '20+'
+        }, {
+          value: '5',
+          label: '50+'
+        }, {
+          value: '6',
+          label: '100+'
+        }
+      ],
       tableData: []
     }
   },
@@ -189,6 +195,9 @@ export default {
       this.pages = val
       this.search()
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

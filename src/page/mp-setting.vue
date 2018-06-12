@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="8-4"></menu-left>
     <div class="mp-setting-object">
       <div class="mp-setting-content">
         <p>
@@ -30,10 +32,12 @@
         </el-dialog>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import {untieMp} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -45,10 +49,12 @@ export default {
       untieMp().then(res => {
         console.log(res)
       }).catch(err => {
-        console.log(12312321)
         console.dir(err.request, '失败')
       })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

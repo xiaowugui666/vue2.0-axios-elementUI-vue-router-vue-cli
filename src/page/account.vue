@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="6"></menu-left>
     <div class="account-object">
       <div class="account-content">
         <div class="income-display">
@@ -71,10 +73,12 @@
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { settlement, incomeInfo } from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -126,6 +130,9 @@ export default {
         name: 'accountDetails', params: { id: link }
       })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

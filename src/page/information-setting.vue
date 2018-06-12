@@ -1,5 +1,6 @@
 <template>
     <div>
+      <menu-left routeIndex="8-1"></menu-left>
       <div class="info-setting-subject">
         <div class="subject-info plate">
           <div class="plate-top">
@@ -143,12 +144,13 @@
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {initialSetData, getQnToken} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      shopName: '阿迪达斯旗舰店',
-      shopNum: 321354656454,
+      shopName: '',
+      shopNum: '',
       creationTime: '',
       shopChiefName: '',
       telNum: '',
@@ -169,7 +171,8 @@ export default {
     }
   },
   components: {
-    CodeToText
+    CodeToText,
+    menuLeft
   },
   created () {
     this.getImageToken()
