@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left :routeIndex="menuLeftIndex"></menu-left>
     <div class="marketing-management-object">
       <div class="marketing-management-content">
         <div class="marketing-management-state clear">
@@ -32,7 +34,7 @@
               width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box" v-if="scope.row.goods">
-                  <span class="goods-img"><img :src="scope.row.goods_sku ? qiniuDomainUrl + scope.row.goods_sku.cover_url : qiniuDomainUrl + scope.row.goods.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="scope.row.goods_sku ? yiqixuanDomainUrl + scope.row.goods_sku.cover_url : yiqixuanDomainUrl + scope.row.goods.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
                     <div class="goods-info-price-category">
@@ -112,10 +114,12 @@
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
+import menuLeft from '@/components/menu-left'
 import {marketingGoods, closeGoods, deleteSpecial, deleteRecommend, closeRecommendGood} from '../axios/api'
 export default {
   data () {
@@ -126,10 +130,13 @@ export default {
       goodsList: [],
       multipleSelection: '',
       linkClass: this.$route.params.class,
-      timeStamp: ''
+      timeStamp: '',
+      // 左侧菜单栏选中的菜单index
+      menuLeftIndex: ''
     }
   },
   mounted () {
+    this.setMenuLeftIndex()
     this.request(0)
   },
   watch: {
@@ -140,14 +147,21 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
+    // 通过url上带的参数选择菜单栏选中状态
+    setMenuLeftIndex () {
+      if (this.linkClass === 'special-offer') {
+        this.menuLeftIndex = '7-1'
+      } else if (this.linkClass === 'recommend') {
+        this.menuLeftIndex = '7-2'
+      }
+    },
     // 页面初始数据加载
     request (curPage) {
       // 路由判定
       let router = 'special-offer'
-      if (this.$route.params.class == 'special-offer') {
+      if (this.linkClass == 'special-offer') {
         router = 'special_goods'
-      } else if (this.$route.params.class == 'recommend') {
+      } else if (this.linkClass == 'recommend') {
         router = 'recommend_goods'
       }
       // 获取商品列表
@@ -290,7 +304,10 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

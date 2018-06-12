@@ -1,5 +1,7 @@
 <template>
-  <div class="cus-order-container">
+  <div>
+    <menu-left routeIndex="5"></menu-left>
+    <div class="cus-order-container">
     <div class="home-content">
       <div class="header">
         <div class="selectInfo">
@@ -98,10 +100,12 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 <script>
 import {mapMutations, mapState} from 'vuex'
 import {customerOrder} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -156,12 +160,12 @@ export default {
     this.getData()
   },
   computed: {
-    ...mapState(['qiniuDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
     orderImageUrl (value) {
-      return this.qiniuDomainUrl + value
+      return this.yiqixuanDomainUrl + value
     },
     // 分页点击
     currentIndex (val) {
@@ -233,6 +237,9 @@ export default {
         }
       }
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

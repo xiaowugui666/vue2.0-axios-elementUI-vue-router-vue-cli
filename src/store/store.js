@@ -5,9 +5,7 @@ Vue.use(Vuex)
 
 const state = {
   menuLeft: '',
-  qiniuDomainUrl: '//p94iruedm.bkt.clouddn.com/',
   qiniuUploadUrl: '//upload.qiniup.com',
-  menuShow: true,
   yiqixuanDomainUrl: '//image.yiqixuan.com/',
   mainCategory: [
     {
@@ -132,9 +130,6 @@ const state = {
 const mutations = {
   setMenuLeft (state, i) {
     state.menuLeft = i
-  },
-  setMenuShow (state, i) {
-    state.menuShow = i
   }
 }
 

@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="3-1"></menu-left>
     <div class="add-goods-object">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <div class="add-goods-type plate">
@@ -307,11 +309,13 @@
       </div>
       </el-form>
     </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 import {goodsEditDetails, goodsCategory, getQnToken, addEditGoods} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
@@ -463,7 +467,6 @@ export default {
     }
   },
   created () {
-    this.setRoutePath()
     this.getGoodsCategory()
     this.getImageToken()
   },
@@ -472,17 +475,13 @@ export default {
     // console.log(this.hash)
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
-    // 设置路径为商品列表的路径，以便于菜单栏选中
-    setRoutePath () {
-      this.setMenuLeft('/commodity-management')
-    },
     // 若存在商品id，获取商品信息
     getGoods (id) {
       if (id) {
         goodsEditDetails(id).then(res => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data) {
+            console.log(1231231231321)
             let data = res.data
             this.goodsType = data.type
             this.goodsName = data.name
@@ -502,7 +501,7 @@ export default {
             this.renderingStatus(data.status)
           }
         }).catch(err => {
-          console.dir(err)
+          console.log(err)
         })
       }
     },
@@ -585,12 +584,14 @@ export default {
         for (let v of this.selectStateOptions) {
           if (v.value === id) {
             this.selectedOptions = [id]
-            break
+            return false
           } else {
-            for (let w of v.children) {
-              if (w.value === id) {
-                this.selectedOptions = [v.value, id]
-                break
+            if (v.children.length > 0) {
+              for (let w of v.children) {
+                if (w.value === id) {
+                  this.selectedOptions = [v.value, id]
+                  return false
+                }
               }
             }
           }
@@ -601,7 +602,7 @@ export default {
     renderingGoodsImageList (imgList) {
       if (imgList) {
         for (let v of imgList) {
-          this.goodsImageShowList.push({id: v.id, url: this.qiniuDomainUrl + v.icon_url, key: v.icon_url})
+          this.goodsImageShowList.push({id: v.id, url: this.yiqixuanDomainUrl + v.icon_url, key: v.icon_url})
         }
       }
     },
@@ -649,7 +650,7 @@ export default {
     },
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
-      this.goodsImageShowList.push({id: '', url: this.qiniuDomainUrl + response.key, key: response.key, modified: file.name})
+      this.goodsImageShowList.push({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
       this.goodsImageValidate = false
     },
     // 删除商品图片列表中的图片，删除商品图片的key
@@ -668,7 +669,7 @@ export default {
     // 商品卖点详情，图片上传成功后的操作
     quillUpScuccess (e, file, fileList) {
       let vm = this
-      let url = this.qiniuDomainUrl + e.key
+      let url = this.yiqixuanDomainUrl + e.key
       if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
         let value = url
         // API: https://segmentfault.com/q/1010000008951906
@@ -910,7 +911,7 @@ export default {
     },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
-      this.skus[index].cover_url = this.qiniuDomainUrl + res.key
+      this.skus[index].cover_url = this.yiqixuanDomainUrl + res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
@@ -1054,16 +1055,15 @@ export default {
       }, [[]])
     }
   },
-  watch: {
-  },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl', 'qiniuUploadUrl']),
+    ...mapState(['yiqixuanDomainUrl', 'qiniuUploadUrl']),
     editor () {
       return this.$refs.myQuillEditor.quill
     }
   },
   components: {
-    quillEditor
+    quillEditor,
+    menuLeft
   }
 }
 </script>

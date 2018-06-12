@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left :routeIndex="menuLeftIndex"></menu-left>
     <div class="add-activity-object">
       <div class="add-activity-content">
         <div class="bread-bar plate">
@@ -12,13 +14,13 @@
               <span class="name alignment-top required">选择商品：</span>
               <div class="goods-img-box" v-if="recommendGoods.length == 0">
                 <span v-if="imgVisible(good)" @click="dialogClick" class="goods-img">
-                  <img :src="qiniuDomainUrl + imgUrlCompu(good)" alt="">
+                  <img :src="yiqixuanDomainUrl + imgUrlCompu(good)" alt="">
                 </span>
                 <i v-else @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
               <div class="goods-img-box" v-else>
                 <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 5px;">
-                  <img :src="qiniuDomainUrl + imgUrlCompu(item)" alt="">
+                  <img :src="yiqixuanDomainUrl + imgUrlCompu(item)" alt="">
                 </span>
                 <i @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
@@ -64,18 +66,22 @@
           </ul>
         </div>
       </div>
-      <select-production v-if="newGoods.length" :newGoods="newGoods" :qiniuDomainUrl="qiniuDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
+      <select-production v-if="newGoods.length" :newGoods="newGoods" :yiqixuanDomainUrl="yiqixuanDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import selectProduction from '@/components/select-production'
 import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods, closeRecommendGood} from '@/axios/api'
 export default {
   data () {
     return {
       linkClass: this.$route.query.class || this.$route.params.class,
+      // 左侧菜单栏选中的菜单index
+      menuLeftIndex: '',
       specialOffer: '',
       originalPrice: '',
       stock: '',
@@ -120,7 +126,7 @@ export default {
     }
   },
   mounted () {
-    this.setMenuLeft('/marketing-management/' + this.linkClass)
+    this.setMenuLeftIndex()
     if (this.$route.query.id) {
       // 请求编辑订单信息
       editorGoods(this.$route.query.id).then(res => {
@@ -137,9 +143,16 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     getHandleClose (msg) {
       this.goodsDialogVisible = msg
+    },
+    // 通过url上带的参数选择菜单栏选中状态
+    setMenuLeftIndex () {
+      if (this.linkClass === 'special-offer') {
+        this.menuLeftIndex = '7-1'
+      } else if (this.linkClass === 'recommend') {
+        this.menuLeftIndex = '7-2'
+      }
     },
     // 点击选择模态框商品
     getGoodsId (value) {
@@ -360,10 +373,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
   },
   components: {
-    selectProduction
+    selectProduction,
+    menuLeft
   }
 }
 </script>
