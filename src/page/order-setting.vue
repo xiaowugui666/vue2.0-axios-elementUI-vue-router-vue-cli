@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import {orderSetting, orderSettingPut} from '../axios/api'
+import {initialSetData} from '../axios/api'
 export default {
   data () {
     return {
@@ -65,7 +65,7 @@ export default {
       let params = this.configData
       params.order_expire_time = Number(this.cancellationTime)
       params.confirm_goods_time = Number(this.receiptTime)
-      orderSettingPut(params).then(res => {
+      initialSetData('put', params).then(res => {
         console.log(res)
       })
     },
@@ -87,11 +87,10 @@ export default {
     }
   },
   mounted () {
-    orderSetting().then(res => {
-      console.log(res)
+    initialSetData('get').then(res => {
+      console.log(res.data)
       this.configData = res.data
       this.cancellationTime = res.data.order_expire_time
-      console.log(this.cancellationTime)
       this.receiptTime = res.data.order_auto_confirm_days
     })
   }

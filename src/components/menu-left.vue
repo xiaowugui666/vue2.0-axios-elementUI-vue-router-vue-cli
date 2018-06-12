@@ -16,7 +16,7 @@
         <i class="icon-概况"></i>
         <span>概况</span>
       </el-menu-item>
-      <el-menu-item index="/shopProfile">
+      <el-menu-item index="/shop-profile">
         <i class="icon-店铺"></i>
         <span>店铺</span>
       </el-menu-item>
@@ -34,10 +34,10 @@
           <i class="icon-订单"></i>
           <span>订单</span>
         </template>
-          <el-menu-item index="/orderManagement">订单管理</el-menu-item>
+          <el-menu-item index="/order-management">订单管理</el-menu-item>
           <el-menu-item index="/orderAfterSale">订单售后</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/customerManagement">
+      <el-menu-item index="/customer-management">
         <i class="icon-客户"></i>
         <span>客户</span>
       </el-menu-item>
@@ -58,8 +58,8 @@
           <i class="icon-设置"></i>
           <span>设置</span>
         </template>
-          <el-menu-item index="/informationSetting">信息设置</el-menu-item>
-          <el-menu-item index="/orderSetting">订单设置</el-menu-item>
+          <el-menu-item index="/information-setting">信息设置</el-menu-item>
+          <el-menu-item index="/order-setting">订单设置</el-menu-item>
           <el-menu-item index="/pay-setting">支付设置</el-menu-item>
           <el-menu-item index="/mp-setting">小程序设置</el-menu-item>
       </el-submenu>
@@ -86,10 +86,10 @@ export default {
   methods: {
     ...mapMutations(['setMenuLeft']),
     handleOpen (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     handleClose (key, keyPath) {
-      console.log(key, keyPath)
+      // console.log(key, keyPath)
     },
     getClientHeight () {
       let height = document.documentElement.clientHeight + 'px'
@@ -117,6 +117,7 @@ export default {
   z-index: 99;
   width: 180px;
   min-height: 600px;
+  overflow-y: auto;
   background: #fff;
   position: fixed;
   box-shadow: 3px 0 2px #eee;

@@ -1,53 +1,23 @@
 <template>
     <div class="pay-setting-object">
       <div class="pay-setting-content">
-        <payment-info :busiInformation="busiInformation" :token="token" :agreement-show="agreementShow" @changeSetting="configSetting"></payment-info>
+        <payment-info></payment-info>
       </div>
     </div>
 </template>
 
 <script>
 import paymentInfo from '@/components/payment-info'
-import {orderSetting, orderSettingPut, getQnToken} from '../axios/api'
 export default {
   data () {
-    return {
-      agreementShow: false,
-      busiInformation: {},
-      token: ''
-    }
+    return {}
+  },
+  mounted () {
+  },
+  methods: {
   },
   components: {
     paymentInfo
-  },
-  mounted () {
-    orderSetting().then(res => {
-      console.log(res)
-      this.busiInformation = res.data
-    })
-    this.getToken()
-  },
-  methods: {
-    configSetting (value, type) {
-      let params = this.busiInformation
-      if (type == 1) {
-        params.merchant_no = value
-      } else if (type == 2) {
-        params.merchant_key = value
-      } else if (type == 3) {
-        console.log(value)
-        params.merchant_cert = value
-      }
-      orderSettingPut(params).then(res => {
-        console.log(res)
-      })
-    },
-    getToken () {
-      getQnToken('document').then(res => {
-        console.log(res)
-        this.token = res.data
-      })
-    }
   }
 }
 </script>

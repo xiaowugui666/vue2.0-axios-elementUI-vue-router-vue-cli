@@ -22,13 +22,12 @@
                       <div class="tag-img">
                         <el-upload
                           class="avatar-uploader"
-                          :action="uploadImgApi"
+                          :action="qiniuUploadUrl"
                           :data="upToken"
                           :show-file-list="false"
-                          :on-change='(value)=>changeUpload(value, index, index2)'
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url ? STATICDOMAIN + item.children[index2].icon_url : '/static/test/ceshi.png'" class="avatar">
+                          <img :src="item.children[index2].icon_url ? qiniuDomainUrl + item.children[index2].icon_url : '/static/default-img/secondary-classification-default.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -38,6 +37,7 @@
                       v-model="inputSpacValue"
                       :ref="'saveSpecTagInput'+index"
                       size="small"
+                      maxlength="20"
                       @keyup.enter.native="handleInputSpec(index, item.id)"
                       @blur="handleInputSpec(index, item.id)"
                     >
@@ -76,15 +76,12 @@ import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategor
 export default {
   data () {
     return {
-      uploadImgApi: '//upload.qiniup.com',
       dialogVisible: false,
       categoryList: [],
       inputSpacVisible: [],
       inputSpacValue: '',
       // 七牛上传图片所需要的token
       upToken: {},
-      // 七牛图片预览的域名
-      STATICDOMAIN: 'http://p94iruedm.bkt.clouddn.com/',
       firstCategoryList: [
         {
           value: 1,
@@ -392,7 +389,7 @@ export default {
         addGoodsCategory({
           'name': inputValue,
           'parent_id': id,
-          'icon': '/static/test/ceshi.png'
+          'icon': ''
         }).then(res => {
           // this.$message.success('添加二级分类成功！')
           // 接口请求成功返回二级分类的id，把id添加到对象上
@@ -403,8 +400,8 @@ export default {
       this.$set(this.inputSpacVisible, index, false)
       this.inputSpacValue = ''
     },
+    // 上传文件之前对上传内容的验证
     beforeAvatarUpload (file) {
-      // 上传文件之前对上传内容的验证
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt1M = file.size / 1024 / 1024 < 1
       const isMt10K = file.size > 100
@@ -420,10 +417,6 @@ export default {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
-    },
-    // 更改本地图片显示
-    changeUpload (file, index, index2) {
-      // this.categoryList[index].children[index2].icon_url = file.url
     },
     // 二级分类图片上传
     handleAvatarSuccess (res, file, parent, children) {
@@ -447,7 +440,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft'])
+    ...mapState(['menuLeft', 'qiniuDomainUrl', 'qiniuUploadUrl'])
   }
 }
 </script>
@@ -499,8 +492,8 @@ export default {
             .avatar {
               width: 100%;
               height: 100%;
-              min-width: 85px;
-              min-height: 85px;
+              max-width: 85px;
+              max-height: 85px;
             }
           }
           .el-tag {

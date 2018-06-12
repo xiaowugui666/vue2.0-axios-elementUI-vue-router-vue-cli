@@ -16,7 +16,7 @@
             clearable
             class="select-state"
             :options="selectStateOptions"
-            v-model="selectedOptions"
+            v-model.trim="selectedOptions"
             @change="categoryChange">
           </el-cascader>
           <span>商品名称：</span>
@@ -76,7 +76,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="stock_count"
+              prop="stock_total"
               label="库存"
               width="80"
               show-overflow-tooltip>
@@ -104,11 +104,11 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              width="180">
+              width="140">
               <template slot-scope="scope">
                 <el-button type="text" size="small" @click="setRouter('/add-edit-goods?gid='+scope.row.id)">编辑</el-button>
                 <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
-                <el-button type="text" size="small" class="black-btn">浏览</el-button>
+                <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
               </template>
             </el-table-column>
           </el-table>
@@ -137,7 +137,7 @@ export default {
   data () {
     return {
       managementState: 0, // 商品状态tab
-      page: 1,
+      page: 0,
       cat_id: '',
       goods_name: '',
       searchComName: '',
@@ -214,7 +214,7 @@ export default {
       if (typeof status !== 'undefined') {
         this.managementState = status
       }
-      this.page = 1
+      this.page = 0
       if (this.selectedOptions) {
         this.cat_id = this.selectedOptions[this.selectedOptions.length - 1]
       }
@@ -258,19 +258,17 @@ export default {
           }
           goodsStatus({'ids': statusArr, 'status': status}).then(res => {
             // console.log(res)
-            if (res.status === 204) {
-              for (let w of _this.tableData) {
-                if (statusArr.indexOf(w.id) > -1) {
-                  w.status = status
-                }
+            for (let w of _this.tableData) {
+              if (statusArr.indexOf(w.id) > -1) {
+                w.status = status
               }
-              this.toggleSelection()
-              this.$message({
-                showClose: true,
-                type: 'success',
-                message: `${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
-              })
             }
+            this.toggleSelection()
+            this.$message({
+              showClose: true,
+              type: 'success',
+              message: `批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
+            })
           }).catch(err => {
             console.log(err)
           })
@@ -280,15 +278,12 @@ export default {
           }
           goodsDelete({'ids': statusArr}).then(res => {
             console.log(res)
-            if (res.status === 204) {
-              this.getGoodsList()
-              // this.toggleSelection()
-              this.$message({
-                showClose: true,
-                type: 'success',
-                message: `${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
-              })
-            }
+            this.getGoodsList()
+            this.$message({
+              showClose: true,
+              type: 'success',
+              message: `批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
+            })
           }).catch(err => {
             console.log(err)
           })
@@ -368,7 +363,7 @@ export default {
     // 点击分页数
     currentChange (page) {
       // console.log(page)
-      this.page = page
+      this.page = page - 1
       this.getGoodsList()
     },
     categoryChange (val) {

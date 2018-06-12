@@ -8,28 +8,29 @@
           <div class="subject-info-list">
             <ul>
               <li>
-                <span class="name">商铺名称：</span>
-                <span v-show="!editState">{{shopName}}</span>
-                <input v-show="editState" type="text" v-model="shopName" placeholder="请输入店铺名称"/>
+                <span class="name required">商铺名称：</span>
+                <span v-if="!editState">{{shopName}}</span>
+                <input v-if="editState" type="text" v-validate="'required'" name="店铺名称" v-model="shopName" placeholder="请输入店铺名称"/>
+                <div class="err-tips">{{ errors.first('店铺名称') }}</div>
               </li>
               <li>
                 <span class="name">商铺编号：</span>
                 <span>{{shopNum}}</span>
               </li>
-              <li>
-                <span class="name">店铺认证：</span>
-                <span style="padding-right: 10px;">已认证</span>
-                <i class="icon-淘宝认证"></i>
-                <i class="icon-微信认证"></i>
-                <i class="icon-公众号认证"></i>
-                <i class="icon-京东认证"></i>
-              </li>
+              <!--<li>-->
+                <!--<span class="name">店铺认证：</span>-->
+                <!--<span style="padding-right: 10px;">已认证</span>-->
+                <!--<i class="icon-淘宝认证"></i>-->
+                <!--<i class="icon-微信认证"></i>-->
+                <!--<i class="icon-公众号认证"></i>-->
+                <!--<i class="icon-京东认证"></i>-->
+              <!--</li>-->
               <li>
                 <span class="name">主营类目：</span>
-                <span v-show="!editState">{{value}}</span>
-                <el-select v-show="editState" v-model="value" size="small" class="select-state">
+                <span v-if="!editState">{{categoryValue}}</span>
+                <el-select v-if="editState" v-model="categoryValue" size="small" class="select-state">
                   <el-option
-                    v-for="item in selectStateOptions"
+                    v-for="item in mainCategory"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -51,52 +52,52 @@
             <ul>
               <li>
                 <span class="name alignment-top">商铺logo：</span>
-                <img v-show="!editState" class="store-logo-img" :src="imageUrl" alt="">
+                <img v-if="!editState" class="store-logo-img" :src="logoImageUrl" alt="">
                 <el-upload
-                  v-show="editState"
+                  v-if="editState"
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-change='changeUpload'
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
-                  :auto-upload="false"
-                  :on-success="handleAvatarSuccess">
-                  <img :src="imageUrl" class="avatar">
+                  :on-success="handleLogoSuccess">
+                  <img :src="logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</p>
+                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top">商铺描述：</span>
-                <span v-show="!editState" class="shop-description-txt">{{textarea}}</span>
-                <textarea v-show="editState" class="shop-description-textarea" placeholder="请输入商品描述" v-model="textarea"></textarea>
+                <span class="name alignment-top required">商铺描述：</span>
+                <span v-if="!editState" class="shop-description-txt">{{textArea}}</span>
+                <textarea v-if="editState" v-validate="'required'" name="商铺描述" class="shop-description-textarea" v-model="textArea" placeholder="请输入商品描述"></textarea>
+                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
               </li>
               <li>
-                <span class="name alignment-top">banner：</span>
-                <img v-show="!editState" class="shop-description-img" :src="imageUrl2" alt="">
+                <span class="name alignment-top required">banner：</span>
+                <img v-if="!editState" class="shop-description-img" :src="bannerImageUrl" alt="">
                 <el-upload
-                  v-show="editState"
+                  v-if="editState"
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-change='changeUpload'
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
-                  :auto-upload="false"
-                  :on-success="handleAvatarSuccess">
-                  <img :src="imageUrl2" class="avatar avatar2">
+                  :on-success="handleBannerSuccess">
+                  <img v-if="bannerImageUrl" :src="bannerImageUrl" class="avatar avatar2">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</p>
+                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
                 <span class="name required">店长姓名：</span>
-                <span v-show="!editState">{{shopChiefName}}</span>
-                <input v-show="editState" type="text" v-model="shopChiefName" placeholder="请输入店长姓名"/>
+                <span v-if="!editState">{{shopChiefName}}</span>
+                <input v-if="editState" type="text" v-validate="'required'" name="店长姓名" v-model="shopChiefName" placeholder="请输入店长姓名"/>
+                <div class="err-tips">{{ errors.first('店长姓名') }}</div>
               </li>
               <li>
                 <span class="name">联系电话：</span>
@@ -104,18 +105,20 @@
               </li>
               <li>
                 <span class="name">联系微信：</span>
-                <span v-show="!editState">{{contactWeChat}}</span>
-                <input v-show="editState" type="text" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+                <span v-if="!editState">{{contactWeChat}}</span>
+                <input v-if="editState" type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+                <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
                 <span class="name">客服电话：</span>
-                <span v-show="!editState">{{customerServiceNum}}</span>
-                <input v-show="editState" type="text" v-model="customerServiceNum" placeholder="请输入客服电话"/>
+                <span v-if="!editState">{{customerServiceNum}}</span>
+                <input v-if="editState" type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话"/>
+                <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
               <li>
                 <span class="name">联系地址：</span>
-                <span v-show="!editState">{{getDetailedAddress() + contactAddress}}</span>
-                <div v-show="editState" class="el-cascader-box">
+                <span v-if="!editState">{{getDetailedAddress() + contactAddress}}</span>
+                <div v-if="editState" class="el-cascader-box">
                   <el-cascader
                     size="small"
                     :options="options"
@@ -130,82 +133,142 @@
           </div>
         </div>
         <div class="edit-btn">
-          <el-button v-show="!editState" type="primary" size="small" @click="editClick" style="padding-left: 25px;padding-right: 25px;">编辑</el-button>
-          <el-button v-show="editState" type="success" size="small" @click="editClick" style="padding-left: 25px;padding-right: 25px;">保存</el-button>
+          <el-button v-if="!editState" type="primary" size="small" @click="editClick">编辑</el-button>
+          <el-button v-if="editState" type="success" size="small" @click="editClick">保存</el-button>
         </div>
       </div>
     </div>
 </template>
 
 <script>
-import ceshi from '../assets/ceshi.png'
-import ceshi2 from '../assets/ceshi2.png'
-import { regionData, CodeToText } from 'element-china-area-data'
+import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
+import {initialSetData, getQnToken} from '../axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
       shopName: '阿迪达斯旗舰店',
       shopNum: 321354656454,
-      creationTime: '2018-01-02 10:05',
-      shopChiefName: '陈天一',
-      telNum: 13611895011,
-      contactWeChat: 'asdasq2134141',
-      customerServiceNum: '021-65465400',
+      creationTime: '',
+      shopChiefName: '',
+      telNum: '',
+      contactWeChat: '',
+      customerServiceNum: '',
       editState: false,
-      imageUrl: ceshi,
-      imageUrl2: ceshi2,
-      textarea: 'wqetrwqerwesdfdfasldkfjalsejtlaweflsadkjflwe',
+      logoImageUrl: '/static/default-img/shops-default-logo.png',
+      logoKey: '',
+      bannerImageUrl: '',
+      bannerKey: '',
+      textArea: '',
       options: regionData,
-      selectedOptions: [ '350000', '350100', '350102' ],
-      contactAddress: '永康路99弄9号909室',
-      selectStateOptions: [{
-        value: '1',
-        label: '食品'
-      }, {
-        value: '2',
-        label: '数码家电'
-      }, {
-        value: '3',
-        label: '女装'
-      }, {
-        value: '4',
-        label: '美妆'
-      }, {
-        value: '5',
-        label: '日用百货'
-      }],
-      value: '食品'
+      selectedOptions: [],
+      contactAddress: '',
+      categoryValue: 1,
+      // 图片上传需要的token
+      upToken: {}
     }
   },
   components: {
     CodeToText
   },
+  created () {
+    this.getImageToken()
+    this.getInitialSetData()
+  },
   mounted () {
-    this.beforeUpload()
   },
   methods: {
+    // 获取图片上传七牛的token
+    getImageToken () {
+      getQnToken('image').then(res => {
+        this.upToken.token = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 进入页面获取店铺信息
+    getInitialSetData () {
+      initialSetData('get').then(res => {
+        console.log(res.data)
+        let data = res.data
+
+        this.shopName = data.name
+        this.categoryValue = data.type
+        this.creationTime = data.created_at
+        if (data.logo_url) {
+          this.logoImageUrl = this.qiniuDomainUrl + data.logo_url
+        }
+        if (data.banner) {
+          this.bannerImageUrl = this.qiniuDomainUrl + data.banner
+        }
+        this.textArea = data.description
+        this.shopChiefName = data.owner_name
+        this.telNum = data.mobile
+        this.contactWeChat = data.wechat ? data.wechat : ''
+        this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
+        this.getRegionCode(data.province, data.city, data.region)
+        this.contactAddress = data.address
+      })
+    },
+    // 根据主营类目的value获取类目名称
+    getCategory () {
+      for (let v of this.mainCategory) {
+        if (v.value === this.categoryValue) {
+          return v.label
+        }
+      }
+    },
+    // 商铺logo图片上传成功后的操作
+    handleLogoSuccess (res, file) {
+      this.logoKey = res.key
+      this.logoImageUrl = URL.createObjectURL(file.raw)
+    },
+    // 商铺banner图片上传成功后的操作
+    handleBannerSuccess (res, file) {
+      this.bannerKey = res.key
+      this.bannerImageUrl = URL.createObjectURL(file.raw)
+    },
+    // 上传文件之前对上传内容的验证
+    beforeUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      const isLt1M = file.size / 1024 / 1024 < 1
+      const isMt10K = file.size > 100
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
+        return false
+      }
+      if (!isLt1M) {
+        this.$message.error('上传图片大小不能超过 1MB!')
+        return false
+      }
+      if (!isMt10K) {
+        this.$message.error('上传图片大小不能小于 100B!')
+        return false
+      }
+    },
+    // 点击编辑/保存后的操作
     editClick () {
       this.editState = !this.editState
     },
-    handleAvatarSuccess (res, file) {
-      console.log('success')
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeUpload (x) {
-      // console.log(x)
-    },
-    changeUpload (file, fileList) {
-      // console.log(file)
-      this.imageUrl = file.url
-    },
+    // 省市区三级联动改变时的操作
     handleChange (value) {
       // console.log(CodeToText[value[0]], CodeToText[value[1]], CodeToText[value[2]])
     },
+    // 显示省市区地址信息
     getDetailedAddress () {
       let selAdd = this.selectedOptions
       let detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
       return detAdd
+    },
+    // 获取省市区信息，赋值给 selectedOptions 变量
+    getRegionCode (province, city, region) {
+      if (province && city && region) {
+        this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
+      }
     }
+  },
+  computed: {
+    ...mapState(['mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
   }
 }
 </script>
@@ -253,6 +316,30 @@ export default {
         background: #999;
       }
     }
+    li {
+      position: relative;
+      .name {
+        padding-right: 3px;
+        color: #999;
+        width: 65px;
+      }
+      .required::before {
+        content: '*';
+        color: #DE5B67;
+        margin-left: -10px;
+        padding-right: 5px;
+      }
+      .name.alignment-top {
+        vertical-align: top;
+        padding-top: 6px;
+      }
+      .err-tips {
+        position: absolute;
+        bottom: -16px;
+        left: 74px;
+        color: @mainC;
+      }
+    }
   }
   .subject-info {
   }
@@ -261,16 +348,10 @@ export default {
     padding-left: 10px;
     li {
       box-sizing: border-box;
-      height: 35px;
-      line-height: 35px;
+      padding-top: 20px;
       font-size: 12px;
       span {
         vertical-align: middle;
-      }
-      span.name {
-        color: #999;
-        padding-right: 3px;
-        width: 65px;
       }
       i {
         font-size: 20px;
@@ -295,21 +376,6 @@ export default {
         display: inline-block;
         vertical-align: middle;
       }
-      .name {
-        padding-right: 3px;
-        color: #999;
-        width: 65px;
-      }
-      .required::before {
-        content: '*';
-        color: #DE5B67;
-        margin-left: -10px;
-        padding-right: 5px;
-      }
-      .name.alignment-top {
-        vertical-align: top;
-        padding-top: 6px;
-      }
       .store-logo-img {
         display: inline-block;
         width: 80px;
@@ -322,6 +388,7 @@ export default {
         line-height: 1.5;
         padding: 10px;
         border: 1px solid #d5d5d5;
+        width: 236px;
         min-height: 80px;
       }
       .shop-description-textarea {
@@ -349,6 +416,11 @@ export default {
     position: fixed;
     top: 32px;
     right: 40px;
+    .el-button--small {
+      width: 80px;
+      height: 30px;
+      padding: 0;
+    }
   }
   .avatar-uploader {
     display: inline-block;
@@ -365,18 +437,18 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 350px;
+      width: 240px;
       text-align: left;
       position: relative;
       margin-left: 17px;
       .el-upload__tip {
-        color: #b5b5b5;
+        color: @b5b5;
         position: absolute;
         width: 100%;
         bottom: 0;
       }
       .banner-tip {
-        color: #b5b5b5;
+        color: @b5b5;
         padding-top: 10px;
       }
     }

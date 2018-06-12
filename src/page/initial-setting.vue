@@ -16,13 +16,14 @@
             <ul>
               <li>
                 <span class="name required">商铺名称：</span>
-                <input type="text" v-model="shopName" placeholder="请输入店铺名称 (15个字符以内)"/>
+                <input type="text" v-validate="'required'" v-model.trim="shopName" name="店铺名称" placeholder="请输入店铺名称 (20个字符以内)" maxlength="20"/>
+                <div class="err-tips">{{ errors.first('店铺名称') }}</div>
               </li>
               <li>
                 <span class="name required">主营类目：</span>
-                <el-select v-model="value" size="small" class="select-state">
+                <el-select v-model.trim="categoryValue" size="small" class="select-state">
                   <el-option
-                    v-for="item in selectStateOptions"
+                    v-for="item in mainCategory"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -31,7 +32,7 @@
               </li>
             </ul>
             <div class="next-step">
-              <el-button type="success" size="small" :disabled="false" @click="setStepActive">下一步</el-button>
+              <el-button type="success" size="small" :disabled="false" @click="setStepActive(1)">下一步</el-button>
             </div>
           </div>
         </div>
@@ -43,44 +44,45 @@
                 <span class="name alignment-top">商铺logo：</span>
                 <el-upload
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-change='changeUpload'
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
-                  :auto-upload="false"
-                  :on-success="handleAvatarSuccess">
-                  <img :src="imageUrl" class="avatar">
+                  :on-success="handleLogoSuccess">
+                  <img :src="logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</p>
+                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
                 <span class="name alignment-top required">商铺描述：</span>
-                <textarea class="shop-description-textarea" placeholder="请输入商品描述" v-model="textArea"></textarea>
+                <textarea v-validate="'required'" v-model.trim="textArea" name="商铺描述" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
+                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
               </li>
               <li>
-                <span class="name alignment-top">banner：</span>
+                <span class="name alignment-top required">banner：</span>
                 <el-upload
                   class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-change='changeUpload'
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
-                  :auto-upload="false"
-                  :on-success="handleAvatarSuccess">
-                  <img :src="imageUrl2" class="avatar avatar2">
+                  :on-success="handleBannerSuccess">
+                  <img v-if="bannerImageUrl" :src="bannerImageUrl" class="avatar avatar2">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</p>
+                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
+                <div class="err-tips" :style="{'display': bannerErrorTips?'block':'none'}">请先上传banner图！</div>
               </li>
               <li>
                 <span class="name required">店长姓名：</span>
-                <input type="text" v-model="shopChiefName" placeholder="请输入店长姓名"/>
+                <input type="text" v-validate="'required'" name="店长姓名" v-model.trim="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
+                <div class="err-tips">{{ errors.first('店长姓名') }}</div>
               </li>
               <li>
                 <span class="name">联系电话：</span>
@@ -88,11 +90,13 @@
               </li>
               <li>
                 <span class="name">联系微信：</span>
-                <input type="text" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+                <input type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model.trim="contactWeChat" placeholder="请输入联系微信号"/>
+                <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
                 <span class="name">客服电话：</span>
-                <input type="text" v-model="customerServiceNum" placeholder="请输入客服电话"/>
+                <input type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
+                <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
               <li>
                 <span class="name">联系地址：</span>
@@ -100,16 +104,16 @@
                   <el-cascader
                     size="small"
                     :options="options"
-                    v-model="selectedOptions"
+                    v-model.trim="selectedOptions"
                     placeholder="省 / 市 / 区"
                     @change="handleChange">
                   </el-cascader>
-                  <input class="contact-address-input" type="text" v-model="contactAddress" placeholder="请输入详细地址"/>
+                  <input class="contact-address-input" type="text" v-model.trim="contactAddress" placeholder="请输入详细地址" maxlength="50"/>
                 </div>
               </li>
             </ul>
             <div class="next-step">
-              <el-button type="success" size="small" :disabled="false" @click="setStepActive">下一步</el-button>
+              <el-button type="success" size="small" :disabled="false" @click="setStepActive(2)">下一步</el-button>
             </div>
           </div>
         </div>
@@ -117,8 +121,24 @@
           <div class="plate-top">支付信息</div>
           <div>
             <payment-info></payment-info>
+
+            <div class="checked-protocol">
+              <el-checkbox v-model.trim="checked">
+                <span class="checked-protocol-text">我已同意并阅读</span>
+                <el-button type="text" @click="readingProtocol = true">《授权协议》</el-button>
+              </el-checkbox>
+              <el-dialog
+                title="授权协议"
+                :visible.sync="readingProtocol"
+                width="60%">
+                <div>casasd</div>
+                <span slot="footer" class="dialog-footer">
+            <el-button type="primary" size="small" @click="readingProtocol = false">确 定</el-button>
+          </span>
+              </el-dialog>
+            </div>
             <div class="next-step">
-              <el-button type="success" size="small" :disabled="true" @click="setStepActive">完成</el-button>
+              <el-button type="success" size="small" @click="setStepActive(3)">完成</el-button>
             </div>
           </div>
         </div>
@@ -130,51 +150,39 @@
 <script>
 import firstSettingMenu from '@/components/first-setting-menu'
 import paymentInfo from '@/components/payment-info'
-import ceshi from '../assets/ceshi.png'
-import ceshi2 from '../assets/ceshi2.png'
-import { regionData, CodeToText } from 'element-china-area-data'
+import {initialSetData, getQnToken, paySetting} from '../axios/api'
+import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {mapState, mapMutations} from 'vuex'
 export default {
   data () {
     return {
-      active: 0,
+      active: -1,
       shopName: '',
-      merchantNumber: '--',
-      businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
-      p12Certificate: 'apiclient_cert.p12',
+      // 图片上传需要的token
+      upToken: {},
+      // 支付部分
+      readingProtocol: false,
       checked: true,
-      selectStateOptions: [{
-        value: '1',
-        label: '食品'
-      }, {
-        value: '2',
-        label: '数码家电'
-      }, {
-        value: '3',
-        label: '女装'
-      }, {
-        value: '4',
-        label: '美妆'
-      }, {
-        value: '5',
-        label: '日用百货'
-      }],
-      value: '食品',
-      shopNum: 321354656454,
-      creationTime: '2018-01-02 10:05',
+      // 商家主营类目
+      categoryValue: 1,
       shopChiefName: '',
-      telNum: 13611895011,
+      telNum: '',
       contactWeChat: '',
       customerServiceNum: '',
-      editState: false,
-      imageUrl: ceshi,
-      imageUrl2: ceshi2,
-      textArea: 'wqetrwqerwesdfdfasldkfjalsejtlaweflsadkjflwe',
+      logoImageUrl: '/static/default-img/shops-default-logo.png',
+      logoKey: '',
+      bannerImageUrl: '',
+      bannerKey: '',
+      bannerErrorTips: false,
+      textArea: '',
       options: regionData,
       selectedOptions: [],
-      contactAddress: '',
-      readingProtocol: false
+      contactAddress: ''
     }
+  },
+  created () {
+    this.getImageToken()
+    this.getInitialSetData()
   },
   mounted () {
     this.setMenuShow(false)
@@ -185,31 +193,170 @@ export default {
     paymentInfo
   },
   computed: {
-    ...mapState(['menuShow'])
+    ...mapState(['menuShow', 'mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
   },
   methods: {
     ...mapMutations(['setMenuShow']),
-    setStepActive () {
-      this.active++
+    // 获取图片上传七牛的token
+    getImageToken () {
+      getQnToken('image').then(res => {
+        this.upToken.token = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
     },
-    handleAvatarSuccess (res, file) {
-      console.log('success')
-      this.imageUrl = URL.createObjectURL(file.raw)
+    // 进入页面获取店铺信息
+    getInitialSetData () {
+      initialSetData('get').then(res => {
+        console.log(res.data)
+        let data = res.data
+        if (data.name && data.type) {
+          if (data.description && data.banner && data.owner_name) {
+            this.active = 2
+          } else {
+            if (data.logo_url) {
+              this.logoImageUrl = this.qiniuDomainUrl + data.logo_url
+            }
+            this.textArea = data.description
+            if (data.banner) {
+              this.bannerImageUrl = this.qiniuDomainUrl + data.banner
+            }
+            this.shopChiefName = data.owner_name
+            this.telNum = data.mobile
+            this.contactWeChat = data.wechat ? data.wechat : ''
+            this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
+            this.getRegionCode(data.province, data.city, data.region)
+            this.contactAddress = data.address
+            this.active = 1
+          }
+        } else {
+          this.shopName = data.name
+          if (data.type) {
+            this.categoryValue = data.type
+          }
+          this.active = 0
+        }
+      })
     },
-    beforeUpload (x) {
-      // console.log(x)
+    // 点击下一步，发送已填写的信息
+    setStepActive (step) {
+      let data = {}
+      if (step === 1) {
+        data = {
+          name: this.shopName,
+          type: this.getCategory()
+        }
+      } else if (step === 2) {
+        data = {
+          logo_url: this.logoKey,
+          description: this.textArea,
+          banner: this.bannerKey,
+          owner_name: this.shopChiefName,
+          wechat: this.contactWeChat,
+          customer_service_mobile: this.customerServiceNum,
+          province: CodeToText[this.selectedOptions[0]],
+          city: CodeToText[this.selectedOptions[1]],
+          region: CodeToText[this.selectedOptions[2]],
+          address: this.contactAddress
+        }
+      } else if (step === 3) {
+        this.paySettingVerification()
+        return false
+      }
+      this.$validator.validateAll().then((msg) => {
+        if (msg) {
+          if (step === 2 && this.bannerKey === '') {
+            this.bannerErrorTips = true
+            return false
+          }
+          initialSetData('put', data).then(res => {
+            console.log(res)
+            this.active = step
+          })
+        } else {
+          if (step === 2 && this.bannerKey === '') {
+            this.bannerErrorTips = true
+          }
+        }
+      })
     },
-    changeUpload (file, fileList) {
-      // console.log(file)
-      this.imageUrl = file.url
+    // 根据主营类目的value获取类目名称
+    getCategory () {
+      for (let v of this.mainCategory) {
+        if (v.value === this.categoryValue) {
+          return v.label
+        }
+      }
     },
+    // 商铺logo图片上传成功后的操作
+    handleLogoSuccess (res, file) {
+      this.logoKey = res.key
+      this.logoImageUrl = URL.createObjectURL(file.raw)
+    },
+    // 商铺banner图片上传成功后的操作
+    handleBannerSuccess (res, file) {
+      this.bannerKey = res.key
+      this.bannerImageUrl = URL.createObjectURL(file.raw)
+    },
+    // 上传文件之前对上传内容的验证
+    beforeUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      const isLt1M = file.size / 1024 / 1024 < 1
+      const isMt10K = file.size > 100
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
+        return false
+      }
+      if (!isLt1M) {
+        this.$message.error('上传图片大小不能超过 1MB!')
+        return false
+      }
+      if (!isMt10K) {
+        this.$message.error('上传图片大小不能小于 100B!')
+        return false
+      }
+    },
+    // 省市区三级联动改变时的操作
     handleChange (value) {
       // console.log(CodeToText[value[0]], CodeToText[value[1]], CodeToText[value[2]])
     },
-    getDetailedAddress () {
-      let selAdd = this.selectedOptions
-      let detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
-      return detAdd
+    // 获取省市区信息，赋值给 selectedOptions 变量
+    getRegionCode (province, city, region) {
+      if (province && city && region) {
+        this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
+      }
+    },
+    // 验证支付信息是否完全设置，跳转到首页
+    paySettingVerification () {
+      paySetting('get').then(res => {
+        console.log(res.data)
+        let data = res.data
+        if (!data.merchant_no) {
+          this.$message.error('请先设置商户号！')
+          return false
+        }
+        if (!data.merchant_key) {
+          this.$message.error('请先设置商户秘钥！')
+          return false
+        }
+        if (!data.merchant_cert) {
+          this.$message.error('请先上传证书！')
+          return false
+        }
+        if (!this.checked) {
+          this.$message.error('请先选择同意授权协议！')
+          return false
+        }
+
+        this.active = 3
+        this.setRouter('/')
+      })
+    },
+    // 设置路由链接
+    setRouter (link) {
+      this.$router.push({
+        path: link
+      })
     }
   }
 }
@@ -258,6 +405,15 @@ export default {
       .el-button--success.is-disabled {
         background: #d5d5d5;
         border-color: #d5d5d5;
+      }
+      li {
+        position: relative;
+        .err-tips {
+          position: absolute;
+          bottom: -16px;
+          left: 74px;
+          color: @mainC;
+        }
       }
     }
     .setting-step {
@@ -359,20 +515,35 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 350px;
+      width: 240px;
       text-align: left;
       position: relative;
       margin-left: 17px;
       .el-upload__tip {
-        color: #b5b5b5;
+        color: @b5b5;
         position: absolute;
         width: 100%;
         bottom: 0;
       }
       .banner-tip {
-        color: #b5b5b5;
+        color: @b5b5;
         padding-top: 10px;
       }
+    }
+  }
+  .checked-protocol {
+    padding-left: 74px;
+    padding-top: 40px;
+    .checked-protocol-text {
+      color: #999;
+    }
+    .el-button--text {
+      padding: 0;
+      border: none;
+    }
+    .dialog-footer {
+      text-align: center;
+      display: block;
     }
   }
   .el-button--small {

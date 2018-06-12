@@ -9,12 +9,12 @@
         <!--<i class="icon-京东认证"></i>-->
       </div>
       <el-row class="shortcut-entrance">
-        <el-col class="li" :span="4"><router-link to="/shopProfile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/shop-profile"><i class="icon-店铺"></i><span>店铺概况</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/commodity-management"><i class="icon-商品"></i><span>商品管理</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/orderManagement"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/customerManagement"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/order-management"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/customer-management"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/account"><i class="icon-账户"></i><span>我的账户</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/collageManagement"><i class="icon-拼团"></i><span>拼团管理</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link to="/collage-management"><i class="icon-拼团"></i><span>拼团管理</span></router-link></el-col>
       </el-row>
       <ul class="home-survey">
         <li>
@@ -82,6 +82,8 @@ export default {
     }
   },
   mounted () {
+    this.setMenuShow(true)
+    this.setMenuLeft('/')
     tradeVolum().then(res => {
       console.log(res)
       if (res.status == 200) {
@@ -101,7 +103,7 @@ export default {
     ...mapState(['menuShow'])
   },
   methods: {
-    ...mapMutations(['setMenuShow'])
+    ...mapMutations(['setMenuShow', 'setMenuLeft'])
   }
 }
 </script>

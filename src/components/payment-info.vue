@@ -4,26 +4,25 @@
       <ul>
         <li>
           <span class="pay-info-title">服务商商户号：</span>
-          <span class="pay-info-txt">{{busiInformation && busiInformation.merchant_no}}</span>
+          <span class="pay-info-txt" :title="busiInformation.merchant_no">{{busiInformation.merchant_no}}</span>
           <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
         </li>
         <li>
           <span class="pay-info-title">服务商商户秘钥：</span>
-          <span class="pay-info-txt">{{busiInformation.merchant_key}}</span>
+          <span class="pay-info-txt" :title="busiInformation.merchant_key">{{busiInformation.merchant_key}}</span>
           <el-button type="primary" size="small" @click="setMerchantKey">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API 安全 > API 秘钥</span>
         </li>
         <li>
           <span class="pay-info-title">服务商P12证书：</span>
-          <span class="pay-info-txt">{{busiInformation.merchant_cert}}</span>
+          <span class="pay-info-txt" :title="busiInformation.merchant_cert">{{busiInformation.merchant_cert}}</span>
           <el-upload
-            v-if="token !== ''"
+            :action="qiniuUploadUrl"
             :data="token"
             accept=".p12"
             :show-file-list="false"
-            action="http://upload.qiniup.com"
-            :on-success="qiniuImage">
+            :on-success="qnUploadSuccess">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API安全 > 下载证书。<br>得到的 apiclient_cert.p12 文件后，点击右侧的上传按钮进行上传即可。</span>
@@ -35,61 +34,49 @@
           <!--<span>如果您是特约支付商户，创建社交立减金前需要完成接口升级</span>-->
         <!--</li>-->
       </ul>
-      <div class="checked-protocol" v-if="agreementShow">
-        <el-checkbox v-model="checked">
-          <span class="checked-protocol-text">我已同意并阅读</span>
-          <el-button type="text" @click="readingProtocol = true">《协议》</el-button>
-        </el-checkbox>
-        <el-dialog
-          title="提示"
-          :visible.sync="readingProtocol"
-          width="60%">
-          <span>这里是协议内容</span>
-          <span slot="footer" class="dialog-footer">
-            <el-button type="primary" size="small" @click="readingProtocol = false">确 定</el-button>
-          </span>
-        </el-dialog>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import {getQnToken, paySetting} from '../axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      merchantNumber: '--',
-      businessSecretKey: 'UedEVaPixDUY04g8MfGNUVBOx3noJSJu',
-      p12Certificate: 'apiclient_cert.p12',
-      checked: true,
-      readingProtocol: false
+      token: {},
+      busiInformation: {
+        merchant_no: '--',
+        merchant_key: '--',
+        merchant_cert: '--',
+        merchantNumber: '--'
+      }
     }
   },
-  props: ['agreementShow', 'busiInformation', 'token'],
-  watch: {
-    token (value) {
-      console.log('监听属性')
-      console.log(value)
-      return value
-    }
+  created () {
+    this.getToken()
+    this.getPaySetting()
   },
   methods: {
+    getPaySetting () {
+      paySetting('get').then(res => {
+        console.log(res.data)
+        let data = res.data
+        this.busiInformation.merchant_no = data.merchant_no ? data.merchant_no : '--'
+        this.busiInformation.merchant_key = data.merchant_key ? data.merchant_key : '--'
+        this.busiInformation.merchant_cert = data.merchant_cert ? data.merchant_cert : '--'
+      })
+    },
     setMerchantCert () {
       this.$prompt('设置商户号', {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(({ value }) => {
-        console.log(value)
-        this.$emit('changeSetting', value, 1)
-        this.$message({
-          type: 'success',
-          message: '商户号设置成功'
+        paySetting('put', {merchant_no: value}).then(res => {
+          this.busiInformation.merchant_no = value
+          // this.$emit('changeSetting', value, 1)
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
       })
     },
     setMerchantKey () {
@@ -97,23 +84,27 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消'
       }).then(({ value }) => {
-        console.log(value)
-        this.$emit('changeSetting', value, 2)
-        this.$message({
-          type: 'success',
-          message: '密钥设置成功'
+        paySetting('put', {merchant_key: value}).then(res => {
+          this.busiInformation.merchant_key = value
+          // this.$emit('changeSetting', value, 2)
         })
       }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
       })
     },
-    qiniuImage (response) {
-      console.log(response)
-      this.$emit('changeSetting', response.key, 3)
+    qnUploadSuccess (res, file) {
+      paySetting('put', {merchant_cert: res.key}).then(resp => {
+        this.busiInformation.merchant_cert = res.key
+        // this.$emit('changeSetting', response.key, 3)
+      })
+    },
+    getToken () {
+      getQnToken('document').then(res => {
+        this.token = res.data
+      })
     }
+  },
+  computed: {
+    ...mapState(['qiniuUploadUrl'])
   }
 }
 </script>
@@ -137,7 +128,7 @@ export default {
         padding-right: 3px;
       }
       .pay-info-txt {
-        width: 250px;
+        width: 300px;
         color: #333;
         padding-right: 10px;
         overflow: hidden;

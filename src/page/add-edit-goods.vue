@@ -88,7 +88,7 @@
               <li>
                 <span class="name">商品重量：</span>
                 <div class="weight-unit">
-                  <input type="tel" v-validate="'decimal:2'" name="商品重量" placeholder="请输入商品重量" v-model.trim="weightNum" maxlength="20">
+                  <input type="tel" v-validate="'numeric'" name="商品重量" placeholder="请输入商品重量" v-model.trim="weightNum" maxlength="30">
                   <div class="err-tips">{{ errors.first('商品重量') }}</div>
                   <el-select v-model.trim="weightUnitValue" size="small" class="select-state">
                     <el-option
@@ -135,7 +135,7 @@
                     v-if="inputVisible"
                     v-model.trim="inputValue"
                     ref="saveTagInput"
-                    maxLength="16"
+                    maxLength="20"
                     size="small"
                     @keyup.enter.native="handleInputConfirm"
                     @blur="handleInputConfirm"
@@ -158,7 +158,7 @@
                   <div class="specification-block clear" v-for="(item, index) in specificationList" :key="index">
                     <div class="specification-name-box">
                       <span class="name">规格名：</span>
-                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名" maxlength="16"/>
+                      <input @change="specificNameChange(index, item.name)" ref="specificV" type="text" :value="item.name" placeholder="请输入规格名" maxlength="20"/>
                       <!--v-model.trim="item.name"-->
                       <i @click="deleteThis(index)" class="delete-specific el-icon-circle-close-outline" style="font-size: 18px"></i>
                     </div>
@@ -181,7 +181,7 @@
                           size="small"
                           @keyup.enter.native="handleInputSpec(index)"
                           @blur="handleInputSpec(index)"
-                          maxlength="16"
+                          maxlength="20"
                         >
                         </el-input>
                         <el-button v-else @click="showSpecInput(index)" type="primary" size="small">添加规格值</el-button>
@@ -208,15 +208,15 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.specs" v-if="sku.specs.length>0" :key="index2">{{item.property}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="10"/>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
                       <td>
-                        <input type="text" v-model.trim="sku.stock_count" v-validate="'required|numeric'" data-vv-as="库存" :name="`stock-${index}`" class="stock-quantity" maxlength="10"/>
+                        <input type="text" v-model.trim="sku.stock_count" v-validate="'required|numeric|max_value:1000000'" data-vv-as="库存" :name="`stock-${index}`" class="stock-quantity" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`stock-${index}`) }}</div>
                       </td>
                       <td><input type="text" v-model.trim="sku.sku_no" class="sku-code" maxlength="20"/></td>
-                      <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.display_price" v-validate="'decimal:2'" data-vv-as="划线价格" :name="`display-price-${index}`" maxlength="20"/>
+                      <td><span class="money-tips">￥</span><input type="text" v-model.trim="sku.display_price" v-validate="'decimal:2'" data-vv-as="划线价格" :name="`display-price-${index}`" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`display-price-${index}`) }}</div>
                       </td>
                       <td width="50">
@@ -263,8 +263,8 @@
               <li class="show-stock-btn">
                 <span class="name">库存显示：</span>
                 <div>
-                  <el-button type="success" size="small" :class="['show-stock', {'active':showStock}]" @click="showStock=true">显示库存</el-button>
-                  <el-button type="success" size="small" :class="['hide-stock', {'active':!showStock}]" @click="showStock=false">不显示剩余库存</el-button>
+                  <el-button type="success" size="small" :class="['show-stock', {'active':showStock==1}]" @click="showStock=1">显示库存</el-button>
+                  <el-button type="success" size="small" :class="['hide-stock', {'active':showStock==2}]" @click="showStock=2">不显示剩余库存</el-button>
                 </div>
               </li>
             </ul>
@@ -278,7 +278,7 @@
               <span class="name required">快递邮费：</span>
               <div>
                 <span class="express-postage">
-                  <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" v-validate="{required: !postage.freeShipping,decimal: 2}" name="快递邮费" placeholder="">
+                  <input type="text" v-model.trim="postage.money" :disabled="postage.freeShipping" v-validate="{required: !postage.freeShipping,decimal: 2}" name="快递邮费" placeholder="" maxlength="12">
                   <el-checkbox v-model="postage.freeShipping" class="freeCheckbox" size="small">包邮</el-checkbox>
                 </span>
               </div>
@@ -287,8 +287,8 @@
             <li>
               <span class="required name">是否上架：</span>
               <div>
-                <el-button type="success" size="small" :class="{'active':grounding}" @click="grounding=true" style="margin-left: 0;">立即上架</el-button>
-                <el-button type="success" size="small" :class="{'active':!grounding}" @click="grounding=false">暂不上架</el-button>
+                <el-button type="success" size="small" :class="{'active':grounding}" @click="grounding=true" style="margin-left: 0;">上架</el-button>
+                <el-button type="success" size="small" :class="{'active':!grounding}" @click="grounding=false">下架</el-button>
               </div>
             </li>
             <li>
@@ -302,7 +302,7 @@
           </ul>
         </div>
         <div class="add-goods-btn">
-            <el-button @click="submitGoodsInfo" type="success" size="small">保存</el-button>
+            <el-button @click="submitGoodsInfo(hash)" type="success" size="small">保存</el-button>
           </div>
       </div>
       </el-form>
@@ -358,7 +358,7 @@ export default {
       goodsPrice: '',
       goodsLinePrice: '',
       goodStock: '',
-      showStock: true,
+      showStock: 1,
       postage: {
         freeShipping: true,
         money: ''
@@ -455,12 +455,15 @@ export default {
       goodsImages: [],
       // 控制是否验证表单选项
       stockValidate: true,
-      goodsImageValidate: false
+      goodsImageValidate: false,
+      // 隐形验证字段
+      old_sku_ids: false,
+      image_ids: [],
+      sku_ids: []
     }
   },
   created () {
     this.setRoutePath()
-    this.getGoods(this.hash)
     this.getGoodsCategory()
     this.getImageToken()
   },
@@ -480,10 +483,26 @@ export default {
         goodsEditDetails(id).then(res => {
           console.log(res.data)
           if (res.data) {
-            console.log(11)
+            let data = res.data
+            this.goodsType = data.type
+            this.goodsName = data.name
+            this.sharingDescription = data.description
+            this.renderingGoodsImageList(data.goods_images)
+            this.renderingSelectedOptions(data.category_id)
+            this.quillContent = data.content
+            this.weightNum = data.weight
+            this.uniqueCoding = data.no
+            this.quantifier = data.unit
+            this.image_ids = data.image_ids
+            this.sku_ids = data.sku_ids
+            this.dynamicTags = data.keywords
+            this.renderingSku(data.sku, data.specs, data.price, data.display_price, data.stock_count)
+            this.showStock = data.stock_shown
+            this.renderingExpress(data.is_free_express, data.free_express_price)
+            this.renderingStatus(data.status)
           }
         }).catch(err => {
-          console.log(err)
+          console.dir(err)
         })
       }
     },
@@ -512,9 +531,79 @@ export default {
           this.setRouter('/category-management')
         }
         // console.log(this.selectStateOptions)
-      }).catch(err => {
-        console.log(err)
       })
+        .then(() => {
+          this.getGoods(this.hash)
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    // 如果有规格，渲染skus和规格部分，如果没有则渲染下面的总体价格等
+    renderingSku (sku, specs, price, displayPrice, stockCount) {
+      if (sku[0].specs[0].property) {
+        for (let v of sku) {
+          v.price = (v.price / 100).toFixed(2)
+          v.display_price = (v.display_price / 100).toFixed(2)
+        }
+        for (let w of specs) {
+          let obj = {name: w.spec, values: []}
+          for (let x of w.property) {
+            obj.values.push({name: x})
+          }
+          this.specificationList.push(obj)
+        }
+        this.skus = sku
+      } else {
+        this.goodsPrice = (price / 100).toFixed(2)
+        if (displayPrice) {
+          this.goodsLinePrice = (displayPrice / 100).toFixed(2)
+        }
+        this.goodStock = stockCount
+      }
+    },
+    // 渲染是否包邮，不包邮的话邮费是多少
+    renderingExpress (free, expressPrice) {
+      if (free === 1) {
+        this.postage.freeShipping = true
+      } else if (free === 2) {
+        this.postage.freeShipping = false
+        this.postage.money = (expressPrice / 100).toFixed(2)
+      }
+    },
+    // 渲染是否上架部分
+    renderingStatus (status) {
+      if (status === 1 || status === 3) {
+        this.grounding = true
+      } else {
+        this.grounding = false
+      }
+    },
+    // 渲染商品分类
+    renderingSelectedOptions (id) {
+      if (id) {
+        for (let v of this.selectStateOptions) {
+          if (v.value === id) {
+            this.selectedOptions = [id]
+            break
+          } else {
+            for (let w of v.children) {
+              if (w.value === id) {
+                this.selectedOptions = [v.value, id]
+                break
+              }
+            }
+          }
+        }
+      }
+    },
+    // 渲染图片列表
+    renderingGoodsImageList (imgList) {
+      if (imgList) {
+        for (let v of imgList) {
+          this.goodsImageShowList.push({id: v.id, url: this.qiniuDomainUrl + v.icon_url, key: v.icon_url})
+        }
+      }
     },
     // 获取图片上传七牛的token
     getImageToken () {
@@ -618,7 +707,7 @@ export default {
       for (let k of ret) {
         let sku = {id: '', price: '', stock_count: '', sku_no: '', display_price: '', cover_url: '', specs: []}
         for (let l of k) {
-          sku.specs.push({ spec: k.name, property: l.name })
+          sku.specs.push({ spec: l.parent, property: l.name })
         }
         keepArr.push(sku)
       }
@@ -646,7 +735,9 @@ export default {
         // 把新建的规格列表赋值给skus
         this.skus = keepArr
       } else {
+        // 完全重建skus，去除id等原本已有的数据
         this.skus = keepArr
+        this.old_sku_ids = true
       }
     },
     // 删除当前规格
@@ -738,7 +829,7 @@ export default {
       let inputValue = this.inputSpacValue
       if (inputValue) {
         if (f()) {
-          this.specificationList[index].values.push({'name': inputValue})
+          this.specificationList[index].values.push({'name': inputValue, 'parent': this.specificationList[index].name})
           if (this.specificationList[index].name) {
             if (this.specificationList[index].values.length === 1) {
               this.setSkus()
@@ -866,6 +957,22 @@ export default {
         }
       }
     },
+    // 每种规格的价格乘以100处理，图片处理等
+    handleSuksPrice () {
+      let deepCopySku = JSON.parse(JSON.stringify(this.skus))
+      for (let v of deepCopySku) {
+        if (v.price) {
+          v.price = Math.round(v.price * 100)
+        }
+        if (v.display_price) {
+          v.display_price = Math.round(v.display_price * 100)
+        }
+        if (v.cover_url) {
+          v.cover_url = v.cover_url.split('.com/')[1]
+        }
+      }
+      return deepCopySku
+    },
     // 保存发送商品信息
     submitGoodsInfo (id) {
       this.getGoodsImages()
@@ -884,31 +991,39 @@ export default {
             description: this.sharingDescription,
             goods_images: this.goodsImages,
             category_id: this.selectedOptions[this.selectedOptions.length - 1],
-            content: this.quillContent,
+            content: this.quillContent ? this.quillContent : '',
             weight: this.getWeightGram(),
             no: this.uniqueCoding,
             unit: this.getGoodsQuantifier(),
             keywords: this.dynamicTags,
-            stock_shown: this.showStock ? 1 : 2,
+            stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
-            free_express_price: this.postage.money,
+            free_express_price: Math.round(this.postage.money * 100),
             status: this.grounding ? 1 : 2
           }
           // 判断是否存在商品规格
           if (this.skus.length > 0) {
             this.getSpecs()
+            // this.handleSuksPrice()
             data.specs = this.specs
-            data.sku = this.skus
+            data.sku = this.handleSuksPrice()
           } else {
-            data.display_price = this.goodsLinePrice
-            data.price = this.goodsPrice
+            data.display_price = Math.round(this.goodsLinePrice * 100)
+            data.price = Math.round(this.goodsPrice * 100)
             data.stock_count = this.goodStock
+          }
+          // 修改商品添加的参数
+          if (id) {
+            data.id = id
+            data.old_sku_ids = this.old_sku_ids
+            data.image_ids = this.image_ids
+            data.sku_ids = this.sku_ids
           }
 
           console.log(data)
           addEditGoods(id, data).then(res => {
             // console.log(res)
-            // this.setRouter('/commodity-management')
+            this.setRouter('/commodity-management')
           }).catch(err => {
             console.log(err)
           })

@@ -242,7 +242,7 @@ export function deleteRecommend (id) {
 // 新建特价商品，获取商品列表
 export function newGoodsList (data) {
   return fetch({
-    url: 'https://develop.yiqixuan.com' + '/management/goods_sku/search',
+    url: api.ip + '/management/goods_sku/search',
     method: 'GET',
     params: data
   })
@@ -310,28 +310,22 @@ export const getQnToken = function (param) {
 
 // 添加商品
 export const addEditGoods = function (id, data) {
+  let method = 'post'
+  if (id) {
+    method = 'put'
+  }
   return fetch({
-    url: api.ip + '/management/goods',
-    method: 'post',
+    url: api.ip + '/management/goods/' + id,
+    method: method,
     data: data
   })
 }
 
-/* 设置模块 */
-// 设置 -> 订单
-export function orderSetting (data) {
+// 设置 -> 支付设置
+export function paySetting (type, data) {
   return fetch({
-    url: api.ip + '/management/mpa',
-    method: 'GET',
-    data: data
-  })
-}
-
-// 设置 -> 订单，修改订单设置
-export function orderSettingPut (data) {
-  return fetch({
-    url: api.ip + '/management/mpa/' + data.id,
-    method: 'PUT',
+    url: api.hqip8080 + '/management/mpa',
+    method: type,
     data: data
   })
 }
@@ -362,18 +356,19 @@ export const updateGoodsCategoryPic = function (data, id) {
   })
 }
 
-// 获取是否绑定小程序，初次设置数据
-export const initialSetData = function () {
+// 获取是否绑定小程序，初次设置数据，支付设置
+export const initialSetData = function (type, data) {
   return fetch({
-    url: api.cjip83 + '/management/merchant',
-    method: 'get' // 请求方法
+    url: api.hqip8080 + '/management/merchant',
+    method: type, // 请求方法
+    data: data
   })
 }
 
 // 绑定小程序
 export const bindingMp = function () {
   return fetch({
-    url: api.cjip + '/management/wx/get_auth_url',
+    url: api.cjip + '/management/mpa/auth',
     method: 'get' // 请求方法
   })
 }
@@ -381,15 +376,24 @@ export const bindingMp = function () {
 // 解绑小程序
 export const untieMp = function () {
   return fetch({
-    url: api.cjip + '/management/wx/unbundle',
+    url: api.cjip + '/management/mpa/unbind',
     method: 'delete' // 请求方法
   })
 }
 
 // 验证小程序是否授权成功
-export const checkAuth = function () {
+export const checkAuth = function (params) {
   return fetch({
-    url: api.cjip + '/management/wx/check_auth',
+    url: api.cjip + '/management/mpa/check_auth',
+    method: 'get', // 请求方法
+    params: params
+  })
+}
+
+// 获取小程序信息
+export const mpInfo = function () {
+  return fetch({
+    url: api.cjip + '/management/mpa/mpa_info',
     method: 'get' // 请求方法
   })
 }
