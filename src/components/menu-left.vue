@@ -96,6 +96,8 @@ export default {
       return height
     },
     getRoutePath (m) {
+      console.log(111111)
+      console.log(m)
       if (m) {
         return m
       } else {
