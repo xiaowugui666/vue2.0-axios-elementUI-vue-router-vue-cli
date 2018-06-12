@@ -463,20 +463,15 @@ export default {
     }
   },
   created () {
-    this.setRoutePath()
+    this.setMenuLeft('/commodity-management')
     this.getGoodsCategory()
     this.getImageToken()
   },
   mounted () {
     this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
-    // console.log(this.hash)
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
-    // 设置路径为商品列表的路径，以便于菜单栏选中
-    setRoutePath () {
-      this.setMenuLeft('/commodity-management')
-    },
     // 若存在商品id，获取商品信息
     getGoods (id) {
       if (id) {

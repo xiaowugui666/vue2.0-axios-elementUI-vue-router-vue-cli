@@ -43,3 +43,8 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+router.beforeEach((to, from, next) => {
+  store.commit('setMenuLeft', '')
+  next()
+})

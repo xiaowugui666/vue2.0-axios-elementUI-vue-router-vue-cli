@@ -211,15 +211,15 @@ export default {
         console.log(res.data)
         let data = res.data
         if (data.name && data.type) {
-          if (data.description && data.banner && data.owner_name) {
+          if (data.description && data.banner_url && data.owner_name) {
             this.active = 2
           } else {
             if (data.logo_url) {
               this.logoImageUrl = this.yiqixuanDomainUrl + data.logo_url
             }
             this.textArea = data.description
-            if (data.banner) {
-              this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner
+            if (data.banner_url) {
+              this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner_url
             }
             this.shopChiefName = data.owner_name
             this.telNum = data.mobile
@@ -250,7 +250,7 @@ export default {
         data = {
           logo_url: this.logoKey,
           description: this.textArea,
-          banner: this.bannerKey,
+          banner_url: this.bannerKey,
           owner_name: this.shopChiefName,
           wechat: this.contactWeChat,
           customer_service_mobile: this.customerServiceNum,

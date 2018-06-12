@@ -13,11 +13,8 @@ export default {
   components: {
     menuLeft
   },
-  beforeUpdate () {
-    this.setMenuLeft('')
-  },
   methods: {
-    ...mapMutations(['setMenuLeft', 'setMenuShow'])
+    ...mapMutations(['setMenuShow'])
   },
   computed: {
     ...mapState(['menuShow'])
