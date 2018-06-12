@@ -29,7 +29,7 @@
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url ? qiniuDomainUrl + item.children[index2].icon_url : '/static/default-img/secondary-classification-default.png'" class="avatar">
+                          <img :src="item.children[index2].icon_url ? yiqixuanDomainUrl + item.children[index2].icon_url : '/static/default-img/secondary-classification-default.png'" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>

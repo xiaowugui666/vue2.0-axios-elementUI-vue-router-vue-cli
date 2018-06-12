@@ -599,7 +599,7 @@ export default {
     renderingGoodsImageList (imgList) {
       if (imgList) {
         for (let v of imgList) {
-          this.goodsImageShowList.push({id: v.id, url: this.qiniuDomainUrl + v.icon_url, key: v.icon_url})
+          this.goodsImageShowList.push({id: v.id, url: this.yiqixuanDomainUrl + v.icon_url, key: v.icon_url})
         }
       }
     },
@@ -647,7 +647,7 @@ export default {
     },
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
-      this.goodsImageShowList.push({id: '', url: this.qiniuDomainUrl + response.key, key: response.key, modified: file.name})
+      this.goodsImageShowList.push({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
       this.goodsImageValidate = false
     },
     // 删除商品图片列表中的图片，删除商品图片的key
@@ -666,7 +666,7 @@ export default {
     // 商品卖点详情，图片上传成功后的操作
     quillUpScuccess (e, file, fileList) {
       let vm = this
-      let url = this.qiniuDomainUrl + e.key
+      let url = this.yiqixuanDomainUrl + e.key
       if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
         let value = url
         // API: https://segmentfault.com/q/1010000008951906
@@ -908,7 +908,7 @@ export default {
     },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
-      this.skus[index].cover_url = this.qiniuDomainUrl + res.key
+      this.skus[index].cover_url = this.yiqixuanDomainUrl + res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
@@ -1053,7 +1053,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['qiniuDomainUrl', 'qiniuUploadUrl']),
+    ...mapState(['yiqixuanDomainUrl', 'qiniuUploadUrl']),
     editor () {
       return this.$refs.myQuillEditor.quill
     }

@@ -92,7 +92,7 @@
 <script>
 import {orderDetail, transComp, orderPrice, orderExpress} from '@/axios/api'
 import menuLeft from '@/components/menu-left'
-import {mapMutations, mapState} from 'vuex'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -117,7 +117,6 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     changeCompile () {
       this.isPrice = false
       this.isPrices = false
@@ -183,7 +182,6 @@ export default {
     }
   },
   mounted () {
-    this.setMenuLeft('/orderManagement')
     // 请求订单信息
     orderDetail(this.$route.params.id).then(res => {
       console.log(this.$route.params.id)
