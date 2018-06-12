@@ -5,10 +5,10 @@ Vue.use(Vuex)
 
 const state = {
   menuLeft: '',
-  qiniuDomainUrl: 'http://p94iruedm.bkt.clouddn.com/',
-  qiniuUploadUrl: 'http://upload.qiniup.com',
+  qiniuDomainUrl: '//p94iruedm.bkt.clouddn.com/',
+  qiniuUploadUrl: '//upload.qiniup.com',
   menuShow: true,
-  yiqixuanDomainUrl: 'http://image.yiqixuan.com/',
+  yiqixuanDomainUrl: '//image.yiqixuan.com/',
   mainCategory: [
     {
       value: 1,
