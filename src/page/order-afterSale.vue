@@ -191,6 +191,7 @@ export default {
     },
     changeTime () {
     },
+    // 点击搜索
     searchOrder () {
       let params = {}
       if (this.keyValue != '') {
@@ -199,6 +200,8 @@ export default {
       if (this.keyName != '') {
         params.no = this.keyName
       }
+      params.begin_at = this.keyTime[0]
+      params.end_at = this.keyTime[1]
       afterSaleGoods(params).then(res => {
         console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
