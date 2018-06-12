@@ -54,7 +54,7 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="qiniuDomainUrl+'/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="yiqixuanDomainUrl+'/'+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
@@ -163,7 +163,7 @@ export default {
     // console.log(this.selectStateOptions)
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
   },
   methods: {
     ...mapMutations(['setMenuLeft']),

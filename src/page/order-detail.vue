@@ -63,7 +63,7 @@
               <div>
                 <div class="prolist" v-for="(item,index) in tradeList.items" :key="index">
                   <div class="proInfo">
-                    <img :src="qiniuDomainUrl + item.cover_url" alt="">
+                    <img :src="yiqixuanDomainUrl + item.cover_url" alt="">
                     <div class="desc">{{item.name}}</div>
                   </div>
                   <div class="proNum">数量 x{{item.count}}</div>
@@ -219,7 +219,7 @@ export default {
     })
   },
   computed: {
-    ...mapState(['qiniuDomainUrl']),
+    ...mapState(['yiqixuanDomainUrl']),
     inputPrice: {
       get () {
         return this.tradeList.amount / 100

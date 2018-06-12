@@ -32,7 +32,7 @@
               width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box" v-if="scope.row.goods">
-                  <span class="goods-img"><img :src="scope.row.goods_sku ? qiniuDomainUrl + scope.row.goods_sku.cover_url : qiniuDomainUrl + scope.row.goods.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="scope.row.goods_sku ? yiqixuanDomainUrl + scope.row.goods_sku.cover_url : yiqixuanDomainUrl + scope.row.goods.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
                     <div class="goods-info-price-category">
@@ -290,7 +290,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
   }
 }
 </script>

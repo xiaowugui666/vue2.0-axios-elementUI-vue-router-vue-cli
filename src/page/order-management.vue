@@ -180,11 +180,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['qiniuDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
     orderImageUrl (value) {
-      return this.qiniuDomainUrl + value
+      return this.yiqixuanDomainUrl + value
     },
     changeType () {
     },

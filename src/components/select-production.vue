@@ -24,7 +24,7 @@
                 width="400">
                 <template slot-scope="scope">
                   <div class="goods-info-box">
-                    <span class="goods-img"><img :src="qiniuDomainUrl + scope.row.cover_url" alt=""></span>
+                    <span class="goods-img"><img :src="yiqixuanDomainUrl + scope.row.cover_url" alt=""></span>
                     <div class="goods-info">
                       <p class="goods-info-name">{{compGoodsName(scope.row)}}</p>
                       <div class="goods-info-price-category">
@@ -82,7 +82,7 @@ export default {
       goods: this.newGoods
     }
   },
-  props: ['goodsDialogVisible', 'newGoods', 'qiniuDomainUrl'],
+  props: ['goodsDialogVisible', 'newGoods', 'yiqixuanDomainUrl'],
   mounted () {
     this.goods = this.newGoods
   },
