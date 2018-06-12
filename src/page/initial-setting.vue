@@ -192,7 +192,7 @@ export default {
     paymentInfo
   },
   computed: {
-    ...mapState(['menuShow', 'mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
+    ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
   },
   methods: {
     // 获取图片上传七牛的token

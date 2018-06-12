@@ -1,6 +1,7 @@
 <template>
   <div>
-      <div class="orderManager">
+    <menu-left routeIndex="4-1"></menu-left>
+    <div class="orderManager">
         <div class="header">
           <div class="selectInfo">
             <el-select v-model="value" placeholder="订单号"  @change="changeType" >
@@ -105,6 +106,7 @@
 </template>
 <script>
 import {order} from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 import {mapState} from 'vuex'
 export default {
   data () {
@@ -300,8 +302,10 @@ export default {
       this.ordersDetail = res.data
       // console.log(this.ordersDetail)
     })
+  },
+  components: {
+    menuLeft
   }
-
 }
 </script>
 <style lang="less">
@@ -412,9 +416,8 @@ export default {
     }
     .el-input--suffix .el-input__inner {
       padding:0 12px;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
-      color: #B5B5B5;
+      color: @b3;
       line-height: 15px;
     }
     .el-date-editor .el-range__icon {

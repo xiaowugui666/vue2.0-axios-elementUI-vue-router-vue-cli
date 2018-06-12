@@ -27,7 +27,7 @@ export default {
             this.getInitialSetData()
           }).catch(error => {
             console.log(error)
-            location.href = 'http://www.51zan.cn/login.html'
+            // location.href = 'http://www.51zan.cn/login.html'
           })
       } else if (userToken.appid) {
         // 绑定小程序回来后，url上会带有appid参数

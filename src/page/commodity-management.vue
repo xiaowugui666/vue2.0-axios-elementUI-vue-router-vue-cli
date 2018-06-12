@@ -1,5 +1,6 @@
 <template>
   <div>
+    <menu-left routeIndex="3-1"></menu-left>
     <div class="commodity-management-subject">
       <div class="commodity-management-state-search">
         <ul class="commodity-management-state clear">
@@ -131,6 +132,7 @@
 </template>
 
 <script>
+import menuLeft from '@/components/menu-left'
 import {mapState, mapMutations} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
@@ -170,8 +172,7 @@ export default {
     // 获取商品列表
     getGoodsList (data = {
       cat_id: this.cat_id,
-      // goods_name: this.goods_name,
-      goods_name: encodeURIComponent(this.goods_name),
+      goods_name: this.goods_name,
       page: this.page,
       status: this.managementState !== 0 ? this.managementState : ''
     }) {
@@ -374,6 +375,9 @@ export default {
         path: link
       })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

@@ -1,95 +1,97 @@
 <template>
-    <div>
-      <div class="orderDetail">
-        <div class="top">
-          <div class="title">订单管理 > 订单详情</div>
-          <el-steps :active="tradeType" v-if="tradeType < 4" align-center  finish-status="success" >
-            <el-step title="待付款"></el-step>
-            <el-step title="已付款"></el-step>
-            <el-step title="已发货"></el-step>
-            <el-step title="确认收货"></el-step>
-          </el-steps>
-        </div>
-        <div class="tradeList">
-            <div class="top">
-              <label>订单编号：{{tradeList.no}}</label>
-            </div>
-            <div class="orderInfo">
-                  <div class="left">
-                      <div>
-                        <label><i>买家微信：</i>248773573799</label>
-                        <label><i>买家手机号：</i>{{tradeList.mobile}}</label>
-                      </div>
-                      <div>
-                        <label><i>收货人名：</i>{{tradeList.consignee}}</label>
-                        <label><i>收货人手机号：</i>13566774466</label>
-                      </div>
-                      <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
-                      <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
-                        <label>
-                          <i>快递公司：</i>
-                          <el-select
-                            v-if="isCompile"
-                            v-model="transCompValue"
-                            clearable>
-                            <el-option
-                              v-for="item in transComp"
-                              :key="item"
-                              :value="item"></el-option>
-                          </el-select>
-                          <label v-else>{{expressCompany}}</label>
-                        </label>
-                        <label>
-                            <i>快递单号：</i>
-                              <input v-if="isCompile" type="text" maxlength="20" v-model.trim="expressNo">
-                              <label v-else>{{tradeList.express_no}}</label>
-                        </label>
-                        <el-button v-if="isCompile" @click="commitTrade" size="small" type="success">提交</el-button>
-                      </div>
-                  </div>
-                  <div class="right">
+  <div>
+    <menu-left routeIndex="4-1"></menu-left>
+    <div class="orderDetail">
+      <div class="top">
+        <div class="title">订单管理 > 订单详情</div>
+        <el-steps :active="tradeType" v-if="tradeType < 4" align-center  finish-status="success" >
+          <el-step title="待付款"></el-step>
+          <el-step title="已付款"></el-step>
+          <el-step title="已发货"></el-step>
+          <el-step title="确认收货"></el-step>
+        </el-steps>
+      </div>
+      <div class="tradeList">
+          <div class="top">
+            <label>订单编号：{{tradeList.no}}</label>
+          </div>
+          <div class="orderInfo">
+                <div class="left">
                     <div>
-                      <label><i>创建时间：</i>2018-08-22    12:33</label>
-                      <label v-if="tradeType>1"><i>付款时间：</i>2018-08-22    12:35</label>
+                      <label><i>买家微信：</i>248773573799</label>
+                      <label><i>买家手机号：</i>{{tradeList.mobile}}</label>
                     </div>
-                    <div :style="{marginTop: (tradeType > 2) ? '30px' : 0}">
-                      <label v-if="tradeType > 2"><i>发货时间：</i>2018-08-23    10:38</label>
-                      <label v-if="tradeType > 3"><i>收货时间：</i>2018-08-27    20:17</label>
+                    <div>
+                      <label><i>收货人名：</i>{{tradeList.consignee}}</label>
+                      <label><i>收货人手机号：</i>13566774466</label>
                     </div>
+                    <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
+                    <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
+                      <label>
+                        <i>快递公司：</i>
+                        <el-select
+                          v-if="isCompile"
+                          v-model="transCompValue"
+                          clearable>
+                          <el-option
+                            v-for="item in transComp"
+                            :key="item"
+                            :value="item"></el-option>
+                        </el-select>
+                        <label v-else>{{expressCompany}}</label>
+                      </label>
+                      <label>
+                          <i>快递单号：</i>
+                            <input v-if="isCompile" type="text" maxlength="20" v-model.trim="expressNo">
+                            <label v-else>{{tradeList.express_no}}</label>
+                      </label>
+                      <el-button v-if="isCompile" @click="commitTrade" size="small" type="success">提交</el-button>
+                    </div>
+                </div>
+                <div class="right">
+                  <div>
+                    <label><i>创建时间：</i>2018-08-22    12:33</label>
+                    <label v-if="tradeType>1"><i>付款时间：</i>2018-08-22    12:35</label>
                   </div>
-
-            </div>
-            <div class="content" v-if="tradeList.items">
-              <div>
-                <div class="prolist" v-for="(item,index) in tradeList.items" :key="index">
-                  <div class="proInfo">
-                    <img :src="yiqixuanDomainUrl + item.cover_url" alt="">
-                    <div class="desc">{{item.name}}</div>
-                  </div>
-                  <div class="proNum">数量 x{{item.count}}</div>
-                  <div class="price">
-                    <label>￥</label>
-                    <label>{{tradeList.amount | money }}</label>
+                  <div :style="{marginTop: (tradeType > 2) ? '30px' : 0}">
+                    <label v-if="tradeType > 2"><i>发货时间：</i>2018-08-23    10:38</label>
+                    <label v-if="tradeType > 3"><i>收货时间：</i>2018-08-27    20:17</label>
                   </div>
                 </div>
-              </div>
-              <div class="orderMon" :style="{height: tradeList.items.length * 80 + 'px'}">
-                <label>
-                  <label>运费：</label>
-                  <label>{{tradeList.express_amount | money }}</label>
-                </label>
-                <label v-if="isPrice">￥{{tradeList.amount | money }}</label>
-                <label v-else>￥<input type="tel" maxlength="11" v-model.trim="inputPrice"></label>
-                <label @click="changeCompile" v-if="isPrices">编辑订单</label>
-                <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
+
+          </div>
+          <div class="content" v-if="tradeList.items">
+            <div>
+              <div class="prolist" v-for="(item,index) in tradeList.items" :key="index">
+                <div class="proInfo">
+                  <img :src="yiqixuanDomainUrl + item.cover_url" alt="">
+                  <div class="desc">{{item.name}}</div>
+                </div>
+                <div class="proNum">数量 x{{item.count}}</div>
+                <div class="price">
+                  <label>￥</label>
+                  <label>{{tradeList.amount | money }}</label>
+                </div>
               </div>
             </div>
-        </div>
+            <div class="orderMon" :style="{height: tradeList.items.length * 80 + 'px'}">
+              <label>
+                <label>运费：</label>
+                <label>{{tradeList.express_amount | money }}</label>
+              </label>
+              <label v-if="isPrice">￥{{tradeList.amount | money }}</label>
+              <label v-else>￥<input type="tel" maxlength="11" v-model.trim="inputPrice"></label>
+              <label @click="changeCompile" v-if="isPrices">编辑订单</label>
+              <div @click="changeSave" class="saveCompile" v-if="isSave">保存</div>
+            </div>
+          </div>
       </div>
     </div>
+  </div>
 </template>
 <script>
 import {orderDetail, transComp, orderPrice, orderExpress} from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 import {mapMutations, mapState} from 'vuex'
 export default {
   data () {
@@ -232,6 +234,9 @@ export default {
     expressCompany () {
       return this.transComp[this.tradeList.express_code]
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>
