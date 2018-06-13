@@ -25,7 +25,12 @@
               width="75">
               <template slot-scope="scope">
                 <div>
-                  <input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">
+                  <!--<input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">-->
+                  <span>{{scope.$index + 1}}</span>
+                  <div class="sort-btn">
+                    <div class="el-icon-caret-top" @click="handleClick(1)"></div>
+                    <div class="el-icon-caret-bottom" @click="handleClick(2)"></div>
+                  </div>
                 </div>
               </template>
             </el-table-column>
@@ -49,6 +54,7 @@
             </el-table-column>
             <el-table-column
               label="访问量"
+              min-width="120"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <div>访问量：11111</div>
@@ -99,19 +105,19 @@
             </el-table-column>
           </el-table>
         </div>
-        <div class="paging-box clear">
-          <el-pagination
-            background
-            v-if="goodsList.length"
-            :currentPage="curPage"
-            :page-size="5"
-            @current-change="currentChange($event)"
-            prev-text="< 上一页"
-            next-text="下一页 >"
-            layout="prev, pager, next"
-            :total="totalPagina * 5">
-          </el-pagination>
-        </div>
+        <!--<div class="paging-box clear">-->
+          <!--<el-pagination-->
+            <!--background-->
+            <!--v-if="goodsList.length"-->
+            <!--:currentPage="curPage"-->
+            <!--:page-size="5"-->
+            <!--@current-change="currentChange($event)"-->
+            <!--prev-text="< 上一页"-->
+            <!--next-text="下一页 >"-->
+            <!--layout="prev, pager, next"-->
+            <!--:total="totalPagina * 5">-->
+          <!--</el-pagination>-->
+        <!--</div>-->
       </div>
     </div>
   </div>
@@ -124,8 +130,6 @@ import {marketingGoods, closeGoods, deleteSpecial, deleteRecommend, closeRecomme
 export default {
   data () {
     return {
-      totalPagina: 0,
-      curPage: 1,
       managementState: 1,
       goodsList: [],
       multipleSelection: '',
@@ -136,14 +140,14 @@ export default {
     }
   },
   mounted () {
+    this.request()
     this.setMenuLeftIndex()
-    this.request(0)
   },
   watch: {
     '$route' () {
       this.linkClass = this.$route.params.class
       this.managementState = 1
-      this.request(0)
+      this.request()
     }
   },
   methods: {
@@ -166,25 +170,22 @@ export default {
       }
       // 获取商品列表
       marketingGoods(router, {
-        type: this.managementState,
-        page: curPage
+        type: this.managementState
       }).then(res => {
         this.goodsList = res.data
-        this.totalPagina = res.headers.page_count
         this.timeStamp = res.headers.time
       })
     },
     // 点击排序状态
     changState (value) {
       this.managementState = value
-      this.request(0)
+      this.request()
     },
     // 点击分页
-    currentChange (value) {
-      console.log(value)
-      this.curPage = value
-      this.request(this.curPage - 1)
-    },
+    // currentChange (value) {
+    //   console.log(value)
+    //   this.request()
+    // },
     // 关闭活动
     closingActivity (data) {
       let _this = this
@@ -199,7 +200,7 @@ export default {
             id: data.id,
             status: 2
           }).then(res => {
-            _this.request(this.curPage - 1)
+            _this.request()
             _this.$message({
               type: 'success',
               message: `关闭成功`
@@ -211,7 +212,7 @@ export default {
             id: data.id,
             status: 2
           }).then(res => {
-            _this.request(this.curPage - 1)
+            _this.request()
             _this.$message({
               type: 'success',
               message: `关闭成功`
@@ -235,7 +236,7 @@ export default {
         // 特价商品路由，删除特价商品
         if (this.$route.params.class == 'special-offer') {
           deleteSpecial(data.id).then(res => {
-            this.request(0).done(() => {
+            this.request().done(() => {
               this.$message({
                 type: 'success',
                 message: `删除成功`
@@ -245,7 +246,7 @@ export default {
         } else if (this.$route.params.class == 'recommend') {
         // 推荐商品路由，删除推荐商品
           deleteRecommend(data.id).then(res => {
-            this.request(0)
+            this.request()
             this.$message({
               type: 'success',
               message: `删除成功`
@@ -364,13 +365,13 @@ export default {
         .el-table {
           color: #666;
           font-size: 12px;
-          .sort-input{
+          /*.sort-input{
             width: 27px;
             height: 23px;
             padding-left: 18px;
             background-color: transparent;
             border: 1px solid @bc;
-          }
+          }*/
           .sort-btn {
             display: inline-block;
             vertical-align: middle;
@@ -381,10 +382,11 @@ export default {
               cursor: pointer;
             }
             .el-icon-caret-top {
-              margin-top: -3px;
+              font-size: 12px;
             }
             .el-icon-caret-bottom {
-              margin-top: -9px;
+              margin-top: -2px;
+              font-size: 12px;
             }
           }
         }

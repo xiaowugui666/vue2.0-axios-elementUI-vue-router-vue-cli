@@ -26,23 +26,34 @@ export function tradeVolum () {
 // 商品总数
 export function storeGoodsAmount () {
   return fetch({
-    url: api.ip + '/management/statistics/good_sku_count',
+    url: api.ip + '/management/statistics/summary',
     method: 'GET'
   })
 }
 
-// 昨日pv,uv
-export function yesterdayPvUv () {
+// 7日浏览量
+export function sevenDaysPv () {
   return fetch({
-    url: api.ip + '/management/statistics/yesterday_pv_uv',
+    url: api.ip + '/management/statistics/page',
     method: 'GET'
   })
 }
-// 七日界面排行榜
-export function pagePvUv () {
+
+/* 表格数据 */
+// 计算表格起止时间
+export function endBegins () {
   return fetch({
-    url: api.ip + '/management/statistics/page_pv_uv',
+    url: api.ip + '/management/statistics/nav',
     method: 'GET'
+  })
+}
+
+// 走势图表格数据
+export function tableData (params) {
+  return fetch({
+    url: api.ip + '/management/statistics',
+    method: 'GET',
+    params: params
   })
 }
 
@@ -206,6 +217,14 @@ export function closeGoods (data) {
   })
 }
 
+// 获取单一推荐商品
+export function singleRecommendGood (id) {
+  return fetch({
+    url: api.ip + '/management/recommend_goods/' + id,
+    method: 'GET'
+  })
+}
+
 // 编辑推荐商品
 export function closeRecommendGood (data) {
   return fetch({
@@ -215,7 +234,7 @@ export function closeRecommendGood (data) {
   })
 }
 
-// 获取编辑商品信息
+// 获取编辑特价商品信息
 export function editorGoods (id) {
   return fetch({
     url: api.ip + '/management/special_goods/' + id,
@@ -359,7 +378,7 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据，支付设置
 export const initialSetData = function (type, data) {
   return fetch({
-    url: api.ip + '/management/merchant',
+    url: api.hqip8080 + '/management/merchant',
     method: type, // 请求方法
     data: data
   })
@@ -393,7 +412,7 @@ export const checkAuth = function (params) {
 // 获取小程序信息
 export const mpInfo = function () {
   return fetch({
-    url: api.ip + '/management/mpa/mpa_info',
+    url: api.ip + '/management/mpa/info',
     method: 'get' // 请求方法
   })
 }

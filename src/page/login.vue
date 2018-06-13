@@ -24,10 +24,19 @@ export default {
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
             localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 
-            this.getInitialSetData()
+            let data = res.data
+            if (!data.mpa) {
+              this.setRouter('/binding-mp')
+            } else {
+              if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key && data.mpa.merchant_cert) {
+                this.setRouter('/')
+              } else {
+                this.setRouter('/initial-setting')
+              }
+            }
           }).catch(error => {
-            console.log(error)
-            // location.href = 'http://www.51zan.cn/login.html'
+            alert(error.response.data.message)
+            location.href = 'http://www.51zan.cn/login.html'
           })
       } else if (userToken.appid) {
         // 绑定小程序回来后，url上会带有appid参数
@@ -40,11 +49,18 @@ export default {
     getInitialSetData () {
       initialSetData('get').then(res => {
         console.log(res.data)
-        if (!res.data.mpa) {
+        let data = res.data
+        if (!data.mpa) {
           this.setRouter('/binding-mp')
         } else {
-          this.setRouter('/initial-setting')
+          if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key && data.mpa.merchant_cert) {
+            this.setRouter('/')
+          } else {
+            this.setRouter('/initial-setting')
+          }
         }
+      }).catch(err => {
+        console.log(err)
       })
     },
     // 设置路由链接

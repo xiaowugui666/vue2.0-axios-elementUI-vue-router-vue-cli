@@ -49,7 +49,7 @@
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleLogoSuccess">
-                  <img :src="logoImageUrl" class="avatar">
+                  <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
@@ -70,7 +70,7 @@
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleBannerSuccess">
-                  <img v-if="bannerImageUrl" :src="bannerImageUrl" class="avatar avatar2">
+                  <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
@@ -169,10 +169,8 @@ export default {
       telNum: '',
       contactWeChat: '',
       customerServiceNum: '',
-      logoImageUrl: '/static/default-img/shops-default-logo.png',
-      logoKey: '',
+      logoImageUrl: 'shop_default _logo.png',
       bannerImageUrl: '',
-      bannerKey: '',
       bannerErrorTips: false,
       textArea: '',
       options: regionData,
@@ -209,15 +207,19 @@ export default {
         console.log(res.data)
         let data = res.data
         if (data.name && data.type) {
-          if (data.description && data.banner_url && data.owner_name) {
-            this.active = 2
+          if (data.description && data.banner && data.owner_name) {
+            if (data.mpa.merchant_no && data.mpa.merchant_key && data.mpa.merchant_cert) {
+              this.setRouter('/')
+            } else {
+              this.active = 2
+            }
           } else {
             if (data.logo_url) {
-              this.logoImageUrl = this.yiqixuanDomainUrl + data.logo_url
+              this.logoImageUrl = data.logo_url
             }
             this.textArea = data.description
-            if (data.banner_url) {
-              this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner_url
+            if (data.banner) {
+              this.bannerImageUrl = data.banner
             }
             this.shopChiefName = data.owner_name
             this.telNum = data.mobile
@@ -246,9 +248,9 @@ export default {
         }
       } else if (step === 2) {
         data = {
-          logo_url: this.logoKey,
+          logo_url: this.logoImageUrl,
           description: this.textArea,
-          banner_url: this.bannerKey,
+          banner: this.bannerImageUrl,
           owner_name: this.shopChiefName,
           wechat: this.contactWeChat,
           customer_service_mobile: this.customerServiceNum,
@@ -263,16 +265,15 @@ export default {
       }
       this.$validator.validateAll().then((msg) => {
         if (msg) {
-          if (step === 2 && this.bannerKey === '') {
+          if (step === 2 && this.bannerImageUrl === '') {
             this.bannerErrorTips = true
             return false
           }
           initialSetData('put', data).then(res => {
-            console.log(res)
             this.active = step
           })
         } else {
-          if (step === 2 && this.bannerKey === '') {
+          if (step === 2 && this.bannerImageUrl === '') {
             this.bannerErrorTips = true
           }
         }
@@ -288,13 +289,12 @@ export default {
     },
     // 商铺logo图片上传成功后的操作
     handleLogoSuccess (res, file) {
-      this.logoKey = res.key
-      this.logoImageUrl = URL.createObjectURL(file.raw)
+      this.logoImageUrl = res.key
     },
     // 商铺banner图片上传成功后的操作
     handleBannerSuccess (res, file) {
-      this.bannerKey = res.key
-      this.bannerImageUrl = URL.createObjectURL(file.raw)
+      // this.bannerImageUrl = URL.createObjectURL(file.raw)
+      this.bannerImageUrl = res.key
     },
     // 上传文件之前对上传内容的验证
     beforeUpload (file) {
