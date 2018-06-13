@@ -28,8 +28,8 @@
                   <!--<input class="sort-input" type="text" :value="scope.$index + 1" @input="sorting($event)">-->
                   <span>{{scope.$index + 1}}</span>
                   <div class="sort-btn">
-                    <div class="el-icon-caret-top" @click="handleClick(1)"></div>
-                    <div class="el-icon-caret-bottom" @click="handleClick(2)"></div>
+                    <div :class="{'enable': scope.$index == 0,'el-icon-caret-top': true}" @click="handleClick(scope.$index,1)"></div>
+                    <div :class="{'enable': scope.$index == goodsList.length - 1,'el-icon-caret-bottom': true}" @click="handleClick(scope.$index,2)"></div>
                   </div>
                 </div>
               </template>
@@ -126,7 +126,7 @@
 <script>
 import {mapState} from 'vuex'
 import menuLeft from '@/components/menu-left'
-import {marketingGoods, closeGoods, deleteSpecial, deleteRecommend, closeRecommendGood} from '../axios/api'
+import {marketingGoods, closeGoods, deleteSpecial, deleteRecommend, closeRecommendGood, changeSort} from '../axios/api'
 export default {
   data () {
     return {
@@ -151,6 +151,33 @@ export default {
     }
   },
   methods: {
+    // 点击改变排序状态
+    handleClick (value, val) {
+      let nextInd = val == 1 ? value - 1 : value + 1
+      if (nextInd > -1 && nextInd < this.goodsList.length) {
+        let route = ''
+        let params = {}
+        params.from_id = this.goodsList[value].id
+        params.to_id = this.goodsList[nextInd].id
+        if (this.linkClass == 'recommend') {
+          route = 'recommend_goods'
+        } else {
+          route = 'special_goods'
+        }
+        changeSort(route, params).then(res => {
+          if (res.status == 200) {
+            // 改变goodsList数据，刷新视图层
+            let temp = this.goodsList.splice(value, 1)
+            this.goodsList.splice(nextInd, 0, temp[0])
+          } else {
+            this.$message({
+              message: '修改顺序失败，请稍后重试',
+              type: 'error'
+            })
+          }
+        })
+      }
+    },
     // 通过url上带的参数选择菜单栏选中状态
     setMenuLeftIndex () {
       if (this.linkClass === 'special-offer') {
@@ -380,6 +407,10 @@ export default {
               font-size: 18px;
               color: #333;
               cursor: pointer;
+            }
+            div.enable {
+              cursor: default;
+              color: #D5D5D5;
             }
             .el-icon-caret-top {
               font-size: 12px;

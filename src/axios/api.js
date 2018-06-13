@@ -283,6 +283,15 @@ export function newRecommendGoods (data) {
     data: data
   })
 }
+
+// 点击排序
+export function changeSort (route, data) {
+  return fetch({
+    url: api.ip + '/management/' + route + '/rank',
+    method: 'POST',
+    data: data
+  })
+}
 /* 营销模块结束 */
 
 // 批量商品上下架
