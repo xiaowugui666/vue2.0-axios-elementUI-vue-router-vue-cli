@@ -19,7 +19,7 @@ export default {
     loginState (userToken) {
       // 如果url上有携带token参数
       if (userToken.token) {
-        this.$http.post(api.cjip + '/management/login', {token: userToken.token})
+        this.$http.post(api.ip + '/management/login', {token: userToken.token})
           .then(res => {
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
             localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
