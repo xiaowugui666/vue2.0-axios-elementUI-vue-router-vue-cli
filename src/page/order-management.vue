@@ -15,7 +15,7 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
-              maxlength="20"
+              maxlength="50"
               v-validate="'decimal'"
               name="orderNumber"
               clearable>
@@ -217,8 +217,10 @@ export default {
       if (this.keyName !== '') {
         params.name = this.keyName
       }
-      params.begin_at = this.keyTime[0]
-      params.end_at = this.keyTime[1]
+      if (this.keyTime.length !== 0) {
+        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+      }
       params.page = 0
       params.per_page = 15
       order(params).then(res => {

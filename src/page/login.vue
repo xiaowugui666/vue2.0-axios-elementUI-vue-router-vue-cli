@@ -19,33 +19,45 @@ export default {
     loginState (userToken) {
       // 如果url上有携带token参数
       if (userToken.token) {
-        this.$http.post(api.cjip + '/management/login', {token: userToken.token})
+        this.$http.post(api.hqip8080 + '/management/login', {token: userToken.token})
           .then(res => {
+            console.log(res.data)
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
             localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 
-            this.getInitialSetData()
+            this.judgmentInfoJump(res.data)
           }).catch(error => {
-            console.log(error)
-            // location.href = 'http://www.51zan.cn/login.html'
+            alert(error.response.data.message)
+            location.href = 'http://www.51zan.cn/login.html'
           })
       } else if (userToken.appid) {
         // 绑定小程序回来后，url上会带有appid参数
         checkAuth({app_id: userToken.appid}).then(res => {
           this.getInitialSetData()
         }).catch()
+      } else {
+        this.getInitialSetData()
       }
     },
     // 登录成功后调用
     getInitialSetData () {
       initialSetData('get').then(res => {
-        console.log(res.data)
-        if (!res.data.mpa) {
-          this.setRouter('/binding-mp')
+        this.judgmentInfoJump(res.data)
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    // 根据返回的信息选择调转页面
+    judgmentInfoJump (data) {
+      if (!data.mpa) {
+        this.setRouter('/binding-mp')
+      } else {
+        if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
+          this.setRouter('/')
         } else {
           this.setRouter('/initial-setting')
         }
-      })
+      }
     },
     // 设置路由链接
     setRouter (link) {

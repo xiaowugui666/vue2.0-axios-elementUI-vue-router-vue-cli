@@ -58,19 +58,22 @@ export default {
     this.getPaySetting()
   },
   methods: {
+    // 获取店铺支付信息
     getPaySetting () {
       paySetting('get').then(res => {
         console.log(res.data)
         let data = res.data
         this.busiInformation.merchant_no = data.merchant_no ? data.merchant_no : '--'
-        this.busiInformation.merchant_key = data.merchant_key ? data.merchant_key : '--'
-        this.busiInformation.merchant_cert = data.merchant_cert ? data.merchant_cert : '--'
+        this.busiInformation.merchant_key = data.merchant_key_encrypt ? data.merchant_key_encrypt : '--'
+        this.busiInformation.merchant_cert = data.merchant_cert_encrypt ? data.merchant_cert_encrypt : '--'
       })
     },
     setMerchantCert () {
       this.$prompt('设置商户号', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        inputPattern: /^.$/,
+        inputErrorMessage: '商户号不能为空！'
       }).then(({ value }) => {
         paySetting('put', {merchant_no: value}).then(res => {
           this.busiInformation.merchant_no = value
@@ -82,7 +85,9 @@ export default {
     setMerchantKey () {
       this.$prompt('设置商户密钥', {
         confirmButtonText: '确定',
-        cancelButtonText: '取消'
+        cancelButtonText: '取消',
+        inputPattern: /^.$/,
+        inputErrorMessage: '商户密钥不能为空！'
       }).then(({ value }) => {
         paySetting('put', {merchant_key: value}).then(res => {
           this.busiInformation.merchant_key = value

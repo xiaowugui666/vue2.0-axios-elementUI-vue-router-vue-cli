@@ -37,6 +37,7 @@
                     :action="qiniuUploadUrl"
                     :data="upToken"
                     list-type="picture-card"
+                    accept=".jpg,.png"
                     multiple
                     :limit="10"
                     :file-list="goodsImageShowList"
@@ -81,6 +82,7 @@
                   <el-upload :action="qiniuUploadUrl"
                              :before-upload='goodsImageBeforeUpload'
                              :data="upToken"
+                             accept=".jpg,.png"
                              :on-success='quillUpScuccess'
                              ref="quillUpload" style="display:none">
                     <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
@@ -226,10 +228,11 @@
                           class="avatar-uploader"
                           :action="qiniuUploadUrl"
                           :data="upToken"
+                          accept=".jpg,.png"
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
                           :before-upload="(value)=>beforeUpload(value, index)">
-                          <img v-if="sku.cover_url" :src="sku.cover_url" class="avatar">
+                          <img v-if="sku.cover_url" :src="yiqixuanDomainUrl+sku.cover_url" class="avatar">
                           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                       </td>
@@ -481,7 +484,6 @@ export default {
         goodsEditDetails(id).then(res => {
           // console.log(res.data)
           if (res.data) {
-            console.log(1231231231321)
             let data = res.data
             this.goodsType = data.type
             this.goodsName = data.name
@@ -911,7 +913,7 @@ export default {
     },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
-      this.skus[index].cover_url = this.yiqixuanDomainUrl + res.key
+      this.skus[index].cover_url = res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
@@ -958,7 +960,7 @@ export default {
         }
       }
     },
-    // 每种规格的价格乘以100处理，图片处理等
+    // 每种规格的价格乘以100处理
     handleSuksPrice () {
       let deepCopySku = JSON.parse(JSON.stringify(this.skus))
       for (let v of deepCopySku) {
@@ -967,9 +969,6 @@ export default {
         }
         if (v.display_price) {
           v.display_price = Math.round(v.display_price * 100)
-        }
-        if (v.cover_url) {
-          v.cover_url = v.cover_url.split('.com/')[1]
         }
       }
       return deepCopySku

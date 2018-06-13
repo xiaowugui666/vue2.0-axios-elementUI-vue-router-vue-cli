@@ -1,7 +1,7 @@
 <template>
   <div class="echarts-component">
     <div class="user-flow-chart">用户流量图</div>
-    <el-select v-model="value" size="mini" class="select-time" @change="selectTime">
+    <el-select v-model="value" size="mini" class="select-time" @change="tableDataChange">
       <el-option
         v-for="item in options"
         :key="item.value"
@@ -22,6 +22,7 @@ import 'echarts/lib/chart/line'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/title'
 import 'echarts/lib/component/legend'
+import {tableData, endBegins} from '../axios/api'
 
 export default {
   data () {
@@ -39,18 +40,83 @@ export default {
         value: '4',
         label: '查看全部'
       }],
-      value: '1'
+      value: '1',
+      // options数据，获取表格数据参数
+      endBeginData: {},
+      // echarts表格数组
+      mpaPv: [],
+      mpaUv: [],
+      goodsPv: [],
+      date: []
     }
   },
   components: {
   },
   mounted () {
-    this.drawLine()
+    endBegins().then(res => {
+      this.endBeginData = res.data
+      let begin = res.data.week.begin_at
+      let end = res.data.week.end_at
+      this.getTableData(begin, end, 1)
+    })
   },
   methods: {
-    selectTime (val) {
-      console.log(this.value)
+    // 获取表格数据,渲染表格
+    getTableData (begin, end, type) {
+      tableData({
+        begin_at: begin,
+        end_at: end,
+        type: type
+      }).then(res => {
+        console.log(res)
+        // 浏览量 pv
+        let tempArr = res.data.stat_mpa
+        for (let i = 0, len = tempArr.length; i < len; i++) {
+          let newArray = tempArr[i].begin_at.split(' ')
+          this.date.push(newArray[0])
+          this.mpaPv.push(tempArr[i].pv)
+          this.mpaUv.push(tempArr[i].uv)
+        }
+        tempArr = res.data.stat_goods
+        for (let i = 0, len = tempArr.length; i < len; i++) {
+          this.goodsPv.push(tempArr[i].pv)
+        }
+        this.drawLine()
+      })
     },
+    // 选择框值改变
+    tableDataChange (value) {
+      console.log(value)
+      console.log(11111)
+      this.date = []
+      this.mpaPv = []
+      this.mpaUv = []
+      this.goodsPv = []
+      endBegins().then(res => {
+        if (value == 1) {
+          this.endBeginData = res.data
+          let begin = res.data.week.begin_at
+          let end = res.data.week.end_at
+          this.getTableData(begin, end, 1)
+        } else if (value == 2) {
+          this.endBeginData = res.data
+          let begin = res.data.month.begin_at
+          let end = res.data.month.end_at
+          this.getTableData(begin, end, 1)
+        } else if (value == 3) {
+          this.endBeginData = res.data
+          let begin = res.data.year.begin_at
+          let end = res.data.year.end_at
+          this.getTableData(begin, end, 2)
+        } else if (value == 4) {
+          this.endBeginData = res.data
+          let begin = res.data.all.begin_at
+          let end = res.data.all.end_at
+          this.getTableData(begin, end, 2)
+        }
+      })
+    },
+    // echarts绘制图表
     drawLine () {
       // 基于准备好的dom，初始化echarts实例
       let myChart = echarts.init(document.getElementById('myChart'))
@@ -59,7 +125,7 @@ export default {
         title: { text: '' },
         tooltip: { trigger: 'axis' },
         legend: {
-          data: ['浏览量', '访客数', '商品浏览量', '商品访客数']
+          data: ['浏览量', '访客数', '商品浏览量']
         },
         grid: {
           left: '3%',
@@ -75,7 +141,7 @@ export default {
         xAxis: {
           // type: 'time',
           boundaryGap: false,
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+          data: this.date,
           axisPointer: {
             lineStyle: {
               color: '#eee'
@@ -90,22 +156,17 @@ export default {
             // symbol: 'circle', // 'circle', 'rect', 'roundRect', 'triangle', 'diamond', 'pin', 'arrow', 'emptyCircle'
             // symbolSize: '4',
             // hoverAnimation: false,
-            data: [120, 132, 101, 134, 90, 230, 1010]
+            data: this.mpaPv
           },
           {
             name: '访客数',
             type: 'line',
-            data: [220, 182, 191, 234, 290, 300, 510]
+            data: this.mpaUv
           },
           {
             name: '商品浏览量',
             type: 'line',
-            data: [150, 232, 201, 154, 190, 240, 1410]
-          },
-          {
-            name: '商品访客数',
-            type: 'line',
-            data: [320, 332, 301, 334, 390, 350, 320]
+            data: this.goodsPv
           }
         ]
       })
