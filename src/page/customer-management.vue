@@ -90,7 +90,7 @@
 </template>
 
 <script>
-import { user } from '@/axios/api'
+import {user, userEditor} from '@/axios/api'
 import menuLeft from '@/components/menu-left'
 export default {
   data () {
@@ -151,7 +151,7 @@ export default {
         mobile: this.phoneNum,
         order_count: this.value,
         page: this.pages
-      }, 'PUT').then(
+      }, 'GET').then(
         res => {
           this.tableData = res.data
           this.totalPage = parseInt(res.headers.page_count) * 15
@@ -167,10 +167,9 @@ export default {
     // 保存姓名 关闭模态框
     saveInfo () {
       let that = this
-      user({
-        id: this.tableData[this.detail].user_id,
+      userEditor({
         name: this.name
-      }, 'GET').then(
+      }, this.tableData[this.detail].id).then(
         res => {
           console.log(res)
           if (res.status === 200) {
@@ -185,7 +184,12 @@ export default {
             this.$message.error('修改失败')
           }
         }
-      )
+      ).catch(() => {
+        this.$message({
+          message: '修改失败',
+          type: 'error'
+        })
+      })
     },
     orderDetails (link) {
       this.$router.push({name: 'customerOrder', params: {id: this.tableData[link].id}})

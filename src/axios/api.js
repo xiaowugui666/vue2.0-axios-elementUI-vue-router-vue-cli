@@ -142,7 +142,16 @@ export const user = function (data, type) {
     // api.Hallowmas 引用url.js里面的数据
     url: api.ip + '/management/user',
     method: type, // 请求方法
-    params: data
+    data: data
+  })
+}
+
+// 编辑客户信息
+export function userEditor (data, id) {
+  return fetch({
+    url: api.ip + '/management/user/' + id,
+    data: data,
+    method: 'PUT'
   })
 }
 // 获取账户列表
