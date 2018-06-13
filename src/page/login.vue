@@ -25,16 +25,7 @@ export default {
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
             localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 
-            let data = res.data
-            if (!data.mpa) {
-              this.setRouter('/binding-mp')
-            } else {
-              if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key && data.mpa.merchant_cert) {
-                this.setRouter('/')
-              } else {
-                this.setRouter('/initial-setting')
-              }
-            }
+            this.judgmentInfoJump(res.data)
           }).catch(error => {
             alert(error.response.data.message)
             location.href = 'http://www.51zan.cn/login.html'
@@ -44,25 +35,29 @@ export default {
         checkAuth({app_id: userToken.appid}).then(res => {
           this.getInitialSetData()
         }).catch()
+      } else {
+        this.getInitialSetData()
       }
     },
     // 登录成功后调用
     getInitialSetData () {
       initialSetData('get').then(res => {
-        console.log(res.data)
-        let data = res.data
-        if (!data.mpa) {
-          this.setRouter('/binding-mp')
-        } else {
-          if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key && data.mpa.merchant_cert) {
-            this.setRouter('/')
-          } else {
-            this.setRouter('/initial-setting')
-          }
-        }
+        this.judgmentInfoJump(res.data)
       }).catch(err => {
         console.log(err)
       })
+    },
+    // 根据返回的信息选择调转页面
+    judgmentInfoJump (data) {
+      if (!data.mpa) {
+        this.setRouter('/binding-mp')
+      } else {
+        if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
+          this.setRouter('/')
+        } else {
+          this.setRouter('/initial-setting')
+        }
+      }
     },
     // 设置路由链接
     setRouter (link) {

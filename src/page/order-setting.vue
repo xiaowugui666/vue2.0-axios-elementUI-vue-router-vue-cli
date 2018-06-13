@@ -43,8 +43,8 @@ export default {
   data () {
     return {
       editState: false,
-      cancellationTime: 20,
-      receiptTime: 7,
+      cancellationTime: '',
+      receiptTime: '',
       configData: {}
     }
   },

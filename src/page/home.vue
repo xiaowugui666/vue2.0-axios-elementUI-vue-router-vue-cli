@@ -74,16 +74,17 @@
 import menuLeft from '@/components/menu-left'
 import echarts from '@/components/echarts'
 import {mapState} from 'vuex'
-import {tradeVolum} from '../axios/api'
+import {tradeVolum, initialSetData} from '../axios/api'
 export default {
   data () {
     return {
-      shopName: '阿迪达斯旗舰店',
+      shopName: '',
       tel: '2881778283',
       storeDetail: {}
     }
   },
   mounted () {
+    this.getShopInfo()
     tradeVolum().then(res => {
       console.log(res)
       if (res.status == 200) {
@@ -103,7 +104,13 @@ export default {
   computed: {
     ...mapState(['menuShow'])
   },
-  methods: {}
+  methods: {
+    getShopInfo () {
+      initialSetData('get').then(res => {
+        this.shopName = res.data.name
+      }).catch()
+    }
+  }
 }
 </script>
 <style scoped lang="less">
