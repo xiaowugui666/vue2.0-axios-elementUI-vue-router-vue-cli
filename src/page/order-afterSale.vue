@@ -465,7 +465,7 @@ export default {
       padding:0 12px;
       font-family: MicrosoftYaHei;
       font-size: 12px;
-      color: #B5B5B5;
+      color: #151515;
       line-height: 15px;
     }
     .el-date-editor .el-range__icon {

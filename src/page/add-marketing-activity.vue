@@ -17,8 +17,9 @@
                 <i v-else @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
               <div class="goods-img-box" v-else>
-                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 5px;">
+                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 10px;">
                   <img :src="qiniuDomainUrl + imgUrlCompu(item)" alt="">
+                  <i @click.stop="deleteRecommend(index)" class="el-icon-circle-close"></i>
                 </span>
                 <i @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
@@ -145,6 +146,12 @@ export default {
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 删除当前选择商品
+    deleteRecommend (index) {
+      console.log(index)
+      this.recommendGoods.splice(index, 1)
+      console.log(this.recommendGoods)
+    },
     getHandleClose (msg) {
       this.goodsDialogVisible = msg
     },
@@ -160,7 +167,7 @@ export default {
         // 推荐
         if (this.recommendGoods.length == 0) {
           this.recommendGoods.push(value)
-        } else if (this.recommendGoods.length < 8) {
+        } else if (this.recommendGoods.length < 7) {
           let flag = true
           for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
             if (this.recommendGoods[i].id == value.id) {
@@ -454,6 +461,7 @@ export default {
             vertical-align: middle;
             width: 80px;
             height: 80px;
+            position: relative;
             border: 1px solid #d5d5d5;
             text-align: center;
             box-sizing: border-box;
@@ -466,6 +474,15 @@ export default {
               position: relative;
               top: 50%;
               transform: translateY(-50%);
+            }
+            i {
+              font-size: 16px;
+              position: absolute;
+              background: #ffffff;
+              color: #D5D5D5;
+              top: -8px;
+              right: -8px;
+              cursor: pointer;
             }
           }
           .select-goods {

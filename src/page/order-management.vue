@@ -33,7 +33,7 @@
                 end-placeholder="结束日期">
               </el-date-picker>
             </div>
-            <!--<div class="timeRange" data-id="0"  :class="{ cur : timeBtn1 }" @click="timeRange(7,$event)">最近7天</div>-->
+            <div class="timeRange" data-id="0"  :class="{ cur : timeBtn1 }" @click="timeRange(7,$event)">最近7天</div>
             <div class="timeRange" data-id="1" :class="{ cur : timeBtn2 }" @click="timeRange(30,$event)">最近30天</div>
           </div>
             <div class="proName">
@@ -416,7 +416,7 @@ export default {
       padding:0 12px;
       font-family: MicrosoftYaHei;
       font-size: 12px;
-      color: #B5B5B5;
+      color: #151515;
       line-height: 15px;
     }
     .el-date-editor .el-range__icon {
