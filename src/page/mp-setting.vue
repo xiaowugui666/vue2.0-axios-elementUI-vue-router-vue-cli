@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import {untieMp} from '../axios/api'
+import {untieMp, mpInfo} from '../axios/api'
 import menuLeft from '@/components/menu-left'
 export default {
   data () {
@@ -44,7 +44,17 @@ export default {
       dialogVisible: false
     }
   },
+  created () {
+    this.getMpInfo()
+  },
   methods: {
+    // 获取小程序信息
+    getMpInfo () {
+      mpInfo().then(res => {
+        console.log(res.data)
+      })
+    },
+    // 解绑小程序
     untieBtn () {
       untieMp().then(res => {
         console.log(res)

@@ -401,11 +401,11 @@ export const untieMp = function () {
 }
 
 // 验证小程序是否授权成功
-export const checkAuth = function (params) {
+export const checkAuth = function (data) {
   return fetch({
     url: api.ip + '/management/mpa/auth',
     method: 'post', // 请求方法
-    data: params
+    data: data
   })
 }
 

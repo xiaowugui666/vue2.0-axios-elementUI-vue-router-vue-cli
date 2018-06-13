@@ -58,13 +58,14 @@ export default {
     this.getPaySetting()
   },
   methods: {
+    // 获取店铺支付信息
     getPaySetting () {
       paySetting('get').then(res => {
         console.log(res.data)
         let data = res.data
         this.busiInformation.merchant_no = data.merchant_no ? data.merchant_no : '--'
-        this.busiInformation.merchant_key = data.merchant_key ? data.merchant_key : '--'
-        this.busiInformation.merchant_cert = data.merchant_cert ? data.merchant_cert : '--'
+        this.busiInformation.merchant_key = data.merchant_key_encrypt ? data.merchant_key_encrypt : '--'
+        this.busiInformation.merchant_cert = data.merchant_cert_encrypt ? data.merchant_cert_encrypt : '--'
       })
     },
     setMerchantCert () {
