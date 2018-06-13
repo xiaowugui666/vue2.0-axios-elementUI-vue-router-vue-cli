@@ -1,5 +1,7 @@
 <template>
-  <div class="account-details-object">
+  <div>
+    <menu-left routeIndex="6"></menu-left>
+    <div class="account-details-object">
     <div class="account-details-content">
       <div class="bread-bar">
         <div class="cumulative-income">
@@ -68,11 +70,12 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
 import {settlementTotal, settlementDetail} from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -107,13 +110,11 @@ export default {
     }
   },
   mounted () {
-    this.setMenuLeft('/account')
     this.id = this.$route.params.id
     this.getData()
     this.getMoney()
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     toOrderDetail (id) {
       this.$router.push({path: '/order-detail/' + id})
     },
@@ -141,8 +142,8 @@ export default {
       this.getData()
     }
   },
-  computed: {
-    ...mapState(['menuLeft'])
+  components: {
+    menuLeft
   }
 }
 </script>

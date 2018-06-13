@@ -1,5 +1,6 @@
 <template>
     <div>
+      <menu-left routeIndex="2"></menu-left>
       <div class="orderProfile">
         <ul class="home-survey">
           <li>
@@ -51,6 +52,7 @@
 import echarts from '@/components/echarts'
 import {mapMutations} from 'vuex'
 import {storeGoodsAmount, sevenDaysPv} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -59,12 +61,12 @@ export default {
     }
   },
   components: {
-    echarts
+    echarts,
+    menuLeft
   },
   computed: {
   },
-  mounted () {
-    this.setMenuLeft('/shop-profile')
+  created () {
     storeGoodsAmount().then(res => {
       this.goodsCounts = res.data
     })
@@ -73,7 +75,6 @@ export default {
     })
   },
   methods: {
-    ...mapMutations(['setMenuLeft'])
   }
 }
 </script>

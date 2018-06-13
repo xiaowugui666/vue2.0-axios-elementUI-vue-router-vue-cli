@@ -1,12 +1,16 @@
 <template>
+  <div>
+    <menu-left routeIndex="8-3"></menu-left>
     <div class="pay-setting-object">
       <div class="pay-setting-content">
         <payment-info></payment-info>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
+import menuLeft from '@/components/menu-left'
 import paymentInfo from '@/components/payment-info'
 export default {
   data () {
@@ -17,7 +21,8 @@ export default {
   methods: {
   },
   components: {
-    paymentInfo
+    paymentInfo,
+    menuLeft
   }
 }
 </script>

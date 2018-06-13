@@ -378,7 +378,7 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据，支付设置
 export const initialSetData = function (type, data) {
   return fetch({
-    url: api.hqip8080 + '/management/merchant',
+    url: api.ip + '/management/merchant',
     method: type, // 请求方法
     data: data
   })
@@ -387,7 +387,7 @@ export const initialSetData = function (type, data) {
 // 绑定小程序
 export const bindingMp = function () {
   return fetch({
-    url: api.cjip + '/management/mpa/auth',
+    url: api.ip + '/management/mpa/auth',
     method: 'get' // 请求方法
   })
 }
@@ -395,7 +395,7 @@ export const bindingMp = function () {
 // 解绑小程序
 export const untieMp = function () {
   return fetch({
-    url: api.cjip + '/management/mpa/unbind',
+    url: api.ip + '/management/mpa/unbind',
     method: 'delete' // 请求方法
   })
 }
@@ -403,7 +403,7 @@ export const untieMp = function () {
 // 验证小程序是否授权成功
 export const checkAuth = function (params) {
   return fetch({
-    url: api.cjip + '/management/mpa/check_auth',
+    url: api.ip + '/management/mpa/check_auth',
     method: 'get', // 请求方法
     params: params
   })
@@ -412,7 +412,7 @@ export const checkAuth = function (params) {
 // 获取小程序信息
 export const mpInfo = function () {
   return fetch({
-    url: api.cjip + '/management/mpa/mpa_info',
+    url: api.ip + '/management/mpa/mpa_info',
     method: 'get' // 请求方法
   })
 }

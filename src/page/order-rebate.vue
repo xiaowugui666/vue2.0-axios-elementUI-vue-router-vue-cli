@@ -1,8 +1,10 @@
 <template>
+  <div>
+    <menu-left routeIndex="4-2"></menu-left>
     <div class="orderRebate">
       <div class="title">
         <span>退款维权 > 处理退款</span>
-        <el-steps :active="tradeType" v-if="tradeType !== 4" align-center finish-status="success" >
+        <el-steps :active="tradeType" v-if="tradeType !== 4" align-center finish-status="success">
           <el-step title="买家申请退款"></el-step>
           <el-step title="商家处理退款"></el-step>
           <el-step title="退款完成"></el-step>
@@ -55,7 +57,7 @@
                 <textarea v-if="tradeType == 0" id="tips" v-model="resRemark" cols="30" rows="10">
                 </textarea>
                 <div v-else class="refund-step-end">
-                  <img v-if="tradeType == 1" src="/static/test/sand%20clock@3x.png">
+                  <img v-if="tradeType == 1" src="/static/icon/hourglass.png">
                   <i v-else class="icon-成功 green"></i>
                   <span :style="{color: (tradeType == 1 ? '#FFAC5A' : '#2CBA4A')}">{{tradeType == 1 ? '处理中' : '退款完成'}}</span>
                 </div>
@@ -76,11 +78,13 @@
           </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import {mapMutations} from 'vuex'
 import {refundDetail, editorRefundDetail} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -129,6 +133,9 @@ export default {
       }
       return name
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

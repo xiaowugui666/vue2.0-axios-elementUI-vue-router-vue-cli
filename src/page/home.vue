@@ -1,5 +1,6 @@
 <template>
   <div>
+    <menu-left routeIndex="1"></menu-left>
     <div class="home-content">
       <div class="shop-info">
         <span>{{shopName}}</span>
@@ -70,8 +71,9 @@
 </template>
 
 <script>
+import menuLeft from '@/components/menu-left'
 import echarts from '@/components/echarts'
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 import {tradeVolum} from '../axios/api'
 export default {
   data () {
@@ -82,8 +84,6 @@ export default {
     }
   },
   mounted () {
-    this.setMenuShow(true)
-    this.setMenuLeft('/')
     tradeVolum().then(res => {
       console.log(res)
       if (res.status == 200) {
@@ -97,14 +97,13 @@ export default {
     })
   },
   components: {
-    echarts
+    echarts,
+    menuLeft
   },
   computed: {
     ...mapState(['menuShow'])
   },
-  methods: {
-    ...mapMutations(['setMenuShow', 'setMenuLeft'])
-  }
+  methods: {}
 }
 </script>
 <style scoped lang="less">

@@ -152,7 +152,7 @@ import firstSettingMenu from '@/components/first-setting-menu'
 import paymentInfo from '@/components/payment-info'
 import {initialSetData, getQnToken, paySetting} from '../axios/api'
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -185,7 +185,6 @@ export default {
     this.getInitialSetData()
   },
   mounted () {
-    this.setMenuShow(false)
   },
   components: {
     firstSettingMenu,
@@ -193,10 +192,9 @@ export default {
     paymentInfo
   },
   computed: {
-    ...mapState(['menuShow', 'mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
+    ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
   },
   methods: {
-    ...mapMutations(['setMenuShow']),
     // 获取图片上传七牛的token
     getImageToken () {
       getQnToken('image').then(res => {
@@ -211,15 +209,15 @@ export default {
         console.log(res.data)
         let data = res.data
         if (data.name && data.type) {
-          if (data.description && data.banner && data.owner_name) {
+          if (data.description && data.banner_url && data.owner_name) {
             this.active = 2
           } else {
             if (data.logo_url) {
-              this.logoImageUrl = this.qiniuDomainUrl + data.logo_url
+              this.logoImageUrl = this.yiqixuanDomainUrl + data.logo_url
             }
             this.textArea = data.description
-            if (data.banner) {
-              this.bannerImageUrl = this.qiniuDomainUrl + data.banner
+            if (data.banner_url) {
+              this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner_url
             }
             this.shopChiefName = data.owner_name
             this.telNum = data.mobile
@@ -250,7 +248,7 @@ export default {
         data = {
           logo_url: this.logoKey,
           description: this.textArea,
-          banner: this.bannerKey,
+          banner_url: this.bannerKey,
           owner_name: this.shopChiefName,
           wechat: this.contactWeChat,
           customer_service_mobile: this.customerServiceNum,

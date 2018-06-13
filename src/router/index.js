@@ -50,7 +50,7 @@ const bindingMp = r => require.ensure([], () => r(require('@/page/binding-mp')))
 Vue.use(Router)
 
 export default new Router({
-  // mode: 'history',
+  mode: 'history',
   routes: [
     {
       path: '/',

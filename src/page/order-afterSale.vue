@@ -1,5 +1,6 @@
 <template>
   <div>
+    <menu-left routeIndex="4-2"></menu-left>
     <div class="orderAfterSale">
       <div class="header">
         <div class="selectInfo">
@@ -133,6 +134,7 @@
 </template>
 <script>
 import {afterSaleGoods} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -276,14 +278,15 @@ export default {
       }
     }
   },
-  computed: {
-  },
   mounted () {
     afterSaleGoods().then(res => {
       console.log(res)
       this.totalPagina = parseInt(res.headers.page_count)
       this.refunds = res.data
     })
+  },
+  components: {
+    menuLeft
   }
 }
 </script>
