@@ -31,7 +31,8 @@
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                        <span class="goods-info-price">￥{{scope.row.price | money}}</span>
+                        <span v-if="scope.row.rangPrice.priceHigh == scope.row.rangPrice.priceLow" class="goods-info-price">￥{{scope.row.rangPrice.priceHigh | money}}</span>
+                        <span v-else class="goods-info-price">￥{{scope.row.rangPrice.priceLow | money}} - {{scope.row.rangPrice.priceHigh | money}}</span>
                       </div>
                     </div>
                   </div>
