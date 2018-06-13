@@ -53,7 +53,7 @@
             <ul>
               <li>
                 <span class="name alignment-top">商铺logo：</span>
-                <img v-if="!editState" class="store-logo-img" :src="logoImageUrl" alt="">
+                <img v-if="!editState" class="store-logo-img" :src="yiqixuanDomainUrl+logoImageUrl" alt="">
                 <el-upload
                   v-if="editState"
                   class="avatar-uploader"
@@ -62,7 +62,7 @@
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleLogoSuccess">
-                  <img :src="logoImageUrl" class="avatar">
+                  <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
@@ -77,7 +77,7 @@
               </li>
               <li>
                 <span class="name alignment-top required">banner：</span>
-                <img v-if="!editState" class="shop-description-img" :src="bannerImageUrl" alt="">
+                <img v-if="!editState" class="shop-description-img" :src="yiqixuanDomainUrl+bannerImageUrl" alt="">
                 <el-upload
                   v-if="editState"
                   class="avatar-uploader"
@@ -86,7 +86,7 @@
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleBannerSuccess">
-                  <img v-if="bannerImageUrl" :src="bannerImageUrl" class="avatar avatar2">
+                  <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
@@ -134,7 +134,7 @@
           </div>
         </div>
         <div class="edit-btn">
-          <el-button v-if="!editState" type="primary" size="small" @click="editClick">编辑</el-button>
+          <el-button v-if="!editState" type="primary" size="small" @click="editState = true">编辑</el-button>
           <el-button v-if="editState" type="success" size="small" @click="editClick">保存</el-button>
         </div>
       </div>
@@ -157,15 +157,13 @@ export default {
       contactWeChat: '',
       customerServiceNum: '',
       editState: false,
-      logoImageUrl: '/static/default-img/shops-default-logo.png',
-      logoKey: '',
+      logoImageUrl: 'shop_default _logo.png',
       bannerImageUrl: '',
-      bannerKey: '',
       textArea: '',
       options: regionData,
       selectedOptions: [],
       contactAddress: '',
-      categoryValue: 1,
+      categoryValue: '食品',
       // 图片上传需要的token
       upToken: {}
     }
@@ -196,13 +194,14 @@ export default {
         let data = res.data
 
         this.shopName = data.name
+        this.shopNum = data.no
         this.categoryValue = data.type
         this.creationTime = data.created_at
         if (data.logo_url) {
-          this.logoImageUrl = this.yiqixuanDomainUrl + data.logo_url
+          this.logoImageUrl = data.logo_url
         }
         if (data.banner) {
-          this.bannerImageUrl = this.yiqixuanDomainUrl + data.banner
+          this.bannerImageUrl = data.banner
         }
         this.textArea = data.description
         this.shopChiefName = data.owner_name
@@ -223,13 +222,12 @@ export default {
     },
     // 商铺logo图片上传成功后的操作
     handleLogoSuccess (res, file) {
-      this.logoKey = res.key
-      this.logoImageUrl = URL.createObjectURL(file.raw)
+      this.logoImageUrl = res.key
     },
     // 商铺banner图片上传成功后的操作
     handleBannerSuccess (res, file) {
-      this.bannerKey = res.key
-      this.bannerImageUrl = URL.createObjectURL(file.raw)
+      // this.bannerImageUrl = URL.createObjectURL(file.raw)
+      this.bannerImageUrl = res.key
     },
     // 上传文件之前对上传内容的验证
     beforeUpload (file) {
@@ -251,7 +249,20 @@ export default {
     },
     // 点击编辑/保存后的操作
     editClick () {
-      this.editState = !this.editState
+      this.$validator.validateAll().then((msg) => {
+        if (msg) {
+          let data = {
+            name: this.shopName,
+            type: this.categoryValue,
+            logo_url: this.logoImageUrl,
+            banner: this.bannerImageUrl,
+            description: this.textArea,
+            owner_name: this.shopChiefName
+          }
+          initialSetData('put', data).then()
+          this.editState = !this.editState
+        }
+      })
     },
     // 省市区三级联动改变时的操作
     handleChange (value) {
@@ -259,8 +270,11 @@ export default {
     },
     // 显示省市区地址信息
     getDetailedAddress () {
-      let selAdd = this.selectedOptions
-      let detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
+      let detAdd = ''
+      if (this.selectedOptions.length > 0) {
+        let selAdd = this.selectedOptions
+        detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
+      }
       return detAdd
     },
     // 获取省市区信息，赋值给 selectedOptions 变量

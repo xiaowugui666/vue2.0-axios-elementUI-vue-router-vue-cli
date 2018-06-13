@@ -359,7 +359,7 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据，支付设置
 export const initialSetData = function (type, data) {
   return fetch({
-    url: api.ip + '/management/merchant',
+    url: api.hqip8080 + '/management/merchant',
     method: type, // 请求方法
     data: data
   })
@@ -393,7 +393,7 @@ export const checkAuth = function (params) {
 // 获取小程序信息
 export const mpInfo = function () {
   return fetch({
-    url: api.ip + '/management/mpa/mpa_info',
+    url: api.ip + '/management/mpa/info',
     method: 'get' // 请求方法
   })
 }
