@@ -45,7 +45,7 @@
                             <input v-if="isCompile" type="text" maxlength="20" v-model.trim="expressNo">
                             <label v-else>{{tradeList.express_no}}</label>
                       </label>
-                      <el-button v-if="isCompile" @click="commitTrade" size="small" type="success">提交</el-button>
+                      <el-button v-if="isCompile" @click="commitTrade" style="height: 30px;width: 80px; letter-spacing: 1px;" size="small" type="success">提交</el-button>
                     </div>
                 </div>
                 <div class="right">

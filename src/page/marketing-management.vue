@@ -62,7 +62,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="goods_sku.stock_count"
+              prop="stock_count"
               label="库存"
               width="80"
               show-overflow-tooltip>
@@ -70,6 +70,14 @@
             <el-table-column
               prop="goods_sku.sales_count"
               label="特价售出"
+              v-if="linkClass == 'special-offer'"
+              width="80"
+              show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
+              prop="goods.sales_count"
+              label="推荐售出"
+              v-else
               width="80"
               show-overflow-tooltip>
             </el-table-column>
