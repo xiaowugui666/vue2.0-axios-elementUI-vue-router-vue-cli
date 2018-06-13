@@ -50,7 +50,6 @@
 
 <script>
 import echarts from '@/components/echarts'
-import {mapMutations} from 'vuex'
 import {storeGoodsAmount, sevenDaysPv} from '../axios/api'
 import menuLeft from '@/components/menu-left'
 export default {

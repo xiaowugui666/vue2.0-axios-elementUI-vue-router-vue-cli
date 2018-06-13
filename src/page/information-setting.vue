@@ -28,7 +28,7 @@
               <!--</li>-->
               <li>
                 <span class="name">主营类目：</span>
-                <span v-if="!editState">{{categoryValue}}</span>
+                <span v-if="!editState">{{typeof categoryValue === 'string' ? categoryValue : getCategory()}}</span>
                 <el-select v-if="editState" v-model="categoryValue" size="small" class="select-state">
                   <el-option
                     v-for="item in mainCategory"
@@ -131,6 +131,7 @@
                 </div>
               </li>
             </ul>
+            <el-button v-if="editState" @click="editClick" class="submitBtn" type="success" size="small">保存</el-button>
           </div>
         </div>
         <div class="edit-btn">
@@ -163,7 +164,7 @@ export default {
       options: regionData,
       selectedOptions: [],
       contactAddress: '',
-      categoryValue: '食品',
+      categoryValue: '',
       // 图片上传需要的token
       upToken: {}
     }
@@ -253,11 +254,18 @@ export default {
         if (msg) {
           let data = {
             name: this.shopName,
-            type: this.categoryValue,
+            type: this.getCategory(),
             logo_url: this.logoImageUrl,
             banner: this.bannerImageUrl,
             description: this.textArea,
-            owner_name: this.shopChiefName
+            owner_name: this.shopChiefName,
+            mobile: this.telNum,
+            wechat: this.contactWeChat,
+            customer_service_mobile: this.customerServiceNum,
+            province: CodeToText[this.selectedOptions[0]],
+            city: CodeToText[this.selectedOptions[1]],
+            region: CodeToText[this.selectedOptions[2]],
+            address: this.contactAddress
           }
           initialSetData('put', data).then()
           this.editState = !this.editState
@@ -428,16 +436,20 @@ export default {
         }
       }
     }
+    .submitBtn {
+      margin-top: 20px;
+      margin-left: 73px;
+    }
   }
   .edit-btn {
     position: fixed;
     top: 32px;
     right: 40px;
-    .el-button--small {
-      width: 80px;
-      height: 30px;
-      padding: 0;
-    }
+  }
+  .el-button--small {
+    width: 80px;
+    height: 30px;
+    padding: 0;
   }
   .avatar-uploader {
     display: inline-block;
