@@ -67,20 +67,20 @@
               width="80"
               show-overflow-tooltip>
             </el-table-column>
-            <el-table-column
-              prop="goods_sku.sales_count"
-              label="特价售出"
-              v-if="linkClass == 'special-offer'"
-              width="80"
-              show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-              prop="goods.sales_count"
-              label="推荐售出"
-              v-else
-              width="80"
-              show-overflow-tooltip>
-            </el-table-column>
+            <!--<el-table-column-->
+              <!--prop="goods_sku.sales_count"-->
+              <!--label="特价售出"-->
+              <!--v-if="linkClass == 'special-offer'"-->
+              <!--width="80"-->
+              <!--show-overflow-tooltip>-->
+            <!--</el-table-column>-->
+            <!--<el-table-column-->
+              <!--prop="goods.sales_count"-->
+              <!--label="推荐售出"-->
+              <!--v-else-->
+              <!--width="80"-->
+              <!--show-overflow-tooltip>-->
+            <!--</el-table-column>-->
             <el-table-column
               prop="begin_at"
               label="开始时间"
