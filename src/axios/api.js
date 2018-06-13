@@ -403,9 +403,9 @@ export const untieMp = function () {
 // 验证小程序是否授权成功
 export const checkAuth = function (params) {
   return fetch({
-    url: api.ip + '/management/mpa/check_auth',
-    method: 'get', // 请求方法
-    params: params
+    url: api.ip + '/management/mpa/auth',
+    method: 'post', // 请求方法
+    data: params
   })
 }
 

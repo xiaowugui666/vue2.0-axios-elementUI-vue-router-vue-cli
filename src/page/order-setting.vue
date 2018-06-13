@@ -89,7 +89,7 @@ export default {
       this.receiptTime = value
     }
   },
-  mounted () {
+  created () {
     initialSetData('get').then(res => {
       console.log(res.data)
       this.configData = res.data

@@ -20,11 +20,11 @@
       <ul class="home-survey">
         <li>
           <div class="up">￥{{storeDetail.today_trade}}</div>
-          <div class="down"><i class="icon-淘宝认证"></i><span>今日交易额</span></div>
+          <div class="down"><i class="icon-钱"></i><span>今日交易额</span></div>
         </li>
         <li>
           <div class="up">￥{{storeDetail.yesterday_trade}}</div>
-          <div class="down"><i class="icon-淘宝认证"></i><span>昨日交易额</span></div>
+          <div class="down"><i class="icon-钱"></i><span>昨日交易额</span></div>
         </li>
         <li>
           <div class="up">{{storeDetail.today_order}}</div>
