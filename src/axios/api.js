@@ -26,23 +26,34 @@ export function tradeVolum () {
 // 商品总数
 export function storeGoodsAmount () {
   return fetch({
-    url: api.ip + '/management/statistics/good_sku_count',
+    url: api.ip + '/management/statistics/summary',
     method: 'GET'
   })
 }
 
-// 昨日pv,uv
-export function yesterdayPvUv () {
+// 7日浏览量
+export function sevenDaysPv () {
   return fetch({
-    url: api.ip + '/management/statistics/yesterday_pv_uv',
+    url: api.ip + '/management/statistics/page',
     method: 'GET'
   })
 }
-// 七日界面排行榜
-export function pagePvUv () {
+
+/* 表格数据 */
+// 计算表格起止时间
+export function endBegins () {
   return fetch({
-    url: api.ip + '/management/statistics/page_pv_uv',
+    url: api.ip + '/management/statistics/nav',
     method: 'GET'
+  })
+}
+
+// 走势图表格数据
+export function tableData (params) {
+  return fetch({
+    url: api.ip + '/management/statistics',
+    method: 'GET',
+    params: params
   })
 }
 
@@ -206,6 +217,14 @@ export function closeGoods (data) {
   })
 }
 
+// 获取单一推荐商品
+export function singleRecommendGood (id) {
+  return fetch({
+    url: api.ip + '/management/recommend_goods/' + id,
+    method: 'GET'
+  })
+}
+
 // 编辑推荐商品
 export function closeRecommendGood (data) {
   return fetch({
@@ -215,7 +234,7 @@ export function closeRecommendGood (data) {
   })
 }
 
-// 获取编辑商品信息
+// 获取编辑特价商品信息
 export function editorGoods (id) {
   return fetch({
     url: api.ip + '/management/special_goods/' + id,
