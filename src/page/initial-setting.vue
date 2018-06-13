@@ -333,11 +333,11 @@ export default {
           this.$message.error('请先设置商户号！')
           return false
         }
-        if (!data.merchant_key) {
+        if (!data.merchant_key_encrypt) {
           this.$message.error('请先设置商户秘钥！')
           return false
         }
-        if (!data.merchant_cert) {
+        if (!data.merchant_cert_encrypt) {
           this.$message.error('请先上传证书！')
           return false
         }

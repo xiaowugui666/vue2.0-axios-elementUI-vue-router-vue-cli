@@ -83,6 +83,7 @@
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
+                  accept="jpeg"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleBannerSuccess">
@@ -267,8 +268,9 @@ export default {
             region: CodeToText[this.selectedOptions[2]],
             address: this.contactAddress
           }
-          initialSetData('put', data).then()
-          this.editState = !this.editState
+          initialSetData('put', data).then(res => {
+            this.editState = false
+          }).catch()
         }
       })
     },
@@ -397,7 +399,6 @@ export default {
       padding-top: 20px;
       font-size: 12px;
       span {
-        max-width: 260px;
         display: inline-block;
         vertical-align: middle;
       }
@@ -460,7 +461,8 @@ export default {
       vertical-align: top;
     }
     .avatar.avatar2 {
-      width: 160px;
+      width: 200px;
+      height: auto;
     }
     .alignment-tip {
       display: inline-block;

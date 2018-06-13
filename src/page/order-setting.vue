@@ -64,12 +64,13 @@ export default {
       this.editState = !this.editState
     },
     saveClick () {
-      this.editState = !this.editState
-      let params = this.configData
-      params.order_expire_time = Number(this.cancellationTime)
-      params.confirm_goods_time = Number(this.receiptTime)
-      initialSetData('put', params).then(res => {
-        console.log(res)
+      let data = this.configData
+      data.order_expire_time = parseInt(this.cancellationTime) * 60
+      data.confirm_goods_time = parseInt(this.receiptTime)
+      initialSetData('put', data).then(res => {
+        this.editState = !this.editState
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
       })
     },
     watchInput (s, mix, max) {
@@ -81,19 +82,11 @@ export default {
       return s
     }
   },
-  watch: {
-    cancellationTime: function (value) {
-      this.cancellationTime = value
-    },
-    receiptTime: function (value) {
-      this.receiptTime = value
-    }
-  },
   created () {
     initialSetData('get').then(res => {
       console.log(res.data)
       this.configData = res.data
-      this.cancellationTime = res.data.order_expire_time
+      this.cancellationTime = res.data.order_expire_time / 60
       this.receiptTime = res.data.order_auto_confirm_days
     })
   }
