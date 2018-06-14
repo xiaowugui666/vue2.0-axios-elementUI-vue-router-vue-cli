@@ -104,22 +104,22 @@ export default {
       pages: 0,
       options: [
         {
-          value: '1',
+          value: 1,
           label: '1+'
         }, {
-          value: '2',
+          value: 5,
           label: '5+'
         }, {
-          value: '3',
+          value: 10,
           label: '10+'
         }, {
-          value: '4',
+          value: 20,
           label: '20+'
         }, {
-          value: '5',
+          value: 50,
           label: '50+'
         }, {
-          value: '6',
+          value: 100,
           label: '100+'
         }
       ],
@@ -148,16 +148,6 @@ export default {
           this.$message.error('这不是一个正确的手机号码')
           return false
         }
-      }
-      let count = 0
-      if (this.value == 1) {
-        count = 1
-      } else if (this.value == 2) {
-        count = 5
-      } else if (this.value == 3) {
-        count = 10
-      } else if (this.value == 4) {
-        count = 20
       }
       user({
         mobile: this.phoneNum,
