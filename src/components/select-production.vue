@@ -31,8 +31,9 @@
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                        <span v-if="scope.row.rangPrice.priceHigh == scope.row.rangPrice.priceLow" class="goods-info-price">￥{{scope.row.rangPrice.priceHigh | money}}</span>
-                        <span v-else class="goods-info-price">￥{{scope.row.rangPrice.priceLow | money}} - {{scope.row.rangPrice.priceHigh | money}}</span>
+                        <span v-if="linkClass == 'special-offer'" class="goods-info-price">￥{{scope.row.price | money}}</span>
+                        <span v-else-if="scope.row.rangPrice.priceHigh == scope.row.rangPrice.priceLow && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.rangPrice.priceHigh | money}}</span>
+                        <span v-else-if="scope.row.rangPrice.priceHigh !== scope.row.rangPrice.priceLow && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.rangPrice.priceLow | money}} - {{scope.row.rangPrice.priceHigh | money}}</span>
                       </div>
                     </div>
                   </div>
@@ -78,6 +79,7 @@
 export default {
   data () {
     return {
+      linkClass: this.$route.query.class || this.$route.params.class,
       productionKey: '',
       multipleSelection: '',
       goods: this.newGoods
