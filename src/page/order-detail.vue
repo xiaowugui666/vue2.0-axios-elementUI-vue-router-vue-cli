@@ -17,17 +17,16 @@
           </div>
           <div class="orderInfo">
                 <div class="left">
-                    <div>
-                      <label><i>买家微信：</i>248773573799</label>
-                      <label><i>买家手机号：</i>{{tradeList.mobile}}</label>
+                    <div v-if="tradeList.user">
+                      <label><i>买家手机号：</i>{{tradeList.user.mobile}}</label>
                     </div>
                     <div>
                       <label><i>收货人名：</i>{{tradeList.consignee}}</label>
-                      <label><i>收货人手机号：</i>13566774466</label>
+                      <label><i>收货人手机号：</i>{{tradeList.mobile}}</label>
                     </div>
                     <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
                     <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
-                      <label>
+                      <div>
                         <i>快递公司：</i>
                         <el-select
                           v-if="isCompile"
@@ -39,23 +38,23 @@
                             :value="item"></el-option>
                         </el-select>
                         <label v-else>{{expressCompany}}</label>
-                      </label>
-                      <label>
+                      </div>
+                      <div>
                           <i>快递单号：</i>
                             <input v-if="isCompile" type="text" maxlength="20" v-model.trim="expressNo">
                             <label v-else>{{tradeList.express_no}}</label>
-                      </label>
-                      <el-button v-if="isCompile" @click="commitTrade" size="small" type="success">提交</el-button>
+                      </div>
+                      <el-button v-if="isCompile" @click="commitTrade" style="height: 30px;width: 80px; letter-spacing: 1px;" size="small" type="success">提交</el-button>
                     </div>
                 </div>
                 <div class="right">
                   <div>
-                    <label><i>创建时间：</i>2018-08-22    12:33</label>
-                    <label v-if="tradeType>1"><i>付款时间：</i>2018-08-22    12:35</label>
+                    <label><i>创建时间：</i>{{tradeList.created_at}}</label>
+                    <label v-if="tradeType > 0 && tradeType < 4"><i>付款时间：</i>{{tradeList.paid_at}}</label>
                   </div>
-                  <div :style="{marginTop: (tradeType > 2) ? '30px' : 0}">
-                    <label v-if="tradeType > 2"><i>发货时间：</i>2018-08-23    10:38</label>
-                    <label v-if="tradeType > 3"><i>收货时间：</i>2018-08-27    20:17</label>
+                  <div :style="{marginTop: (tradeType > 1) ? '30px' : 0}">
+                    <label v-if="tradeType > 1 && tradeType < 4"><i>发货时间：</i>{{tradeList.updated_at}}</label>
+                    <label v-if="tradeType > 2 && tradeType < 4"><i>收货时间：</i>{{tradeList.delivery_at}}</label>
                   </div>
                 </div>
 
@@ -264,6 +263,7 @@ export default {
     border-left: 1px solid #EFEFEF;
     border-right: 1px solid #EFEFEF;
     .right{
+      padding-left: 20px;
       >div:last-child{
         margin-top: 30px;
       }
@@ -278,6 +278,9 @@ export default {
         padding-left: 5px;
         /*width: 150px;*/
       }
+      >div {
+        padding-left: 20px;
+      }
       div.el-select{
         width: 133px;
         height: 27px;
@@ -286,9 +289,6 @@ export default {
     >div{
       width: 50%;
       box-sizing: border-box;
-      div:nth-child(3){
-        padding-left: 20px;
-      }
       div:nth-child(4){
         margin-top: 20px;
       }
@@ -301,10 +301,7 @@ export default {
         i{
           color: #999999;
         }
-        label:first-child{
-          padding-left: 20px;
-        }
-        label{
+        >label,div {
           width: 340px;
           text-align: left;
           font-family: MicrosoftYaHei;
