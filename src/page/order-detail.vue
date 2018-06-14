@@ -17,7 +17,7 @@
           </div>
           <div class="orderInfo">
                 <div class="left">
-                    <div>
+                    <div v-if="tradeList.user">
                       <label><i>买家手机号：</i>{{tradeList.user.mobile}}</label>
                     </div>
                     <div>

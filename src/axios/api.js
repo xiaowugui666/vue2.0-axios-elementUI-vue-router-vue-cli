@@ -137,12 +137,12 @@ export const goodsList = function (data) {
 }
 
 // 获取客户列表
-export const user = function (data, type) {
+export const user = function (data) {
   return fetch({
     // api.Hallowmas 引用url.js里面的数据
     url: api.ip + '/management/user',
-    method: type, // 请求方法
-    data: data
+    method: 'GET', // 请求方法
+    params: data
   })
 }
 
