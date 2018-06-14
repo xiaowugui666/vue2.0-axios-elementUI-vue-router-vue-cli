@@ -1,7 +1,7 @@
 <template>
     <div>
       <menu-left routeIndex="8-1"></menu-left>
-      <div class="info-setting-subject">
+      <div class="info-setting-subject content-box">
         <div class="subject-info plate">
           <div class="plate-top">
             <span>主体信息</span>
@@ -59,6 +59,7 @@
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
+                  accept=".jpg,.png"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleLogoSuccess">
@@ -83,7 +84,7 @@
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
-                  accept="jpeg"
+                  accept=".jpg,.png"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleBannerSuccess">
@@ -303,9 +304,6 @@ export default {
 <style scoped lang="less">
   @import "../fonts/icomoon.css";
   .info-setting-subject {
-    min-width: 1100px;
-    padding-top: 20px;
-    margin: 0 20px 0 200px;
     input {
       color: #333;
       border: 1px solid #d5d5d5;

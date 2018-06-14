@@ -37,6 +37,7 @@
                     :action="qiniuUploadUrl"
                     :data="upToken"
                     list-type="picture-card"
+                    accept=".jpg,.png"
                     multiple
                     :limit="10"
                     :file-list="goodsImageShowList"
@@ -81,6 +82,7 @@
                   <el-upload :action="qiniuUploadUrl"
                              :before-upload='goodsImageBeforeUpload'
                              :data="upToken"
+                             accept=".jpg,.png"
                              :on-success='quillUpScuccess'
                              ref="quillUpload" style="display:none">
                     <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
@@ -226,6 +228,7 @@
                           class="avatar-uploader"
                           :action="qiniuUploadUrl"
                           :data="upToken"
+                          accept=".jpg,.png"
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
                           :before-upload="(value)=>beforeUpload(value, index)">

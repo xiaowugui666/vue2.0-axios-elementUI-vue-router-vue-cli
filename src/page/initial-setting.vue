@@ -46,6 +46,7 @@
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
+                  accept=".jpg,.png"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleLogoSuccess">
@@ -67,6 +68,7 @@
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
+                  accept=".jpg,.png"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleBannerSuccess">
@@ -208,7 +210,7 @@ export default {
         let data = res.data
         if (data.name && data.type) {
           if (data.description && data.banner && data.owner_name) {
-            if (data.mpa.merchant_no && data.mpa.merchant_key && data.mpa.merchant_cert) {
+            if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
               this.setRouter('/')
             } else {
               this.active = 2
