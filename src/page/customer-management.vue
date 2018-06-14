@@ -149,7 +149,7 @@ export default {
           return false
         }
       }
-      let count = 0
+      let count = ''
       if (this.value == 1) {
         count = 1
       } else if (this.value == 2) {
@@ -158,10 +158,14 @@ export default {
         count = 10
       } else if (this.value == 4) {
         count = 20
+      } else if (this.value == 5) {
+        count = 50
+      } else if (this.value == 6) {
+        count = 100
       }
       user({
         mobile: this.phoneNum,
-        order_count: this.value,
+        order_count: count,
         page: value,
         per_page: 2
       }).then(
