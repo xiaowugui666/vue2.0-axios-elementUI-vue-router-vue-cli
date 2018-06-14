@@ -262,7 +262,7 @@ export default {
     // 执行批量操作
     batchOperation (status) {
       let _this = this
-      this.$confirm(`是否批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}所选中的商品`, '提示', {
+      this.$confirm(`是否批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}所选中的商品`, '确认操作', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -327,7 +327,7 @@ export default {
     // 单个商品上下架
     upperLowerFrame (data) {
       let _this = this
-      this.$confirm(`是否${data.status === 1 ? '下架' : '上架'}该商品`, '提示', {
+      this.$confirm(`是否${data.status === 1 ? '下架' : '上架'}该商品`, '确认操作', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -562,6 +562,7 @@ export default {
     }
     .el-table{
       th {
+        padding: 8px 0;
         color: #333;
         text-align: center;
         font-weight: normal;
@@ -574,6 +575,7 @@ export default {
         }
       }
       td {
+        padding: 10px 0;
         .waring {
           color: @mainC;
         }

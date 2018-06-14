@@ -17,7 +17,7 @@
         </div>
         <div class="experience-setting plate">
           <div class="plate-top">体验设置</div>
-          <el-button class="add-experience-users" type="success" size="small">添加</el-button>
+          <el-button @click="setWechat()" class="add-experience-users" type="success" size="small">添加</el-button>
           <div class="experience-setting-table">
             <el-table
               :data="experienceUsersList"
@@ -35,7 +35,7 @@
                 label="操作"
                 width="200">
                 <template slot-scope="scope">
-                  <el-button type="text">删除</el-button>
+                  <el-button @click="deleteWechat(scope.row.id)" type="text">删除</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -43,7 +43,7 @@
               <el-pagination
                 background
                 prev-text="< 上一页"
-                :page-size="15"
+                :page-size="1"
                 next-text="下一页 >"
                 @current-change="changePage"
                 layout="prev, pager, next"
@@ -87,23 +87,28 @@ export default {
       mpaId: '',
       experienceUsersList: [
         {
-          wechat_number: 'qweqweqweqweqwe',
+          id: 1,
+          wechat_number: 'qwe111111111',
           created_at: '2018-02-22'
         }, {
-          wechat_number: 'qweqweqweqweqwe',
+          id: 2,
+          wechat_number: 'qweqweqw222222222',
           created_at: '2018-02-22'
         }, {
-          wechat_number: 'qweqweqweqweqwe',
+          id: 3,
+          wechat_number: 'qweqweq33333333',
           created_at: '2018-02-22'
         }, {
-          wechat_number: 'qweqweqweqweqwe',
+          id: 4,
+          wechat_number: 'qweqweq4444444444',
           created_at: '2018-02-22'
         }, {
-          wechat_number: 'qweqweqweqweqwe',
+          id: 5,
+          wechat_number: 'qweqwe5555555555',
           created_at: '2018-02-22'
         }
       ],
-      totalPage: 100
+      totalPage: 10
     }
   },
   created () {
@@ -125,7 +130,49 @@ export default {
       }).catch(err => {
         console.dir(err.request, '失败')
       })
-    }
+    },
+    // 添加体验用户的微信号
+    setWechat () {
+      this.$prompt('微信号：', '添加体验用户', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/,
+        inputErrorMessage: '微信号格式错误！'
+      }).then(({ value }) => {
+        let date = new Date()
+        let year = date.getFullYear()
+        let month = (date.getMonth() + 1) >= 10 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
+        let day = date.getDate()
+        let newId = this.experienceUsersList[this.experienceUsersList.length - 1].id + 1
+        let obj = {
+          id: newId,
+          wechat_number: value,
+          created_at: year + '-' + month + '-' + day
+        }
+        this.experienceUsersList.unshift(obj)
+      })
+    },
+    // 是否删除这个体验账号
+    deleteWechat (id) {
+      this.$confirm(`确认删除此账号的体验权限？`, '确认操作', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        for (let [i, v] of this.experienceUsersList.entries()) {
+          if (v.id === id) {
+            this.experienceUsersList.splice(i, 1)
+          }
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: `已取消`
+        })
+      })
+    },
+    // 分页
+    changePage () {}
   },
   components: {
     menuLeft
@@ -238,6 +285,9 @@ export default {
       padding: 20px;
     }
     .el-table {
+      th, td {
+        padding: 8px 0;
+      }
       th {
         color: #333;
         font-size: 14px;
