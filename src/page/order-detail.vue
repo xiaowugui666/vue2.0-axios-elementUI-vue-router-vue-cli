@@ -183,8 +183,6 @@ export default {
   mounted () {
     // 请求订单信息
     orderDetail(this.$route.params.id).then(res => {
-      console.log(this.$route.params.id)
-      console.log(res.data)
       this.tradeList = res.data
       // 更新订单完成状态
       if (res.data.status == 200) { // 待付款
@@ -202,11 +200,9 @@ export default {
       } else {
         this.tradeType = 4
       }
-      console.log(this.tradeType)
       // 如果订单状态不为待付款，即tradeType > 0,请求快递公司信息
       if (this.tradeType > 0 && this.tradeType < 4) {
         transComp().then(res => {
-          console.log(res)
           this.transComp = res.data
         }).catch(() => {
           this.$message({

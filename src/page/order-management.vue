@@ -94,6 +94,7 @@
             background
             :page-size="2"
             :page-count="6"
+            style="padding-top: 20px;"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
@@ -147,41 +148,7 @@ export default {
       OrderType: '1',
       // 交易类型
       tradeType: 'first',
-      tradeList: [
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个伤心的故事',
-              num: 1,
-              prePrice: '12323',
-              nowPrice: '123'
-            },
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 12323,
-          yfPrice: 10
-        },
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 1323,
-          yfPrice: 0
-        }
-      ]
+      tradeList: []
     }
   },
   computed: {
@@ -459,8 +426,7 @@ export default {
     background: #fff;
     padding:30px 20px 20px;
     .tradeList{
-          padding-bottom: 10px;
-          padding-top: 30px;
+          padding-top: 15px;
           display: block;
           width: 100%;
           .top{

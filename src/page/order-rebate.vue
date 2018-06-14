@@ -4,7 +4,7 @@
     <div class="orderRebate">
       <div class="title">
         <span>退款维权 > 处理退款</span>
-        <el-steps :active="tradeType" v-if="tradeType !== 4" align-center finish-status="success">
+        <el-steps :active="tradeType" v-if="tradeType < 3" align-center finish-status="success">
           <el-step title="买家申请退款"></el-step>
           <el-step title="商家处理退款"></el-step>
           <el-step title="退款完成"></el-step>
@@ -12,7 +12,7 @@
       </div>
       <div class="rebateDetail">
           <div class="content">
-            <div class="left">
+            <div style="flex: 1;">
               <div class="rebateInfo">
                 <div><label>订单编号：</label><label>{{rebateDetail.order_no}}</label></div>
                 <div><label>创建时间：</label><label>{{rebateDetail.created_at}}</label></div>
@@ -48,7 +48,7 @@
                 </div>
               </div>
             </div>
-            <div class="right">
+            <div class="right" v-if="tradeType < 3 ">
                 <div class="top" v-if="tradeType == 0">
                   <label  class="agree" @click="editorDetail(3)">同意</label>
                   <label  class="disagree" @click="editorDetail(2)">拒绝</label>
@@ -99,10 +99,12 @@ export default {
       console.log(res)
       this.rebateDetail = res.data
       this.tradeType = res.data.status - 1
+      console.log(this.tradeType)
     })
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 编辑售后订单信息，改变状态
     editorDetail (value) {
       let params = {}
       params.status = value
@@ -111,7 +113,6 @@ export default {
       editorRefundDetail(params).then(res => {
         if (res.status == 200) {
           refundDetail(this.$route.query.id).then(res => {
-            console.log(res)
             this.rebateDetail = res.data
             this.tradeType = value - 1
           })
@@ -163,13 +164,11 @@ export default {
   .money{
     margin-top: 30px;
     label:nth-child(1){
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
     label:nth-child(2){
       color: #DE5B67 ;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
     }
   }
@@ -178,13 +177,11 @@ export default {
     padding-bottom: 200px;
     border-bottom: 1px dashed #efefef;
     label:nth-child(1){
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
     label:nth-child(2){
-      color: #151515  ;
-      font-family: MicrosoftYaHei;
+      color: #151515;
       font-size: 12px;
     }
   }
@@ -192,7 +189,6 @@ export default {
     margin-top: 25px;
     label{
       display: block;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       line-height: 16px;
       color: #999999;
@@ -206,7 +202,6 @@ export default {
     width: 34%;
     .tip{
       margin-top: 30px;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
@@ -280,7 +275,6 @@ export default {
   }
   .dialogue p{
     padding-top:20px;
-    font-family: MicrosoftYaHei;
     font-size: 12px;
     color: #333333;
     padding-bottom: 10px;
@@ -290,7 +284,6 @@ export default {
     padding-bottom:20px;
   }
   .dialogue div{
-    font-family: MicrosoftYaHei;
     font-size: 12px;
     color: #999999;
     margin-top: 10px;
@@ -308,7 +301,6 @@ export default {
     position: relative;
     min-width: 1000px;
     .title{
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #333333;
       padding: 20px;

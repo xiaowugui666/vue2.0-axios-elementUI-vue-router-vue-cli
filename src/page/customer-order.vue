@@ -59,7 +59,7 @@
         </div>
 
       </div>
-      <div class="tradeRecord">
+      <div class="tradeRecord" v-if="tradeList.length !== 0">
         <div class="tradeList" v-for="( item,index ) in tradeList" :key="index">
           <div class="top">
             <label>下单时间：{{ item.paid_at }}</label>
@@ -83,7 +83,8 @@
             </div>
             <div class="orderResult"  :style="{height:item.length+'px'} ">
                 <label>{{tradeStatus(item.status)}}</label>
-              <router-link  :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
+              <router-link v-if="item.status > 405" :to="{ path: '/order-rebate',query:{id:item.id }}" tag="label">订单详情</router-link>
+              <router-link v-else :to="{ name: 'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
             </div>
           </div>
         </div>
@@ -97,6 +98,9 @@
           @current-change="currentIndex"
           :total="totalPage">
         </el-pagination>
+      </div>
+      <div  v-else class="enpty">
+        <div>暂无数据</div>
       </div>
     </div>
   </div>
@@ -180,6 +184,8 @@ export default {
         return '待收货'
       } else if (value == 405) {
         return '确认收货'
+      } else if (value == 500) {
+        return '处理中'
       } else {
         return '这是啥状态呀。是九阴白骨爪！'
       }
@@ -194,13 +200,22 @@ export default {
       params.page = this.pages
       params.id = this.$route.params.id
       customerOrder(params).then(res => {
-        console.log(res)
-        console.log(res.headers.page_count)
         this.totalPage = parseInt(res.headers.page_count) * 15
         res.data.forEach(function (v, i) {
           Object.assign(res.data[i], {length: res.data[i].items.length * 80})
         })
         this.tradeList = res.data
+        if (this.tradeList.length == 0) {
+          this.$message({
+            message: '暂无数据',
+            type: 'warning'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          message: '数据请求错误，请稍后重试',
+          type: 'error'
+        })
       })
     },
     changeTime () {
@@ -362,7 +377,7 @@ export default {
       padding: 20px;
       overflow: hidden;
       .tradeList{
-        padding-bottom: 30px;
+        padding-bottom: 15px;
         .top{
           background: #EFEFEF;
           border: 1px solid #D5D5D5;
@@ -554,6 +569,19 @@ export default {
           margin-left: 20px;
           float: left;
         }
+      }
+    }
+    .enpty {
+      min-width: 1000px;
+      background: #ffffff;
+      height: 50px;
+      font-size: 14px;
+      color: #B5B5B5;
+      text-align: center;
+      line-height: 50px;
+      padding: 10px 20px;
+      >div {
+        border: 1px solid #eeeeee;
       }
     }
   }

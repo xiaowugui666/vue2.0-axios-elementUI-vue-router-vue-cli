@@ -47,6 +47,9 @@
             <el-table-column
               prop="order_count"
               label="拥有订单数">
+              <template slot-scope="scope">
+                <div class="11111">{{scope.row.order_count ? scope.row.order_count : 0}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="address"
@@ -215,8 +218,8 @@ export default {
   .header{
     min-width: 1000px;
     background: #ffffff;
-    padding-top: 40px;
-    height: 80px;
+    padding: 40px 0;
+    overflow: hidden;
     span{
       font-size: 12px;
       color: #999999;

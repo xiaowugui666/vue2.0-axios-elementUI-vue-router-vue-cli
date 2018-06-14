@@ -20,7 +20,7 @@
             <!--<div class="down"><span>昨日商品访客数</span></div>-->
           <!--</li>-->
           <li>
-            <div class="up">{{goodsCounts.goods_sku_count}}</div>
+            <div class="up">{{goodsCounts.goods_count}}</div>
             <div class="down"><span>商铺商品总数</span></div>
           </li>
         </ul>
