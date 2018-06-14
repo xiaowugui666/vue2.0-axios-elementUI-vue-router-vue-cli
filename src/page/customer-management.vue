@@ -64,10 +64,10 @@
             background
             prev-text="<上一页"
             next-text="下一页>"
-            :page-size="2"
+            :page-size="15"
             @current-change="changePage"
             layout="prev, pager, next"
-            :total="totalPage * 2">
+            :total="totalPage * 15">
           </el-pagination>
         </div>
         <el-dialog
@@ -107,19 +107,19 @@ export default {
           value: '1',
           label: '1+'
         }, {
-          value: '2',
+          value: '5',
           label: '5+'
         }, {
-          value: '3',
+          value: '10',
           label: '10+'
         }, {
-          value: '4',
+          value: '20',
           label: '20+'
         }, {
-          value: '5',
+          value: '50',
           label: '50+'
         }, {
-          value: '6',
+          value: '100',
           label: '100+'
         }
       ],
@@ -130,8 +130,7 @@ export default {
     user({
       mobile: this.phoneNum,
       order_count: this.value,
-      page: this.pages,
-      per_page: 2
+      page: this.pages
     }).then(
       res => {
         this.tableData = res.data
@@ -149,25 +148,10 @@ export default {
           return false
         }
       }
-      let count = ''
-      if (this.value == 1) {
-        count = 1
-      } else if (this.value == 2) {
-        count = 5
-      } else if (this.value == 3) {
-        count = 10
-      } else if (this.value == 4) {
-        count = 20
-      } else if (this.value == 5) {
-        count = 50
-      } else if (this.value == 6) {
-        count = 100
-      }
       user({
         mobile: this.phoneNum,
-        order_count: count,
-        page: value,
-        per_page: 2
+        order_count: value,
+        page: value
       }).then(
         res => {
           this.tableData = res.data
