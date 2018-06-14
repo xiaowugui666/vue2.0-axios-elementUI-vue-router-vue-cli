@@ -26,6 +26,7 @@
                           class="avatar-uploader"
                           :action="qiniuUploadUrl"
                           :data="upToken"
+                          accept=".jpg,.png"
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
