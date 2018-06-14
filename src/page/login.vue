@@ -19,7 +19,7 @@ export default {
     loginState (userToken) {
       // 如果url上有携带token参数
       if (userToken.token) {
-        this.$http.post(api.hqip8080 + '/management/login', {token: userToken.token})
+        this.$http.post(api.ip + '/management/login', {token: userToken.token})
           .then(res => {
             console.log(res.data)
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
