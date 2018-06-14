@@ -66,7 +66,7 @@
                   <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：160*160像素，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
@@ -92,7 +92,7 @@
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
@@ -466,7 +466,7 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 240px;
+      width: 440px;
       text-align: left;
       position: relative;
       margin-left: 17px;

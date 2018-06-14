@@ -55,7 +55,7 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="yiqixuanDomainUrl+'/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="yiqixuanDomainUrl+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
@@ -475,10 +475,12 @@ export default {
           text-align: left;
           font-size: 0;
           position: relative;
+          display: flex;
+          align-items: center;
           .goods-img {
+            flex: none;
             width: 60px;
             height: 60px;
-            float: left;
             text-align: center;
             border: 1px solid #d5d5d5;
             img {
@@ -492,10 +494,9 @@ export default {
             }
           }
           .goods-info {
-            text-align: left;
+            flex: 1;
             font-size: 12px;
             padding-left: 15px;
-            margin-left: 60px;
             .goods-info-name {
               color: #333;
               font-size: 14px;

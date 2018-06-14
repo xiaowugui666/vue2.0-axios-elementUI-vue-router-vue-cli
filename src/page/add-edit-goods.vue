@@ -42,7 +42,7 @@
                     :limit="10"
                     :file-list="goodsImageShowList"
                     :on-exceed="beyondNumberLimit"
-                    :before-upload="beforeUpload"
+                    :before-upload="goodsImageBeforeUpload"
                     :on-success="goodsUploadSuccess"
                     :before-remove="goodsHandleRemove">
                     <i class="el-icon-plus"></i>
@@ -466,7 +466,8 @@ export default {
       // 隐形验证字段
       old_sku_ids: false,
       image_ids: [],
-      sku_ids: []
+      sku_ids: [],
+      goods_detail_id: -1
     }
   },
   created () {
@@ -496,6 +497,7 @@ export default {
             this.quantifier = data.unit
             this.image_ids = data.image_ids
             this.sku_ids = data.sku_ids
+            this.goods_detail_id = data.goods_detail_id
             this.dynamicTags = data.keywords
             this.renderingSku(data.sku, data.specs, data.price, data.display_price, data.stock_count)
             this.showStock = data.stock_shown
@@ -529,7 +531,7 @@ export default {
             this.selectStateOptions.push(option)
           }
         } else {
-          this.setRouter('/category-management')
+          // this.setRouter('/category-management')
         }
         // console.log(this.selectStateOptions)
       })
@@ -1017,6 +1019,7 @@ export default {
             data.old_sku_ids = this.old_sku_ids
             data.image_ids = this.image_ids
             data.sku_ids = this.sku_ids
+            data.goods_detail_id = this.goods_detail_id
           }
 
           console.log(data)
@@ -1271,7 +1274,6 @@ export default {
             }
             .specification-value-box {
               .specification-value-list {
-                display: inline-block;
                 .el-tag {
                   margin-right: 10px;
                   border-color: #d5d5d5;

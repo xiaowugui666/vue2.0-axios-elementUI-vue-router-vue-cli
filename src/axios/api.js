@@ -1,7 +1,7 @@
 import { fetch } from './fetch' // 引用fetch.js
 import api from './url' // 引用url.js
 
-// 查看用户
+// 例子
 export function lookOption (issuer, userId) { // lookOption是你要调用接口的名字，issuer,userId是传进来的参数
   return fetch({
     // api.Hallowmas 引用url.js里面的数据
