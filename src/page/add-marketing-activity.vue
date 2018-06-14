@@ -248,7 +248,7 @@ export default {
           this.newGoods.totalPagina = res.headers.page_count
         })
       } else if (this.$route.params.class == 'recommend') {
-        goodsList({page: value}).then(res => {
+        goodsList({page: value, status: 1}).then(res => {
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
           if (this.newGoods.length !== 0) {

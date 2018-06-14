@@ -23,6 +23,10 @@ export function fetch (options) {
       })
       .catch(error => {
         console.dir(error)
+        if (error.response.status === 401) {
+          alert('未登录！请返回51赞平台重进入！')
+          location.href = 'http://www.51zan.cn/login.html'
+        }
         // console.log('请求异常信息：' + error)
         reject(error)
       })

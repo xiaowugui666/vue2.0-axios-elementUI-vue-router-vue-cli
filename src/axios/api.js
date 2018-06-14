@@ -137,12 +137,21 @@ export const goodsList = function (data) {
 }
 
 // 获取客户列表
-export const user = function (data, type) {
+export const user = function (data) {
   return fetch({
     // api.Hallowmas 引用url.js里面的数据
     url: api.ip + '/management/user',
-    method: type, // 请求方法
+    method: 'GET', // 请求方法
     params: data
+  })
+}
+
+// 编辑客户信息
+export function userEditor (data, id) {
+  return fetch({
+    url: api.ip + '/management/user/' + id,
+    data: data,
+    method: 'PUT'
   })
 }
 // 获取账户列表
@@ -279,6 +288,15 @@ export function paginaGoods (params) {
 export function newRecommendGoods (data) {
   return fetch({
     url: api.ip + '/management/recommend_goods',
+    method: 'POST',
+    data: data
+  })
+}
+
+// 点击排序
+export function changeSort (route, data) {
+  return fetch({
+    url: api.ip + '/management/' + route + '/rank',
     method: 'POST',
     data: data
   })

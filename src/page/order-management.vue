@@ -136,7 +136,10 @@ export default {
         label: '订单号'
       }, {
         value: '2',
-        label: '内部订单'
+        label: '收货人姓名'
+      }, {
+        value: '3',
+        label: '收货人手机号'
       }],
       // 搜索类型
       value: '1',
@@ -212,7 +215,13 @@ export default {
       // 参数
       let params = {}
       if (this.keyValue !== '') {
-        params.no = this.keyValue
+        if (this.value == 1) {
+          params.no = this.keyValue
+        } else if (this.value == 2) {
+          params.consignee = this.keyValue
+        } else if (this.value == 3) {
+          params.mobile = this.keyValue
+        }
       }
       if (this.keyName !== '') {
         params.name = this.keyName
@@ -450,7 +459,7 @@ export default {
     background: #fff;
     padding:30px 20px 20px;
     .tradeList{
-          padding-bottom: 30px;
+          padding-bottom: 10px;
           padding-top: 30px;
           display: block;
           width: 100%;

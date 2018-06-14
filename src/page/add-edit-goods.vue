@@ -80,7 +80,7 @@
                   </quill-editor>
                   <!-- 文件上传input 将它隐藏-->
                   <el-upload :action="qiniuUploadUrl"
-                             :before-upload='goodsImageBeforeUpload'
+                             :before-upload='beforeUpload'
                              :data="upToken"
                              accept=".jpg,.png"
                              :on-success='quillUpScuccess'
@@ -1002,9 +1002,8 @@ export default {
             status: this.grounding ? 1 : 2
           }
           // 判断是否存在商品规格
-          if (this.skus.length > 0) {
+          if (this.specificationList.length > 0) {
             this.getSpecs()
-            // this.handleSuksPrice()
             data.specs = this.specs
             data.sku = this.handleSuksPrice()
           } else {
@@ -1273,7 +1272,6 @@ export default {
             .specification-value-box {
               .specification-value-list {
                 display: inline-block;
-                width: 800px;
                 .el-tag {
                   margin-right: 10px;
                   border-color: #d5d5d5;
