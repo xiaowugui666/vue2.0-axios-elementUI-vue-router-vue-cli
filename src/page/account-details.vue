@@ -51,7 +51,7 @@
               label="操作"
               width="150">
               <template slot-scope="scope">
-                <el-button @click="toOrderDetail(scope.row.id)" type="text" size="small">详情</el-button>
+                <el-button @click="toOrderDetail(scope.row.order_id)" type="text" size="small">详情</el-button>
               </template>
             </el-table-column>
           </el-table>

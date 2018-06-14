@@ -18,7 +18,7 @@
             </el-option>
           </el-select>
         </div>
-        <div class="search" @click="search">
+        <div class="search" @click="search(0)">
           <el-button
           size="small"
           type="success"
@@ -64,10 +64,10 @@
             background
             prev-text="<上一页"
             next-text="下一页>"
-            :page-size="15"
+            :page-size="2"
             @current-change="changePage"
             layout="prev, pager, next"
-            :total="totalPage">
+            :total="totalPage * 2">
           </el-pagination>
         </div>
         <el-dialog
@@ -90,13 +90,13 @@
 </template>
 
 <script>
-import { user } from '@/axios/api'
+import {user, userEditor} from '@/axios/api'
 import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
       name: '',
-      totalPage: 15,
+      totalPage: 0,
       dialogVisible: false,
       phoneNum: '',
       wechatNum: '',
@@ -130,15 +130,17 @@ export default {
     user({
       mobile: this.phoneNum,
       order_count: this.value,
-      page: this.pages
-    }, 'GET').then(
+      page: this.pages,
+      per_page: 2
+    }).then(
       res => {
         this.tableData = res.data
+        this.totalPage = parseInt(res.headers.page_count)
       }
     )
   },
   methods: {
-    search () {
+    search (value) {
       const reg = /^[1][3,4,5,7,8][0-9]{9}$/
       if (this.phoneNum) {
         if (reg.test(this.phoneNum)) {
@@ -147,14 +149,25 @@ export default {
           return false
         }
       }
+      let count = 0
+      if (this.value == 1) {
+        count = 1
+      } else if (this.value == 2) {
+        count = 5
+      } else if (this.value == 3) {
+        count = 10
+      } else if (this.value == 4) {
+        count = 20
+      }
       user({
         mobile: this.phoneNum,
         order_count: this.value,
-        page: this.pages
-      }, 'PUT').then(
+        page: value,
+        per_page: 2
+      }).then(
         res => {
           this.tableData = res.data
-          this.totalPage = parseInt(res.headers.page_count) * 15
+          this.totalPage = parseInt(res.headers.page_count)
         }
       )
     },
@@ -167,10 +180,9 @@ export default {
     // 保存姓名 关闭模态框
     saveInfo () {
       let that = this
-      user({
-        id: this.tableData[this.detail].user_id,
+      userEditor({
         name: this.name
-      }, 'GET').then(
+      }, this.tableData[this.detail].id).then(
         res => {
           console.log(res)
           if (res.status === 200) {
@@ -185,15 +197,19 @@ export default {
             this.$message.error('修改失败')
           }
         }
-      )
+      ).catch(() => {
+        this.$message({
+          message: '修改失败',
+          type: 'error'
+        })
+      })
     },
     orderDetails (link) {
       this.$router.push({name: 'customerOrder', params: {id: this.tableData[link].id}})
       // this.$router.push({name: 'customerOrder', params: {id: 1}})
     },
     changePage (val) {
-      this.pages = val
-      this.search()
+      this.search(val - 1)
     }
   },
   components: {

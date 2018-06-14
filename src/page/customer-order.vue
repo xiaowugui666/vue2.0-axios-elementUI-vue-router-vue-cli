@@ -123,9 +123,6 @@ export default {
       optionType: [{
         value: '0',
         label: '普通订单'
-      }, {
-        value: '1',
-        label: '内部订单'
       }],
       // 用户id
       user_id: '',
@@ -323,7 +320,7 @@ export default {
         padding:0 12px;
         font-family: MicrosoftYaHei;
         font-size: 12px;
-        color: #B5B5B5;
+        color: #151515;
         line-height: 15px;
       }
       .el-date-editor .el-range__icon {

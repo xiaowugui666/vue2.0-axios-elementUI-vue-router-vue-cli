@@ -66,7 +66,7 @@
                 next-text="下一页 >"
                 @current-change="changePage"
                 layout="prev, pager, next"
-                :total="totalPage">
+                :total="pages * 15">
               </el-pagination>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default {
     }
   },
   mounted () {
-    this.getInfo()
+    this.getInfo(this.pages)
     this.getMoney()
   },
   methods: {
@@ -105,14 +105,14 @@ export default {
         }
       )
     },
-    getInfo () {
+    getInfo (value) {
       settlement({
-        page: this.pages
+        page: value
       }).then(
         res => {
           let datas = []
           console.log(res)
-          this.pages = res.headers.page_count * 15
+          this.pages = res.headers.page_count
           res.data.forEach(function (v, i) {
             v.end_at = v.end_at.substring(0, 11)
             datas.push(v)
@@ -122,8 +122,7 @@ export default {
       )
     },
     changePage (val) {
-      this.pages = val
-      this.getInfo()
+      this.getInfo(val - 1)
     },
     detailsLink (link) {
       this.$router.push({
