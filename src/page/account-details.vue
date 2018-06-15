@@ -55,7 +55,7 @@
               </template>
             </el-table-column>
           </el-table>
-          <div class="paging-box clear">
+          <div class="paging-box clear" v-if="incomeExpenditureData.length != 0">
             <el-pagination
               background
               prev-text="< 上一页"
@@ -84,29 +84,7 @@ export default {
       totalPage: 15,
       settlementDate: '2018-05-22',
       totalIncome: 2368993.12,
-      incomeExpenditureData: [
-        {
-          id: 1,
-          orderGenerationTime: '2018-05-22 10:20:39',
-          paymentTime: '2018-05-22 10:30:39',
-          orderNum: '321344654654354',
-          money: 222333.22
-        },
-        {
-          id: 1,
-          orderGenerationTime: '2018-05-22 10:20:39',
-          paymentTime: '2018-05-22 10:30:39',
-          orderNum: '321344654654354',
-          money: 222333.22
-        },
-        {
-          id: 1,
-          orderGenerationTime: '2018-05-22 10:20:39',
-          paymentTime: '2018-05-22 10:30:39',
-          orderNum: '321344654654354',
-          money: 222333.22
-        }
-      ]
+      incomeExpenditureData: []
     }
   },
   mounted () {

@@ -59,7 +59,7 @@
         </div>
 
       </div>
-      <div class="tradeRecord">
+      <div class="tradeRecord" v-if="tradeList.length">
         <div class="tradeList" v-for="( item,index ) in tradeList" :key="index">
           <div class="top">
             <label>下单时间：{{ item.paid_at }}</label>
@@ -83,20 +83,25 @@
             </div>
             <div class="orderResult"  :style="{height:item.length+'px'} ">
                 <label>{{tradeStatus(item.status)}}</label>
-              <router-link  :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
+              <router-link v-if="item.status > 405" :to="{ path: '/order-rebate',query:{id:item.id }}" tag="label">订单详情</router-link>
+              <router-link v-else :to="{ name: 'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
             </div>
           </div>
         </div>
         <el-pagination
           background
+          v-if="tradeList.length"
           :page-size="15"
           :page-count="6"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
           @current-change="currentIndex"
-          :total="totalPage">
+          :total="totalPage * 15">
         </el-pagination>
+      </div>
+      <div  v-else class="empty">
+        <div>暂无数据</div>
       </div>
     </div>
   </div>
@@ -147,8 +152,9 @@ export default {
       // 订单类型
       OrderType: '0',
       // 交易类型
-      tradeType: 'first',
-      tradeList: []
+      tradeList: [],
+      // flag: 标记是否已点击搜索
+      flag: false
     }
   },
   mounted () {
@@ -180,27 +186,39 @@ export default {
         return '待收货'
       } else if (value == 405) {
         return '确认收货'
+      } else if (value == 500) {
+        return '处理中'
       } else {
         return '这是啥状态呀。是九阴白骨爪！'
       }
     },
     getData () {
       let params = {}
-      params.no = this.keyValue
-      params.name = this.keyName
-      params.status = this.OrderType
-      params.begin_at = this.keyTime[0]
-      params.end_at = this.keyTime[1]
+      if (this.flag) {
+        params.no = this.keyValue
+        params.name = this.keyName
+        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+      }
       params.page = this.pages
       params.id = this.$route.params.id
       customerOrder(params).then(res => {
-        console.log(res)
-        console.log(res.headers.page_count)
-        this.totalPage = parseInt(res.headers.page_count) * 15
+        this.totalPage = parseInt(res.headers.page_count)
         res.data.forEach(function (v, i) {
           Object.assign(res.data[i], {length: res.data[i].items.length * 80})
         })
         this.tradeList = res.data
+        if (this.tradeList.length == 0) {
+          this.$message({
+            message: '暂无数据',
+            type: 'info'
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          message: '数据请求错误，请稍后重试',
+          type: 'error'
+        })
       })
     },
     changeTime () {
@@ -209,7 +227,9 @@ export default {
       this.isMonth = false
       this.keyTime = [keyTimes[0].getTime(), keyTimes[1].getTime()]
     },
+    // 点击搜索
     searchOrder () {
+      this.flag = true
       this.pages = 0
       this.getData()
     },
@@ -362,7 +382,7 @@ export default {
       padding: 20px;
       overflow: hidden;
       .tradeList{
-        padding-bottom: 30px;
+        padding-bottom: 15px;
         .top{
           background: #EFEFEF;
           border: 1px solid #D5D5D5;
@@ -554,6 +574,19 @@ export default {
           margin-left: 20px;
           float: left;
         }
+      }
+    }
+    .empty {
+      min-width: 1000px;
+      background: #ffffff;
+      height: 50px;
+      font-size: 14px;
+      color: #151515;
+      text-align: center;
+      line-height: 50px;
+      padding: 10px 20px;
+      >div {
+        border: 1px solid #eeeeee;
       }
     }
   }

@@ -47,6 +47,9 @@
             <el-table-column
               prop="order_count"
               label="拥有订单数">
+              <template slot-scope="scope">
+                <div class="11111">{{scope.row.order_count ? scope.row.order_count : 0}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="address"
@@ -62,12 +65,13 @@
         <div class="padding-top-20">
           <el-pagination
             background
+            v-if="tableData.length"
             prev-text="<上一页"
             next-text="下一页>"
-            :page-size="2"
+            :page-size="15"
             @current-change="changePage"
             layout="prev, pager, next"
-            :total="totalPage * 2">
+            :total="totalPage * 15">
           </el-pagination>
         </div>
         <el-dialog
@@ -107,31 +111,32 @@ export default {
           value: 1,
           label: '1+'
         }, {
-          value: 5,
+          value: '5',
           label: '5+'
         }, {
-          value: 10,
+          value: '10',
           label: '10+'
         }, {
-          value: 20,
+          value: '20',
           label: '20+'
         }, {
-          value: 50,
+          value: '50',
           label: '50+'
         }, {
-          value: 100,
+          value: '100',
           label: '100+'
         }
       ],
-      tableData: []
+      tableData: [],
+      // flag： 标记搜索状态
+      flag: false
     }
   },
   mounted () {
     user({
       mobile: this.phoneNum,
       order_count: this.value,
-      page: this.pages,
-      per_page: 2
+      page: this.pages
     }).then(
       res => {
         this.tableData = res.data
@@ -140,21 +145,22 @@ export default {
     )
   },
   methods: {
+    // 点击搜索
     search (value) {
+      this.flag = true
+      let params = {}
       const reg = /^[1][3,4,5,7,8][0-9]{9}$/
       if (this.phoneNum) {
         if (reg.test(this.phoneNum)) {
+          params.mobile = this.phoneNum
         } else {
           this.$message.error('这不是一个正确的手机号码')
           return false
         }
       }
-      user({
-        mobile: this.phoneNum,
-        order_count: this.value,
-        page: value,
-        per_page: 2
-      }).then(
+      params.order_count = this.value
+      params.page = value
+      user(params).then(
         res => {
           this.tableData = res.data
           this.totalPage = parseInt(res.headers.page_count)
@@ -199,7 +205,25 @@ export default {
       // this.$router.push({name: 'customerOrder', params: {id: 1}})
     },
     changePage (val) {
-      this.search(val - 1)
+      let params = {}
+      if (this.flag) {
+        const reg = /^[1][3,4,5,7,8][0-9]{9}$/
+        if (this.phoneNum) {
+          if (reg.test(this.phoneNum)) {
+            params.mobile = this.phoneNum
+          } else {
+            this.$message.error('这不是一个正确的手机号码')
+            return false
+          }
+        }
+        params.order_count = this.value
+      }
+      params.page = val - 1
+      user(params).then(
+        res => {
+          this.tableData = res.data
+          this.totalPage = parseInt(res.headers.page_count)
+        })
     }
   },
   components: {
@@ -217,8 +241,8 @@ export default {
   .header{
     min-width: 1000px;
     background: #ffffff;
-    padding-top: 40px;
-    height: 80px;
+    padding: 40px 0;
+    overflow: hidden;
     span{
       font-size: 12px;
       color: #999999;

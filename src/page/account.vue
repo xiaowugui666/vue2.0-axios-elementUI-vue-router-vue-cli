@@ -47,7 +47,7 @@
                 prop="amount"
                 label="盈利金额（￥）">
                 <template slot-scope="scope">
-                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{scope.row.amount>0?'+'+scope.row.amount:scope.row.amount}}</div>
+                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{profAmount(scope.row.amount)}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -61,6 +61,7 @@
             <div class="paging-box clear">
               <el-pagination
                 background
+                v-if="incomeExpenditureData.length"
                 prev-text="< 上一页"
                 :page-size="15"
                 next-text="下一页 >"
@@ -97,6 +98,15 @@ export default {
     this.getMoney()
   },
   methods: {
+    profAmount (value) {
+      if (value > 0) {
+        value = Number(value) / 100
+        return '+' + value.toFixed(2)
+      } else {
+        value = Number(value) / 100
+        return value.toFixed(2)
+      }
+    },
     getMoney () {
       incomeInfo().then(
         res => {
