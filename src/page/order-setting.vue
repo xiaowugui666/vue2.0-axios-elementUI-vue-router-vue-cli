@@ -44,8 +44,7 @@ export default {
     return {
       editState: false,
       cancellationTime: '',
-      receiptTime: '',
-      configData: {}
+      receiptTime: ''
     }
   },
   components: {
@@ -64,9 +63,10 @@ export default {
       this.editState = !this.editState
     },
     saveClick () {
-      let data = this.configData
-      data.order_expire_time = parseInt(this.cancellationTime) * 60
-      data.confirm_goods_time = parseInt(this.receiptTime)
+      let data = {
+        order_expire_time: parseInt(this.cancellationTime) * 60,
+        confirm_goods_time: parseInt(this.receiptTime)
+      }
       initialSetData('put', data).then(res => {
         this.editState = !this.editState
       }).catch(err => {
@@ -85,7 +85,6 @@ export default {
   created () {
     initialSetData('get').then(res => {
       console.log(res.data)
-      this.configData = res.data
       this.cancellationTime = res.data.order_expire_time / 60
       this.receiptTime = res.data.order_auto_confirm_days
     })

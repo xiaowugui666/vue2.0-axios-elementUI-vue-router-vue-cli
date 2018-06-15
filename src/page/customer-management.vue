@@ -232,8 +232,6 @@ export default {
   },
   components: {
     menuLeft
-  },
-  computed: {
   }
 }
 </script>

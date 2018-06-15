@@ -15,6 +15,7 @@
         <el-col class="li" :span="4"><router-link to="/order-management"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/customer-management"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/account"><i class="icon-账户"></i><span>我的账户</span></router-link></el-col>
+        <el-col class="li" :span="4"><router-link :to="{name:'marketingManagement',params:{class:'special-offer'}}"><i class="icon-特卖"></i><span>特价管理</span></router-link></el-col>
       </el-row>
       <ul class="home-survey">
         <li>
