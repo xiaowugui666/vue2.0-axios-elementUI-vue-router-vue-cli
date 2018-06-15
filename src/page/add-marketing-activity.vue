@@ -144,6 +144,7 @@ export default {
         // 请求编辑推荐商品详情
         singleRecommendGood(this.$route.query.id).then(res => {
           console.log(res)
+          console.log(this.recommendGoods)
           this.good = res.data
           this.activityTime = [res.data.begin_at, res.data.end_at]
         })
