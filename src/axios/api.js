@@ -377,10 +377,13 @@ export const addGoodsCategory = function (data) {
 }
 
 // 删除商品分类
-export const deleteGoodsCategory = function (id) {
+export const deleteGoodsCategory = function (id, parentId) {
   return fetch({
     url: api.ip + '/management/category/' + id,
-    method: 'delete' // 请求方法
+    method: 'delete', // 请求方法
+    data: {
+      parent_id: parentId
+    }
   })
 }
 
