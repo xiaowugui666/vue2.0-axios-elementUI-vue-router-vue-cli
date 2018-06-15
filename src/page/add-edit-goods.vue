@@ -212,7 +212,7 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.specs" v-if="sku.specs.length>0" :key="index2">{{item.property}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
                       <td>
@@ -244,7 +244,7 @@
                 <span class="name required">商品价格：</span>
                 <div>
                   <span class="goods-price">
-                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
+                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2,min_value:0.01}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
                   </span>
                   <div class="err-tips">{{ errors.first('商品价格') }}</div>
                 </div>

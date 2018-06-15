@@ -477,11 +477,9 @@ export default {
         .goods-info-box {
           text-align: left;
           font-size: 0;
-          position: relative;
-          display: flex;
-          align-items: center;
           .goods-img {
-            flex: none;
+            display: inline-block;
+            vertical-align: middle;
             width: 60px;
             height: 60px;
             text-align: center;
@@ -497,9 +495,11 @@ export default {
             }
           }
           .goods-info {
-            flex: 1;
             font-size: 12px;
             padding-left: 15px;
+            display: inline-block;
+            vertical-align: middle;
+            width:calc(100% - 65px);
             .goods-info-name {
               color: #333;
               font-size: 14px;
