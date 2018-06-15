@@ -160,7 +160,7 @@ export default {
       contactWeChat: '',
       customerServiceNum: '',
       editState: false,
-      logoImageUrl: 'shop_default _logo.png',
+      logoImageUrl: 'shop_default_logo.png',
       bannerImageUrl: '',
       textArea: '',
       options: regionData,
