@@ -126,13 +126,13 @@
         <el-pagination
           background
           v-if="totalPagina !== 0"
-          :page-size="1"
+          :page-size="15"
           :current-page="page"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
           @current-change="currentIndex"
-          :total="totalPagina">
+          :total="totalPagina * 15">
         </el-pagination>
       </div>
     </div>
@@ -304,8 +304,15 @@ export default {
         console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
+        if (res.data.length == 0) {
+          this.$message({
+            message: '没有此类订单!',
+            type: 'info'
+          })
+        }
       })
     },
+    // 售后状态
     refundStatu (value) {
       if (value == 1) {
         return '待处理'

@@ -92,14 +92,14 @@
           <el-pagination
             v-if="totalPagina != 0"
             background
-            :page-size="2"
+            :page-size="15"
             :page-count="6"
             style="padding-top: 20px;"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
             @current-change="currentIndex"
-            :total="totalPagina * 2">
+            :total="totalPagina * 15">
           </el-pagination>
         </div>
       </div>

@@ -65,6 +65,7 @@
         <div class="padding-top-20">
           <el-pagination
             background
+            v-if="tableData.length"
             prev-text="<上一页"
             next-text="下一页>"
             :page-size="15"
@@ -126,7 +127,9 @@ export default {
           label: '100+'
         }
       ],
-      tableData: []
+      tableData: [],
+      // flag： 标记搜索状态
+      flag: false
     }
   },
   mounted () {
@@ -142,20 +145,22 @@ export default {
     )
   },
   methods: {
+    // 点击搜索
     search (value) {
+      this.flag = true
+      let params = {}
       const reg = /^[1][3,4,5,7,8][0-9]{9}$/
       if (this.phoneNum) {
         if (reg.test(this.phoneNum)) {
+          params.mobile = this.phoneNum
         } else {
           this.$message.error('这不是一个正确的手机号码')
           return false
         }
       }
-      user({
-        mobile: this.phoneNum,
-        order_count: value,
-        page: value
-      }).then(
+      params.order_count = this.value
+      params.page = value
+      user(params).then(
         res => {
           this.tableData = res.data
           this.totalPage = parseInt(res.headers.page_count)
@@ -200,7 +205,25 @@ export default {
       // this.$router.push({name: 'customerOrder', params: {id: 1}})
     },
     changePage (val) {
-      this.search(val - 1)
+      let params = {}
+      if (this.flag) {
+        const reg = /^[1][3,4,5,7,8][0-9]{9}$/
+        if (this.phoneNum) {
+          if (reg.test(this.phoneNum)) {
+            params.mobile = this.phoneNum
+          } else {
+            this.$message.error('这不是一个正确的手机号码')
+            return false
+          }
+        }
+        params.order_count = this.value
+      }
+      params.page = val - 1
+      user(params).then(
+        res => {
+          this.tableData = res.data
+          this.totalPage = parseInt(res.headers.page_count)
+        })
     }
   },
   components: {

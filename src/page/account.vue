@@ -61,6 +61,7 @@
             <div class="paging-box clear">
               <el-pagination
                 background
+                v-if="incomeExpenditureData.length"
                 prev-text="< 上一页"
                 :page-size="15"
                 next-text="下一页 >"

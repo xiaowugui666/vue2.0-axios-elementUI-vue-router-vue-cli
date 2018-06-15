@@ -96,10 +96,10 @@
           next-text="下一页 >"
           layout="prev, pager, next"
           @current-change="currentIndex"
-          :total="totalPage">
+          :total="totalPage * 15">
         </el-pagination>
       </div>
-      <div  v-else class="enpty">
+      <div  v-else class="empty">
         <div>暂无数据</div>
       </div>
     </div>
@@ -151,7 +151,9 @@ export default {
       // 订单类型
       OrderType: '0',
       // 交易类型
-      tradeList: []
+      tradeList: [],
+      // flag: 标记是否已点击搜索
+      flag: false
     }
   },
   mounted () {
@@ -191,15 +193,16 @@ export default {
     },
     getData () {
       let params = {}
-      params.no = this.keyValue
-      params.name = this.keyName
-      params.status = this.OrderType
-      params.begin_at = this.keyTime[0]
-      params.end_at = this.keyTime[1]
+      if (this.flag) {
+        params.no = this.keyValue
+        params.name = this.keyName
+        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+      }
       params.page = this.pages
       params.id = this.$route.params.id
       customerOrder(params).then(res => {
-        this.totalPage = parseInt(res.headers.page_count) * 15
+        this.totalPage = parseInt(res.headers.page_count)
         res.data.forEach(function (v, i) {
           Object.assign(res.data[i], {length: res.data[i].items.length * 80})
         })
@@ -207,7 +210,7 @@ export default {
         if (this.tradeList.length == 0) {
           this.$message({
             message: '暂无数据',
-            type: 'warning'
+            type: 'info'
           })
         }
       }).catch(() => {
@@ -223,7 +226,9 @@ export default {
       this.isMonth = false
       this.keyTime = [keyTimes[0].getTime(), keyTimes[1].getTime()]
     },
+    // 点击搜索
     searchOrder () {
+      this.flag = true
       this.pages = 0
       this.getData()
     },
@@ -570,12 +575,12 @@ export default {
         }
       }
     }
-    .enpty {
+    .empty {
       min-width: 1000px;
       background: #ffffff;
       height: 50px;
       font-size: 14px;
-      color: #B5B5B5;
+      color: #151515;
       text-align: center;
       line-height: 50px;
       padding: 10px 20px;
