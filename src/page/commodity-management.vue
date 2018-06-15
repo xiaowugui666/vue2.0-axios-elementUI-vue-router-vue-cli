@@ -195,12 +195,14 @@ export default {
     // 渲染商品价格
     renderingGoodsPrice (low, high) {
       let price = ''
-      if (low === high) {
-        price = (low / 100).toFixed(2)
-        return price
-      } else {
-        price = (low / 100).toFixed(2) + '~' + (high / 100).toFixed(2)
-        return price
+      if (low && high) {
+        if (low === high) {
+          price = (low / 100).toFixed(2)
+          return price
+        } else {
+          price = (low / 100).toFixed(2) + '~' + (high / 100).toFixed(2)
+          return price
+        }
       }
     },
     // 请求商品分类

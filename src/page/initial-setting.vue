@@ -171,7 +171,7 @@ export default {
       telNum: '',
       contactWeChat: '',
       customerServiceNum: '',
-      logoImageUrl: 'shop_default _logo.png',
+      logoImageUrl: 'shop_default_logo.png',
       bannerImageUrl: '',
       bannerErrorTips: false,
       textArea: '',
