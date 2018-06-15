@@ -148,7 +148,11 @@ export default {
       OrderType: '1',
       // 交易类型
       tradeType: 'first',
-      tradeList: []
+      tradeList: [],
+      // 标记当前所处订单分类
+      statu: '',
+      // flag：是否已点击搜索
+      flag: false
     }
   },
   computed: {
@@ -179,23 +183,27 @@ export default {
     },
     // 点击搜索
     searchOrder () {
+      // 改变flag状态
+      this.flag = true
       // 参数
       let params = {}
-      if (this.keyValue !== '') {
-        if (this.value == 1) {
-          params.no = this.keyValue
-        } else if (this.value == 2) {
-          params.consignee = this.keyValue
-        } else if (this.value == 3) {
-          params.mobile = this.keyValue
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
         }
-      }
-      if (this.keyName !== '') {
-        params.name = this.keyName
-      }
-      if (this.keyTime.length !== 0) {
-        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length !== 0) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
       params.page = 0
       params.per_page = 15
@@ -208,6 +216,7 @@ export default {
         }
       })
     },
+    // 改变时间段
     timeRange (res, event) {
       let flag = event.target.dataset.id
       if (flag === '0') {
@@ -232,19 +241,40 @@ export default {
     // 订单分类状态点击
     handleClick (tab) {
       console.log(tab.index)
-      let statu = 0
-      if (tab.index == 1) {
-        statu = 200
-      } else if (tab.index == 2) {
-        statu = 205
-      } else if (tab.index == 3) {
-        statu = 400
-      } else if (tab.index == 4) {
-        statu = 405
-      } else if (tab.index == 5) {
-        statu = 207
+      let params = {}
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
+        }
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length !== 0) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
-      order({status: statu}).then(res => {
+      if (tab.index == 1) {
+        this.statu = 200
+      } else if (tab.index == 2) {
+        this.statu = 205
+      } else if (tab.index == 3) {
+        this.statu = 400
+      } else if (tab.index == 4) {
+        this.statu = 405
+      } else if (tab.index == 5) {
+        this.statu = 207
+      } else {
+        this.statu = ''
+      }
+      params.status = this.statu
+      order(params).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
@@ -256,13 +286,26 @@ export default {
     // 分页点击
     currentIndex (val) {
       let params = {}
-      if (this.keyValue !== '') {
-        params.no = this.keyValue
-      }
-      if (this.keyName !== '') {
-        params.name = this.keyName
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
+        }
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length !== 0) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
       params.page = val - 1
+      params.status = this.statu
       this.currentPage = val
       order(params).then(res => {
         this.totalPagina = res.headers.page_count

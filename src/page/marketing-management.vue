@@ -46,7 +46,7 @@
                       <span v-if="linkClass == 'special-offer' && scope.row.goods_sku && (scope.row.goods_sku.spec_a || scope.row.goods_sku.spec_b || scope.row.goods_sku.spec_c)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                      <span class="goods-info-price">￥{{scope.row.price | money}}</span>
+                      <span class="goods-info-price">￥{{(linkClass == 'recommend' ? scope.row.goods.price : scope.row.price) | money}}</span>
                     </div>
                   </div>
                 </div>
@@ -62,6 +62,14 @@
               </template>
             </el-table-column>
             <el-table-column
+              v-if="linkClass == 'recommend'"
+              prop="goods.stock_count"
+              label="库存"
+              width="80"
+              show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
+              v-else
               prop="stock_count"
               label="库存"
               width="80"

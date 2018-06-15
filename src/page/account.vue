@@ -47,7 +47,7 @@
                 prop="amount"
                 label="盈利金额（￥）">
                 <template slot-scope="scope">
-                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{scope.row.amount>0?'+'+scope.row.amount:scope.row.amount}}</div>
+                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{profAmount(scope.row.amount)}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -97,6 +97,15 @@ export default {
     this.getMoney()
   },
   methods: {
+    profAmount (value) {
+      if (value > 0) {
+        value = Number(value) / 100
+        return '+' + value.toFixed(2)
+      } else {
+        value = Number(value) / 100
+        return value.toFixed(2)
+      }
+    },
     getMoney () {
       incomeInfo().then(
         res => {

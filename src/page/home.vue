@@ -15,7 +15,6 @@
         <el-col class="li" :span="4"><router-link to="/order-management"><i class="icon-订单"></i><span>订单管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/customer-management"><i class="icon-客户"></i><span>客户管理</span></router-link></el-col>
         <el-col class="li" :span="4"><router-link to="/account"><i class="icon-账户"></i><span>我的账户</span></router-link></el-col>
-        <el-col class="li" :span="4"><router-link to="/collage-management"><i class="icon-拼团"></i><span>拼团管理</span></router-link></el-col>
       </el-row>
       <ul class="home-survey">
         <li>
@@ -153,6 +152,9 @@ export default {
       }
       &:first-child {
         border-left: 1px solid #F5F5F5;
+      }
+      &:last-child {
+        border-right: none;
       }
       a {
         color: #888;

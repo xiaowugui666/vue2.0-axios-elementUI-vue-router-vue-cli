@@ -99,7 +99,6 @@ export default {
       console.log(res)
       this.rebateDetail = res.data
       this.tradeType = res.data.status - 1
-      console.log(this.tradeType)
     })
   },
   methods: {

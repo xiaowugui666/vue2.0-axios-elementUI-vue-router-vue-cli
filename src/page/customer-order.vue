@@ -151,7 +151,6 @@ export default {
       // 订单类型
       OrderType: '0',
       // 交易类型
-      tradeType: 'first',
       tradeList: []
     }
   },

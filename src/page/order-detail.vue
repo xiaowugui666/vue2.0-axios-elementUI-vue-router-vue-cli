@@ -140,16 +140,6 @@ export default {
         }
       })
     },
-    getParams () {
-      this.tradeType = parseInt(this.$route.params.id)
-      if (this.tradeType === 2) {
-        this.isSave = true
-        this.isPrices = false
-        this.isCompile = false
-      } else if (this.tradeType === 3 || this.tradeType === 4) {
-        this.isPrices = false
-      }
-    },
     // 提交快递信息
     commitTrade () {
       let params = {}
@@ -176,7 +166,7 @@ export default {
           }
         })
       } else {
-        this.$message('请选择快递公司并输入订单号')
+        this.$message('请选择快递公司并输入快递单号')
       }
     }
   },
