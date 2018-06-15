@@ -435,26 +435,12 @@ export const mpInfo = function () {
   })
 }
 
-// 有新接口的时候像上面那样再来一次
-// //修改昵称接口
-// export function userID(name){
-//   return fetch({
-//     url:api.myself_name,
-//     method:"put",
-//     data:{
-//       nickname:name
-//     }
-//   })
-// }
-//
-//
-// //取消转发赞踩接口
-// export function cancelForward(articleId,type){
-//   return fetch({
-//     url:api.detail_article+articleId+"/forwarded_impress",
-//     method:"delete",
-//     params:{
-//       type:type
-//     }
-//   })
-// }
+// 小程序体验者账号
+export const mpaExperience = function (type, data) {
+  return fetch({
+    url: api.ip + '/management/mpa/tester',
+    method: type, // 请求方法
+    data: data,
+    params: data
+  })
+}

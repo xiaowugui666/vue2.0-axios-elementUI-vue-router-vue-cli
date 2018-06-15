@@ -466,7 +466,7 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 440px;
+      width: 400px;
       text-align: left;
       position: relative;
       margin-left: 17px;
