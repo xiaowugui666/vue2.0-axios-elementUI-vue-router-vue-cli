@@ -19,7 +19,7 @@
                       v-for="(tag, index2) in item.children"
                       closable
                       :disable-transitions="false"
-                      @close="alignmentHandleClose(tag, index, tag.id)">
+                      @close="alignmentHandleClose(tag, index)">
                       <span class="el-tag-bar">{{tag.name}}</span>
                       <div class="tag-img">
                         <el-upload
@@ -30,7 +30,7 @@
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,item,tag)"
                           :before-upload="beforeAvatarUpload">
-                          <img :src="item.children[index2].icon_url ? yiqixuanDomainUrl + item.children[index2].icon_url : '/static/default-img/secondary-classification-default.png'" class="avatar">
+                          <img :src="yiqixuanDomainUrl + item.children[index2].icon_url" class="avatar">
                         </el-upload>
                       </div>
                     </el-tag>
@@ -76,7 +76,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 import {goodsCategory, addGoodsCategory, deleteGoodsCategory, updateGoodsCategoryPic, getQnToken} from '../axios/api.js'
 export default {
   data () {
@@ -262,19 +262,21 @@ export default {
           selected: false,
           changed: false
         }
-      ]
+      ],
+      changedNum: 0, // 修改的一级分类个数
+      count: 0 // 已修改完成的一级分类个数
     }
   },
   created () {
-    this.setMenuLeft('/category-management')
     this.getCategoryList()
     this.getImageToken()
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     // 获取商品类目列表
     getCategoryList () {
       goodsCategory().then(res => {
+        this.changedNum = 0
+        this.count = 0
         if (res.data) {
           this.categoryList = res.data
           this.setFirstCategoryListSelect()
@@ -319,35 +321,31 @@ export default {
     // 确认修改一级类目
     confirmationModification () {
       this.dialogVisible = false
-      let validate = false
-      for (let k of this.firstCategoryList) {
-        if (k.changed) {
-          if (!validate) {
-            validate = true
-          }
-          if (k.selected === true) {
+      for (let v of this.firstCategoryList) {
+        if (v.changed) {
+          this.changedNum++
+        }
+      }
+      for (let v of this.firstCategoryList) {
+        if (v.changed) {
+          if (v.selected === true) {
             addGoodsCategory({
-              'name': k.label,
+              'name': v.label,
               'parent_id': 0
             }).then(res => {
               this.$message.success('添加分类成功！')
+              this.count++
+              v.changed = false
             })
           } else {
             // 删除商品分类
-            deleteGoodsCategory(k.id).then(res => {
+            deleteGoodsCategory(v.id, 0).then(res => {
               this.$message('删除分类成功！')
+              this.count++
+              v.changed = false
             })
           }
         }
-        k.changed = false
-      }
-      // 如果有修改分类，则重新获取数据
-      if (validate) {
-        // 延迟请求接口，等到添加删除接口请求成功
-        setTimeout(() => {
-          // 重新请求接口，获取修改后的页面显示数据
-          this.getCategoryList()
-        }, 500)
       }
     },
     // 选择一级类目
@@ -356,12 +354,13 @@ export default {
       this.firstCategoryList[index].changed = !this.firstCategoryList[index].changed
     },
     // 删除选中的规则值
-    alignmentHandleClose (tag, index, id) {
+    alignmentHandleClose (tag, index) {
+      console.log(tag)
       let values = this.categoryList[index].children
-      this.categoryList[index].children.splice(values.indexOf(tag), 1)
       // 删除选择的二级分类
-      deleteGoodsCategory(id).then(res => {
+      deleteGoodsCategory(tag.id, this.categoryList[index].id).then(res => {
         // this.$message('删除二级分类成功！')
+        this.categoryList[index].children.splice(values.indexOf(tag), 1)
       })
     },
     // 显示 规则值输入框，使输入框获取焦点
@@ -374,36 +373,38 @@ export default {
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
     handleInputSpec (index, id) {
       let inputValue = this.inputSpacValue
+      let _this = this
       if (inputValue) {
-        for (let k of this.categoryList[index].children) {
+        if (f()) {
+          let data = {
+            'parent_id': id,
+            'name': inputValue,
+            'icon_url': 'level2_cate_default.png'
+          }
+          // 请求接口，保存二级商品分类
+          addGoodsCategory(data).then(res => {
+            // this.$message.success('添加二级分类成功！')
+            data.id = res.data.id
+            this.categoryList[index].children.push(data)
+          })
+        }
+      }
+      this.$set(this.inputSpacVisible, index, false)
+      this.inputSpacValue = ''
+
+      function f () {
+        for (let k of _this.categoryList[index].children) {
           if (inputValue === k.name) {
-            this.$message({
+            _this.$message({
               showClose: true,
-              message: '规格值重复！',
-              type: 'error'
+              message: '二级分类重复！',
+              type: 'warning'
             })
             return false
           }
         }
-        let children = {
-          id: index,
-          'name': inputValue,
-          'icon_url': ''
-        }
-        // 请求接口，保存二级商品分类
-        addGoodsCategory({
-          'name': inputValue,
-          'parent_id': id,
-          'icon': ''
-        }).then(res => {
-          // this.$message.success('添加二级分类成功！')
-          // 接口请求成功返回二级分类的id，把id添加到对象上
-          children.id = res.data
-          this.categoryList[index].children.push(children)
-        })
+        return true
       }
-      this.$set(this.inputSpacVisible, index, false)
-      this.inputSpacValue = ''
     },
     // 上传文件之前对上传内容的验证
     beforeAvatarUpload (file) {
@@ -425,22 +426,14 @@ export default {
     },
     // 二级分类图片上传
     handleAvatarSuccess (res, file, parent, children) {
-      this.categoryList.forEach((v, k) => {
-        if (v.id === parent.id) {
-          v.children.forEach((val, key) => {
-            if (val.id === children.id) {
-              val.icon_url = res.key
-            }
-          })
-        }
-      })
       // 修改上传图片地址，修改二级分类图片地址
       updateGoodsCategoryPic({
         'icon_url': res.key,
         'name': children.name,
         'parent_id': parent.id
-      }, children.id).then(res => {
+      }, children.id).then(resp => {
         // console.log('修改二级商品分类图片成功')
+        children.icon_url = res.key
       })
     }
   },
@@ -449,6 +442,17 @@ export default {
   },
   components: {
     menuLeft
+  },
+  watch: {
+    // 监测发送请求完成的计数
+    // 重新请求接口，获取修改后的页面显示数据
+    count () {
+      if (this.changedNum !== 0 && this.count !== 0) {
+        if (this.count === this.changedNum) {
+          this.getCategoryList()
+        }
+      }
+    }
   }
 }
 </script>
@@ -498,10 +502,8 @@ export default {
               border-bottom-color: transparent;
             }
             .avatar {
-              width: 100%;
-              height: 100%;
-              max-width: 85px;
-              max-height: 85px;
+              width: 85px;
+              height: 85px;
             }
           }
           .el-tag {
