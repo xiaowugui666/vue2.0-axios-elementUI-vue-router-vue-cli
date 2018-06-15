@@ -154,6 +154,9 @@ export default {
       &:first-child {
         border-left: 1px solid #F5F5F5;
       }
+      &:last-child {
+        border-right: none;
+      }
       a {
         color: #888;
         display: block;
