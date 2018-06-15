@@ -122,8 +122,41 @@
         <div v-if="active == 2" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
-            <payment-info></payment-info>
-
+            <div class="pay-information-setting">
+              <ul>
+                <li>
+                  <span class="pay-info-title">服务商商户号：</span>
+                  <span class="pay-info-txt" :title="busiInformation.merchant_no">{{busiInformation.merchant_no}}</span>
+                  <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
+                  <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
+                </li>
+                <li>
+                  <span class="pay-info-title">服务商商户秘钥：</span>
+                  <span class="pay-info-txt" :title="busiInformation.merchant_key">{{busiInformation.merchant_key}}</span>
+                  <el-button type="primary" size="small" @click="setMerchantKey">设置</el-button>
+                  <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API 安全 > API 秘钥</span>
+                </li>
+                <li>
+                  <span class="pay-info-title">服务商P12证书：</span>
+                  <span class="pay-info-txt" :title="busiInformation.merchant_cert">{{busiInformation.merchant_cert}}</span>
+                  <el-upload
+                    :action="qiniuUploadUrl"
+                    :data="docToken"
+                    accept=".p12"
+                    :show-file-list="false"
+                    :on-success="qnUploadSuccess">
+                    <el-button size="small" type="primary">点击上传</el-button>
+                  </el-upload>
+                  <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API安全 > 下载证书。<br>得到的 apiclient_cert.p12 文件后，点击右侧的上传按钮进行上传即可。</span>
+                </li>
+                <!--<li>-->
+                <!--<span class="pay-info-title">升级支付接口：</span>-->
+                <!--<span class="pay-info-txt"></span>-->
+                <!--<el-button type="primary" size="small" @click="setMerchantNumber">免费升级</el-button>-->
+                <!--<span>如果您是特约支付商户，创建社交立减金前需要完成接口升级</span>-->
+                <!--</li>-->
+              </ul>
+            </div>
             <div class="checked-protocol">
               <el-checkbox v-model.trim="checked">
                 <span class="checked-protocol-text">我已同意并阅读</span>
@@ -151,7 +184,6 @@
 
 <script>
 import firstSettingMenu from '@/components/first-setting-menu'
-import paymentInfo from '@/components/payment-info'
 import {initialSetData, getQnToken, paySetting} from '../axios/api'
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {mapState} from 'vuex'
@@ -162,6 +194,7 @@ export default {
       shopName: '',
       // 图片上传需要的token
       upToken: {},
+      docToken: {},
       // 支付部分
       readingProtocol: false,
       checked: true,
@@ -177,19 +210,25 @@ export default {
       textArea: '',
       options: regionData,
       selectedOptions: [],
-      contactAddress: ''
+      contactAddress: '',
+      busiInformation: {
+        merchant_no: '--',
+        merchant_key: '--',
+        merchant_cert: '--',
+        merchantNumber: '--'
+      }
     }
   },
   created () {
     this.getImageToken()
     this.getInitialSetData()
+    this.getCertificateToken()
   },
   mounted () {
   },
   components: {
     firstSettingMenu,
-    CodeToText,
-    paymentInfo
+    CodeToText
   },
   computed: {
     ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
@@ -203,16 +242,25 @@ export default {
         console.log(err)
       })
     },
+    // 获取证书上传七牛的token
+    getCertificateToken () {
+      getQnToken('document').then(res => {
+        this.docToken.token = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
+    },
     // 进入页面获取店铺信息
     getInitialSetData () {
       initialSetData('get').then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         let data = res.data
         this.telNum = data.mobile
         if (data.name && data.type) {
           if (data.description && data.banner && data.owner_name) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
-              this.setRouter('/')
+              // this.setRouter('/')
+              this.active = 2
             } else {
               this.active = 2
             }
@@ -228,7 +276,7 @@ export default {
             this.contactWeChat = data.wechat ? data.wechat : ''
             this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
             this.getRegionCode(data.province, data.city, data.region)
-            this.contactAddress = data.address
+            this.contactAddress = data.address === null ? '' : data.address
             this.active = 1
           }
         } else {
@@ -326,27 +374,61 @@ export default {
         this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
       }
     },
+    setMerchantCert () {
+      let _this = this
+      this.$prompt('设置商户号', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^.+$/,
+        inputErrorMessage: '商户号不能为空！'
+      }).then(({ value }) => {
+        _this.busiInformation.merchant_no = value
+      }).catch(() => {
+      })
+    },
+    setMerchantKey () {
+      let _this = this
+      this.$prompt('设置商户密钥', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^.+$/,
+        inputErrorMessage: '商户密钥不能为空！'
+      }).then(({ value }) => {
+        _this.busiInformation.merchant_key = value
+      }).catch(() => {
+      })
+    },
+    // 上传证书
+    qnUploadSuccess (res, file) {
+      this.busiInformation.merchant_cert = res.key
+    },
     // 验证支付信息是否完全设置，跳转到首页
     paySettingVerification () {
-      paySetting('get').then(res => {
-        console.log(res.data)
-        let data = res.data
-        if (!data.merchant_no) {
-          this.$message.error('请先设置商户号！')
-          return false
-        }
-        if (!data.merchant_key_encrypt) {
-          this.$message.error('请先设置商户秘钥！')
-          return false
-        }
-        if (!data.merchant_cert_encrypt) {
-          this.$message.error('请先上传证书！')
-          return false
-        }
-        if (!this.checked) {
-          this.$message.error('请先选择同意授权协议！')
-          return false
-        }
+      if (!this.busiInformation.merchant_no || this.busiInformation.merchant_no === '--') {
+        this.$message.error('请先设置商户号！')
+        return false
+      }
+      if (!this.busiInformation.merchant_key || this.busiInformation.merchant_key === '--') {
+        this.$message.error('请先设置商户秘钥！')
+        return false
+      }
+      if (!this.busiInformation.merchant_cert || this.busiInformation.merchant_cert === '--') {
+        this.$message.error('请先上传证书！')
+        return false
+      }
+      if (!this.checked) {
+        this.$message.error('请先选择同意授权协议！')
+        return false
+      }
+
+      let data = {
+        merchant_no: this.busiInformation.merchant_no,
+        merchant_key: this.busiInformation.merchant_key,
+        merchant_cert: this.busiInformation.merchant_cert
+      }
+      paySetting('put', data).then(res => {
+        localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
+        localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 
         this.active = 3
         this.setRouter('/')
@@ -544,6 +626,40 @@ export default {
     .dialog-footer {
       text-align: center;
       display: block;
+    }
+  }
+  .pay-information-setting {
+    padding: 0 0 10px;
+    padding-left: 5px;
+    li {
+      padding-top: 20px;
+      font-size: 12px;
+      color: #B5B5B5;
+      span {
+        display: inline-block;
+        vertical-align: middle;
+        line-height: 1.4;
+      }
+      .pay-info-title {
+        width: 96px;
+        text-align: right;
+        padding-right: 3px;
+      }
+      .pay-info-txt {
+        width: 300px;
+        color: #333;
+        padding-right: 10px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .el-button--small {
+        margin-right: 25px;
+      }
+      &:nth-child(3) {
+        >div {
+          display: inline-block;
+        }
+      }
     }
   }
   .el-button--small {

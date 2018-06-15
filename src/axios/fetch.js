@@ -22,10 +22,14 @@ export function fetch (options) {
         resolve(response)// 把请求到的数据发到引用请求的地方
       })
       .catch(error => {
-        console.dir(error)
+        // console.dir(error)
         if (error.response.status === 401) {
           alert('未登录！请返回51赞平台重进入！')
           location.href = 'http://www.51zan.cn/login.html'
+        }
+        if (error.response.status === 403) {
+          alert('未授权小程序或未完成初次设置！')
+          location.href = '/login'
         }
         // console.log('请求异常信息：' + error)
         reject(error)
