@@ -108,7 +108,7 @@ export default {
       pages: 0,
       options: [
         {
-          value: '1',
+          value: 1,
           label: '1+'
         }, {
           value: '5',

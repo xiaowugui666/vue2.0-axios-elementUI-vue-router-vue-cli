@@ -53,7 +53,7 @@
                   <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：160*160像素，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
@@ -76,7 +76,7 @@
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
                 <div class="err-tips" :style="{'display': bannerErrorTips?'block':'none'}">请先上传banner图！</div>
@@ -208,6 +208,7 @@ export default {
       initialSetData('get').then(res => {
         console.log(res.data)
         let data = res.data
+        this.telNum = data.mobile
         if (data.name && data.type) {
           if (data.description && data.banner && data.owner_name) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
@@ -224,7 +225,6 @@ export default {
               this.bannerImageUrl = data.banner
             }
             this.shopChiefName = data.owner_name
-            this.telNum = data.mobile
             this.contactWeChat = data.wechat ? data.wechat : ''
             this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
             this.getRegionCode(data.province, data.city, data.region)
@@ -515,7 +515,7 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 240px;
+      width: 400px;
       text-align: left;
       position: relative;
       margin-left: 17px;
