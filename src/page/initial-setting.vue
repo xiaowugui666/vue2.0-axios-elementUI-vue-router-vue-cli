@@ -208,6 +208,7 @@ export default {
       initialSetData('get').then(res => {
         console.log(res.data)
         let data = res.data
+        this.telNum = data.mobile
         if (data.name && data.type) {
           if (data.description && data.banner && data.owner_name) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
@@ -224,7 +225,6 @@ export default {
               this.bannerImageUrl = data.banner
             }
             this.shopChiefName = data.owner_name
-            this.telNum = data.mobile
             this.contactWeChat = data.wechat ? data.wechat : ''
             this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
             this.getRegionCode(data.province, data.city, data.region)
@@ -515,7 +515,7 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 240px;
+      width: 400px;
       text-align: left;
       position: relative;
       margin-left: 17px;
