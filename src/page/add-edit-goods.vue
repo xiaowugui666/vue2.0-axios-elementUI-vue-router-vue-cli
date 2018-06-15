@@ -299,9 +299,9 @@
             <li>
               <span class="name">商家承诺：</span>
               <div>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.deliverGoods}" @click="businessCommitment.deliverGoods=!businessCommitment.deliverGoods">24小时发货</el-button>
+                <el-button type="success" size="small" :class="{'active':free_return==1}" @click="free_return==1?free_return=2:free_return=1" style="margin-left: 0;">7天包退换</el-button>
+                <el-button type="success" size="small" :class="{'active':genuine_article==1}" @click="genuine_article==1?genuine_article=2:genuine_article=1">100%正品</el-button>
+                <el-button type="success" size="small" :class="{'active':quick_delivery==1}" @click="quick_delivery==1?quick_delivery=2:quick_delivery=1">24小时发货</el-button>
               </div>
             </li>
           </ul>
@@ -376,11 +376,9 @@ export default {
       goodsName: '',
       sharingDescription: '',
       grounding: true,
-      businessCommitment: {
-        refundable: false,
-        qualityGoods: false,
-        deliverGoods: false
-      },
+      free_return: 2,
+      genuine_article: 2,
+      quick_delivery: 2,
       uniqueCoding: '',
       // 商品卖点
       quillContent: '',
@@ -503,6 +501,9 @@ export default {
             this.showStock = data.stock_shown
             this.renderingExpress(data.is_free_express, data.free_express_price)
             this.renderingStatus(data.status)
+            this.free_return = data.free_return
+            this.genuine_article = data.genuine_article
+            this.quick_delivery = data.quick_delivery
           }
         }).catch(err => {
           console.log(err)
@@ -539,6 +540,7 @@ export default {
           this.getGoods(this.hash)
         })
         .catch(err => {
+          this.getGoods(this.hash)
           console.log(err)
         })
     },
@@ -552,7 +554,7 @@ export default {
         for (let w of specs) {
           let obj = {name: w.spec, values: []}
           for (let x of w.property) {
-            obj.values.push({name: x})
+            obj.values.push({name: x, parent: w.spec})
           }
           this.specificationList.push(obj)
         }
@@ -576,7 +578,7 @@ export default {
     },
     // 渲染是否上架部分
     renderingStatus (status) {
-      if (status === 1 || status === 3) {
+      if (status === 1) {
         this.grounding = true
       } else {
         this.grounding = false
@@ -728,6 +730,7 @@ export default {
         for (let v of keepArr) {
           for (let w of arr) {
             if (JSON.stringify(v.specs) === JSON.stringify(w.specs)) {
+              v.id = w.id
               v.price = w.price
               v.stock_count = w.stock_count
               v.sku_no = w.sku_no
@@ -842,6 +845,7 @@ export default {
               this.setSkus(true)
             }
           }
+        } else {
         }
       }
       this['inputSpacVisible' + index] = false
@@ -1001,7 +1005,10 @@ export default {
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
             free_express_price: Math.round(this.postage.money * 100),
-            status: this.grounding ? 1 : 2
+            status: this.grounding ? 1 : 2,
+            free_return: this.free_return,
+            genuine_article: this.genuine_article,
+            quick_delivery: this.quick_delivery
           }
           // 判断是否存在商品规格
           if (this.specificationList.length > 0) {
