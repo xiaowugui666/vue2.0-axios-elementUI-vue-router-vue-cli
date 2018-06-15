@@ -24,7 +24,7 @@
                       <label><i>收货人名：</i>{{tradeList.consignee}}</label>
                       <label><i>收货人手机号：</i>{{tradeList.mobile}}</label>
                     </div>
-                    <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
+                    <div><i>收货地址：</i>{{tradeList.province + tradeList.city + tradeList.address_detail}}</div>
                     <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
                       <div>
                         <i>快递公司：</i>
