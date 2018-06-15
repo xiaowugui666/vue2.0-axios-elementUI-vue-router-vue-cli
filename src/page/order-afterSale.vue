@@ -83,6 +83,7 @@
             </el-table-column>
             <el-table-column
               props="items"
+              show-overflow-tooltip
               label="商品名称">
               <template slot-scope="scope">
                 <div class="goodsName" v-for="(item,index) in scope.row.items" :key="index">{{item.name}}</div>
@@ -104,6 +105,7 @@
             </el-table-column>
             <el-table-column
               prop="created_at"
+              show-overflow-tooltip
               label="申请时间">
             </el-table-column>
             <el-table-column
@@ -160,9 +162,6 @@ export default {
       // 订单类型
       optionType: [{
         value: '1',
-        label: '全部'
-      }, {
-        value: '2',
         label: '退货退款'
       }],
       // 搜索类型

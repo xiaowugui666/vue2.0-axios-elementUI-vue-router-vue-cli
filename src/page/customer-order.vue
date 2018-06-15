@@ -154,7 +154,7 @@ export default {
       // 交易类型
       tradeList: [],
       // flag: 标记是否已点击搜索
-      flag: false
+      flagObj: {}
     }
   },
   mounted () {
@@ -194,12 +194,10 @@ export default {
     },
     getData () {
       let params = {}
-      if (this.flag) {
-        params.no = this.keyValue
-        params.name = this.keyName
-        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+      if (JSON.stringify(this.flagObj) != '{}') {
+        params = this.flagObj
       }
+      console.log(params)
       params.page = this.pages
       params.id = this.$route.params.id
       customerOrder(params).then(res => {
@@ -229,7 +227,10 @@ export default {
     },
     // 点击搜索
     searchOrder () {
-      this.flag = true
+      this.flagObj.no = this.keyValue
+      this.flagObj.name = this.keyName
+      this.flagObj.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+      this.flagObj.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
       this.pages = 0
       this.getData()
     },

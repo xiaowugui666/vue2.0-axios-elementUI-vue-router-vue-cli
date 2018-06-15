@@ -19,7 +19,7 @@
                 <i v-else @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
               <div class="goods-img-box" v-else>
-                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 10px;">
+                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" class="goods-img" style="margin-right: 10px;">
                   <img :src="yiqixuanDomainUrl + imgUrlCompu(item)" alt="">
                   <i @click.stop="deleteRecommend(index)" class="el-icon-circle-close"></i>
                 </span>

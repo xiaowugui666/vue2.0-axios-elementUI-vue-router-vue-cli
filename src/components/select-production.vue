@@ -33,7 +33,7 @@
                       </span>
                         <span v-if="linkClass == 'special-offer'" class="goods-info-price">￥{{scope.row.price | money}}</span>
                         <span v-else-if="scope.row.price_low == scope.row.price_high && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.price_high | money}}</span>
-                        <span v-else-if="scope.row.price_low == scope.row.price_high && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.price_low | money}} - {{scope.row.price_high | money}}</span>
+                        <span v-else-if="scope.row.price_low != scope.row.price_high && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.price_low | money}} - {{scope.row.price_high | money}}</span>
                       </div>
                     </div>
                   </div>
