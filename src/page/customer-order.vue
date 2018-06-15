@@ -59,7 +59,7 @@
         </div>
 
       </div>
-      <div class="tradeRecord" v-if="tradeList.length !== 0">
+      <div class="tradeRecord" v-if="tradeList.length">
         <div class="tradeList" v-for="( item,index ) in tradeList" :key="index">
           <div class="top">
             <label>下单时间：{{ item.paid_at }}</label>
@@ -90,6 +90,7 @@
         </div>
         <el-pagination
           background
+          v-if="tradeList.length"
           :page-size="15"
           :page-count="6"
           prev-text="< 上一页"
