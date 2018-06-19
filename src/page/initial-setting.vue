@@ -58,9 +58,8 @@
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top required">商铺描述：</span>
-                <textarea v-validate="'required'" v-model.trim="textArea" name="商铺描述" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
-                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
+                <span class="name alignment-top">商铺描述：</span>
+                <textarea v-model.trim="textArea" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
               </li>
               <li>
                 <span class="name alignment-top required">banner：</span>
@@ -82,22 +81,21 @@
                 <div class="err-tips" :style="{'display': bannerErrorTips?'block':'none'}">请先上传banner图！</div>
               </li>
               <li>
-                <span class="name required">店长姓名：</span>
-                <input type="text" v-validate="'required'" name="店长姓名" v-model.trim="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
-                <div class="err-tips">{{ errors.first('店长姓名') }}</div>
+                <span class="name">店长姓名：</span>
+                <input type="text" v-model.trim="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
               </li>
               <li>
                 <span class="name">联系电话：</span>
                 <span>{{telNum}}</span>
               </li>
               <li>
-                <span class="name">联系微信：</span>
-                <input type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model.trim="contactWeChat" placeholder="请输入联系微信号"/>
+                <span class="name required">联系微信：</span>
+                <input type="text" v-validate="{required: true, regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model.trim="contactWeChat" placeholder="请输入联系微信号"/>
                 <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
-                <span class="name">客服电话：</span>
-                <input type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
+                <span class="name required">客服电话：</span>
+                <input type="text" v-validate="{required: true, regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
                 <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
               <li>
@@ -268,15 +266,15 @@ export default {
             if (data.logo_url) {
               this.logoImageUrl = data.logo_url
             }
-            this.textArea = data.description
+            this.textArea = data.description ? data.description : ''
             if (data.banner) {
               this.bannerImageUrl = data.banner
             }
-            this.shopChiefName = data.owner_name
+            this.shopChiefName = data.owner_name ? data.owner_name : ''
             this.contactWeChat = data.wechat ? data.wechat : ''
             this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
             this.getRegionCode(data.province, data.city, data.region)
-            this.contactAddress = data.address === null ? '' : data.address
+            this.contactAddress = data.address ? data.address : ''
             this.active = 1
           }
         } else {
@@ -591,7 +589,8 @@ export default {
       vertical-align: top;
     }
     .avatar.avatar2 {
-      width: 160px;
+      width: 200px;
+      height: auto;
     }
     .alignment-tip {
       display: inline-block;
