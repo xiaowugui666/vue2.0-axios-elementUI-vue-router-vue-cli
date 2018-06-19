@@ -44,7 +44,7 @@
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
                     <div class="goods-info-price-category">
-                      <span v-if="linkClass == 'special-offer' && scope.row.goods_sku && (scope.row.goods_sku.spec_a || scope.row.goods_sku.spec_b || scope.row.goods_sku.spec_c)" class="goods-info-category">
+                      <span v-if="linkClass == 'special-offer' && scope.row.goods_sku && (scope.row.goods_sku.property_a || scope.row.goods_sku.property_b || scope.row.goods_sku.property_c)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
                       <span class="goods-info-price">￥{{(linkClass == 'recommend' ? scope.row.goods.price : scope.row.price) | money}}</span>
@@ -325,12 +325,12 @@ export default {
     // 商品规格
     showSpecific (index) {
       let specificList = ''
-      if (this.goodsList[index].goods_sku.spec_a) {
-        specificList += this.goodsList[index].goods_sku.spec_a
-        if (this.goodsList[index].goods_sku.spec_b) {
-          specificList += '；' + this.goodsList[index].goods_sku.spec_b
-          if (this.goodsList[index].goods_sku.spec_c) {
-            specificList += '；' + this.goodsList[index].goods_sku.spec_c
+      if (this.goodsList[index].goods_sku.property_a) {
+        specificList += this.goodsList[index].goods_sku.property_a
+        if (this.goodsList[index].goods_sku.property_b) {
+          specificList += '；' + this.goodsList[index].goods_sku.property_b
+          if (this.goodsList[index].goods_sku.property_c) {
+            specificList += '；' + this.goodsList[index].goods_sku.property_c
           }
         }
       }

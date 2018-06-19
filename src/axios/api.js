@@ -22,6 +22,13 @@ export function tradeVolum () {
   })
 }
 
+export function getQRCode () {
+  return fetch({
+    url: api.ip + '/management/mpa/exp_url',
+    method: 'GET'
+  })
+}
+
 /* 店铺 */
 // 商品总数
 export function storeGoodsAmount () {

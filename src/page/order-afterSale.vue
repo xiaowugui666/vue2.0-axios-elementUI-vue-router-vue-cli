@@ -192,7 +192,7 @@ export default {
       statu: 0,
       // 当前页
       page: 1,
-      // flag: 是否已点击搜索
+      // flagObj: 是否已点击搜索
       flag: false
     }
   },
@@ -206,37 +206,42 @@ export default {
     },
     // 点击搜索
     searchOrder () {
-      this.flag = true
-      let params = {}
-      if (this.keyValue != '') {
+      if (this.keyValue != '' && this.keyValue.length != 32) {
+        this.$message({
+          message: '请输入正确的订单编号',
+          type: 'warning'
+        })
+      } else if (this.keyName != '' && this.keyName.length != 32) {
+        this.$message({
+          message: '请输入正确的退款编号',
+          type: 'warning'
+        })
+      } else {
+        let params = {}
+        this.flag = true
         params.order_no = this.keyValue
-      }
-      if (this.keyName != '') {
         params.no = this.keyName
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
+        params.status = 0
+        afterSaleGoods(params).then(res => {
+          console.log(res)
+          this.totalPagina = parseInt(res.headers.page_count)
+          this.refunds = res.data
+          this.page = 1
+        })
       }
-      if (this.keyTime.length !== 0) {
-        params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-        params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
-      }
-      afterSaleGoods(params).then(res => {
-        console.log(res)
-        this.totalPagina = parseInt(res.headers.page_count)
-        this.refunds = res.data
-        this.page = 1
-      })
     },
     // 分页点击
     currentIndex (val) {
       let params = {}
       // 如果已点击搜索
       if (this.flag) {
-        if (this.keyValue != '') {
-          params.order_no = this.keyValue
-        }
-        if (this.keyName != '') {
-          params.no = this.keyName
-        }
-        if (this.keyTime.length !== 0) {
+        params.order_no = this.keyValue
+        params.no = this.keyName
+        if (this.keyTime.length) {
           params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
           params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
         }
@@ -287,13 +292,9 @@ export default {
       let params = {}
       // 如果已点击搜索
       if (this.flag) {
-        if (this.keyValue != '') {
-          params.order_no = this.keyValue
-        }
-        if (this.keyName != '') {
-          params.no = this.keyName
-        }
-        if (this.keyTime.length !== 0) {
+        params.order_no = this.keyValue
+        params.no = this.keyName
+        if (this.keyTime.length) {
           params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
           params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
         }
@@ -587,6 +588,7 @@ export default {
         color:#B5B5B5;
         margin-left: 20px;
         cursor: pointer;
+        user-select: none;
       }
       .cur{
         border: 1px solid #DE5B67;

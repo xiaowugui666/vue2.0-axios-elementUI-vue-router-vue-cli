@@ -139,12 +139,12 @@ export default {
     },
     showSpecific (index) {
       let specificList = ''
-      if (this.newGoods[index].spec_a) {
-        specificList += this.newGoods[index].spec_a
-        if (this.newGoods[index].spec_b) {
-          specificList += '；' + this.newGoods[index].spec_b
-          if (this.newGoods[index].spec_c) {
-            specificList += '；' + this.newGoods[index].spec_c
+      if (this.newGoods[index].property_a) {
+        specificList += this.newGoods[index].property_a
+        if (this.newGoods[index].property_b) {
+          specificList += '；' + this.newGoods[index].property_b
+          if (this.newGoods[index].property_c) {
+            specificList += '；' + this.newGoods[index].property_c
           }
         }
       }
