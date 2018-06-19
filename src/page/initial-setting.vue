@@ -255,7 +255,7 @@ export default {
         let data = res.data
         this.telNum = data.mobile
         if (data.name && data.type) {
-          if (data.description && data.banner && data.owner_name) {
+          if (data.wechat && data.banner && data.customer_service_mobile) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
               // this.setRouter('/')
               this.active = 2
