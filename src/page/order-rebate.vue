@@ -14,24 +14,24 @@
           <div class="content">
             <div style="flex: 1;">
               <div class="rebateInfo">
-                <div><label>订单编号：</label><label>{{rebateDetail.order_no}}</label></div>
-                <div><label>创建时间：</label><label>{{rebateDetail.created_at}}</label></div>
-                <div v-if="rebateDetail.order"><label>付款时间：</label><label>{{rebateDetail.order.paid_at}}</label></div>
+                <div style="margin-right: 30px;"><label>订单编号：</label><label>{{rebateDetail.order_no}}</label></div>
+                <div style="margin-right: 30px;"><label>创建时间：</label><label>{{rebateDetail.created_at}}</label></div>
+                <div style="margin-right: 30px;" v-if="rebateDetail.order"><label>付款时间：</label><label>{{rebateDetail.order.paid_at}}</label></div>
                 <div><label>退款编号：</label><label>{{rebateDetail.no}}</label></div>
               </div>
-              <div class="buyer" v-if="rebateDetail.order">
+              <div class="buyer goods-name" v-if="rebateDetail.order">
                 <div><label>买家手机号：</label><label>{{rebateDetail.order.mobile}}</label></div>
-                <div style="display: flex"><label style="display: inline-block;width: 80px;">商品名称：</label><label style="display: inline-block">{{rebateGoodsDetail}}</label></div>
+                <div><label style="display: inline-block;width: 80px;">商品名称：</label><label style="display: inline-block;">{{rebateGoodsDetail}}</label></div>
               </div>
-              <div class="buyer">
+              <div class="buyer rebate">
                 <div><label>期望结果：</label><label>退货退款</label></div>
-                <div><label>退款金额：</label><label>¥ {{rebateDetail.refund_amount}} （含运费）</label></div>
+                <div><label>退款金额：</label><label>¥ {{rebateDetail.refund_amount | money}} （含运费）</label></div>
                 <div><label>退款原因：</label><label>{{rebateDetail.reason}}</label></div>
               </div>
               <div class="trade">沟通记录</div>
               <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: (index % 2 == 0 ? '#F4F4F4' : '#FFFFFF')}">
                 <p class="user">
-                  <label>{{index % 2 == 0 ? '卖家' : '买家'}}</label>
+                  <label>{{index % 2 == 0 ? '买家' : '卖家'}}</label>
                   <label>{{item.created_at}}</label>
                 </p>
                 <div>
@@ -40,7 +40,7 @@
                 </div>
                 <div>
                   <label>退款金额：</label>
-                  <label>¥ {{rebateDetail.refund_amount}}</label>
+                  <label>¥ {{rebateDetail.refund_amount | money}}</label>
                 </div>
                 <div>
                   <label>留&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;言：</label>
@@ -63,11 +63,7 @@
                 </div>
                 <div class="money">
                   <label>退款金额：</label>
-                  <label>￥999.00</label>
-                </div>
-                <div class="bank">
-                  <label>退款至：</label>
-                  <label>招商银行（银行卡）</label>
+                  <label>￥{{rebateDetail.refund_amount | money}}</label>
                 </div>
                 <div class="warn">
                   <label>友情提醒：</label>
@@ -116,6 +112,11 @@ export default {
             this.tradeType = value - 1
           })
         }
+      }).catch(() => {
+        this.$message({
+          message: '处理订单失败，请稍后重试',
+          type: 'error'
+        })
       })
     }
   },
@@ -129,7 +130,7 @@ export default {
         for (let i = 0; i < len - 1; i++) {
           name = this.rebateDetail.items[i].name + '/'
         }
-        name += this.rebateDetail.items[len - 1]
+        name += this.rebateDetail.items[len - 1].name
       }
       return name
     }
@@ -162,6 +163,7 @@ export default {
 <style scoped lang="less">
   .money{
     margin-top: 30px;
+    padding-bottom: 200px;
     label:nth-child(1){
       font-size: 12px;
       color: #999999;
@@ -173,7 +175,6 @@ export default {
   }
   .bank{
     margin-top: 10px;
-    padding-bottom: 200px;
     border-bottom: 1px dashed #efefef;
     label:nth-child(1){
       font-size: 12px;
@@ -324,24 +325,41 @@ export default {
           justify-content: flex-start;
           padding:0 10px 10px;
           div{
-            width: 33%;
             margin-top: 10px;
             label:nth-child(1){
-              font-family: MicrosoftYaHei;
               font-size: 12px;
               color: #999999;
             }
             label:nth-child(2){
-              font-family: MicrosoftYaHei;
               font-size: 12px;
               color: #151515;
+            }
+          }
+        }
+        .buyer.goods-name {
+          display: block;
+          overflow: hidden;
+          div {
+            float: left;
+            overflow: hidden;
+            &:last-child {
+              width: 50%;
+              label {
+                float: left;
+                &:first-child {
+                  width: 25%;
+                }
+                &:last-child {
+                  width: 75%;
+                  letter-spacing: 0.5px;
+                }
+              }
             }
           }
         }
         .trade{
           padding-left: 20px;
           position: relative;
-          font-family: MicrosoftYaHei;
           font-size: 14px;
           color: #333333;
           margin-top:30px;
@@ -361,7 +379,9 @@ export default {
         .buyer{
           background:#fff;
           border-bottom: 1px solid #EFEFEF;
-          div{
+        }
+        .buyer {
+          div {
             width: 38%;
           }
         }

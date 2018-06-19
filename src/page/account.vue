@@ -110,8 +110,8 @@ export default {
     getMoney () {
       incomeInfo().then(
         res => {
-          this.cumulativeIncome = parseFloat(res.data.total_income).toFixed(2)
-          this.sevenDayIncome = parseFloat(res.data.week_income).toFixed(2)
+          this.cumulativeIncome = parseFloat(res.data.total_income / 100).toFixed(2)
+          this.sevenDayIncome = parseFloat(res.data.week_income / 100).toFixed(2)
         }
       )
     },

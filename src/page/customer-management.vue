@@ -5,7 +5,7 @@
       <div class="header">
         <div class="number">
           <span>手机号码</span>
-          <input type="text" v-model="phoneNum" maxlength="11">
+          <input type="text" v-model="phoneNum" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="11">
         </div>
         <div class="screen">
           <span>购物次数</span>
@@ -108,7 +108,11 @@ export default {
       pages: 0,
       options: [
         {
-          value: 1,
+          value: '',
+          label: '不限'
+        },
+        {
+          value: '1',
           label: '1+'
         }, {
           value: '5',
