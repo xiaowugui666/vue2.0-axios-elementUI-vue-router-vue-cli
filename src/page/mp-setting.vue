@@ -61,7 +61,7 @@
           trigger="hover">
           <div class="code">
             <span>店铺预览码</span>
-            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528264769927&di=b4ac63a8eeeb4dbf8edcd19773be1bc1&imgtype=0&src=http%3A%2F%2Fimg1.cache.netease.com%2Fcatchpic%2F8%2F81%2F81603D35CDC37D6C82AE9256039DB086.jpg" />
+            <img :src="yiqixuanDomainUrl+mpaQRUrl" />
             <span>微信扫描预览店铺</span>
           </div>
           <el-button slot="reference">小<br>程<br>序<br>预<br>览<br></el-button>
@@ -91,14 +91,16 @@
 </template>
 
 <script>
-import {mpaExperience} from '../axios/api'
+import {mpaExperience, getQRCode} from '../axios/api'
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
       dialogVisible: false,
       mpaName: '',
       mpaId: '',
+      mpaQRUrl: '',
       experienceUsersList: [],
       totalPage: 1,
       page: 0
@@ -107,6 +109,7 @@ export default {
   created () {
     // this.getMpInfo()
     this.getMpaExperience()
+    this.getMpQRCode()
   },
   methods: {
     // // 获取小程序信息
@@ -125,6 +128,11 @@ export default {
     //     console.dir(err.request, '失败')
     //   })
     // },
+    getMpQRCode () {
+      getQRCode().then(res => {
+        this.mpaQRUrl = res.data.code_url
+      })
+    },
     // 添加体验用户的微信号
     // 获取体验用户列表
     getMpaExperience () {
@@ -179,6 +187,9 @@ export default {
   },
   components: {
     menuLeft
+  },
+  computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   }
 }
 </script>
