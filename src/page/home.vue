@@ -49,7 +49,7 @@
           placement="left"
           width="150"
           trigger="hover">
-          <div class="detailed-consultation">详情咨询QQ：<span>{{tel}}</span></div>
+          <div class="detailed-consultation">详情咨询微信号：<span>{{wechat}}</span></div>
           <el-button slot="reference">在<br>线<br>咨<br>询</el-button>
         </el-popover>
       </div>
@@ -60,7 +60,7 @@
           trigger="hover">
           <div class="code">
             <span>店铺预览码</span>
-            <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1528264769927&di=b4ac63a8eeeb4dbf8edcd19773be1bc1&imgtype=0&src=http%3A%2F%2Fimg1.cache.netease.com%2Fcatchpic%2F8%2F81%2F81603D35CDC37D6C82AE9256039DB086.jpg" />
+            <img :src="yiqixuanDomainUrl + QRcode" />
             <span>微信扫描预览店铺</span>
           </div>
           <el-button slot="reference">店<br>铺<br>预<br>览<br></el-button>
@@ -74,19 +74,19 @@
 import menuLeft from '@/components/menu-left'
 import echarts from '@/components/echarts'
 import {mapState} from 'vuex'
-import {tradeVolum, initialSetData} from '../axios/api'
+import {tradeVolum, initialSetData, getQRCode} from '../axios/api'
 export default {
   data () {
     return {
       shopName: '',
-      tel: '2881778283',
+      wechat: '',
+      QRcode: '',
       storeDetail: {}
     }
   },
   mounted () {
     this.getShopInfo()
     tradeVolum().then(res => {
-      console.log(res)
       if (res.status == 200) {
         this.storeDetail = res.data
       } else {
@@ -96,18 +96,24 @@ export default {
         })
       }
     })
+    // 获取体验二维码
+    getQRCode().then(res => {
+      console.log(res)
+      this.QRcode = res.data.exp_code_url
+    })
   },
   components: {
     echarts,
     menuLeft
   },
   computed: {
-    ...mapState(['menuShow'])
+    ...mapState(['menuShow', 'yiqixuanDomainUrl'])
   },
   methods: {
     getShopInfo () {
       initialSetData('get').then(res => {
         this.shopName = res.data.name
+        this.wechat = res.data.wechat
       }).catch()
     }
   }

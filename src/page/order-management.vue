@@ -94,6 +94,7 @@
             background
             :page-size="15"
             :page-count="6"
+            :current-page="currentPage"
             style="padding-top: 20px;"
             prev-text="< 上一页"
             next-text="下一页 >"
@@ -152,7 +153,7 @@ export default {
       // 标记当前所处订单分类
       statu: '',
       // flagObj：是否已点击搜索
-      flagObj: {}
+      flag: false
     }
   },
   computed: {
@@ -183,35 +184,50 @@ export default {
     },
     // 点击搜索
     searchOrder () {
-      // 参数
-      let params = {}
-      if (this.keyValue !== '') {
-        if (this.value == 1) {
-          this.flagObj.no = this.keyValue
-        } else if (this.value == 2) {
-          this.flagObj.consignee = this.keyValue
-        } else if (this.value == 3) {
-          this.flagObj.mobile = this.keyValue
+      this.currentPage = 0
+      // 若订单编号有输入，则判断
+      if (this.keyValue != '' && this.keyValue.length != 32 && this.value == 1) {
+        this.$message({
+          message: '请输入正确的订单编号',
+          type: 'warning'
+        })
+      } else if (this.keyValue != '' && this.keyValue.length != 11 && this.value == 3) {
+        this.$message({
+          message: '请输入正确的手机号',
+          type: 'warning'
+        })
+      } else {
+        this.tradeType = 'first'
+        // 参数
+        let params = {}
+        this.flag = true
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
         }
-      }
-      if (this.keyName !== '') {
-        this.flagObj.name = this.keyName
-      }
-      if (this.keyTime.length !== 0) {
-        this.flagObj.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-        this.flagObj.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
-      }
-      params = this.flagObj
-      params.page = 0
-      params.per_page = 15
-      order(params).then(res => {
-        console.log(res)
-        this.totalPagina = res.headers.page_count
-        this.ordersDetail = res.data
-        if (!res.data) {
-          this.$message('没有此类订单！')
+        if (this.keyName !== '') {
+          params.name = this.keyName
         }
-      })
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
+        params.page = 0
+        params.per_page = 15
+        order(params).then(res => {
+          console.log(res)
+          this.totalPagina = res.headers.page_count
+          this.ordersDetail = res.data
+          if (!res.data) {
+            this.$message('没有此类订单！')
+          }
+        })
+      }
     },
     // 改变时间段
     timeRange (res, event) {
@@ -238,9 +254,25 @@ export default {
     // 订单分类状态点击
     handleClick (tab) {
       console.log(tab.index)
+      this.currentPage = 1
       let params = {}
-      if (JSON.stringify(this.flagObj) != '{}') {
-        params = this.flagObj
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
+        }
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
       if (tab.index == 1) {
         this.statu = 200
@@ -268,8 +300,23 @@ export default {
     // 分页点击
     currentIndex (val) {
       let params = {}
-      if (JSON.stringify(this.flagObj) != '{}') {
-        params = this.flagObj
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
+        }
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
       params.page = val - 1
       params.status = this.statu
@@ -593,6 +640,7 @@ export default {
          color:#B5B5B5;
          margin-left: 20px;
          cursor: pointer;
+         user-select: none;
        }
        .cur{
          border: 1px solid #DE5B67;

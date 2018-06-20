@@ -154,7 +154,7 @@ export default {
       // 交易类型
       tradeList: [],
       // flag: 标记是否已点击搜索
-      flagObj: {}
+      flag: false
     }
   },
   mounted () {
@@ -194,10 +194,14 @@ export default {
     },
     getData () {
       let params = {}
-      if (JSON.stringify(this.flagObj) != '{}') {
-        params = this.flagObj
+      if (this.flag) {
+        params.no = this.keyValue
+        params.name = this.keyName
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
-      console.log(params)
       params.page = this.pages
       params.id = this.$route.params.id
       customerOrder(params).then(res => {
@@ -227,12 +231,16 @@ export default {
     },
     // 点击搜索
     searchOrder () {
-      this.flagObj.no = this.keyValue
-      this.flagObj.name = this.keyName
-      this.flagObj.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-      this.flagObj.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
-      this.pages = 0
-      this.getData()
+      if (this.keyValue != '' && this.keyValue.length != 32) {
+        this.$message({
+          message: '请输入正确的订单编号',
+          type: 'warning'
+        })
+      } else {
+        this.flag = true
+        this.pages = 0
+        this.getData()
+      }
     },
     timeRange (day) {
       if (day === 7) {
@@ -551,6 +559,7 @@ export default {
           color:#B5B5B5;
           margin-left: 20px;
           cursor: pointer;
+          user-select: none;
         }
         .cur{
           border: 1px solid #DE5B67;
