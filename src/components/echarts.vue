@@ -35,10 +35,10 @@ export default {
         label: '最近一月'
       }, {
         value: '3',
-        label: '最近一年'
+        label: '最近三个月'
       }, {
         value: '4',
-        label: '查看全部'
+        label: '最近半年'
       }],
       value: '1',
       // options数据，获取表格数据参数
@@ -102,13 +102,13 @@ export default {
           this.getTableData(begin, end, 1)
         } else if (value == 3) {
           this.endBeginData = res.data
-          let begin = res.data.year.begin_at
+          let begin = res.data.threeMonth.begin_at
           let end = res.data.year.end_at
           this.getTableData(begin, end, 2)
         } else if (value == 4) {
           this.endBeginData = res.data
-          let begin = res.data.all.begin_at
-          let end = res.data.all.end_at
+          let begin = res.data.sixMonth.begin_at
+          let end = res.data.sixMonth.end_at
           this.getTableData(begin, end, 2)
         }
       })

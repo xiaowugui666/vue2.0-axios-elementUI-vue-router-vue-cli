@@ -60,11 +60,11 @@
           width="200"
           trigger="hover">
           <div class="code">
-            <span>店铺预览码</span>
+            <span>体验店铺预览码</span>
             <img :src="yiqixuanDomainUrl+mpaQRUrl" />
-            <span>微信扫描预览店铺</span>
+            <span>微信扫描预览体验店铺</span>
           </div>
-          <el-button slot="reference">小<br>程<br>序<br>预<br>览<br></el-button>
+          <el-button slot="reference">小<br>程<br>序<br>体<br>验<br></el-button>
         </el-popover>
       </div>
 
@@ -130,7 +130,7 @@ export default {
     // },
     getMpQRCode () {
       getQRCode().then(res => {
-        this.mpaQRUrl = res.data.code_url
+        this.mpaQRUrl = res.data.exp_code_url
       })
     },
     // 添加体验用户的微信号

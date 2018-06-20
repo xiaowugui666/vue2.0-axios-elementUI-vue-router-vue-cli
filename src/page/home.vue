@@ -99,7 +99,7 @@ export default {
     // 获取体验二维码
     getQRCode().then(res => {
       console.log(res)
-      this.QRcode = res.data.exp_code_url
+      this.QRcode = res.data.code_url
     })
   },
   components: {
