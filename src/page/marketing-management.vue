@@ -36,8 +36,7 @@
             </el-table-column>
             <el-table-column
               label="商品"
-              show-overflow-tooltip
-              width="300">
+              show-overflow-tooltip>
               <template slot-scope="scope">
                 <div class="goods-info-box" v-if="scope.row.goods">
                   <span class="goods-img"><img :src="(scope.row.goods_sku && scope.row.goods_sku.cover_url) ? yiqixuanDomainUrl + scope.row.goods_sku.cover_url : yiqixuanDomainUrl + scope.row.goods.cover_url" alt=""></span>
@@ -51,15 +50,6 @@
                     </div>
                   </div>
                 </div>
-              </template>
-            </el-table-column>
-            <el-table-column
-              label="访问量"
-              min-width="120"
-              show-overflow-tooltip>
-              <template slot-scope="scope">
-                <div>访问量：11111</div>
-                <div>浏览量：11111</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -464,7 +454,7 @@ export default {
             text-align: left;
             font-size: 12px;
             padding-left: 15px;
-            width: 216px;
+            width: 312px;
             .goods-info-name {
               color: #333;
               font-size: 14px;

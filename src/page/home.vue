@@ -19,11 +19,11 @@
       </el-row>
       <ul class="home-survey">
         <li>
-          <div class="up">￥{{storeDetail.today_trade}}</div>
+          <div class="up">￥{{storeDetail.today_trade | money}}</div>
           <div class="down"><i class="icon-钱"></i><span>今日交易额</span></div>
         </li>
         <li>
-          <div class="up">￥{{storeDetail.yesterday_trade}}</div>
+          <div class="up">￥{{storeDetail.yesterday_trade | money}}</div>
           <div class="down"><i class="icon-钱"></i><span>昨日交易额</span></div>
         </li>
         <li>
@@ -292,8 +292,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     img {
-      width: 90px;
-      height: 90px;
+      max-width: 180px;
     }
     span:first-child {
       font-size: 14px;
