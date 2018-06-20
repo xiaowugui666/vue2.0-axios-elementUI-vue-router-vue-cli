@@ -1,6 +1,7 @@
 <template>
   <div>
-    <div class="commodity-management-subject">
+    <menu-left routeIndex="3-1"></menu-left>
+    <div class="commodity-management-subject content-box">
       <div class="commodity-management-state-search">
         <ul class="commodity-management-state clear">
           <li :class="{'active':managementState==0}" @click="changeManagementState(0)">全部</li>
@@ -54,11 +55,11 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="qiniuDomainUrl+'/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="yiqixuanDomainUrl+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
-                      <span class="goods-info-price">￥{{scope.row.price | money}}</span>
+                      <span class="goods-info-price">￥{{renderingGoodsPrice(scope.row.price_low, scope.row.price_high)}}</span>
                       <span v-if="scope.row.category_name" class="goods-info-category">
                         类目：{{scope.row.category_name}}
                       </span>
@@ -80,12 +81,18 @@
               label="库存"
               width="80"
               show-overflow-tooltip>
+              <template slot-scope="scope">
+                <div :class="{'waring':scope.row.stock_total==0}">{{scope.row.stock_total}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="sales_count"
               label="总销量"
               width="80"
               show-overflow-tooltip>
+              <template slot-scope="scope">
+                <div :class="{'waring':scope.row.sales_count==0}">{{scope.row.sales_count}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="created_at"
@@ -99,15 +106,16 @@
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div :style="{'color':scope.row.status==1?'#6BA725':(scope.row.status==2?'#676767':'#DE5B67')}">{{getGoodsState(scope.$index)}}</div>
+                <div :class="{'safe':scope.row.status==1}">{{getGoodsState(scope.$index)}}</div>
               </template>
             </el-table-column>
             <el-table-column
               label="操作"
               width="140">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="setRouter('/add-edit-goods?gid='+scope.row.id)">编辑</el-button>
+                <el-button @click="setRouter('/add-edit-goods?gid='+scope.row.id)" :disabled="scope.row.status==1" type="text" size="small">编辑</el-button>
                 <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
+                <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
                 <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
               </template>
             </el-table-column>
@@ -119,7 +127,7 @@
               prev-text="< 上一页"
               next-text="下一页 >"
               layout="prev, pager, next"
-              :current-page="page"
+              :current-page="page+1"
               @current-change="currentChange"
               :total="page_count*10">
             </el-pagination>
@@ -131,7 +139,8 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import {goodsList, goodsStatus, goodsDelete, goodsCategory} from '../axios/api.js'
 export default {
   data () {
@@ -157,21 +166,18 @@ export default {
   created () {
     this.getGoodsList()
     this.getGoodsCategory()
-    this.setMenuLeft('/commodity-management')
   },
   mounted () {
     // console.log(this.selectStateOptions)
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     // 获取商品列表
     getGoodsList (data = {
-      cat_id: this.cat_id,
-      // goods_name: this.goods_name,
-      goods_name: encodeURIComponent(this.goods_name),
+      category_id: this.cat_id,
+      goods_name: this.goods_name,
       page: this.page,
       status: this.managementState !== 0 ? this.managementState : ''
     }) {
@@ -185,6 +191,19 @@ export default {
       }).catch(err => {
         console.log(err)
       })
+    },
+    // 渲染商品价格
+    renderingGoodsPrice (low, high) {
+      let price = ''
+      if (low && high) {
+        if (low === high) {
+          price = (low / 100).toFixed(2)
+          return price
+        } else {
+          price = (low / 100).toFixed(2) + '~' + (high / 100).toFixed(2)
+          return price
+        }
+      }
     },
     // 请求商品分类
     getGoodsCategory () {
@@ -246,7 +265,7 @@ export default {
     // 执行批量操作
     batchOperation (status) {
       let _this = this
-      this.$confirm(`是否批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}所选中的商品`, '提示', {
+      this.$confirm(`是否批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}所选中的商品`, '确认操作', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -271,6 +290,13 @@ export default {
             })
           }).catch(err => {
             console.log(err)
+            if (err.response.status === 404) {
+              this.$message({
+                showClose: true,
+                type: 'error',
+                message: err.response.data.message
+              })
+            }
           })
         } else {
           for (let v of this.multipleSelection) {
@@ -286,6 +312,13 @@ export default {
             })
           }).catch(err => {
             console.log(err)
+            if (err.response.status === 404) {
+              this.$message({
+                showClose: true,
+                type: 'error',
+                message: err.response.data.message
+              })
+            }
           })
         }
       }).catch(() => {
@@ -311,7 +344,7 @@ export default {
     // 单个商品上下架
     upperLowerFrame (data) {
       let _this = this
-      this.$confirm(`是否${data.status === 1 ? '下架' : '上架'}该商品`, '提示', {
+      this.$confirm(`是否${data.status === 1 ? '下架' : '上架'}该商品`, '确认操作', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -336,7 +369,14 @@ export default {
             message: `${data.status === 1 ? '上架' : '下架'}成功!`
           })
         }).catch(err => {
-          console.log(err)
+          // console.dir(err)
+          if (err.response.status === 404) {
+            this.$message({
+              showClose: true,
+              type: 'error',
+              message: err.response.data.message
+            })
+          }
         })
       }).catch(() => {
         this.$message({
@@ -346,6 +386,7 @@ export default {
         })
       })
     },
+    // 初始化表格选中状态
     toggleSelection (rows) {
       if (rows) {
         rows.forEach(row => {
@@ -362,7 +403,7 @@ export default {
     },
     // 点击分页数
     currentChange (page) {
-      // console.log(page)
+      console.log(page)
       this.page = page - 1
       this.getGoodsList()
     },
@@ -374,17 +415,15 @@ export default {
         path: link
       })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>
 
 <style scoped lang="less">
   .commodity-management-subject {
-    min-width: 1100px;
-    margin-left: 200px;
-    margin-right: 20px;
-    padding-top: 20px;
-    padding-bottom: 20px;
     .commodity-management-state-search {
       background: #fff;
       margin-bottom: 20px;
@@ -460,10 +499,10 @@ export default {
           text-align: left;
           font-size: 0;
           .goods-img {
-            width: 60px;
-            height: 60px;
             display: inline-block;
             vertical-align: middle;
+            width: 60px;
+            height: 60px;
             text-align: center;
             border: 1px solid #d5d5d5;
             img {
@@ -477,12 +516,11 @@ export default {
             }
           }
           .goods-info {
-            display: inline-block;
-            vertical-align: middle;
-            text-align: left;
             font-size: 12px;
             padding-left: 15px;
-            width: 216px;
+            display: inline-block;
+            vertical-align: middle;
+            width:calc(100% - 65px);
             .goods-info-name {
               color: #333;
               font-size: 14px;
@@ -537,6 +575,10 @@ export default {
       padding: 0 7px;
       height: 24px;
       border: 1px solid #63A4FF;
+      &:disabled {
+        color: @b9;
+        border-color: @b5b5;
+      }
     }
   }
 </style>
@@ -547,17 +589,29 @@ export default {
       color: #333;
       border-color: #d5d5d5;
     }
-    .el-table th {
-      color: #333;
-      text-align: center;
-      font-weight: normal;
-      background: #efefef;
-      border-color: #e4e4e4;
-    }
-    .el-table th .el-checkbox::after {
-      content: '全选';
-      color: #333;
-      padding-left: 6px;
+    .el-table{
+      th {
+        padding: 8px 0;
+        color: #333;
+        text-align: center;
+        font-weight: normal;
+        background: #efefef;
+        border-color: #e4e4e4;
+        .el-checkbox::after {
+          content: '全选';
+          color: #333;
+          padding-left: 6px;
+        }
+      }
+      td {
+        padding: 10px 0;
+        .waring {
+          color: @mainC;
+        }
+        .safe {
+          color: @green;
+        }
+      }
     }
   }
 </style>

@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="3-1"></menu-left>
     <div class="add-goods-object">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <div class="add-goods-type plate">
@@ -35,11 +37,12 @@
                     :action="qiniuUploadUrl"
                     :data="upToken"
                     list-type="picture-card"
+                    accept=".jpg,.png"
                     multiple
                     :limit="10"
                     :file-list="goodsImageShowList"
                     :on-exceed="beyondNumberLimit"
-                    :before-upload="beforeUpload"
+                    :before-upload="goodsImageBeforeUpload"
                     :on-success="goodsUploadSuccess"
                     :before-remove="goodsHandleRemove">
                     <i class="el-icon-plus"></i>
@@ -77,8 +80,9 @@
                   </quill-editor>
                   <!-- 文件上传input 将它隐藏-->
                   <el-upload :action="qiniuUploadUrl"
-                             :before-upload='goodsImageBeforeUpload'
+                             :before-upload='beforeUpload'
                              :data="upToken"
+                             accept=".jpg,.png"
                              :on-success='quillUpScuccess'
                              ref="quillUpload" style="display:none">
                     <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
@@ -208,7 +212,7 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.specs" v-if="sku.specs.length>0" :key="index2">{{item.property}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
                       <td>
@@ -224,10 +228,11 @@
                           class="avatar-uploader"
                           :action="qiniuUploadUrl"
                           :data="upToken"
+                          accept=".jpg,.png"
                           :show-file-list="false"
                           :on-success="(res,file)=>handleAvatarSuccess(res,file,index)"
                           :before-upload="(value)=>beforeUpload(value, index)">
-                          <img v-if="sku.cover_url" :src="sku.cover_url" class="avatar">
+                          <img v-if="sku.cover_url" :src="yiqixuanDomainUrl+sku.cover_url" class="avatar">
                           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                       </td>
@@ -239,7 +244,7 @@
                 <span class="name required">商品价格：</span>
                 <div>
                   <span class="goods-price">
-                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
+                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2,min_value:0.01}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
                   </span>
                   <div class="err-tips">{{ errors.first('商品价格') }}</div>
                 </div>
@@ -294,9 +299,9 @@
             <li>
               <span class="name">商家承诺：</span>
               <div>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.deliverGoods}" @click="businessCommitment.deliverGoods=!businessCommitment.deliverGoods">24小时发货</el-button>
+                <el-button type="success" size="small" :class="{'active':free_return==1}" @click="free_return==1?free_return=2:free_return=1" style="margin-left: 0;">7天包退换</el-button>
+                <el-button type="success" size="small" :class="{'active':genuine_article==1}" @click="genuine_article==1?genuine_article=2:genuine_article=1">100%正品</el-button>
+                <el-button type="success" size="small" :class="{'active':quick_delivery==1}" @click="quick_delivery==1?quick_delivery=2:quick_delivery=1">24小时发货</el-button>
               </div>
             </li>
           </ul>
@@ -307,11 +312,13 @@
       </div>
       </el-form>
     </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import {mapState} from 'vuex'
 import {goodsEditDetails, goodsCategory, getQnToken, addEditGoods} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 import Quill from 'quill'
 import 'quill/dist/quill.core.css'
@@ -369,11 +376,9 @@ export default {
       goodsName: '',
       sharingDescription: '',
       grounding: true,
-      businessCommitment: {
-        refundable: false,
-        qualityGoods: false,
-        deliverGoods: false
-      },
+      free_return: 2,
+      genuine_article: 2,
+      quick_delivery: 2,
       uniqueCoding: '',
       // 商品卖点
       quillContent: '',
@@ -459,11 +464,11 @@ export default {
       // 隐形验证字段
       old_sku_ids: false,
       image_ids: [],
-      sku_ids: []
+      sku_ids: [],
+      goods_detail_id: -1
     }
   },
   created () {
-    this.setRoutePath()
     this.getGoodsCategory()
     this.getImageToken()
   },
@@ -472,16 +477,11 @@ export default {
     // console.log(this.hash)
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
-    // 设置路径为商品列表的路径，以便于菜单栏选中
-    setRoutePath () {
-      this.setMenuLeft('/commodity-management')
-    },
     // 若存在商品id，获取商品信息
     getGoods (id) {
       if (id) {
         goodsEditDetails(id).then(res => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data) {
             let data = res.data
             this.goodsType = data.type
@@ -495,14 +495,18 @@ export default {
             this.quantifier = data.unit
             this.image_ids = data.image_ids
             this.sku_ids = data.sku_ids
+            this.goods_detail_id = data.goods_detail_id
             this.dynamicTags = data.keywords
             this.renderingSku(data.sku, data.specs, data.price, data.display_price, data.stock_count)
             this.showStock = data.stock_shown
             this.renderingExpress(data.is_free_express, data.free_express_price)
             this.renderingStatus(data.status)
+            this.free_return = data.free_return
+            this.genuine_article = data.genuine_article
+            this.quick_delivery = data.quick_delivery
           }
         }).catch(err => {
-          console.dir(err)
+          console.log(err)
         })
       }
     },
@@ -528,7 +532,7 @@ export default {
             this.selectStateOptions.push(option)
           }
         } else {
-          this.setRouter('/category-management')
+          // this.setRouter('/category-management')
         }
         // console.log(this.selectStateOptions)
       })
@@ -536,6 +540,7 @@ export default {
           this.getGoods(this.hash)
         })
         .catch(err => {
+          this.getGoods(this.hash)
           console.log(err)
         })
     },
@@ -549,7 +554,7 @@ export default {
         for (let w of specs) {
           let obj = {name: w.spec, values: []}
           for (let x of w.property) {
-            obj.values.push({name: x})
+            obj.values.push({name: x, parent: w.spec})
           }
           this.specificationList.push(obj)
         }
@@ -573,7 +578,7 @@ export default {
     },
     // 渲染是否上架部分
     renderingStatus (status) {
-      if (status === 1 || status === 3) {
+      if (status === 1) {
         this.grounding = true
       } else {
         this.grounding = false
@@ -585,12 +590,14 @@ export default {
         for (let v of this.selectStateOptions) {
           if (v.value === id) {
             this.selectedOptions = [id]
-            break
+            return false
           } else {
-            for (let w of v.children) {
-              if (w.value === id) {
-                this.selectedOptions = [v.value, id]
-                break
+            if (v.children.length > 0) {
+              for (let w of v.children) {
+                if (w.value === id) {
+                  this.selectedOptions = [v.value, id]
+                  return false
+                }
               }
             }
           }
@@ -601,7 +608,7 @@ export default {
     renderingGoodsImageList (imgList) {
       if (imgList) {
         for (let v of imgList) {
-          this.goodsImageShowList.push({id: v.id, url: this.qiniuDomainUrl + v.icon_url, key: v.icon_url})
+          this.goodsImageShowList.push({id: v.id, url: this.yiqixuanDomainUrl + v.icon_url, key: v.icon_url})
         }
       }
     },
@@ -649,7 +656,7 @@ export default {
     },
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
-      this.goodsImageShowList.push({id: '', url: this.qiniuDomainUrl + response.key, key: response.key, modified: file.name})
+      this.goodsImageShowList.push({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
       this.goodsImageValidate = false
     },
     // 删除商品图片列表中的图片，删除商品图片的key
@@ -668,7 +675,7 @@ export default {
     // 商品卖点详情，图片上传成功后的操作
     quillUpScuccess (e, file, fileList) {
       let vm = this
-      let url = this.qiniuDomainUrl + e.key
+      let url = this.yiqixuanDomainUrl + e.key
       if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
         let value = url
         // API: https://segmentfault.com/q/1010000008951906
@@ -723,6 +730,7 @@ export default {
         for (let v of keepArr) {
           for (let w of arr) {
             if (JSON.stringify(v.specs) === JSON.stringify(w.specs)) {
+              v.id = w.id
               v.price = w.price
               v.stock_count = w.stock_count
               v.sku_no = w.sku_no
@@ -837,6 +845,7 @@ export default {
               this.setSkus(true)
             }
           }
+        } else {
         }
       }
       this['inputSpacVisible' + index] = false
@@ -910,7 +919,7 @@ export default {
     },
     // 每种规格图片上传
     handleAvatarSuccess (res, file, index) {
-      this.skus[index].cover_url = this.qiniuDomainUrl + res.key
+      this.skus[index].cover_url = res.key
       // this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload (file, index) {},
@@ -957,7 +966,7 @@ export default {
         }
       }
     },
-    // 每种规格的价格乘以100处理，图片处理等
+    // 每种规格的价格乘以100处理
     handleSuksPrice () {
       let deepCopySku = JSON.parse(JSON.stringify(this.skus))
       for (let v of deepCopySku) {
@@ -966,9 +975,6 @@ export default {
         }
         if (v.display_price) {
           v.display_price = Math.round(v.display_price * 100)
-        }
-        if (v.cover_url) {
-          v.cover_url = v.cover_url.split('.com/')[1]
         }
       }
       return deepCopySku
@@ -999,12 +1005,14 @@ export default {
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
             free_express_price: Math.round(this.postage.money * 100),
-            status: this.grounding ? 1 : 2
+            status: this.grounding ? 1 : 2,
+            free_return: this.free_return,
+            genuine_article: this.genuine_article,
+            quick_delivery: this.quick_delivery
           }
           // 判断是否存在商品规格
-          if (this.skus.length > 0) {
+          if (this.specificationList.length > 0) {
             this.getSpecs()
-            // this.handleSuksPrice()
             data.specs = this.specs
             data.sku = this.handleSuksPrice()
           } else {
@@ -1018,6 +1026,7 @@ export default {
             data.old_sku_ids = this.old_sku_ids
             data.image_ids = this.image_ids
             data.sku_ids = this.sku_ids
+            data.goods_detail_id = this.goods_detail_id
           }
 
           console.log(data)
@@ -1054,16 +1063,15 @@ export default {
       }, [[]])
     }
   },
-  watch: {
-  },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl', 'qiniuUploadUrl']),
+    ...mapState(['yiqixuanDomainUrl', 'qiniuUploadUrl']),
     editor () {
       return this.$refs.myQuillEditor.quill
     }
   },
   components: {
-    quillEditor
+    quillEditor,
+    menuLeft
   }
 }
 </script>
@@ -1273,8 +1281,6 @@ export default {
             }
             .specification-value-box {
               .specification-value-list {
-                display: inline-block;
-                width: 800px;
                 .el-tag {
                   margin-right: 10px;
                   border-color: #d5d5d5;

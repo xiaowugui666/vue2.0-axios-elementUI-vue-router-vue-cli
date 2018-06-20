@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left routeIndex="6"></menu-left>
     <div class="account-object">
       <div class="account-content">
         <div class="income-display">
@@ -45,7 +47,7 @@
                 prop="amount"
                 label="盈利金额（￥）">
                 <template slot-scope="scope">
-                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{scope.row.amount>0?'+'+scope.row.amount:scope.row.amount}}</div>
+                  <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{profAmount(scope.row.amount)}}</div>
                 </template>
               </el-table-column>
               <el-table-column
@@ -59,22 +61,25 @@
             <div class="paging-box clear">
               <el-pagination
                 background
+                v-if="incomeExpenditureData.length"
                 prev-text="< 上一页"
                 :page-size="15"
                 next-text="下一页 >"
                 @current-change="changePage"
                 layout="prev, pager, next"
-                :total="totalPage">
+                :total="pages * 15">
               </el-pagination>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { settlement, incomeInfo } from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -89,26 +94,35 @@ export default {
     }
   },
   mounted () {
-    this.getInfo()
+    this.getInfo(this.pages)
     this.getMoney()
   },
   methods: {
+    profAmount (value) {
+      if (value > 0) {
+        value = Number(value) / 100
+        return '+' + value.toFixed(2)
+      } else {
+        value = Number(value) / 100
+        return value.toFixed(2)
+      }
+    },
     getMoney () {
       incomeInfo().then(
         res => {
-          this.cumulativeIncome = parseFloat(res.data.total_income).toFixed(2)
-          this.sevenDayIncome = parseFloat(res.data.week_income).toFixed(2)
+          this.cumulativeIncome = parseFloat(res.data.total_income / 100).toFixed(2)
+          this.sevenDayIncome = parseFloat(res.data.week_income / 100).toFixed(2)
         }
       )
     },
-    getInfo () {
+    getInfo (value) {
       settlement({
-        page: this.pages
+        page: value
       }).then(
         res => {
           let datas = []
           console.log(res)
-          this.pages = res.headers.page_count * 15
+          this.pages = res.headers.page_count
           res.data.forEach(function (v, i) {
             v.end_at = v.end_at.substring(0, 11)
             datas.push(v)
@@ -118,14 +132,16 @@ export default {
       )
     },
     changePage (val) {
-      this.pages = val
-      this.getInfo()
+      this.getInfo(val - 1)
     },
     detailsLink (link) {
       this.$router.push({
         name: 'accountDetails', params: { id: link }
       })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>

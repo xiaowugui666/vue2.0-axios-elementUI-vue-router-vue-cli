@@ -1,6 +1,7 @@
 <template>
   <div>
-      <div class="orderManager">
+    <menu-left routeIndex="4-1"></menu-left>
+    <div class="orderManager">
         <div class="header">
           <div class="selectInfo">
             <el-select v-model="value" placeholder="订单号"  @change="changeType" >
@@ -14,7 +15,7 @@
             <el-input
               placeholder="订单号/退款单号/支付流水号"
               v-model="keyValue"
-              maxlength="20"
+              maxlength="50"
               v-validate="'decimal'"
               name="orderNumber"
               clearable>
@@ -91,13 +92,15 @@
           <el-pagination
             v-if="totalPagina != 0"
             background
-            :page-size="2"
+            :page-size="15"
             :page-count="6"
+            :current-page="currentPage"
+            style="padding-top: 20px;"
             prev-text="< 上一页"
             next-text="下一页 >"
             layout="prev, pager, next"
             @current-change="currentIndex"
-            :total="totalPagina * 2">
+            :total="totalPagina * 15">
           </el-pagination>
         </div>
       </div>
@@ -105,6 +108,7 @@
 </template>
 <script>
 import {order} from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 import {mapState} from 'vuex'
 export default {
   data () {
@@ -134,7 +138,10 @@ export default {
         label: '订单号'
       }, {
         value: '2',
-        label: '内部订单'
+        label: '收货人姓名'
+      }, {
+        value: '3',
+        label: '收货人手机号'
       }],
       // 搜索类型
       value: '1',
@@ -142,49 +149,19 @@ export default {
       OrderType: '1',
       // 交易类型
       tradeType: 'first',
-      tradeList: [
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个伤心的故事',
-              num: 1,
-              prePrice: '12323',
-              nowPrice: '123'
-            },
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 12323,
-          yfPrice: 10
-        },
-        {
-          list: [
-            {
-              img: '/static/test/ceshi.png',
-              desc: '这真是一个开心的故事',
-              num: 2,
-              prePrice: 996,
-              nowPrice: 429
-            }
-          ],
-          totalPrice: 1323,
-          yfPrice: 0
-        }
-      ]
+      tradeList: [],
+      // 标记当前所处订单分类
+      statu: '',
+      // flagObj：是否已点击搜索
+      flag: false
     }
   },
   computed: {
-    ...mapState(['qiniuDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
     orderImageUrl (value) {
-      return this.qiniuDomainUrl + value
+      return this.yiqixuanDomainUrl + value
     },
     changeType () {
     },
@@ -207,27 +184,52 @@ export default {
     },
     // 点击搜索
     searchOrder () {
-      // 参数
-      let params = {}
-      if (this.keyValue !== '') {
-        params.no = this.keyValue
-      }
-      if (this.keyName !== '') {
-        params.name = this.keyName
-      }
-      params.begin_at = this.keyTime[0]
-      params.end_at = this.keyTime[1]
-      params.page = 0
-      params.per_page = 15
-      order(params).then(res => {
-        console.log(res)
-        this.totalPagina = res.headers.page_count
-        this.ordersDetail = res.data
-        if (!res.data) {
-          this.$message('没有此类订单！')
+      this.currentPage = 0
+      // 若订单编号有输入，则判断
+      if (this.keyValue != '' && this.keyValue.length != 32 && this.value == 1) {
+        this.$message({
+          message: '请输入正确的订单编号',
+          type: 'warning'
+        })
+      } else if (this.keyValue != '' && this.keyValue.length != 11 && this.value == 3) {
+        this.$message({
+          message: '请输入正确的手机号',
+          type: 'warning'
+        })
+      } else {
+        this.tradeType = 'first'
+        // 参数
+        let params = {}
+        this.flag = true
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
         }
-      })
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
+        params.page = 0
+        params.per_page = 15
+        order(params).then(res => {
+          console.log(res)
+          this.totalPagina = res.headers.page_count
+          this.ordersDetail = res.data
+          if (!res.data) {
+            this.$message('没有此类订单！')
+          }
+        })
+      }
     },
+    // 改变时间段
     timeRange (res, event) {
       let flag = event.target.dataset.id
       if (flag === '0') {
@@ -252,19 +254,41 @@ export default {
     // 订单分类状态点击
     handleClick (tab) {
       console.log(tab.index)
-      let statu = 0
-      if (tab.index == 1) {
-        statu = 200
-      } else if (tab.index == 2) {
-        statu = 205
-      } else if (tab.index == 3) {
-        statu = 400
-      } else if (tab.index == 4) {
-        statu = 405
-      } else if (tab.index == 5) {
-        statu = 207
+      this.currentPage = 1
+      let params = {}
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
+        }
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
-      order({status: statu}).then(res => {
+      if (tab.index == 1) {
+        this.statu = 200
+      } else if (tab.index == 2) {
+        this.statu = 205
+      } else if (tab.index == 3) {
+        this.statu = 400
+      } else if (tab.index == 4) {
+        this.statu = 405
+      } else if (tab.index == 5) {
+        this.statu = 207
+      } else {
+        this.statu = ''
+      }
+      params.status = this.statu
+      order(params).then(res => {
         console.log(res)
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
@@ -276,13 +300,26 @@ export default {
     // 分页点击
     currentIndex (val) {
       let params = {}
-      if (this.keyValue !== '') {
-        params.no = this.keyValue
-      }
-      if (this.keyName !== '') {
-        params.name = this.keyName
+      if (this.flag) {
+        if (this.keyValue !== '') {
+          if (this.value == 1) {
+            params.no = this.keyValue
+          } else if (this.value == 2) {
+            params.consignee = this.keyValue
+          } else if (this.value == 3) {
+            params.mobile = this.keyValue
+          }
+        }
+        if (this.keyName !== '') {
+          params.name = this.keyName
+        }
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
       params.page = val - 1
+      params.status = this.statu
       this.currentPage = val
       order(params).then(res => {
         this.totalPagina = res.headers.page_count
@@ -300,8 +337,10 @@ export default {
       this.ordersDetail = res.data
       // console.log(this.ordersDetail)
     })
+  },
+  components: {
+    menuLeft
   }
-
 }
 </script>
 <style lang="less">
@@ -412,9 +451,8 @@ export default {
     }
     .el-input--suffix .el-input__inner {
       padding:0 12px;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
-      color: #B5B5B5;
+      color: @b3;
       line-height: 15px;
     }
     .el-date-editor .el-range__icon {
@@ -445,8 +483,7 @@ export default {
     background: #fff;
     padding:30px 20px 20px;
     .tradeList{
-          padding-bottom: 30px;
-          padding-top: 30px;
+          padding-top: 15px;
           display: block;
           width: 100%;
           .top{
@@ -603,6 +640,7 @@ export default {
          color:#B5B5B5;
          margin-left: 20px;
          cursor: pointer;
+         user-select: none;
        }
        .cur{
          border: 1px solid #DE5B67;

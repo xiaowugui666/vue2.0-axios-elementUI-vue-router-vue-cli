@@ -1,4 +1,6 @@
 <template>
+  <div>
+    <menu-left :routeIndex="menuLeftIndex"></menu-left>
     <div class="add-activity-object">
       <div class="add-activity-content">
         <div class="bread-bar plate">
@@ -12,13 +14,14 @@
               <span class="name alignment-top required">选择商品：</span>
               <div class="goods-img-box" v-if="recommendGoods.length == 0">
                 <span v-if="imgVisible(good)" @click="dialogClick" class="goods-img">
-                  <img :src="qiniuDomainUrl + imgUrlCompu(good)" alt="">
+                  <img :src="yiqixuanDomainUrl + imgUrlCompu(good)" alt="">
                 </span>
                 <i v-else @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
               <div class="goods-img-box" v-else>
-                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" @click="dialogClick" class="goods-img" style="margin-right: 5px;">
-                  <img :src="qiniuDomainUrl + imgUrlCompu(item)" alt="">
+                <span  v-for="(item,index) in recommendGoods" :key="index"  :data-id="index" v-if="imgVisible(item)" class="goods-img" style="margin-right: 10px;">
+                  <img :src="yiqixuanDomainUrl + imgUrlCompu(item)" alt="">
+                  <i @click.stop="deleteRecommend(index)" class="el-icon-circle-close"></i>
                 </span>
                 <i @click="dialogClick" class="select-goods el-icon-plus"></i>
               </div>
@@ -64,18 +67,22 @@
           </ul>
         </div>
       </div>
-      <select-production v-if="newGoods.length" :newGoods="newGoods" :qiniuDomainUrl="qiniuDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
+      <select-production v-if="newGoods.length" :newGoods="newGoods" :yiqixuanDomainUrl="yiqixuanDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
+import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import selectProduction from '@/components/select-production'
-import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods, closeRecommendGood} from '@/axios/api'
+import {editorGoods, closeGoods, newGoodsList, addSpecialGood, goodsList, newRecommendGoods, closeRecommendGood, singleRecommendGood} from '@/axios/api'
 export default {
   data () {
     return {
       linkClass: this.$route.query.class || this.$route.params.class,
+      // 左侧菜单栏选中的菜单index
+      menuLeftIndex: '',
       specialOffer: '',
       originalPrice: '',
       stock: '',
@@ -120,8 +127,8 @@ export default {
     }
   },
   mounted () {
-    this.setMenuLeft('/marketing-management/' + this.linkClass)
-    if (this.$route.query.id) {
+    this.setMenuLeftIndex()
+    if (this.$route.query.id && this.linkClass == 'special-offer') {
       // 请求编辑订单信息
       editorGoods(this.$route.query.id).then(res => {
         this.good = res.data
@@ -131,15 +138,36 @@ export default {
         this.stock = res.data.stock_count
         this.activityTime = [res.data.begin_at, res.data.end_at]
       })
-    }
-    if (this.$route.params.class == 'recommend') {
+    } else if (this.linkClass == 'recommend') {
       this.routerIf = false
+      if (this.$route.query.id) {
+        // 请求编辑推荐商品详情
+        singleRecommendGood(this.$route.query.id).then(res => {
+          console.log(res)
+          console.log(this.recommendGoods)
+          this.good = res.data
+          this.activityTime = [res.data.begin_at, res.data.end_at]
+        })
+      }
     }
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
+    // 删除当前选择商品
+    deleteRecommend (index) {
+      console.log(index)
+      this.recommendGoods.splice(index, 1)
+      console.log(this.recommendGoods)
+    },
     getHandleClose (msg) {
       this.goodsDialogVisible = msg
+    },
+    // 通过url上带的参数选择菜单栏选中状态
+    setMenuLeftIndex () {
+      if (this.linkClass === 'special-offer') {
+        this.menuLeftIndex = '7-1'
+      } else if (this.linkClass === 'recommend') {
+        this.menuLeftIndex = '7-2'
+      }
     },
     // 点击选择模态框商品
     getGoodsId (value) {
@@ -153,7 +181,7 @@ export default {
         // 推荐
         if (this.recommendGoods.length == 0) {
           this.recommendGoods.push(value)
-        } else if (this.recommendGoods.length < 8) {
+        } else if (this.recommendGoods.length < 7) {
           let flag = true
           for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
             if (this.recommendGoods[i].id == value.id) {
@@ -221,7 +249,7 @@ export default {
           this.newGoods.totalPagina = res.headers.page_count
         })
       } else if (this.$route.params.class == 'recommend') {
-        goodsList({page: value}).then(res => {
+        goodsList({page: value, status: 1}).then(res => {
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
           if (this.newGoods.length !== 0) {
@@ -247,7 +275,7 @@ export default {
         })
       }
     },
-    // 商品信息更改
+    // 点击保存
     saveEditor () {
       if (JSON.stringify(this.good) !== '{}' || this.recommendGoods.length !== 0) {
         if (!this.errors.items.length && this.activityTime.length) {
@@ -257,8 +285,8 @@ export default {
           params.goods_sku_id = this.good.id
           params.goods_id = this.good.goods_id
           params.price = this.specialOffer * 100
-          params.begin_at = this.activityTime[0]
-          params.end_at = this.activityTime[1]
+          params.begin_at = new Date(new Date(this.activityTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.activityTime[1]).getTime() + 8 * 3600 * 1000)
           params.stock_count = this.stock
           // 如果为新建商品
           if (JSON.stringify(this.$route.query) == '{}') { // 新建
@@ -310,10 +338,10 @@ export default {
               })
             }
           } else { // 编辑
-            // 更改商品信息
+            // 更改特价商品信息
             if (this.$route.params.class == 'special-offer') {
               closeGoods(params).then(res => {
-                if (res.data == '更新成功') {
+                if (res.status == 200) {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
                 } else {
                   console.log(res)
@@ -321,6 +349,7 @@ export default {
                 }
               })
             } else if (this.$route.params.class == 'recommend') {
+              // 推荐
               closeRecommendGood(params).then(res => {
                 console.log('更新推荐商品成功')
                 _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
@@ -346,6 +375,8 @@ export default {
         return true
       } else if (value.cover_url) {
         return true
+      } else if (value.goods) {
+        return true
       } else {
         return false
       }
@@ -356,14 +387,17 @@ export default {
         return value.goods_sku.cover_url
       } else if (value.cover_url) {
         return value.cover_url
+      } else if (value.goods.cover_url) {
+        return value.goods.cover_url
       }
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'qiniuDomainUrl'])
+    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
   },
   components: {
-    selectProduction
+    selectProduction,
+    menuLeft
   }
 }
 </script>
@@ -438,6 +472,7 @@ export default {
             vertical-align: middle;
             width: 80px;
             height: 80px;
+            position: relative;
             border: 1px solid #d5d5d5;
             text-align: center;
             box-sizing: border-box;
@@ -450,6 +485,15 @@ export default {
               position: relative;
               top: 50%;
               transform: translateY(-50%);
+            }
+            i {
+              font-size: 16px;
+              position: absolute;
+              background: #ffffff;
+              color: #D5D5D5;
+              top: -8px;
+              right: -8px;
+              cursor: pointer;
             }
           }
           .select-goods {

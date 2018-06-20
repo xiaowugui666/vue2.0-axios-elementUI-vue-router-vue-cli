@@ -1,6 +1,7 @@
 <template>
     <div>
-      <div class="info-setting-subject">
+      <menu-left routeIndex="8-1"></menu-left>
+      <div class="info-setting-subject content-box">
         <div class="subject-info plate">
           <div class="plate-top">
             <span>主体信息</span>
@@ -27,7 +28,7 @@
               <!--</li>-->
               <li>
                 <span class="name">主营类目：</span>
-                <span v-if="!editState">{{categoryValue}}</span>
+                <span v-if="!editState">{{typeof categoryValue === 'string' ? categoryValue : getCategory()}}</span>
                 <el-select v-if="editState" v-model="categoryValue" size="small" class="select-state">
                   <el-option
                     v-for="item in mainCategory"
@@ -52,67 +53,67 @@
             <ul>
               <li>
                 <span class="name alignment-top">商铺logo：</span>
-                <img v-if="!editState" class="store-logo-img" :src="logoImageUrl" alt="">
+                <img v-if="!editState" class="store-logo-img" :src="yiqixuanDomainUrl+logoImageUrl" alt="">
                 <el-upload
                   v-if="editState"
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
+                  accept=".jpg,.png"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleLogoSuccess">
-                  <img :src="logoImageUrl" class="avatar">
+                  <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：160*160像素，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top required">商铺描述：</span>
+                <span class="name alignment-top">商铺描述：</span>
                 <span v-if="!editState" class="shop-description-txt">{{textArea}}</span>
-                <textarea v-if="editState" v-validate="'required'" name="商铺描述" class="shop-description-textarea" v-model="textArea" placeholder="请输入商品描述"></textarea>
-                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
+                <textarea v-if="editState" class="shop-description-textarea" v-model="textArea" placeholder="请输入商品描述"></textarea>
               </li>
               <li>
                 <span class="name alignment-top required">banner：</span>
-                <img v-if="!editState" class="shop-description-img" :src="bannerImageUrl" alt="">
+                <img v-if="!editState" class="shop-description-img" :src="yiqixuanDomainUrl+bannerImageUrl" alt="">
                 <el-upload
                   v-if="editState"
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
                   :data="upToken"
+                  accept=".jpg,.png"
                   :before-upload="beforeUpload"
                   :show-file-list="false"
                   :on-success="handleBannerSuccess">
-                  <img v-if="bannerImageUrl" :src="bannerImageUrl" class="avatar avatar2">
+                  <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
-                <span class="name required">店长姓名：</span>
+                <span class="name">店长姓名：</span>
                 <span v-if="!editState">{{shopChiefName}}</span>
-                <input v-if="editState" type="text" v-validate="'required'" name="店长姓名" v-model="shopChiefName" placeholder="请输入店长姓名"/>
-                <div class="err-tips">{{ errors.first('店长姓名') }}</div>
+                <input v-if="editState" type="text" v-model="shopChiefName" placeholder="请输入店长姓名"/>
               </li>
               <li>
                 <span class="name">联系电话：</span>
                 <span>{{telNum}}</span>
               </li>
               <li>
-                <span class="name">联系微信：</span>
+                <span class="name required">联系微信：</span>
                 <span v-if="!editState">{{contactWeChat}}</span>
-                <input v-if="editState" type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+                <input v-if="editState" type="text" v-validate="{required: true, regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model="contactWeChat" placeholder="请输入联系微信号"/>
                 <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
-                <span class="name">客服电话：</span>
+                <span class="name required">客服电话：</span>
                 <span v-if="!editState">{{customerServiceNum}}</span>
-                <input v-if="editState" type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话"/>
+                <input v-if="editState" type="text" v-validate="{required: true, regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话"/>
                 <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
               <li>
@@ -130,10 +131,11 @@
                 </div>
               </li>
             </ul>
+            <!--<el-button v-if="editState" @click="editClick" class="submitBtn" type="success" size="small">保存</el-button>-->
           </div>
         </div>
         <div class="edit-btn">
-          <el-button v-if="!editState" type="primary" size="small" @click="editClick">编辑</el-button>
+          <el-button v-if="!editState" type="primary" size="small" @click="editState = true">编辑</el-button>
           <el-button v-if="editState" type="success" size="small" @click="editClick">保存</el-button>
         </div>
       </div>
@@ -143,33 +145,33 @@
 <script>
 import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {initialSetData, getQnToken} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      shopName: '阿迪达斯旗舰店',
-      shopNum: 321354656454,
+      shopName: '',
+      shopNum: '',
       creationTime: '',
       shopChiefName: '',
       telNum: '',
       contactWeChat: '',
       customerServiceNum: '',
       editState: false,
-      logoImageUrl: '/static/default-img/shops-default-logo.png',
-      logoKey: '',
+      logoImageUrl: 'shop_default_logo.png',
       bannerImageUrl: '',
-      bannerKey: '',
       textArea: '',
       options: regionData,
       selectedOptions: [],
       contactAddress: '',
-      categoryValue: 1,
+      categoryValue: '',
       // 图片上传需要的token
       upToken: {}
     }
   },
   components: {
-    CodeToText
+    CodeToText,
+    menuLeft
   },
   created () {
     this.getImageToken()
@@ -193,13 +195,14 @@ export default {
         let data = res.data
 
         this.shopName = data.name
+        this.shopNum = data.no
         this.categoryValue = data.type
         this.creationTime = data.created_at
         if (data.logo_url) {
-          this.logoImageUrl = this.qiniuDomainUrl + data.logo_url
+          this.logoImageUrl = data.logo_url
         }
         if (data.banner) {
-          this.bannerImageUrl = this.qiniuDomainUrl + data.banner
+          this.bannerImageUrl = data.banner
         }
         this.textArea = data.description
         this.shopChiefName = data.owner_name
@@ -220,13 +223,12 @@ export default {
     },
     // 商铺logo图片上传成功后的操作
     handleLogoSuccess (res, file) {
-      this.logoKey = res.key
-      this.logoImageUrl = URL.createObjectURL(file.raw)
+      this.logoImageUrl = res.key
     },
     // 商铺banner图片上传成功后的操作
     handleBannerSuccess (res, file) {
-      this.bannerKey = res.key
-      this.bannerImageUrl = URL.createObjectURL(file.raw)
+      // this.bannerImageUrl = URL.createObjectURL(file.raw)
+      this.bannerImageUrl = res.key
     },
     // 上传文件之前对上传内容的验证
     beforeUpload (file) {
@@ -248,7 +250,27 @@ export default {
     },
     // 点击编辑/保存后的操作
     editClick () {
-      this.editState = !this.editState
+      this.$validator.validateAll().then((msg) => {
+        if (msg) {
+          let data = {
+            name: this.shopName,
+            type: this.getCategory(),
+            logo_url: this.logoImageUrl,
+            banner: this.bannerImageUrl,
+            description: this.textArea,
+            owner_name: this.shopChiefName,
+            wechat: this.contactWeChat,
+            customer_service_mobile: this.customerServiceNum,
+            province: CodeToText[this.selectedOptions[0]],
+            city: CodeToText[this.selectedOptions[1]],
+            region: CodeToText[this.selectedOptions[2]],
+            address: this.contactAddress
+          }
+          initialSetData('put', data).then(res => {
+            this.editState = false
+          }).catch()
+        }
+      })
     },
     // 省市区三级联动改变时的操作
     handleChange (value) {
@@ -256,8 +278,11 @@ export default {
     },
     // 显示省市区地址信息
     getDetailedAddress () {
-      let selAdd = this.selectedOptions
-      let detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
+      let detAdd = ''
+      if (this.selectedOptions.length > 0) {
+        let selAdd = this.selectedOptions
+        detAdd = CodeToText[selAdd[0]] + ' ' + CodeToText[selAdd[1]] + ' ' + CodeToText[selAdd[2]] + ' '
+      }
       return detAdd
     },
     // 获取省市区信息，赋值给 selectedOptions 变量
@@ -268,7 +293,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['mainCategory', 'qiniuDomainUrl', 'qiniuUploadUrl'])
+    ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
   }
 }
 </script>
@@ -276,9 +301,6 @@ export default {
 <style scoped lang="less">
   @import "../fonts/icomoon.css";
   .info-setting-subject {
-    min-width: 1100px;
-    padding-top: 20px;
-    margin: 0 20px 0 200px;
     input {
       color: #333;
       border: 1px solid #d5d5d5;
@@ -372,7 +394,6 @@ export default {
       padding-top: 20px;
       font-size: 12px;
       span {
-        max-width: 260px;
         display: inline-block;
         vertical-align: middle;
       }
@@ -411,16 +432,20 @@ export default {
         }
       }
     }
+    .submitBtn {
+      margin-top: 20px;
+      margin-left: 73px;
+    }
   }
   .edit-btn {
     position: fixed;
     top: 32px;
     right: 40px;
-    .el-button--small {
-      width: 80px;
-      height: 30px;
-      padding: 0;
-    }
+  }
+  .el-button--small {
+    width: 80px;
+    height: 30px;
+    padding: 0;
   }
   .avatar-uploader {
     display: inline-block;
@@ -431,13 +456,14 @@ export default {
       vertical-align: top;
     }
     .avatar.avatar2 {
-      width: 160px;
+      width: 200px;
+      height: auto;
     }
     .alignment-tip {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 240px;
+      width: 400px;
       text-align: left;
       position: relative;
       margin-left: 17px;

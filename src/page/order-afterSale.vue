@@ -1,5 +1,6 @@
 <template>
   <div>
+    <menu-left routeIndex="4-2"></menu-left>
     <div class="orderAfterSale">
       <div class="header">
         <div class="selectInfo">
@@ -7,7 +8,7 @@
             <label>订单编号</label>
             <el-input
               v-model="keyValue"
-              maxlength="20"
+              maxlength="50"
               clearable>
             </el-input>
           </div>
@@ -33,7 +34,7 @@
             <label>退款编号</label>
             <el-input
               v-model="keyName"
-              maxlength="20"
+              maxlength="50"
               clearable>
             </el-input>
           </div>
@@ -82,6 +83,7 @@
             </el-table-column>
             <el-table-column
               props="items"
+              show-overflow-tooltip
               label="商品名称">
               <template slot-scope="scope">
                 <div class="goodsName" v-for="(item,index) in scope.row.items" :key="index">{{item.name}}</div>
@@ -90,13 +92,20 @@
             <el-table-column
               prop="order_amount"
               label="订单金额">
+              <template slot-scope="scope">
+                <div>{{scope.row.order_amount | money}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="refund_amount"
               label="退款金额">
+              <template slot-scope="scope">
+                <div>{{scope.row.refund_amount | money}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="created_at"
+              show-overflow-tooltip
               label="申请时间">
             </el-table-column>
             <el-table-column
@@ -119,13 +128,13 @@
         <el-pagination
           background
           v-if="totalPagina !== 0"
-          :page-size="2"
-          :page-count="6"
+          :page-size="15"
+          :current-page="page"
           prev-text="< 上一页"
           next-text="下一页 >"
           layout="prev, pager, next"
           @current-change="currentIndex"
-          :total="totalPagina">
+          :total="totalPagina * 15">
         </el-pagination>
       </div>
     </div>
@@ -133,6 +142,7 @@
 </template>
 <script>
 import {afterSaleGoods} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -152,9 +162,6 @@ export default {
       // 订单类型
       optionType: [{
         value: '1',
-        label: '全部'
-      }, {
-        value: '2',
         label: '退货退款'
       }],
       // 搜索类型
@@ -180,7 +187,13 @@ export default {
       // 订单详情
       refunds: [],
       // 总页数
-      totalPagina: 0
+      totalPagina: 0,
+      // 标记当前分类状态
+      statu: 0,
+      // 当前页
+      page: 1,
+      // flagObj: 是否已点击搜索
+      flag: false
     }
   },
   methods: {
@@ -193,39 +206,59 @@ export default {
     },
     // 点击搜索
     searchOrder () {
-      let params = {}
-      if (this.keyValue != '') {
+      if (this.keyValue != '' && this.keyValue.length != 32) {
+        this.$message({
+          message: '请输入正确的订单编号',
+          type: 'warning'
+        })
+      } else if (this.keyName != '' && this.keyName.length != 32) {
+        this.$message({
+          message: '请输入正确的退款编号',
+          type: 'warning'
+        })
+      } else {
+        let params = {}
+        this.flag = true
         params.order_no = this.keyValue
-      }
-      if (this.keyName != '') {
         params.no = this.keyName
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
+        params.status = 0
+        afterSaleGoods(params).then(res => {
+          console.log(res)
+          this.totalPagina = parseInt(res.headers.page_count)
+          this.refunds = res.data
+          this.page = 1
+        })
       }
-      params.begin_at = this.keyTime[0]
-      params.end_at = this.keyTime[1]
-      afterSaleGoods(params).then(res => {
-        console.log(res)
-        this.totalPagina = parseInt(res.headers.page_count)
-        this.refunds = res.data
-      })
     },
     // 分页点击
     currentIndex (val) {
       let params = {}
-      if (this.keyValue !== '') {
-        params.no = this.keyValue
+      // 如果已点击搜索
+      if (this.flag) {
+        params.order_no = this.keyValue
+        params.no = this.keyName
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
       }
-      if (this.keyName !== '') {
-        params.name = this.keyName
-      }
+      this.page = val
+      params.status = this.statu
       params.page = val - 1
       afterSaleGoods(params).then(res => {
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
       })
     },
+    // 时间段
     timeRange (res, event) {
       let flag = event.target.dataset.id
       if (flag == '0') {
+        this.timeBtn3 = false
         this.timeBtn2 = false
         this.timeBtn1 = !this.timeBtn1
         if (this.timeBtn1) {
@@ -235,6 +268,7 @@ export default {
         }
       } else if (flag == '1') {
         this.timeBtn1 = false
+        this.timeBtn3 = false
         this.timeBtn2 = !this.timeBtn2
         if (this.timeBtn2) {
           this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
@@ -252,14 +286,33 @@ export default {
         }
       }
     },
+    // 点击选择不同订单状态分类
     handleClick (tab) {
-      console.log(tab.index)
-      afterSaleGoods({status: tab.index}).then(res => {
+      this.statu = tab.index
+      let params = {}
+      // 如果已点击搜索
+      if (this.flag) {
+        params.order_no = this.keyValue
+        params.no = this.keyName
+        if (this.keyTime.length) {
+          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
+          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+        }
+      }
+      params.status = tab.index
+      afterSaleGoods(params).then(res => {
         console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
+        if (res.data.length == 0) {
+          this.$message({
+            message: '没有此类订单!',
+            type: 'info'
+          })
+        }
       })
     },
+    // 售后状态
     refundStatu (value) {
       if (value == 1) {
         return '待处理'
@@ -272,14 +325,15 @@ export default {
       }
     }
   },
-  computed: {
-  },
   mounted () {
     afterSaleGoods().then(res => {
       console.log(res)
       this.totalPagina = parseInt(res.headers.page_count)
       this.refunds = res.data
     })
+  },
+  components: {
+    menuLeft
   }
 }
 </script>
@@ -461,7 +515,7 @@ export default {
       padding:0 12px;
       font-family: MicrosoftYaHei;
       font-size: 12px;
-      color: #B5B5B5;
+      color: #151515;
       line-height: 15px;
     }
     .el-date-editor .el-range__icon {
@@ -496,6 +550,9 @@ export default {
         height: 50px;
         line-height: 50px;
         text-align: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
@@ -531,6 +588,7 @@ export default {
         color:#B5B5B5;
         margin-left: 20px;
         cursor: pointer;
+        user-select: none;
       }
       .cur{
         border: 1px solid #DE5B67;

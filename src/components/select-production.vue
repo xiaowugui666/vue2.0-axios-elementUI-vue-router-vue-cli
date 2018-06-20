@@ -24,14 +24,16 @@
                 width="400">
                 <template slot-scope="scope">
                   <div class="goods-info-box">
-                    <span class="goods-img"><img :src="qiniuDomainUrl + scope.row.cover_url" alt=""></span>
+                    <span class="goods-img"><img :src="yiqixuanDomainUrl + scope.row.cover_url" alt=""></span>
                     <div class="goods-info">
                       <p class="goods-info-name">{{compGoodsName(scope.row)}}</p>
                       <div class="goods-info-price-category">
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
                       </span>
-                        <span class="goods-info-price">￥{{scope.row.price | money}}</span>
+                        <span v-if="linkClass == 'special-offer'" class="goods-info-price">￥{{scope.row.price | money}}</span>
+                        <span v-else-if="scope.row.price_low == scope.row.price_high && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.price_high | money}}</span>
+                        <span v-else-if="scope.row.price_low != scope.row.price_high && linkClass == 'recommend'" class="goods-info-price">￥{{scope.row.price_low | money}} - {{scope.row.price_high | money}}</span>
                       </div>
                     </div>
                   </div>
@@ -77,12 +79,13 @@
 export default {
   data () {
     return {
+      linkClass: this.$route.query.class || this.$route.params.class,
       productionKey: '',
       multipleSelection: '',
       goods: this.newGoods
     }
   },
-  props: ['goodsDialogVisible', 'newGoods', 'qiniuDomainUrl'],
+  props: ['goodsDialogVisible', 'newGoods', 'yiqixuanDomainUrl'],
   mounted () {
     this.goods = this.newGoods
   },
@@ -136,12 +139,12 @@ export default {
     },
     showSpecific (index) {
       let specificList = ''
-      if (this.newGoods[index].spec_a) {
-        specificList += this.newGoods[index].spec_a
-        if (this.newGoods[index].spec_b) {
-          specificList += '；' + this.newGoods[index].spec_b
-          if (this.newGoods[index].spec_c) {
-            specificList += '；' + this.newGoods[index].spec_c
+      if (this.newGoods[index].property_a) {
+        specificList += this.newGoods[index].property_a
+        if (this.newGoods[index].property_b) {
+          specificList += '；' + this.newGoods[index].property_b
+          if (this.newGoods[index].property_c) {
+            specificList += '；' + this.newGoods[index].property_c
           }
         }
       }

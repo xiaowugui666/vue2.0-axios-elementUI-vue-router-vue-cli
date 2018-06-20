@@ -1,9 +1,11 @@
 <template>
+  <div>
+    <menu-left routeIndex="5"></menu-left>
     <div class="cus-container">
       <div class="header">
         <div class="number">
           <span>手机号码</span>
-          <input type="text" v-model="phoneNum" maxlength="11">
+          <input type="text" v-model="phoneNum" onkeyup="value=value.replace(/[^\d]/g,'')" maxlength="11">
         </div>
         <div class="screen">
           <span>购物次数</span>
@@ -16,7 +18,7 @@
             </el-option>
           </el-select>
         </div>
-        <div class="search" @click="search">
+        <div class="search" @click="search(0)">
           <el-button
           size="small"
           type="success"
@@ -45,6 +47,9 @@
             <el-table-column
               prop="order_count"
               label="拥有订单数">
+              <template slot-scope="scope">
+                <div class="11111">{{scope.row.order_count ? scope.row.order_count : 0}}</div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="address"
@@ -60,12 +65,13 @@
         <div class="padding-top-20">
           <el-pagination
             background
+            v-if="tableData.length"
             prev-text="<上一页"
             next-text="下一页>"
             :page-size="15"
             @current-change="changePage"
             layout="prev, pager, next"
-            :total="totalPage">
+            :total="totalPage * 15">
           </el-pagination>
         </div>
         <el-dialog
@@ -84,40 +90,50 @@
         </el-dialog>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
-import { user } from '@/axios/api'
+import {user, userEditor} from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
       name: '',
-      totalPage: 15,
+      totalPage: 0,
       dialogVisible: false,
       phoneNum: '',
       wechatNum: '',
       value: '',
       pages: 0,
-      options: [{
-        value: '1',
-        label: '1+'
-      }, {
-        value: '2',
-        label: '5+'
-      }, {
-        value: '3',
-        label: '10+'
-      }, {
-        value: '4',
-        label: '20+'
-      }, {
-        value: '5',
-        label: '50+'
-      }, {
-        value: '6',
-        label: '100+'
-      }],
-      tableData: []
+      options: [
+        {
+          value: '',
+          label: '不限'
+        },
+        {
+          value: '1',
+          label: '1+'
+        }, {
+          value: '5',
+          label: '5+'
+        }, {
+          value: '10',
+          label: '10+'
+        }, {
+          value: '20',
+          label: '20+'
+        }, {
+          value: '50',
+          label: '50+'
+        }, {
+          value: '100',
+          label: '100+'
+        }
+      ],
+      tableData: [],
+      // flag： 标记搜索状态
+      flag: false
     }
   },
   mounted () {
@@ -125,30 +141,33 @@ export default {
       mobile: this.phoneNum,
       order_count: this.value,
       page: this.pages
-    }, 'get').then(
+    }).then(
       res => {
         this.tableData = res.data
+        this.totalPage = parseInt(res.headers.page_count)
       }
     )
   },
   methods: {
-    search () {
+    // 点击搜索
+    search (value) {
+      this.flag = true
+      let params = {}
       const reg = /^[1][3,4,5,7,8][0-9]{9}$/
       if (this.phoneNum) {
         if (reg.test(this.phoneNum)) {
+          params.mobile = this.phoneNum
         } else {
           this.$message.error('这不是一个正确的手机号码')
           return false
         }
       }
-      user({
-        mobile: this.phoneNum,
-        order_count: this.value,
-        page: this.pages
-      }, 'get').then(
+      params.order_count = this.value
+      params.page = value
+      user(params).then(
         res => {
           this.tableData = res.data
-          this.totalPage = parseInt(res.headers.page_count) * 15
+          this.totalPage = parseInt(res.headers.page_count)
         }
       )
     },
@@ -161,10 +180,9 @@ export default {
     // 保存姓名 关闭模态框
     saveInfo () {
       let that = this
-      user({
-        id: this.tableData[this.detail].user_id,
+      userEditor({
         name: this.name
-      }, 'GET').then(
+      }, this.tableData[this.detail].id).then(
         res => {
           console.log(res)
           if (res.status === 200) {
@@ -179,16 +197,41 @@ export default {
             this.$message.error('修改失败')
           }
         }
-      )
+      ).catch(() => {
+        this.$message({
+          message: '修改失败',
+          type: 'error'
+        })
+      })
     },
     orderDetails (link) {
       this.$router.push({name: 'customerOrder', params: {id: this.tableData[link].id}})
       // this.$router.push({name: 'customerOrder', params: {id: 1}})
     },
     changePage (val) {
-      this.pages = val
-      this.search()
+      let params = {}
+      if (this.flag) {
+        const reg = /^[1][3,4,5,7,8][0-9]{9}$/
+        if (this.phoneNum) {
+          if (reg.test(this.phoneNum)) {
+            params.mobile = this.phoneNum
+          } else {
+            this.$message.error('这不是一个正确的手机号码')
+            return false
+          }
+        }
+        params.order_count = this.value
+      }
+      params.page = val - 1
+      user(params).then(
+        res => {
+          this.tableData = res.data
+          this.totalPage = parseInt(res.headers.page_count)
+        })
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>
@@ -202,8 +245,8 @@ export default {
   .header{
     min-width: 1000px;
     background: #ffffff;
-    padding-top: 40px;
-    height: 80px;
+    padding: 40px 0;
+    overflow: hidden;
     span{
       font-size: 12px;
       color: #999999;

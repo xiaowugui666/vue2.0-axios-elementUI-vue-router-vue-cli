@@ -1,9 +1,14 @@
 import axios from 'axios'
-let key = JSON.parse(localStorage.getItem('api-key'))
-let secret = JSON.parse(localStorage.getItem('api-secret'))
 
+let key = null
+let secret = null
+if (localStorage.getItem('api-key') !== 'undefined' && localStorage.getItem('api-secret') !== 'undefined') {
+  key = JSON.parse(localStorage.getItem('api-key'))
+  secret = JSON.parse(localStorage.getItem('api-secret'))
+}
 // console.log(secret)
 // console.log(key)
+
 export function fetch (options) {
   return new Promise((resolve, reject) => {
     const instance = axios.create({ // instance创建一个axios实例，可以自定义配置，可在 axios文档中查看详情
@@ -22,7 +27,15 @@ export function fetch (options) {
         resolve(response)// 把请求到的数据发到引用请求的地方
       })
       .catch(error => {
-        console.dir(error)
+        // console.dir(error)
+        // if (error.response.status === 401) {
+        //   alert('未登录！请返回51赞平台重进入！')
+        //   location.href = 'http://www.51zan.cn/login.html'
+        // }
+        // if (error.response.status === 403) {
+        //   alert('未授权小程序或未完成初次设置！')
+        //   location.href = '/login'
+        // }
         // console.log('请求异常信息：' + error)
         reject(error)
       })

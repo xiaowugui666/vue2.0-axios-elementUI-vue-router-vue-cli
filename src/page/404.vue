@@ -5,19 +5,10 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
 import error from '../components/error'
 export default {
   data () {
     return {}
-  },
-  created () {
-    this.setMenuShow(false)
-  },
-  methods: {
-    ...mapMutations(['setMenuShow'])
-  },
-  computed: {
   },
   components: {
     error

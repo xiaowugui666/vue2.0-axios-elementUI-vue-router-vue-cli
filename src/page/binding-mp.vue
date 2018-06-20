@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
 import {bindingMp} from '../axios/api'
 export default {
   data () {
@@ -22,24 +21,21 @@ export default {
     }
   },
   created () {
-    this.setMenuShow(false)
   },
   methods: {
-    ...mapMutations(['setMenuShow']),
     openRegisterMp () {
       window.open('https://mp.weixin.qq.com/')
     },
     authorizationMp () {
       bindingMp().then(res => {
         // console.log(res.data)
-        location.href = res.data.auth_url
+        if (res.data.auth_url) {
+          location.href = res.data.auth_url
+        }
       }).catch(err => {
         console.log(err)
       })
     }
-  },
-  computed: {
-    ...mapState(['menuShow'])
   }
 }
 </script>

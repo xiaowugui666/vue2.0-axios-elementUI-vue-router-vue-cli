@@ -1,5 +1,6 @@
 <template>
     <div>
+      <menu-left routeIndex="8-2"></menu-left>
       <div class="time-setting-subject">
         <div class="order-cancellation-time plate">
           <div class="plate-top">
@@ -37,16 +38,17 @@
 
 <script>
 import {initialSetData} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
       editState: false,
-      cancellationTime: 20,
-      receiptTime: 7,
-      configData: {}
+      cancellationTime: '',
+      receiptTime: ''
     }
   },
   components: {
+    menuLeft
   },
   methods: {
     // 限制输入
@@ -61,12 +63,14 @@ export default {
       this.editState = !this.editState
     },
     saveClick () {
-      this.editState = !this.editState
-      let params = this.configData
-      params.order_expire_time = Number(this.cancellationTime)
-      params.confirm_goods_time = Number(this.receiptTime)
-      initialSetData('put', params).then(res => {
-        console.log(res)
+      let data = {
+        order_expire_time: parseInt(this.cancellationTime) * 60,
+        confirm_goods_time: parseInt(this.receiptTime)
+      }
+      initialSetData('put', data).then(res => {
+        this.editState = !this.editState
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
       })
     },
     watchInput (s, mix, max) {
@@ -78,19 +82,10 @@ export default {
       return s
     }
   },
-  watch: {
-    cancellationTime: function (value) {
-      this.cancellationTime = value
-    },
-    receiptTime: function (value) {
-      this.receiptTime = value
-    }
-  },
-  mounted () {
+  created () {
     initialSetData('get').then(res => {
       console.log(res.data)
-      this.configData = res.data
-      this.cancellationTime = res.data.order_expire_time
+      this.cancellationTime = res.data.order_expire_time ? res.data.order_expire_time / 60 : res.data.order_expire_time
       this.receiptTime = res.data.order_auto_confirm_days
     })
   }

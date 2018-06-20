@@ -1,8 +1,10 @@
 <template>
+  <div>
+    <menu-left routeIndex="4-2"></menu-left>
     <div class="orderRebate">
       <div class="title">
         <span>退款维权 > 处理退款</span>
-        <el-steps :active="tradeType" v-if="tradeType !== 4" align-center finish-status="success" >
+        <el-steps :active="tradeType" v-if="tradeType < 3" align-center finish-status="success">
           <el-step title="买家申请退款"></el-step>
           <el-step title="商家处理退款"></el-step>
           <el-step title="退款完成"></el-step>
@@ -10,35 +12,36 @@
       </div>
       <div class="rebateDetail">
           <div class="content">
-            <div class="left">
+            <div style="flex: 1;">
               <div class="rebateInfo">
-                <div><label>订单编号：</label><label>{{rebateDetail.order_no}}</label></div>
-                <div><label>创建时间：</label><label>{{rebateDetail.created_at}}</label></div>
-                <div v-if="rebateDetail.order"><label>付款时间：</label><label>{{rebateDetail.order.paid_at}}</label></div>
+                <div style="margin-right: 30px;"><label>订单编号：</label><label>{{rebateDetail.order_no}}</label></div>
+                <div style="margin-right: 30px;"><label>创建时间：</label><label>{{rebateDetail.created_at}}</label></div>
+                <div style="margin-right: 30px;" v-if="rebateDetail.order"><label>付款时间：</label><label>{{rebateDetail.order.paid_at}}</label></div>
                 <div><label>退款编号：</label><label>{{rebateDetail.no}}</label></div>
               </div>
-              <div class="buyer" v-if="rebateDetail.order">
+              <div class="buyer goods-name" v-if="rebateDetail.order">
                 <div><label>买家手机号：</label><label>{{rebateDetail.order.mobile}}</label></div>
-                <div><label>商品名称：</label><label>{{rebateGoodsDetail}}</label></div>
+                <div><label style="display: inline-block;width: 80px;">商品名称：</label><label style="display: inline-block;">{{rebateGoodsDetail}}</label></div>
               </div>
-              <div class="buyer">
+              <div class="buyer rebate">
                 <div><label>期望结果：</label><label>退货退款</label></div>
-                <div><label>退款金额：</label><label>¥ {{rebateDetail.refund_amount}} （含运费）</label></div>
+                <div><label>退款金额：</label><label>¥ {{rebateDetail.refund_amount | money}} （含运费）</label></div>
                 <div><label>退款原因：</label><label>{{rebateDetail.reason}}</label></div>
               </div>
               <div class="trade">沟通记录</div>
               <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: (index % 2 == 0 ? '#F4F4F4' : '#FFFFFF')}">
                 <p class="user">
-                  <label>{{index % 2 == 0 ? '卖家' : '买家'}}</label>
+                  <label>{{item.user_id ? '卖家' : '买家'}}</label>
                   <label>{{item.created_at}}</label>
                 </p>
                 <div>
                   <label>操作行为：</label>
-                  <label>发起退款  I  退货退款</label>
+                  <label v-if="item.operation != 3 && item.operation != 4">发起退款  I  退货退款</label>
+                  <label v-else>{{item.operation == 3 ? '同意' : '拒绝'}}</label>
                 </div>
                 <div>
                   <label>退款金额：</label>
-                  <label>¥ {{rebateDetail.refund_amount}}</label>
+                  <label>¥ {{rebateDetail.refund_amount | money}}</label>
                 </div>
                 <div>
                   <label>留&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;言：</label>
@@ -46,7 +49,7 @@
                 </div>
               </div>
             </div>
-            <div class="right">
+            <div class="right" v-if="tradeType < 3 ">
                 <div class="top" v-if="tradeType == 0">
                   <label  class="agree" @click="editorDetail(3)">同意</label>
                   <label  class="disagree" @click="editorDetail(2)">拒绝</label>
@@ -55,17 +58,13 @@
                 <textarea v-if="tradeType == 0" id="tips" v-model="resRemark" cols="30" rows="10">
                 </textarea>
                 <div v-else class="refund-step-end">
-                  <img v-if="tradeType == 1" src="/static/test/sand%20clock@3x.png">
+                  <img v-if="tradeType == 1" src="/static/icon/hourglass.png">
                   <i v-else class="icon-成功 green"></i>
                   <span :style="{color: (tradeType == 1 ? '#FFAC5A' : '#2CBA4A')}">{{tradeType == 1 ? '处理中' : '退款完成'}}</span>
                 </div>
                 <div class="money">
                   <label>退款金额：</label>
-                  <label>￥999.00</label>
-                </div>
-                <div class="bank">
-                  <label>退款至：</label>
-                  <label>招商银行（银行卡）</label>
+                  <label>￥{{rebateDetail.refund_amount | money}}</label>
                 </div>
                 <div class="warn">
                   <label>友情提醒：</label>
@@ -76,11 +75,13 @@
           </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
 import {mapMutations} from 'vuex'
 import {refundDetail, editorRefundDetail} from '../axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -99,6 +100,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setMenuLeft']),
+    // 编辑售后订单信息，改变状态
     editorDetail (value) {
       let params = {}
       params.status = value
@@ -107,11 +109,15 @@ export default {
       editorRefundDetail(params).then(res => {
         if (res.status == 200) {
           refundDetail(this.$route.query.id).then(res => {
-            console.log(res)
             this.rebateDetail = res.data
             this.tradeType = value - 1
           })
         }
+      }).catch(() => {
+        this.$message({
+          message: '处理订单失败，请稍后重试',
+          type: 'error'
+        })
       })
     }
   },
@@ -125,10 +131,13 @@ export default {
         for (let i = 0; i < len - 1; i++) {
           name = this.rebateDetail.items[i].name + '/'
         }
-        name += this.rebateDetail.items[len - 1]
+        name += this.rebateDetail.items[len - 1].name
       }
       return name
     }
+  },
+  components: {
+    menuLeft
   }
 }
 </script>
@@ -155,29 +164,25 @@ export default {
 <style scoped lang="less">
   .money{
     margin-top: 30px;
+    padding-bottom: 200px;
     label:nth-child(1){
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
     label:nth-child(2){
       color: #DE5B67 ;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
     }
   }
   .bank{
     margin-top: 10px;
-    padding-bottom: 200px;
     border-bottom: 1px dashed #efefef;
     label:nth-child(1){
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
     label:nth-child(2){
-      color: #151515  ;
-      font-family: MicrosoftYaHei;
+      color: #151515;
       font-size: 12px;
     }
   }
@@ -185,7 +190,6 @@ export default {
     margin-top: 25px;
     label{
       display: block;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       line-height: 16px;
       color: #999999;
@@ -199,7 +203,6 @@ export default {
     width: 34%;
     .tip{
       margin-top: 30px;
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #999999;
     }
@@ -273,7 +276,6 @@ export default {
   }
   .dialogue p{
     padding-top:20px;
-    font-family: MicrosoftYaHei;
     font-size: 12px;
     color: #333333;
     padding-bottom: 10px;
@@ -283,7 +285,6 @@ export default {
     padding-bottom:20px;
   }
   .dialogue div{
-    font-family: MicrosoftYaHei;
     font-size: 12px;
     color: #999999;
     margin-top: 10px;
@@ -301,7 +302,6 @@ export default {
     position: relative;
     min-width: 1000px;
     .title{
-      font-family: MicrosoftYaHei;
       font-size: 12px;
       color: #333333;
       padding: 20px;
@@ -326,24 +326,41 @@ export default {
           justify-content: flex-start;
           padding:0 10px 10px;
           div{
-            width: 33%;
             margin-top: 10px;
             label:nth-child(1){
-              font-family: MicrosoftYaHei;
               font-size: 12px;
               color: #999999;
             }
             label:nth-child(2){
-              font-family: MicrosoftYaHei;
               font-size: 12px;
               color: #151515;
+            }
+          }
+        }
+        .buyer.goods-name {
+          display: block;
+          overflow: hidden;
+          div {
+            float: left;
+            overflow: hidden;
+            &:last-child {
+              width: 50%;
+              label {
+                float: left;
+                &:first-child {
+                  width: 25%;
+                }
+                &:last-child {
+                  width: 75%;
+                  letter-spacing: 0.5px;
+                }
+              }
             }
           }
         }
         .trade{
           padding-left: 20px;
           position: relative;
-          font-family: MicrosoftYaHei;
           font-size: 14px;
           color: #333333;
           margin-top:30px;
@@ -363,7 +380,9 @@ export default {
         .buyer{
           background:#fff;
           border-bottom: 1px solid #EFEFEF;
-          div{
+        }
+        .buyer {
+          div {
             width: 38%;
           }
         }

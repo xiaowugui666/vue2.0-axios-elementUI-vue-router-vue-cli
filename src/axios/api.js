@@ -1,7 +1,7 @@
 import { fetch } from './fetch' // 引用fetch.js
 import api from './url' // 引用url.js
 
-// 查看用户
+// 例子
 export function lookOption (issuer, userId) { // lookOption是你要调用接口的名字，issuer,userId是传进来的参数
   return fetch({
     // api.Hallowmas 引用url.js里面的数据
@@ -22,27 +22,46 @@ export function tradeVolum () {
   })
 }
 
-/* 店铺 */
-// 商品总数
-export function storeGoodsAmount () {
+// 获取体验二维码
+export function getQRCode () {
   return fetch({
-    url: api.ip + '/management/statistics/good_sku_count',
+    url: api.ip + '/management/mpa/code_url',
     method: 'GET'
   })
 }
 
-// 昨日pv,uv
-export function yesterdayPvUv () {
+/* 店铺 */
+// 商品总数
+export function storeGoodsAmount () {
   return fetch({
-    url: api.ip + '/management/statistics/yesterday_pv_uv',
+    url: api.ip + '/management/statistics/summary',
     method: 'GET'
   })
 }
-// 七日界面排行榜
-export function pagePvUv () {
+
+// 7日浏览量
+export function sevenDaysPv () {
   return fetch({
-    url: api.ip + '/management/statistics/page_pv_uv',
+    url: api.ip + '/management/statistics/page',
     method: 'GET'
+  })
+}
+
+/* 表格数据 */
+// 计算表格起止时间
+export function endBegins () {
+  return fetch({
+    url: api.ip + '/management/statistics/nav',
+    method: 'GET'
+  })
+}
+
+// 走势图表格数据
+export function tableData (params) {
+  return fetch({
+    url: api.ip + '/management/statistics',
+    method: 'GET',
+    params: params
   })
 }
 
@@ -126,12 +145,21 @@ export const goodsList = function (data) {
 }
 
 // 获取客户列表
-export const user = function (data, type) {
+export const user = function (data) {
   return fetch({
     // api.Hallowmas 引用url.js里面的数据
     url: api.ip + '/management/user',
-    method: type, // 请求方法
+    method: 'GET', // 请求方法
     params: data
+  })
+}
+
+// 编辑客户信息
+export function userEditor (data, id) {
+  return fetch({
+    url: api.ip + '/management/user/' + id,
+    data: data,
+    method: 'PUT'
   })
 }
 // 获取账户列表
@@ -206,6 +234,14 @@ export function closeGoods (data) {
   })
 }
 
+// 获取单一推荐商品
+export function singleRecommendGood (id) {
+  return fetch({
+    url: api.ip + '/management/recommend_goods/' + id,
+    method: 'GET'
+  })
+}
+
 // 编辑推荐商品
 export function closeRecommendGood (data) {
   return fetch({
@@ -215,7 +251,7 @@ export function closeRecommendGood (data) {
   })
 }
 
-// 获取编辑商品信息
+// 获取编辑特价商品信息
 export function editorGoods (id) {
   return fetch({
     url: api.ip + '/management/special_goods/' + id,
@@ -260,6 +296,15 @@ export function paginaGoods (params) {
 export function newRecommendGoods (data) {
   return fetch({
     url: api.ip + '/management/recommend_goods',
+    method: 'POST',
+    data: data
+  })
+}
+
+// 点击排序
+export function changeSort (route, data) {
+  return fetch({
+    url: api.ip + '/management/' + route + '/rank',
     method: 'POST',
     data: data
   })
@@ -324,7 +369,7 @@ export const addEditGoods = function (id, data) {
 // 设置 -> 支付设置
 export function paySetting (type, data) {
   return fetch({
-    url: api.hqip8080 + '/management/mpa',
+    url: api.ip + '/management/mpa',
     method: type,
     data: data
   })
@@ -340,10 +385,13 @@ export const addGoodsCategory = function (data) {
 }
 
 // 删除商品分类
-export const deleteGoodsCategory = function (id) {
+export const deleteGoodsCategory = function (id, parentId) {
   return fetch({
     url: api.ip + '/management/category/' + id,
-    method: 'delete' // 请求方法
+    method: 'delete', // 请求方法
+    data: {
+      parent_id: parentId
+    }
   })
 }
 
@@ -359,7 +407,7 @@ export const updateGoodsCategoryPic = function (data, id) {
 // 获取是否绑定小程序，初次设置数据，支付设置
 export const initialSetData = function (type, data) {
   return fetch({
-    url: api.hqip8080 + '/management/merchant',
+    url: api.ip + '/management/merchant',
     method: type, // 请求方法
     data: data
   })
@@ -368,7 +416,7 @@ export const initialSetData = function (type, data) {
 // 绑定小程序
 export const bindingMp = function () {
   return fetch({
-    url: api.cjip + '/management/mpa/auth',
+    url: api.ip + '/management/mpa/auth',
     method: 'get' // 请求方法
   })
 }
@@ -376,48 +424,34 @@ export const bindingMp = function () {
 // 解绑小程序
 export const untieMp = function () {
   return fetch({
-    url: api.cjip + '/management/mpa/unbind',
+    url: api.ip + '/management/mpa/unbind',
     method: 'delete' // 请求方法
   })
 }
 
 // 验证小程序是否授权成功
-export const checkAuth = function (params) {
+export const checkAuth = function (data) {
   return fetch({
-    url: api.cjip + '/management/mpa/check_auth',
-    method: 'get', // 请求方法
-    params: params
+    url: api.ip + '/management/mpa/auth',
+    method: 'post', // 请求方法
+    data: data
   })
 }
 
 // 获取小程序信息
 export const mpInfo = function () {
   return fetch({
-    url: api.cjip + '/management/mpa/mpa_info',
+    url: api.ip + '/management/mpa/info',
     method: 'get' // 请求方法
   })
 }
 
-// 有新接口的时候像上面那样再来一次
-// //修改昵称接口
-// export function userID(name){
-//   return fetch({
-//     url:api.myself_name,
-//     method:"put",
-//     data:{
-//       nickname:name
-//     }
-//   })
-// }
-//
-//
-// //取消转发赞踩接口
-// export function cancelForward(articleId,type){
-//   return fetch({
-//     url:api.detail_article+articleId+"/forwarded_impress",
-//     method:"delete",
-//     params:{
-//       type:type
-//     }
-//   })
-// }
+// 小程序体验者账号
+export const mpaExperience = function (type, data) {
+  return fetch({
+    url: api.ip + '/management/mpa/tester',
+    method: type, // 请求方法
+    data: data,
+    params: data
+  })
+}

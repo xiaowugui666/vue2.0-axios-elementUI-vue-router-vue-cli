@@ -1,5 +1,7 @@
 <template>
-  <div class="account-details-object">
+  <div>
+    <menu-left routeIndex="6"></menu-left>
+    <div class="account-details-object">
     <div class="account-details-content">
       <div class="bread-bar">
         <div class="cumulative-income">
@@ -49,11 +51,11 @@
               label="操作"
               width="150">
               <template slot-scope="scope">
-                <el-button @click="toOrderDetail(scope.row.id)" type="text" size="small">详情</el-button>
+                <el-button @click="toOrderDetail(scope.row.order_id)" type="text" size="small">详情</el-button>
               </template>
             </el-table-column>
           </el-table>
-          <div class="paging-box clear">
+          <div class="paging-box clear" v-if="incomeExpenditureData.length != 0">
             <el-pagination
               background
               prev-text="< 上一页"
@@ -68,11 +70,12 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
-import {mapState, mapMutations} from 'vuex'
 import {settlementTotal, settlementDetail} from '@/axios/api'
+import menuLeft from '@/components/menu-left'
 export default {
   data () {
     return {
@@ -81,39 +84,15 @@ export default {
       totalPage: 15,
       settlementDate: '2018-05-22',
       totalIncome: 2368993.12,
-      incomeExpenditureData: [
-        {
-          id: 1,
-          orderGenerationTime: '2018-05-22 10:20:39',
-          paymentTime: '2018-05-22 10:30:39',
-          orderNum: '321344654654354',
-          money: 222333.22
-        },
-        {
-          id: 1,
-          orderGenerationTime: '2018-05-22 10:20:39',
-          paymentTime: '2018-05-22 10:30:39',
-          orderNum: '321344654654354',
-          money: 222333.22
-        },
-        {
-          id: 1,
-          orderGenerationTime: '2018-05-22 10:20:39',
-          paymentTime: '2018-05-22 10:30:39',
-          orderNum: '321344654654354',
-          money: 222333.22
-        }
-      ]
+      incomeExpenditureData: []
     }
   },
   mounted () {
-    this.setMenuLeft('/account')
     this.id = this.$route.params.id
     this.getData()
     this.getMoney()
   },
   methods: {
-    ...mapMutations(['setMenuLeft']),
     toOrderDetail (id) {
       this.$router.push({path: '/order-detail/' + id})
     },
@@ -141,8 +120,8 @@ export default {
       this.getData()
     }
   },
-  computed: {
-    ...mapState(['menuLeft'])
+  components: {
+    menuLeft
   }
 }
 </script>
