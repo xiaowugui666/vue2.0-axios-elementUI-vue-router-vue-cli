@@ -3,19 +3,19 @@
     <div class="pay-information-setting">
       <ul>
         <li>
-          <span class="pay-info-title">服务商商户号：</span>
+          <span class="pay-info-title">微信支付商户号：</span>
           <span class="pay-info-txt" :title="busiInformation.merchant_no">{{busiInformation.merchant_no}}</span>
           <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
         </li>
         <li>
-          <span class="pay-info-title">服务商商户秘钥：</span>
+          <span class="pay-info-title">微信支付商户秘钥：</span>
           <span class="pay-info-txt" :title="busiInformation.merchant_key">{{busiInformation.merchant_key}}</span>
           <el-button type="primary" size="small" @click="setMerchantKey">设置</el-button>
           <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API 安全 > API 秘钥</span>
         </li>
         <li>
-          <span class="pay-info-title">服务商P12证书：</span>
+          <span class="pay-info-title">微信支付P12证书：</span>
           <span class="pay-info-txt" :title="busiInformation.merchant_cert">{{busiInformation.merchant_cert}}</span>
           <el-upload
             :action="qiniuUploadUrl"
@@ -121,20 +121,21 @@ export default {
     li {
       padding-top: 20px;
       font-size: 12px;
-      color: #B5B5B5;
+      color: @b8;
       span {
         display: inline-block;
         vertical-align: middle;
         line-height: 1.4;
       }
       .pay-info-title {
-        width: 96px;
+        width: 108px;
         text-align: right;
         padding-right: 3px;
+        color: @b3;
       }
       .pay-info-txt {
         width: 300px;
-        color: #333;
+        color: @b3;
         padding-right: 10px;
         overflow: hidden;
         text-overflow: ellipsis;
