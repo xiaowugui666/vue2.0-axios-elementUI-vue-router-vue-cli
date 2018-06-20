@@ -22,6 +22,14 @@ export function tradeVolum () {
   })
 }
 
+// 获取体验二维码
+export function getQRCode () {
+  return fetch({
+    url: api.ip + '/management/mpa/code_url',
+    method: 'GET'
+  })
+}
+
 /* 店铺 */
 // 商品总数
 export function storeGoodsAmount () {

@@ -54,6 +54,19 @@
           </div>
         </div>
       </div>
+      <div class="QR-code">
+        <el-popover
+          placement="left"
+          width="200"
+          trigger="hover">
+          <div class="code">
+            <span>店铺预览码</span>
+            <img :src="yiqixuanDomainUrl+mpaQRUrl" />
+            <span>微信扫描预览店铺</span>
+          </div>
+          <el-button slot="reference">小<br>程<br>序<br>预<br>览<br></el-button>
+        </el-popover>
+      </div>
 
       <!--<div class="unbind-dialog">
         <el-dialog
@@ -78,14 +91,16 @@
 </template>
 
 <script>
-import {mpaExperience} from '../axios/api'
+import {mpaExperience, getQRCode} from '../axios/api'
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
       dialogVisible: false,
       mpaName: '',
       mpaId: '',
+      mpaQRUrl: '',
       experienceUsersList: [],
       totalPage: 1,
       page: 0
@@ -94,6 +109,7 @@ export default {
   created () {
     // this.getMpInfo()
     this.getMpaExperience()
+    this.getMpQRCode()
   },
   methods: {
     // // 获取小程序信息
@@ -112,10 +128,15 @@ export default {
     //     console.dir(err.request, '失败')
     //   })
     // },
+    getMpQRCode () {
+      getQRCode().then(res => {
+        this.mpaQRUrl = res.data.code_url
+      })
+    },
     // 添加体验用户的微信号
     // 获取体验用户列表
     getMpaExperience () {
-      mpaExperience('get', {page: this.page, per_page: 2}).then(res => {
+      mpaExperience('get', {page: this.page}).then(res => {
         this.totalPage = parseInt(res.headers.page_count)
         this.experienceUsersList = res.data
       })
@@ -166,12 +187,16 @@ export default {
   },
   components: {
     menuLeft
+  },
+  computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   }
 }
 </script>
 
 <style scoped lang="less">
   .mp-setting-object {
+    margin-right: 60px;
     .mp-setting-content {
       .plate {
         padding: 20px;
@@ -254,6 +279,46 @@ export default {
           padding-right: 20px;
         }
       }
+    }
+    .QR-code{
+      top: 220px;
+      position: fixed;
+      z-index: 99;
+      right: 0;
+      background: #fff;
+      text-align: center;
+      writing-mode: vertical-rl;
+      .el-button {
+        padding: 22px 13px;
+        border: none;
+        margin-left: -10px;
+        color: #333;
+        font-size: 12px;
+        line-height: 1.4;
+        &:hover {
+          background: #fff;
+          color: #333;
+        }
+      }
+    }
+  }
+  .code {
+    font-size: 12px;
+    color: #999999;
+    height: 202px;
+    width: 198px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    img {
+      width: 90px;
+      height: 90px;
+    }
+    span:first-child {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333333;
     }
   }
   .el-button--small {

@@ -31,12 +31,13 @@
               <div class="trade">沟通记录</div>
               <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: (index % 2 == 0 ? '#F4F4F4' : '#FFFFFF')}">
                 <p class="user">
-                  <label>{{index % 2 == 0 ? '买家' : '卖家'}}</label>
+                  <label>{{item.user_id ? '卖家' : '买家'}}</label>
                   <label>{{item.created_at}}</label>
                 </p>
                 <div>
                   <label>操作行为：</label>
-                  <label>发起退款  I  退货退款</label>
+                  <label v-if="item.operation != 3 && item.operation != 4">发起退款  I  退货退款</label>
+                  <label v-else>{{item.operation == 3 ? '同意' : '拒绝'}}</label>
                 </div>
                 <div>
                   <label>退款金额：</label>

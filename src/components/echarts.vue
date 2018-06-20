@@ -68,7 +68,6 @@ export default {
         end_at: end,
         type: type
       }).then(res => {
-        console.log(res)
         // 浏览量 pv
         let tempArr = res.data.stat_mpa
         for (let i = 0, len = tempArr.length; i < len; i++) {
@@ -86,8 +85,6 @@ export default {
     },
     // 选择框值改变
     tableDataChange (value) {
-      console.log(value)
-      console.log(11111)
       this.date = []
       this.mpaPv = []
       this.mpaUv = []

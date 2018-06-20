@@ -290,6 +290,13 @@ export default {
             })
           }).catch(err => {
             console.log(err)
+            if (err.response.status === 404) {
+              this.$message({
+                showClose: true,
+                type: 'error',
+                message: err.response.data.message
+              })
+            }
           })
         } else {
           for (let v of this.multipleSelection) {
@@ -305,6 +312,13 @@ export default {
             })
           }).catch(err => {
             console.log(err)
+            if (err.response.status === 404) {
+              this.$message({
+                showClose: true,
+                type: 'error',
+                message: err.response.data.message
+              })
+            }
           })
         }
       }).catch(() => {
@@ -355,7 +369,14 @@ export default {
             message: `${data.status === 1 ? '上架' : '下架'}成功!`
           })
         }).catch(err => {
-          console.log(err)
+          // console.dir(err)
+          if (err.response.status === 404) {
+            this.$message({
+              showClose: true,
+              type: 'error',
+              message: err.response.data.message
+            })
+          }
         })
       }).catch(() => {
         this.$message({
