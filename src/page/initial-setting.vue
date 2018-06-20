@@ -592,6 +592,9 @@ export default {
       width: 200px;
       height: auto;
     }
+    .avatar {
+      margin-right: 17px;
+    }
     .alignment-tip {
       display: inline-block;
       vertical-align: top;
@@ -599,15 +602,14 @@ export default {
       width: 400px;
       text-align: left;
       position: relative;
-      margin-left: 17px;
       .el-upload__tip {
-        color: @b5b5;
+        color: @b8;
         position: absolute;
         width: 100%;
         bottom: 0;
       }
       .banner-tip {
-        color: @b5b5;
+        color: @b8;
         padding-top: 10px;
       }
     }
