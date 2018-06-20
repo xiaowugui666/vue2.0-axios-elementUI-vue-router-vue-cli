@@ -635,7 +635,7 @@ export default {
     li {
       padding-top: 20px;
       font-size: 12px;
-      color: #B5B5B5;
+      color: @b8;
       span {
         display: inline-block;
         vertical-align: middle;
