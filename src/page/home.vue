@@ -1,7 +1,7 @@
 <template>
   <div>
     <menu-left routeIndex="1"></menu-left>
-    <div class="home-content">
+    <div class="home-content content-box">
       <div class="shop-info">
         <span>{{shopName}}</span>
         <!--<i class="icon-淘宝认证"></i>-->
@@ -122,10 +122,7 @@ export default {
 <style scoped lang="less">
   @import '../fonts/icomoon.css';
   .home-content {
-    margin: 0 60px 0 200px;
-    padding-top: 20px;
-    position: relative;
-    min-width: 1000px;
+    margin-right: 60px;
   }
   .shop-info, .shortcut-entrance, .home-survey {
     background: #fff;
