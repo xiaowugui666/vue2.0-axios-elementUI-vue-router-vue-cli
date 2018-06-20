@@ -176,6 +176,7 @@ export default {
   .echarts-component {
     background: #fff;
     padding-bottom: 20px;
+    position: relative;
   }
   .select-time {
     position: absolute;
