@@ -1,8 +1,9 @@
 // 有些不能用ip地址直接访问，先修改hosts文件
 export default {
   // 接口代理配置
+  // ip: 'https://develop.yiqixuan.com'
+  ip: 'https://api.yiqixuan.com'
   // ip: 'https://test.yiqixuan.com'
-  ip: 'https://test.yiqixuan.com'
   // ip: 'http://192.168.20.176:8080' // 吴慧卿 192.168.20.176
   // ip: 'http://192.168.20.198' // 将纯吉
 }
