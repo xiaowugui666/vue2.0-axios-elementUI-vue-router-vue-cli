@@ -69,7 +69,7 @@
                 <div class="proNum">数量 x{{item.count}}</div>
                 <div class="price">
                   <label>￥</label>
-                  <label>{{tradeList.amount | money }}</label>
+                  <label>{{(item.price * item.count) | money}}</label>
                 </div>
               </div>
             </div>

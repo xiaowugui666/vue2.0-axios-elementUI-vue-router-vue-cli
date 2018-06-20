@@ -21,7 +21,6 @@ export default {
       if (userToken.token) {
         this.$http.post(api.ip + '/management/login', {token: userToken.token})
           .then(res => {
-            console.log(res.data)
             localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
             localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 

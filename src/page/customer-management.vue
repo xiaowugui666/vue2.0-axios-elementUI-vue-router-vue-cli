@@ -245,7 +245,7 @@ export default {
   .header{
     min-width: 1000px;
     background: #ffffff;
-    padding: 40px 0;
+    padding: 20px 0;
     overflow: hidden;
     span{
       font-size: 12px;
