@@ -468,13 +468,13 @@ export default {
       position: relative;
       margin-left: 17px;
       .el-upload__tip {
-        color: @b5b5;
+        color: @b8;
         position: absolute;
         width: 100%;
         bottom: 0;
       }
       .banner-tip {
-        color: @b5b5;
+        color: @b8;
         padding-top: 10px;
       }
     }
