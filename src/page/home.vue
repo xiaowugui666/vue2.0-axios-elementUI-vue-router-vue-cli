@@ -292,8 +292,7 @@ export default {
     align-items: center;
     justify-content: space-around;
     img {
-      width: 90px;
-      height: 90px;
+      max-width: 180px;
     }
     span:first-child {
       font-size: 14px;
