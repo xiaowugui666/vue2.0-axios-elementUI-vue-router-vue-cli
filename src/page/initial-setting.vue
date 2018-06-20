@@ -123,19 +123,19 @@
             <div class="pay-information-setting">
               <ul>
                 <li>
-                  <span class="pay-info-title">服务商商户号：</span>
+                  <span class="pay-info-title">微信支付商户号：</span>
                   <span class="pay-info-txt" :title="busiInformation.merchant_no">{{busiInformation.merchant_no}}</span>
                   <el-button type="primary" size="small" @click="setMerchantCert">设置</el-button>
                   <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > 商户信息 > 微信支付商户号</span>
                 </li>
                 <li>
-                  <span class="pay-info-title">服务商商户秘钥：</span>
+                  <span class="pay-info-title">微信支付商户秘钥：</span>
                   <span class="pay-info-txt" :title="busiInformation.merchant_key">{{busiInformation.merchant_key}}</span>
                   <el-button type="primary" size="small" @click="setMerchantKey">设置</el-button>
                   <span>获取方法：微信支付商户后台 > 账户中心 > 账户设置 > API 安全 > API 秘钥</span>
                 </li>
                 <li>
-                  <span class="pay-info-title">服务商P12证书：</span>
+                  <span class="pay-info-title">微信支付P12证书：</span>
                   <span class="pay-info-txt" :title="busiInformation.merchant_cert">{{busiInformation.merchant_cert}}</span>
                   <el-upload
                     :action="qiniuUploadUrl"
@@ -161,10 +161,59 @@
                 <el-button type="text" @click="readingProtocol = true">《授权协议》</el-button>
               </el-checkbox>
               <el-dialog
+                style="margin-top: -5vh;"
                 title="授权协议"
                 :visible.sync="readingProtocol"
                 width="60%">
-                <div>casasd</div>
+                <div class="checked-protocol-dialog">
+                  <p><strong>授权人</strong>：<span>{{shopName}}</span></p>
+                  <p><strong>被授权人</strong>：<span>上海虎赞信息科技有限公司</span></p>
+                  <p><span class="t">授权人点击“同意”按钮，视为同意授权上海虎赞信息科技有限公司代为管理授权人微信小程序（以下统称“标的账号”）内的部分内容。双方就该授权达成如下协议;</span></p>
+                  <p>
+                    <strong>第一条</strong>
+                    <br>
+                    <span class="t">授权人将其标的账号授权委托被授权人代为管理，被授权人通过标的账号所进行的任何行为，均视为授权人的行为；授权人有权随时在微信平台取消授权以终止被授权人的管理权。</span>
+                  </p>
+                  <p>
+                    <strong>第二条</strong>
+                    <br>
+                    <span class="t">授权范围如下：</span>
+                    <br>
+                    <span class="t">1、授权人在微信平台的“设置——第三方服务”功能项下选择被授权人，完成授权；</span>
+                    <span class="t">2、被授权人在功能范围内为授权人搭建小程序展示页面；</span>
+                    <span class="t">3、被授权人提供“小程序电子商铺后台管理功能”服务，并开通端口对接授权人标的账号。</span>
+                  </p>
+                  <p>
+                    <strong>第三条</strong>
+                    <br>
+                    <span class="t">授权人与被授权人另行签订的《虎赞平台服务协议》（以下简称‘主合同’），本授权协议有效期与主合同一致。主合同提前终止、解除的，本授权协议随之终止、解除，主合同有效期延长的，本协议授权有效期随之延长。但授权人在微信平台主动取消授权的除外。</span>
+                  </p>
+                  <p>
+                    <strong>第四条</strong>
+                    <br>
+                    <span class="t">授权人取消授权、或本协议到期未续约的，授权人可正常使用小程序展示页面，但“小程序电子商铺后台管理功能”无权继续使用。</span>
+                  </p>
+                  <p>
+                    <strong>第五条</strong>
+                    <br>
+                    <span class="t">授权人应及时以明确、有效的方式告知小程序使用用户，标的账号使用了被授权人的服务，这部分用户数据可能被被授权人获取并使用。</span>
+                  </p>
+                  <p>
+                    <strong>第六条</strong>
+                    <br>
+                    <span class="t">被授权人在为授权人提供服务期间会获取标的账号的用户数据、运营数据、交易数据，被授权人承诺获取上述数据仅为向标的账户提供管理服务，未经授权人另行书面授权，不做他用。</span>
+                  </p>
+                  <p>
+                    <strong>第七条</strong>
+                    <br>
+                    <span class="t">授权人应在微信平台开通标的账号的功能，获得相应的能力和资格，同意微信平台要求的协议和规则；若因授权人未完成功能开通导致被授权人无法提供服务的，由此产生的责任由授权人承担。</span>
+                  </p>
+                  <p>
+                    <strong>第八条</strong>
+                    <br>
+                    <span class="t">本协议自授权人在勾选 “我已同意并阅读《协议》” 并提交起生效。</span>
+                  </p>
+                </div>
                 <span slot="footer" class="dialog-footer">
             <el-button type="primary" size="small" @click="readingProtocol = false">确 定</el-button>
           </span>
@@ -254,6 +303,7 @@ export default {
         // console.log(res.data)
         let data = res.data
         this.telNum = data.mobile
+        this.shopName = data.name
         if (data.name && data.type) {
           if (data.wechat && data.banner && data.customer_service_mobile) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
@@ -278,7 +328,6 @@ export default {
             this.active = 1
           }
         } else {
-          this.shopName = data.name
           if (data.type) {
             this.categoryValue = data.type
           }
@@ -511,7 +560,7 @@ export default {
         padding-left: 10px;
         padding-right: 10px;
         &::-webkit-input-placeholder {
-          color: #b5b5b5;
+          color: @b5b5;
         }
       }
     }
@@ -620,6 +669,23 @@ export default {
     .checked-protocol-text {
       color: #999;
     }
+    .checked-protocol-dialog {
+      color: #333;
+      line-height: 22px;
+      padding: 0 10px;
+      max-height: 55vh;
+      overflow-y: auto;
+      p {
+        padding-bottom: 13px;
+      }
+      .t {
+        text-indent: 2em;
+      }
+      span {
+        display: inline-block;
+        color: #888;
+      }
+    }
     .el-button--text {
       padding: 0;
       border: none;
@@ -642,13 +708,14 @@ export default {
         line-height: 1.4;
       }
       .pay-info-title {
-        width: 96px;
+        width: 108px;
         text-align: right;
         padding-right: 3px;
+        color: @b3;
       }
       .pay-info-txt {
         width: 300px;
-        color: #333;
+        color: @b3;
         padding-right: 10px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -673,21 +740,21 @@ export default {
 <style lang="less">
   .first-setting-object {
     .el-step__title.is-process {
-      color: #333;
+      color: @b3;
     }
     .el-step__title.is-wait {
       color: #d5d5d5;
     }
     .el-input__inner {
        border-radius: 0;
-       color: #333;
+       color: @b3;
      }
     .el-dialog__header {
       text-align: center;
     }
     .el-dialog__header span {
-      font-size: 14px;
-      color: #333;
+      font-size: 18px;
+      color: #000;
       font-weight: bold;
     }
     .el-dialog__body {

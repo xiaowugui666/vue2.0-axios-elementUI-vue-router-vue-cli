@@ -1200,7 +1200,7 @@ export default {
       .essential-info-edit {
         padding: 10px 5px 20px;
         .upload-img-explain {
-          color: @b5b5;
+          color: @b8;
           font-size: 12px;
           padding-top: 10px;
           padding-left: 72px;
@@ -1225,7 +1225,7 @@ export default {
           .keyword-list {
             font-size: 0;
             .keyword-tips {
-              color: @b5b5;
+              color: @b8;
               font-size: 12px;
               padding-left: 20px;
             }
