@@ -24,7 +24,7 @@
                       <label><i>收货人名：</i>{{tradeList.consignee}}</label>
                       <label><i>收货人手机号：</i>{{tradeList.mobile}}</label>
                     </div>
-                    <div><i>收货地址：</i>{{tradeList.address_detail}}</div>
+                    <div><i>收货地址：</i>{{tradeList.province + tradeList.city + tradeList.address_detail}}</div>
                     <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
                       <div>
                         <i>快递公司：</i>
@@ -140,16 +140,6 @@ export default {
         }
       })
     },
-    getParams () {
-      this.tradeType = parseInt(this.$route.params.id)
-      if (this.tradeType === 2) {
-        this.isSave = true
-        this.isPrices = false
-        this.isCompile = false
-      } else if (this.tradeType === 3 || this.tradeType === 4) {
-        this.isPrices = false
-      }
-    },
     // 提交快递信息
     commitTrade () {
       let params = {}
@@ -176,15 +166,13 @@ export default {
           }
         })
       } else {
-        this.$message('请选择快递公司并输入订单号')
+        this.$message('请选择快递公司并输入快递单号')
       }
     }
   },
   mounted () {
     // 请求订单信息
     orderDetail(this.$route.params.id).then(res => {
-      console.log(this.$route.params.id)
-      console.log(res.data)
       this.tradeList = res.data
       // 更新订单完成状态
       if (res.data.status == 200) { // 待付款
@@ -202,11 +190,9 @@ export default {
       } else {
         this.tradeType = 4
       }
-      console.log(this.tradeType)
       // 如果订单状态不为待付款，即tradeType > 0,请求快递公司信息
       if (this.tradeType > 0 && this.tradeType < 4) {
         transComp().then(res => {
-          console.log(res)
           this.transComp = res.data
         }).catch(() => {
           this.$message({

@@ -52,7 +52,7 @@ export default {
       if (!data.mpa) {
         this.setRouter('/binding-mp')
       } else {
-        if (data.name && data.type && data.description && data.banner && data.owner_name && data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
+        if (data.name && data.type && data.wechat && data.banner && data.customer_service_mobile && data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
           this.setRouter('/')
         } else {
           this.setRouter('/initial-setting')

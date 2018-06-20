@@ -32,8 +32,10 @@ const config = {
 Vue.use(VeeValidate, config)
 
 Vue.filter('money', function (val) {
-  val = Number(val) / 100
-  return val.toFixed(2)
+  if (val != undefined) {
+    val = Number(val) / 100
+    return val.toFixed(2)
+  }
 })
 /* eslint-disable no-new */
 new Vue({
@@ -42,9 +44,4 @@ new Vue({
   store,
   components: { App },
   template: '<App/>'
-})
-
-router.beforeEach((to, from, next) => {
-  store.commit('setMenuLeft', '')
-  next()
 })

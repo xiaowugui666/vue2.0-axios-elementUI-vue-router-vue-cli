@@ -42,7 +42,7 @@
                     :limit="10"
                     :file-list="goodsImageShowList"
                     :on-exceed="beyondNumberLimit"
-                    :before-upload="beforeUpload"
+                    :before-upload="goodsImageBeforeUpload"
                     :on-success="goodsUploadSuccess"
                     :before-remove="goodsHandleRemove">
                     <i class="el-icon-plus"></i>
@@ -212,7 +212,7 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.specs" v-if="sku.specs.length>0" :key="index2">{{item.property}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
                       <td>
@@ -244,7 +244,7 @@
                 <span class="name required">商品价格：</span>
                 <div>
                   <span class="goods-price">
-                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
+                    <input type="text" v-model.trim="goodsPrice" v-validate="{required: !verificationSpec(),decimal: 2,min_value:0.01}" name="商品价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
                   </span>
                   <div class="err-tips">{{ errors.first('商品价格') }}</div>
                 </div>
@@ -299,9 +299,9 @@
             <li>
               <span class="name">商家承诺：</span>
               <div>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.refundable}" @click="businessCommitment.refundable=!businessCommitment.refundable" style="margin-left: 0;">7天包退换</el-button>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.qualityGoods}" @click="businessCommitment.qualityGoods=!businessCommitment.qualityGoods">100%正品</el-button>
-                <el-button type="success" size="small" :class="{'active':businessCommitment.deliverGoods}" @click="businessCommitment.deliverGoods=!businessCommitment.deliverGoods">24小时发货</el-button>
+                <el-button type="success" size="small" :class="{'active':free_return==1}" @click="free_return==1?free_return=2:free_return=1" style="margin-left: 0;">7天包退换</el-button>
+                <el-button type="success" size="small" :class="{'active':genuine_article==1}" @click="genuine_article==1?genuine_article=2:genuine_article=1">100%正品</el-button>
+                <el-button type="success" size="small" :class="{'active':quick_delivery==1}" @click="quick_delivery==1?quick_delivery=2:quick_delivery=1">24小时发货</el-button>
               </div>
             </li>
           </ul>
@@ -376,11 +376,9 @@ export default {
       goodsName: '',
       sharingDescription: '',
       grounding: true,
-      businessCommitment: {
-        refundable: false,
-        qualityGoods: false,
-        deliverGoods: false
-      },
+      free_return: 2,
+      genuine_article: 2,
+      quick_delivery: 2,
       uniqueCoding: '',
       // 商品卖点
       quillContent: '',
@@ -466,7 +464,8 @@ export default {
       // 隐形验证字段
       old_sku_ids: false,
       image_ids: [],
-      sku_ids: []
+      sku_ids: [],
+      goods_detail_id: -1
     }
   },
   created () {
@@ -496,11 +495,15 @@ export default {
             this.quantifier = data.unit
             this.image_ids = data.image_ids
             this.sku_ids = data.sku_ids
+            this.goods_detail_id = data.goods_detail_id
             this.dynamicTags = data.keywords
             this.renderingSku(data.sku, data.specs, data.price, data.display_price, data.stock_count)
             this.showStock = data.stock_shown
             this.renderingExpress(data.is_free_express, data.free_express_price)
             this.renderingStatus(data.status)
+            this.free_return = data.free_return
+            this.genuine_article = data.genuine_article
+            this.quick_delivery = data.quick_delivery
           }
         }).catch(err => {
           console.log(err)
@@ -529,7 +532,7 @@ export default {
             this.selectStateOptions.push(option)
           }
         } else {
-          this.setRouter('/category-management')
+          // this.setRouter('/category-management')
         }
         // console.log(this.selectStateOptions)
       })
@@ -537,6 +540,7 @@ export default {
           this.getGoods(this.hash)
         })
         .catch(err => {
+          this.getGoods(this.hash)
           console.log(err)
         })
     },
@@ -550,7 +554,7 @@ export default {
         for (let w of specs) {
           let obj = {name: w.spec, values: []}
           for (let x of w.property) {
-            obj.values.push({name: x})
+            obj.values.push({name: x, parent: w.spec})
           }
           this.specificationList.push(obj)
         }
@@ -574,7 +578,7 @@ export default {
     },
     // 渲染是否上架部分
     renderingStatus (status) {
-      if (status === 1 || status === 3) {
+      if (status === 1) {
         this.grounding = true
       } else {
         this.grounding = false
@@ -726,6 +730,7 @@ export default {
         for (let v of keepArr) {
           for (let w of arr) {
             if (JSON.stringify(v.specs) === JSON.stringify(w.specs)) {
+              v.id = w.id
               v.price = w.price
               v.stock_count = w.stock_count
               v.sku_no = w.sku_no
@@ -840,6 +845,7 @@ export default {
               this.setSkus(true)
             }
           }
+        } else {
         }
       }
       this['inputSpacVisible' + index] = false
@@ -999,7 +1005,10 @@ export default {
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
             free_express_price: Math.round(this.postage.money * 100),
-            status: this.grounding ? 1 : 2
+            status: this.grounding ? 1 : 2,
+            free_return: this.free_return,
+            genuine_article: this.genuine_article,
+            quick_delivery: this.quick_delivery
           }
           // 判断是否存在商品规格
           if (this.specificationList.length > 0) {
@@ -1017,6 +1026,7 @@ export default {
             data.old_sku_ids = this.old_sku_ids
             data.image_ids = this.image_ids
             data.sku_ids = this.sku_ids
+            data.goods_detail_id = this.goods_detail_id
           }
 
           console.log(data)
@@ -1271,7 +1281,6 @@ export default {
             }
             .specification-value-box {
               .specification-value-list {
-                display: inline-block;
                 .el-tag {
                   margin-right: 10px;
                   border-color: #d5d5d5;

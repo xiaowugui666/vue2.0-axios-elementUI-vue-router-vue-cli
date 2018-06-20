@@ -55,11 +55,11 @@
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
-                  <span class="goods-img"><img :src="yiqixuanDomainUrl+'/'+scope.row.cover_url" alt=""></span>
+                  <span class="goods-img"><img :src="yiqixuanDomainUrl+scope.row.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.name}}</p>
                     <div class="goods-info-price-category">
-                      <span class="goods-info-price">￥{{renderingGoodsPrice(scope.row.rangPrice.priceLow, scope.row.rangPrice.priceHigh)}}</span>
+                      <span class="goods-info-price">￥{{renderingGoodsPrice(scope.row.price_low, scope.row.price_high)}}</span>
                       <span v-if="scope.row.category_name" class="goods-info-category">
                         类目：{{scope.row.category_name}}
                       </span>
@@ -113,8 +113,9 @@
               label="操作"
               width="140">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="setRouter('/add-edit-goods?gid='+scope.row.id)">编辑</el-button>
+                <el-button @click="setRouter('/add-edit-goods?gid='+scope.row.id)" :disabled="scope.row.status==1" type="text" size="small">编辑</el-button>
                 <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
+                <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
                 <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
               </template>
             </el-table-column>
@@ -194,12 +195,14 @@ export default {
     // 渲染商品价格
     renderingGoodsPrice (low, high) {
       let price = ''
-      if (low === high) {
-        price = (low / 100).toFixed(2)
-        return price
-      } else {
-        price = (low / 100).toFixed(2) + '~' + (high / 100).toFixed(2)
-        return price
+      if (low && high) {
+        if (low === high) {
+          price = (low / 100).toFixed(2)
+          return price
+        } else {
+          price = (low / 100).toFixed(2) + '~' + (high / 100).toFixed(2)
+          return price
+        }
       }
     },
     // 请求商品分类
@@ -287,6 +290,13 @@ export default {
             })
           }).catch(err => {
             console.log(err)
+            if (err.response.status === 404) {
+              this.$message({
+                showClose: true,
+                type: 'error',
+                message: err.response.data.message
+              })
+            }
           })
         } else {
           for (let v of this.multipleSelection) {
@@ -302,6 +312,13 @@ export default {
             })
           }).catch(err => {
             console.log(err)
+            if (err.response.status === 404) {
+              this.$message({
+                showClose: true,
+                type: 'error',
+                message: err.response.data.message
+              })
+            }
           })
         }
       }).catch(() => {
@@ -352,7 +369,14 @@ export default {
             message: `${data.status === 1 ? '上架' : '下架'}成功!`
           })
         }).catch(err => {
-          console.log(err)
+          // console.dir(err)
+          if (err.response.status === 404) {
+            this.$message({
+              showClose: true,
+              type: 'error',
+              message: err.response.data.message
+            })
+          }
         })
       }).catch(() => {
         this.$message({
@@ -474,11 +498,11 @@ export default {
         .goods-info-box {
           text-align: left;
           font-size: 0;
-          position: relative;
           .goods-img {
+            display: inline-block;
+            vertical-align: middle;
             width: 60px;
             height: 60px;
-            float: left;
             text-align: center;
             border: 1px solid #d5d5d5;
             img {
@@ -492,10 +516,11 @@ export default {
             }
           }
           .goods-info {
-            text-align: left;
             font-size: 12px;
             padding-left: 15px;
-            margin-left: 60px;
+            display: inline-block;
+            vertical-align: middle;
+            width:calc(100% - 65px);
             .goods-info-name {
               color: #333;
               font-size: 14px;
@@ -550,6 +575,10 @@ export default {
       padding: 0 7px;
       height: 24px;
       border: 1px solid #63A4FF;
+      &:disabled {
+        color: @b9;
+        border-color: @b5b5;
+      }
     }
   }
 </style>

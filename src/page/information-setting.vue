@@ -66,15 +66,14 @@
                   <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：160*160像素，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top required">商铺描述：</span>
+                <span class="name alignment-top">商铺描述：</span>
                 <span v-if="!editState" class="shop-description-txt">{{textArea}}</span>
-                <textarea v-if="editState" v-validate="'required'" name="商铺描述" class="shop-description-textarea" v-model="textArea" placeholder="请输入商品描述"></textarea>
-                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
+                <textarea v-if="editState" class="shop-description-textarea" v-model="textArea" placeholder="请输入商品描述"></textarea>
               </li>
               <li>
                 <span class="name alignment-top required">banner：</span>
@@ -92,30 +91,29 @@
                   <div class="alignment-tip">
                     <el-button size="small" type="primary">点击上传</el-button>
                     <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">只能上传jpg/jpeg/png文件，且不超过1MB</p>
+                    <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
                 </el-upload>
               </li>
               <li>
-                <span class="name required">店长姓名：</span>
+                <span class="name">店长姓名：</span>
                 <span v-if="!editState">{{shopChiefName}}</span>
-                <input v-if="editState" type="text" v-validate="'required'" name="店长姓名" v-model="shopChiefName" placeholder="请输入店长姓名"/>
-                <div class="err-tips">{{ errors.first('店长姓名') }}</div>
+                <input v-if="editState" type="text" v-model="shopChiefName" placeholder="请输入店长姓名"/>
               </li>
               <li>
                 <span class="name">联系电话：</span>
                 <span>{{telNum}}</span>
               </li>
               <li>
-                <span class="name">联系微信：</span>
+                <span class="name required">联系微信：</span>
                 <span v-if="!editState">{{contactWeChat}}</span>
-                <input v-if="editState" type="text" v-validate="{regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model="contactWeChat" placeholder="请输入联系微信号"/>
+                <input v-if="editState" type="text" v-validate="{required: true, regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model="contactWeChat" placeholder="请输入联系微信号"/>
                 <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
-                <span class="name">客服电话：</span>
+                <span class="name required">客服电话：</span>
                 <span v-if="!editState">{{customerServiceNum}}</span>
-                <input v-if="editState" type="text" v-validate="{regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话"/>
+                <input v-if="editState" type="text" v-validate="{required: true, regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话"/>
                 <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
               <li>
@@ -133,7 +131,7 @@
                 </div>
               </li>
             </ul>
-            <el-button v-if="editState" @click="editClick" class="submitBtn" type="success" size="small">保存</el-button>
+            <!--<el-button v-if="editState" @click="editClick" class="submitBtn" type="success" size="small">保存</el-button>-->
           </div>
         </div>
         <div class="edit-btn">
@@ -160,7 +158,7 @@ export default {
       contactWeChat: '',
       customerServiceNum: '',
       editState: false,
-      logoImageUrl: 'shop_default _logo.png',
+      logoImageUrl: 'shop_default_logo.png',
       bannerImageUrl: '',
       textArea: '',
       options: regionData,
@@ -261,7 +259,6 @@ export default {
             banner: this.bannerImageUrl,
             description: this.textArea,
             owner_name: this.shopChiefName,
-            mobile: this.telNum,
             wechat: this.contactWeChat,
             customer_service_mobile: this.customerServiceNum,
             province: CodeToText[this.selectedOptions[0]],
@@ -466,7 +463,7 @@ export default {
       display: inline-block;
       vertical-align: top;
       height: 80px;
-      width: 240px;
+      width: 400px;
       text-align: left;
       position: relative;
       margin-left: 17px;
