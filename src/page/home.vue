@@ -55,7 +55,7 @@
       </div>
       <div class="QR-code">
         <el-popover
-          placement="left"
+          placement="left-start"
           width="200"
           trigger="hover">
           <div class="code">
