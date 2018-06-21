@@ -20,7 +20,7 @@
             </span>
             <span>
               <span>收益金额：</span>
-              <span class="total-income">￥{{totalIncome}}</span>
+              <span class="total-income">￥{{totalIncome | money}}</span>
             </span>
           </div>
           <el-table
@@ -44,7 +44,7 @@
               prop="amount"
               label="盈利金额（￥）">
               <template slot-scope="scope">
-                <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{scope.row.amount>=0?'+'+scope.row.amount:scope.row.amount}}</div>
+                <div :class="[{'profit':scope.row.amount>=0},{'loss':scope.row.amount<0}]">{{profAmount(scope.row.amount)}}</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -93,6 +93,16 @@ export default {
     this.getMoney()
   },
   methods: {
+    // 盈利金额价格显示
+    profAmount (value) {
+      if (value > 0) {
+        value = Number(value) / 100
+        return '+' + value.toFixed(2)
+      } else {
+        value = Number(value) / 100
+        return value.toFixed(2)
+      }
+    },
     toOrderDetail (id) {
       this.$router.push({path: '/order-detail/' + id})
     },

@@ -26,18 +26,18 @@
               <div class="buyer rebate">
                 <div><label>期望结果：</label><label>退货退款</label></div>
                 <div><label>退款金额：</label><label>¥ {{rebateDetail.refund_amount | money}} （含运费）</label></div>
-                <div><label>退款原因：</label><label>{{rebateDetail.reason}}</label></div>
+                <div><label>退款原因：</label><label>{{rebateReason(rebateDetail.reason)}}</label></div>
               </div>
               <div class="trade">沟通记录</div>
               <div class="dialogue" v-for="(item,index) in rebateDetail.logs" :key="index" :style="{background: (index % 2 == 0 ? '#F4F4F4' : '#FFFFFF')}">
                 <p class="user">
-                  <label>{{item.user_id ? '卖家' : '买家'}}</label>
+                  <label>{{item.user_id ? '买家' : '卖家'}}</label>
                   <label>{{item.created_at}}</label>
                 </p>
                 <div>
                   <label>操作行为：</label>
                   <label v-if="item.operation != 3 && item.operation != 4">发起退款  I  退货退款</label>
-                  <label v-else>{{item.operation == 3 ? '同意' : '拒绝'}}</label>
+                  <label v-else>{{item.operation == 3 ? '拒绝' : '同意'}}</label>
                 </div>
                 <div>
                   <label>退款金额：</label>
@@ -119,6 +119,22 @@ export default {
           type: 'error'
         })
       })
+    },
+    // 退款原因
+    rebateReason (val) {
+      if (val == 1) {
+        return '物流太慢/收货太迟'
+      } else if (val == 2) {
+        return '发错货'
+      } else if (val == 3) {
+        return '尺码偏小'
+      } else if (val == 4) {
+        return '尺码偏大'
+      } else if (val == 5) {
+        return '脏污/色差'
+      } else {
+        return '其它'
+      }
     }
   },
   computed: {

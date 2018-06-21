@@ -69,6 +69,7 @@
             prev-text="<上一页"
             next-text="下一页>"
             :page-size="15"
+            :current-page="pages"
             @current-change="changePage"
             layout="prev, pager, next"
             :total="totalPage * 15">
@@ -105,7 +106,7 @@ export default {
       phoneNum: '',
       wechatNum: '',
       value: '',
-      pages: 0,
+      pages: 1,
       options: [
         {
           value: '',
@@ -137,11 +138,7 @@ export default {
     }
   },
   mounted () {
-    user({
-      mobile: this.phoneNum,
-      order_count: this.value,
-      page: this.pages
-    }).then(
+    user().then(
       res => {
         this.tableData = res.data
         this.totalPage = parseInt(res.headers.page_count)
@@ -168,6 +165,7 @@ export default {
         res => {
           this.tableData = res.data
           this.totalPage = parseInt(res.headers.page_count)
+          this.pages = 1
         }
       )
     },
@@ -208,6 +206,7 @@ export default {
       this.$router.push({name: 'customerOrder', params: {id: this.tableData[link].id}})
       // this.$router.push({name: 'customerOrder', params: {id: 1}})
     },
+    // 点击分页
     changePage (val) {
       let params = {}
       if (this.flag) {
