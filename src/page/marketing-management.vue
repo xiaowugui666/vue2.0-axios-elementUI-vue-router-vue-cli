@@ -36,6 +36,7 @@
             </el-table-column>
             <el-table-column
               label="商品"
+              min-width="250"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <div class="goods-info-box" v-if="scope.row.goods">
@@ -454,7 +455,7 @@ export default {
             text-align: left;
             font-size: 12px;
             padding-left: 15px;
-            width: 312px;
+            width:calc(100% - 65px);
             .goods-info-name {
               color: #333;
               font-size: 14px;
