@@ -265,10 +265,10 @@
   .el-message--info .el-message__content {
     color: #909399; }
   .el-message--success {
-    background-color: #fceff0;
-    border-color: #f8dee1; }
+    background-color: #ffeeef;
+    border-color: #fedcdf; }
     .el-message--success .el-message__content {
-      color: #DE5B67; }
+      color: #FA505D; }
   .el-message--warning {
     background-color: #fdf6ec;
     border-color: #faecd8; }
@@ -301,7 +301,7 @@
     .el-message__closeBtn:hover {
       color: #909399; }
   .el-message .el-icon-success {
-    color: #DE5B67; }
+    color: #FA505D; }
   .el-message .el-icon-error {
     color: #f56c6c; }
   .el-message .el-icon-info {
