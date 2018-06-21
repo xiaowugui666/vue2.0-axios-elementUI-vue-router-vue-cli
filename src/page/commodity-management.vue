@@ -41,7 +41,6 @@
             ref="multipleTable"
             :data="tableData"
             tooltip-effect="dark"
-            style="width: 100%"
             border
             @selection-change="handleSelectionChange">
             <el-table-column
@@ -69,11 +68,10 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="访问量"
+              label="浏览量"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div>访问量：{{scope.row.amountAccess}}</div>
-                <div>浏览量：{{scope.row.browsingVolume}}</div>
+                <div>浏览量：{{scope.row.view_count?scope.row.view_count:0}}</div>
               </template>
             </el-table-column>
             <el-table-column

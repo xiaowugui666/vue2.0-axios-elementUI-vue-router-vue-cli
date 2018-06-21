@@ -252,10 +252,10 @@
     -ms-flex-pack: center;
     justify-content: center; }
   .el-alert--success {
-    background-color: #fceff0;
-    color: #DE5B67; }
+    background-color: #ffeeef;
+    color: #FA505D; }
     .el-alert--success .el-alert__description {
-      color: #DE5B67; }
+      color: #FA505D; }
   .el-alert--info {
     background-color: #f4f4f5;
     color: #909399; }
