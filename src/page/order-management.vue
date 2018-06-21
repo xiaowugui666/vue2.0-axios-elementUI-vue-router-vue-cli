@@ -13,7 +13,7 @@
               </el-option>
             </el-select>
             <el-input
-              placeholder="订单号/退款单号/支付流水号"
+              placeholder="订单号"
               v-model="keyValue"
               maxlength="50"
               v-validate="'decimal'"
