@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-left" :style="{height: clientHeight}">
+  <div class="menu-left">
     <div class="mall-logo">
       <img src="../assets/logo.png" alt="">
       <span>一起选·商城</span>
@@ -113,8 +113,7 @@ export default {
   left: 0;
   z-index: 99;
   width: 180px;
-  min-height: 600px;
-  overflow-y: auto;
+  height: 100%;
   position: fixed;
 .el-submenu .el-menu-item {
   min-width: auto;
@@ -137,6 +136,8 @@ export default {
 }
 .el-menu {
   border-right: none;
+  overflow-y: auto;
+  height: calc(100% - 133px);
   i {
     font-size: 20px;
     padding-right: 5px;
