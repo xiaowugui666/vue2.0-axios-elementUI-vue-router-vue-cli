@@ -214,8 +214,10 @@ export default {
           params.name = this.keyName
         }
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
         params.page = 0
         params.per_page = 15
@@ -236,6 +238,7 @@ export default {
         this.timeBtn2 = false
         this.timeBtn1 = !this.timeBtn1
         if (this.timeBtn1) {
+          console.log(new Date().getTime())
           this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
         } else {
           this.keyTime = []
@@ -270,8 +273,10 @@ export default {
           params.name = this.keyName
         }
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
       if (tab.index == 1) {
@@ -314,8 +319,10 @@ export default {
           params.name = this.keyName
         }
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
       params.page = val - 1
