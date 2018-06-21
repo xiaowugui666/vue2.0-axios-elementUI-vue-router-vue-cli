@@ -69,7 +69,7 @@
                 <div class="proNum">数量 x{{item.count}}</div>
                 <div class="price">
                   <label>￥</label>
-                  <label>{{(item.price * item.count) | money}}</label>
+                  <label>{{item.price | money}}</label>
                 </div>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default {
         id: this.$route.params.id,
         amount: this.tradeList.amount
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.status == 200) {
           this.$message({
             message: '修改价格成功！',
@@ -155,7 +155,7 @@ export default {
       params.express_no = this.expressNo
       if (params.express_no && params.express_code) {
         orderExpress(params).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.status == 200) {
             // 提交快递信息成功，请求订单信息，改变可视状态
             orderDetail(this.$route.params.id).then(res => {

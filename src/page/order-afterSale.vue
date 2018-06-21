@@ -229,7 +229,7 @@ export default {
         }
         params.status = 0
         afterSaleGoods(params).then(res => {
-          console.log(res)
+          // console.log(res)
           this.totalPagina = parseInt(res.headers.page_count)
           this.refunds = res.data
           this.page = 1
@@ -307,7 +307,7 @@ export default {
       }
       params.status = tab.index
       afterSaleGoods(params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
         if (res.data.length == 0) {
@@ -333,7 +333,7 @@ export default {
   },
   mounted () {
     afterSaleGoods().then(res => {
-      console.log(res)
+      // console.log(res)
       this.totalPagina = parseInt(res.headers.page_count)
       this.refunds = res.data
     })

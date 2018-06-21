@@ -84,7 +84,7 @@ export default {
   },
   created () {
     initialSetData('get').then(res => {
-      console.log(res.data)
+      // console.log(res.data)
       this.cancellationTime = res.data.order_expire_time ? res.data.order_expire_time / 60 : res.data.order_expire_time
       this.receiptTime = res.data.order_auto_confirm_days
     })

@@ -121,7 +121,6 @@ export default {
       }).then(
         res => {
           let datas = []
-          console.log(res)
           this.pages = res.headers.page_count
           res.data.forEach(function (v, i) {
             v.end_at = v.end_at.substring(0, 11)

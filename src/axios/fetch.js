@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox } from 'element-ui'
+import { MessageBox, Message } from 'element-ui'
 
 export function fetch (options) {
   return new Promise((resolve, reject) => {
@@ -27,8 +27,6 @@ export function fetch (options) {
       .catch(error => {
         // console.dir(error)
         if (error.response.status === 401) {
-          // alert('未登录！请返回51赞平台重新进入！')
-          // location.href = 'http://www.51zan.cn/login.html'
           MessageBox.alert('未登录！请返回51赞平台重新进入！', {
             confirmButtonText: '确定',
             showClose: false,
@@ -36,10 +34,7 @@ export function fetch (options) {
               location.href = 'http://www.51zan.cn/login.html'
             }
           })
-        }
-        if (error.response.status === 403) {
-          // alert('未授权小程序或未完成初次设置！')
-          // location.href = '/login'
+        } else if (error.response.status === 403) {
           MessageBox.alert('未授权小程序或未完成初次设置！', {
             confirmButtonText: '确定',
             showClose: false,
@@ -47,6 +42,8 @@ export function fetch (options) {
               location.href = '/login'
             }
           })
+        } else {
+          Message.error(error.response.data.message)
         }
         reject(error)
       })
