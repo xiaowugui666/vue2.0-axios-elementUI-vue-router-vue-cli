@@ -228,6 +228,126 @@
 --------------------------*/
 /* Break-point
 --------------------------*/
+/* BEM support Func
+ -------------------------- */
+/* Element Chalk Variables */
+/* Transition
+-------------------------- */
+/* Colors
+-------------------------- */
+/* 53a8ff */
+/* 66b1ff */
+/* 79bbff */
+/* 8cc5ff */
+/* a0cfff */
+/* b3d8ff */
+/* c6e2ff */
+/* d9ecff */
+/* ecf5ff */
+/* Link
+-------------------------- */
+/* Background
+-------------------------- */
+/* Border
+-------------------------- */
+/* Box-shadow
+-------------------------- */
+/* Fill
+-------------------------- */
+/* Font
+-------------------------- */
+/* Size
+-------------------------- */
+/* z-index
+-------------------------- */
+/* Disable base
+-------------------------- */
+/* Icon
+-------------------------- */
+/* Checkbox
+-------------------------- */
+/* Radio
+-------------------------- */
+/* Select
+-------------------------- */
+/* Alert
+-------------------------- */
+/* Message Box
+-------------------------- */
+/* Message
+-------------------------- */
+/* Notification
+-------------------------- */
+/* Input
+-------------------------- */
+/* Cascader
+-------------------------- */
+/* Group
+-------------------------- */
+/* Tab
+-------------------------- */
+/* Button
+-------------------------- */
+/* cascader
+-------------------------- */
+/* Switch
+-------------------------- */
+/* Dialog
+-------------------------- */
+/* Table
+-------------------------- */
+/* Pagination
+-------------------------- */
+/* Popover
+-------------------------- */
+/* Tooltip
+-------------------------- */
+/* Tag
+-------------------------- */
+/* Tree
+-------------------------- */
+/* Dropdown
+-------------------------- */
+/* Badge
+-------------------------- */
+/* Card
+--------------------------*/
+/* Slider
+--------------------------*/
+/* Steps
+--------------------------*/
+/* Menu
+--------------------------*/
+/* Rate
+--------------------------*/
+/* DatePicker
+--------------------------*/
+/* Loading
+--------------------------*/
+/* Scrollbar
+--------------------------*/
+/* Carousel
+--------------------------*/
+/* Collapse
+--------------------------*/
+/* Transfer
+--------------------------*/
+/* Header
+  --------------------------*/
+/* Footer
+--------------------------*/
+/* Main
+--------------------------*/
+/* Break-point
+--------------------------*/
+/* Break-points
+ -------------------------- */
+/* Scrollbar
+ -------------------------- */
+/* Placeholder
+ -------------------------- */
+/* BEM
+ -------------------------- */
 .v-modal-enter {
   -webkit-animation: v-modal-in .2s ease;
   animation: v-modal-in .2s ease; }
@@ -264,6 +384,9 @@
   height: 100%;
   opacity: 0.5;
   background: #000; }
+
+.el-popup-parent--hidden {
+  overflow: hidden; }
 
 /* Element Chalk Variables */
 /* Transition
@@ -634,12 +757,12 @@
   .el-button.is-round {
     padding: 12px 20px; }
   .el-button:hover, .el-button:focus {
-    color: #63A4FF;
-    border-color: #d0e4ff;
-    background-color: #eff6ff; }
+    color: #58A8FF;
+    border-color: #cde5ff;
+    background-color: #eef6ff; }
   .el-button:active {
-    color: #5994e6;
-    border-color: #5994e6;
+    color: #4f97e6;
+    border-color: #4f97e6;
     outline: none; }
   .el-button::-moz-focus-inner {
     border: 0; }
@@ -647,16 +770,16 @@
     margin-left: 5px; }
   .el-button.is-plain:hover, .el-button.is-plain:focus {
     background: #fff;
-    border-color: #63A4FF;
-    color: #63A4FF; }
+    border-color: #58A8FF;
+    color: #58A8FF; }
   .el-button.is-plain:active {
     background: #fff;
-    border-color: #5994e6;
-    color: #5994e6;
+    border-color: #4f97e6;
+    color: #4f97e6;
     outline: none; }
   .el-button.is-active {
-    color: #5994e6;
-    border-color: #5994e6; }
+    color: #4f97e6;
+    border-color: #4f97e6; }
   .el-button.is-disabled, .el-button.is-disabled:hover, .el-button.is-disabled:focus {
     color: #c0c4cc;
     cursor: not-allowed;
@@ -690,80 +813,80 @@
     padding: 12px; }
   .el-button--primary {
     color: #fff;
-    background-color: #63A4FF;
-    border-color: #63A4FF; }
+    background-color: #58A8FF;
+    border-color: #58A8FF; }
     .el-button--primary:hover, .el-button--primary:focus {
-      background: #82b6ff;
-      border-color: #82b6ff;
+      background: #79b9ff;
+      border-color: #79b9ff;
       color: #fff; }
     .el-button--primary:active {
-      background: #5994e6;
-      border-color: #5994e6;
+      background: #4f97e6;
+      border-color: #4f97e6;
       color: #fff;
       outline: none; }
     .el-button--primary.is-active {
-      background: #5994e6;
-      border-color: #5994e6;
+      background: #4f97e6;
+      border-color: #4f97e6;
       color: #fff; }
     .el-button--primary.is-disabled, .el-button--primary.is-disabled:hover, .el-button--primary.is-disabled:focus, .el-button--primary.is-disabled:active {
       color: #fff;
-      background-color: #b1d2ff;
-      border-color: #b1d2ff; }
+      background-color: #acd4ff;
+      border-color: #acd4ff; }
     .el-button--primary.is-plain {
-      color: #63A4FF;
-      background: #eff6ff;
-      border-color: #c1dbff; }
+      color: #58A8FF;
+      background: #eef6ff;
+      border-color: #bcdcff; }
       .el-button--primary.is-plain:hover, .el-button--primary.is-plain:focus {
-        background: #63A4FF;
-        border-color: #63A4FF;
+        background: #58A8FF;
+        border-color: #58A8FF;
         color: #fff; }
       .el-button--primary.is-plain:active {
-        background: #5994e6;
-        border-color: #5994e6;
+        background: #4f97e6;
+        border-color: #4f97e6;
         color: #fff;
         outline: none; }
       .el-button--primary.is-plain.is-disabled, .el-button--primary.is-plain.is-disabled:hover, .el-button--primary.is-plain.is-disabled:focus, .el-button--primary.is-plain.is-disabled:active {
-        color: #a1c8ff;
-        background-color: #eff6ff;
-        border-color: #e0edff; }
+        color: #9bcbff;
+        background-color: #eef6ff;
+        border-color: #deeeff; }
   .el-button--success {
     color: #fff;
-    background-color: #DE5B67;
-    border-color: #DE5B67; }
+    background-color: #FA505D;
+    border-color: #FA505D; }
     .el-button--success:hover, .el-button--success:focus {
-      background: #e57c85;
-      border-color: #e57c85;
+      background: #fb737d;
+      border-color: #fb737d;
       color: #fff; }
     .el-button--success:active {
-      background: #c8525d;
-      border-color: #c8525d;
+      background: #e14854;
+      border-color: #e14854;
       color: #fff;
       outline: none; }
     .el-button--success.is-active {
-      background: #c8525d;
-      border-color: #c8525d;
+      background: #e14854;
+      border-color: #e14854;
       color: #fff; }
     .el-button--success.is-disabled, .el-button--success.is-disabled:hover, .el-button--success.is-disabled:focus, .el-button--success.is-disabled:active {
       color: #fff;
-      background-color: #efadb3;
-      border-color: #efadb3; }
+      background-color: #fda8ae;
+      border-color: #fda8ae; }
     .el-button--success.is-plain {
-      color: #DE5B67;
-      background: #fceff0;
-      border-color: #f2bdc2; }
+      color: #FA505D;
+      background: #ffeeef;
+      border-color: #fdb9be; }
       .el-button--success.is-plain:hover, .el-button--success.is-plain:focus {
-        background: #DE5B67;
-        border-color: #DE5B67;
+        background: #FA505D;
+        border-color: #FA505D;
         color: #fff; }
       .el-button--success.is-plain:active {
-        background: #c8525d;
-        border-color: #c8525d;
+        background: #e14854;
+        border-color: #e14854;
         color: #fff;
         outline: none; }
       .el-button--success.is-plain.is-disabled, .el-button--success.is-plain.is-disabled:hover, .el-button--success.is-plain.is-disabled:focus, .el-button--success.is-plain.is-disabled:active {
-        color: #eb9da4;
-        background-color: #fceff0;
-        border-color: #f8dee1; }
+        color: #fc969e;
+        background-color: #ffeeef;
+        border-color: #fedcdf; }
   .el-button--warning {
     color: #fff;
     background-color: #e6a23c;
@@ -898,16 +1021,16 @@
       padding: 7px 15px; }
   .el-button--text {
     border-color: transparent;
-    color: #63A4FF;
+    color: #58A8FF;
     background: transparent;
     padding-left: 0;
     padding-right: 0; }
     .el-button--text:hover, .el-button--text:focus {
-      color: #82b6ff;
+      color: #79b9ff;
       border-color: transparent;
       background-color: transparent; }
     .el-button--text:active {
-      color: #5994e6;
+      color: #4f97e6;
       border-color: transparent;
       background-color: transparent; }
     .el-button--text.is-disabled, .el-button--text.is-disabled:hover, .el-button--text.is-disabled:focus {
@@ -1245,7 +1368,7 @@
       border-color: #c0c4cc; }
     .el-textarea__inner:focus {
       outline: none;
-      border-color: #63A4FF; }
+      border-color: #58A8FF; }
   .el-textarea.is-disabled .el-textarea__inner {
     background-color: #f5f7fa;
     border-color: #e4e7ed;
@@ -1320,7 +1443,7 @@
       border-color: #c0c4cc; }
     .el-input__inner:focus {
       outline: none;
-      border-color: #63A4FF; }
+      border-color: #58A8FF; }
   .el-input__suffix {
     position: absolute;
     height: 100%;
@@ -1359,7 +1482,7 @@
     pointer-events: none; }
   .el-input.is-active .el-input__inner {
     outline: none;
-    border-color: #63A4FF; }
+    border-color: #58A8FF; }
   .el-input.is-disabled .el-input__inner {
     background-color: #f5f7fa;
     border-color: #e4e7ed;
@@ -1517,7 +1640,7 @@
     .el-message-box__headerbtn .el-message-box__close {
       color: #909399; }
     .el-message-box__headerbtn:focus .el-message-box__close, .el-message-box__headerbtn:hover .el-message-box__close {
-      color: #63A4FF; }
+      color: #58A8FF; }
   .el-message-box__content {
     position: relative;
     padding: 10px 15px;
@@ -1541,7 +1664,7 @@
       padding-left: 36px;
       padding-right: 12px; }
     .el-message-box__status.el-icon-success {
-      color: #DE5B67; }
+      color: #FA505D; }
     .el-message-box__status.el-icon-info {
       color: #909399; }
     .el-message-box__status.el-icon-warning {

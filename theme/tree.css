@@ -245,13 +245,13 @@
     top: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    color: #817480; }
+    color: #7b7680; }
   .el-tree__drop-indicator {
     position: absolute;
     left: 0;
     right: 0;
     height: 1px;
-    background-color: #63A4FF; }
+    background-color: #58A8FF; }
 
 .el-tree-node {
   white-space: nowrap;
@@ -261,7 +261,7 @@
     .el-tree-node:focus > .el-tree-node__content {
       background-color: #f5f7fa; }
   .el-tree-node.is-drop-inner > .el-tree-node__content .el-tree-node__label {
-    background-color: #63A4FF;
+    background-color: #58A8FF;
     color: #fff; }
   .el-tree-node__content {
     display: -webkit-box;
@@ -313,4 +313,4 @@
     display: block; }
 
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-  background-color: #f3f8ff; }
+  background-color: #f2f8ff; }
