@@ -142,13 +142,13 @@ export default {
     height: 50px;
   }
   .datalist .top{
-    background: #d5d5d5;
+    background: @bg;
     height: 40px;
     line-height: 40px;
-    border:1px solid #EFEFEF;
+    border:1px solid #ededed;
     font-family: MicrosoftYaHei;
     font-size: 12px;
-    color: #333333;
+    color: @b2;
     text-align: center;
   }
   .datalist>div div{
