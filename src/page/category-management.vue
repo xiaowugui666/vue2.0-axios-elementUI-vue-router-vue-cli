@@ -304,8 +304,6 @@ export default {
     getImageToken () {
       getQnToken('image').then(res => {
         this.upToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
       })
     },
     // 关闭一级类目选择框之前的动作
@@ -355,7 +353,6 @@ export default {
     },
     // 删除选中的规则值
     alignmentHandleClose (tag, index) {
-      console.log(tag)
       let values = this.categoryList[index].children
       // 删除选择的二级分类
       deleteGoodsCategory(tag.id, this.categoryList[index].id).then(res => {
@@ -432,7 +429,6 @@ export default {
         'name': children.name,
         'parent_id': parent.id
       }, children.id).then(resp => {
-        // console.log('修改二级商品分类图片成功')
         children.icon_url = res.key
       })
     }

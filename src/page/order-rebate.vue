@@ -93,7 +93,6 @@ export default {
   mounted () {
     this.setMenuLeft('/orderAfterSale')
     refundDetail(this.$route.query.id).then(res => {
-      console.log(res)
       this.rebateDetail = res.data
       this.tradeType = res.data.status - 1
     })
