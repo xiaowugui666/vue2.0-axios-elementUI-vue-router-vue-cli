@@ -213,11 +213,11 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.specs" v-if="sku.specs.length>0" :key="index2">{{item.property}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" @change="specPriceMin()" type="text" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
                       <td>
-                        <input type="text" v-model.trim="sku.stock_count" v-validate="'required|numeric|max_value:1000000'" data-vv-as="库存" :name="`stock-${index}`" class="stock-quantity" maxlength="12"/>
+                        <input type="text" v-model.trim="sku.stock_count" v-validate="'required|numeric|max_value:1000000'" data-vv-as="库存" :name="`stock-${index}`" @change="calculateStockCount()" class="stock-quantity" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`stock-${index}`) }}</div>
                       </td>
                       <td><input type="text" v-model.trim="sku.sku_no" class="sku-code" maxlength="20"/></td>
@@ -561,12 +561,12 @@ export default {
         }
         this.skus = sku
       } else {
-        this.goodsPrice = (price / 100).toFixed(2)
         if (displayPrice) {
           this.goodsLinePrice = (displayPrice / 100).toFixed(2)
         }
-        this.goodStock = stockCount
       }
+      this.goodsPrice = (price / 100).toFixed(2)
+      this.goodStock = stockCount
     },
     // 渲染是否包邮，不包邮的话邮费是多少
     renderingExpress (free, expressPrice) {
@@ -612,6 +612,26 @@ export default {
           this.goodsImageShowList.push({id: v.id, url: this.yiqixuanDomainUrl + v.icon_url, key: v.icon_url})
         }
       }
+    },
+    // 若有规格，计算规格价格最小值
+    specPriceMin () {
+      let arr = []
+      for (let v of this.skus) {
+        if (v.price && !isNaN(v.price)) {
+          arr.push(v.price)
+        }
+      }
+      this.goodsPrice = Math.min.apply(null, arr).toFixed(2)
+    },
+    // 计算库存总量
+    calculateStockCount () {
+      let n = 0
+      for (let v of this.skus) {
+        if (v.stock_count && !isNaN(v.stock_count)) {
+          n += parseInt(v.stock_count, 10)
+        }
+      }
+      this.goodStock = n
     },
     // 获取图片上传七牛的token
     getImageToken () {
