@@ -55,7 +55,7 @@
       </div>
       <div class="QR-code">
         <el-popover
-          placement="left"
+          placement="left-start"
           width="200"
           trigger="hover">
           <div class="code">
@@ -98,7 +98,7 @@ export default {
     })
     // 获取体验二维码
     getQRCode().then(res => {
-      console.log(res)
+      // console.log(res)
       this.QRcode = res.data.code_url
     })
   },
@@ -129,7 +129,7 @@ export default {
     height: 60px;
     line-height: 60px;
     font-size: 0;
-    color: #333;
+    color: @b2;
     margin-bottom: 20px;
   }
   .shop-info span {
@@ -149,9 +149,8 @@ export default {
     .li {
       border-right: 1px solid #F5F5F5;
       &:hover {
-        background: #F6F6F6;
         a {
-          color: #333;
+          color: @mainC;
         }
       }
       &:first-child {
@@ -190,13 +189,13 @@ export default {
       border-right: 2px solid #eee;
       .up {
         font-size: 22px;
-        color: #333;
+        color: @b2;
         margin-top: -10px;
       }
       .down {
         padding-top: 10px;
         font-size: 12px;
-        color: #999;
+        color: @b8;
         i {
           font-size: 16px;
           padding-right: 8px;
@@ -210,22 +209,24 @@ export default {
     li:first-child {
       width: 20%;
       .up {
-        color: rgba(255, 117, 129, 0.84);
+        color: #FF8C96;
+        font-weight: 600;
       }
       .down {
         i::before {
-          color: rgba(255, 117, 129, 0.84);
+          color: #FF8C96;
         }
       }
     }
     li:nth-child(2) {
       width: 20%;
       .up {
-        color: rgba(255, 173, 113, 0.93);
+        color: #FEB670;
+        font-weight: 600;
       }
       .down {
         i::before {
-          color: rgba(255, 173, 113, 0.93);
+          color: #FEB670;
         }
       }
     }
@@ -245,12 +246,12 @@ export default {
       padding: 22px 13px;
       border: none;
       margin-left: -10px;
-      color: #333;
+      color: @b2;
       font-size: 12px;
       line-height: 1.4;
       &:hover {
         background: #fff;
-        color: #333;
+        color: @b2;
       }
     }
   }
@@ -266,25 +267,25 @@ export default {
       padding: 22px 13px;
       border: none;
       margin-left: -10px;
-      color: #333;
+      color: @b2;
       font-size: 12px;
       line-height: 1.4;
       &:hover {
         background: #fff;
-        color: #333;
+        color: @b2;
       }
     }
   }
   .detailed-consultation {
     font-size: 12px;
-    color: #999999;
+    color: @b8;
     span {
-      color: #63A4FF;
+      color: @blue;
     }
   }
   .code {
     font-size: 12px;
-    color: #999999;
+    color: @b8;
     height: 202px;
     width: 198px;
     display: flex;
@@ -297,7 +298,7 @@ export default {
     span:first-child {
       font-size: 14px;
       font-weight: 600;
-      color: #333333;
+      color: @b2;
     }
   }
 </style>

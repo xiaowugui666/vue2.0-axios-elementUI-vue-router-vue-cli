@@ -42,8 +42,6 @@ export default {
     getInitialSetData () {
       initialSetData('get').then(res => {
         this.judgmentInfoJump(res.data)
-      }).catch(err => {
-        console.log(err)
       })
     },
     // 根据返回的信息选择调转页面

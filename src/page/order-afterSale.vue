@@ -222,12 +222,14 @@ export default {
         params.order_no = this.keyValue
         params.no = this.keyName
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
         params.status = 0
         afterSaleGoods(params).then(res => {
-          console.log(res)
+          // console.log(res)
           this.totalPagina = parseInt(res.headers.page_count)
           this.refunds = res.data
           this.page = 1
@@ -242,8 +244,10 @@ export default {
         params.order_no = this.keyValue
         params.no = this.keyName
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
       this.page = val
@@ -295,13 +299,15 @@ export default {
         params.order_no = this.keyValue
         params.no = this.keyName
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
       params.status = tab.index
       afterSaleGoods(params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.totalPagina = parseInt(res.headers.page_count)
         this.refunds = res.data
         if (res.data.length == 0) {
@@ -327,7 +333,7 @@ export default {
   },
   mounted () {
     afterSaleGoods().then(res => {
-      console.log(res)
+      // console.log(res)
       this.totalPagina = parseInt(res.headers.page_count)
       this.refunds = res.data
     })

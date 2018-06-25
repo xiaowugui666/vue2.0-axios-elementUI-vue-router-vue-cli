@@ -13,7 +13,7 @@
               </el-option>
             </el-select>
             <el-input
-              placeholder="订单号/退款单号/支付流水号"
+              placeholder="订单号"
               v-model="keyValue"
               maxlength="50"
               v-validate="'decimal'"
@@ -75,7 +75,7 @@
                         </div>
                         <div class="proNum">数量 x {{i.count}}</div>
                         <div class="price">
-                          <label>￥{{item.amount | money}}</label>
+                          <label>￥{{item.items[0].price | money}}</label>
                         </div>
                       </div>
                   </div>
@@ -166,7 +166,6 @@ export default {
     changeType () {
     },
     changeTime (res) {
-      console.log(111)
     },
     // 订单状态
     orderMessage (status) {
@@ -214,13 +213,15 @@ export default {
           params.name = this.keyName
         }
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
         params.page = 0
         params.per_page = 15
         order(params).then(res => {
-          console.log(res)
+          // console.log(res)
           this.totalPagina = res.headers.page_count
           this.ordersDetail = res.data
           if (!res.data) {
@@ -253,7 +254,7 @@ export default {
     },
     // 订单分类状态点击
     handleClick (tab) {
-      console.log(tab.index)
+      // console.log(tab.index)
       this.currentPage = 1
       let params = {}
       if (this.flag) {
@@ -270,8 +271,10 @@ export default {
           params.name = this.keyName
         }
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
       if (tab.index == 1) {
@@ -289,7 +292,7 @@ export default {
       }
       params.status = this.statu
       order(params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
         if (res.data == '') {
@@ -314,8 +317,10 @@ export default {
           params.name = this.keyName
         }
         if (this.keyTime.length) {
-          params.begin_at = new Date(new Date(this.keyTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.keyTime[1]).getTime() + 8 * 3600 * 1000)
+          let dateBegin = new Date(this.keyTime[0])
+          let dateEnd = new Date(this.keyTime[1])
+          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
       params.page = val - 1
@@ -324,7 +329,6 @@ export default {
       order(params).then(res => {
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
-        console.log(res)
       })
     }
   },
@@ -332,10 +336,8 @@ export default {
     order({
       page: 0
     }).then(res => {
-      console.log(res)
       this.totalPagina = res.headers.page_count
       this.ordersDetail = res.data
-      // console.log(this.ordersDetail)
     })
   },
   components: {

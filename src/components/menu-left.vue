@@ -1,5 +1,5 @@
 <template>
-  <div class="menu-left" :style="{height: clientHeight}">
+  <div class="menu-left">
     <div class="mall-logo">
       <img src="../assets/logo.png" alt="">
       <span>一起选·商城</span>
@@ -8,8 +8,6 @@
       :default-active="routeIndex"
       @open="handleOpen"
       @close="handleClose"
-      text-color="#666"
-      active-text-color="#333"
       router
       >
       <el-menu-item index="1" route="/">
@@ -115,12 +113,8 @@ export default {
   left: 0;
   z-index: 99;
   width: 180px;
-  min-height: 600px;
-  overflow-y: auto;
-  background: #fff;
+  height: 100%;
   position: fixed;
-  box-shadow: 3px 0 2px #eee;
-}
 .el-submenu .el-menu-item {
   min-width: auto;
   padding-left: 60px;
@@ -129,43 +123,39 @@ export default {
   height: 76px;
   line-height: 76px;
   text-align: center;
-  border-bottom: 2px solid #f5f5f5;
-
   img {
     vertical-align: middle;
     margin-left: -10px;
     margin-right: 10px;
-    width: 34px;
+    width: 41px;
   }
   span {
     vertical-align: middle;
-    color: #666;
+    color: @b2;
     }
 }
 .el-menu {
   border-right: none;
-
+  overflow-y: auto;
+  height: calc(100% - 133px);
   i {
-    font-size: 18px;
+    font-size: 20px;
     padding-right: 5px;
+  }
+  .el-menu--inline {
+    li {
+      margin-left: 10px;
+    }
   }
 }
 .el-menu-item {
   height: 40px;
   line-height: 40px;
+  color: @b8;
 
   &.is-active {
-    background: #EFEFEF;
-  }
-  &.is-active::before {
-    content: '';
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 4px;
-    background: #DA3A48;
+    background: #fff;
+    color: @mainC;
   }
 }
 .menu-left-bottom-logo {
@@ -174,18 +164,34 @@ export default {
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: #888;
+  color: @b6;
   z-index: -1;
 }
-</style>
-<style>
-.el-submenu__title {
-  height: 40px;
-  line-height: 40px;
 }
-.el-menu-item-group__title {
-  height: 0;
-  padding: 0;
-  display: none;
+</style>
+<style lang="less">
+.menu-left {
+  .el-menu {
+    background: transparent;
+  }
+  .el-submenu__title {
+    height: 40px;
+    line-height: 40px;
+    color: @b8;
+  }
+  .el-menu-item-group__title {
+    height: 0;
+    padding: 0;
+    display: none;
+  }
+  .el-submenu__title:hover, .el-menu-item:hover {
+    background: transparent;
+  }
+  .el-submenu.is-active .el-submenu__title{
+    color: @b2 !important;
+    i {
+      color: @b2 !important;
+    }
+  }
 }
 </style>

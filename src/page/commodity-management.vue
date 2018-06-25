@@ -41,7 +41,6 @@
             ref="multipleTable"
             :data="tableData"
             tooltip-effect="dark"
-            style="width: 100%"
             border
             @selection-change="handleSelectionChange">
             <el-table-column
@@ -69,11 +68,10 @@
               </template>
             </el-table-column>
             <el-table-column
-              label="访问量"
+              label="浏览量"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div>访问量：{{scope.row.amountAccess}}</div>
-                <div>浏览量：{{scope.row.browsingVolume}}</div>
+                <div class="browsing-volume">浏览量：{{scope.row.view_count?scope.row.view_count:0}}</div>
               </template>
             </el-table-column>
             <el-table-column
@@ -88,7 +86,7 @@
             <el-table-column
               prop="sales_count"
               label="总销量"
-              width="80"
+              min-width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <div :class="{'waring':scope.row.sales_count==0}">{{scope.row.sales_count}}</div>
@@ -111,7 +109,7 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              width="140">
+              min-width="140">
               <template slot-scope="scope">
                 <el-button @click="setRouter('/add-edit-goods?gid='+scope.row.id)" :disabled="scope.row.status==1" type="text" size="small">编辑</el-button>
                 <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
@@ -541,6 +539,11 @@ export default {
               }
             }
           }
+        }
+        .browsing-volume {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .operation-paging {
           text-align: left;

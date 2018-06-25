@@ -33,12 +33,11 @@
             <el-table-column
               prop="name"
               label="姓名"
-              width="180">
+              width="200">
             </el-table-column>
             <el-table-column
               prop="mobile"
-              label="手机号码"
-              width="180">
+              label="手机号码">
             </el-table-column>
             <el-table-column
               prop="nick_name"
@@ -46,14 +45,14 @@
             </el-table-column>
             <el-table-column
               prop="order_count"
-              label="拥有订单数">
+              label="拥有订单数"
+              width="120">
               <template slot-scope="scope">
                 <div class="11111">{{scope.row.order_count ? scope.row.order_count : 0}}</div>
               </template>
             </el-table-column>
             <el-table-column
               prop="address"
-              width="168"
               label="操作">
               <template slot-scope="scope">
                 <el-button type="text" @click="editDetails(scope.$index)">编辑</el-button>
@@ -69,6 +68,7 @@
             prev-text="<上一页"
             next-text="下一页>"
             :page-size="15"
+            :current-page="pages"
             @current-change="changePage"
             layout="prev, pager, next"
             :total="totalPage * 15">
@@ -105,7 +105,7 @@ export default {
       phoneNum: '',
       wechatNum: '',
       value: '',
-      pages: 0,
+      pages: 1,
       options: [
         {
           value: '',
@@ -137,11 +137,7 @@ export default {
     }
   },
   mounted () {
-    user({
-      mobile: this.phoneNum,
-      order_count: this.value,
-      page: this.pages
-    }).then(
+    user().then(
       res => {
         this.tableData = res.data
         this.totalPage = parseInt(res.headers.page_count)
@@ -168,6 +164,7 @@ export default {
         res => {
           this.tableData = res.data
           this.totalPage = parseInt(res.headers.page_count)
+          this.pages = 1
         }
       )
     },
@@ -184,7 +181,7 @@ export default {
         name: this.name
       }, this.tableData[this.detail].id).then(
         res => {
-          console.log(res)
+          // console.log(res)
           if (res.status === 200) {
             that.tableData[that.detail].name = that.name
             that.dialogVisible = false
@@ -208,6 +205,7 @@ export default {
       this.$router.push({name: 'customerOrder', params: {id: this.tableData[link].id}})
       // this.$router.push({name: 'customerOrder', params: {id: 1}})
     },
+    // 点击分页
     changePage (val) {
       let params = {}
       if (this.flag) {

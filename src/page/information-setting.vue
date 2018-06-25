@@ -184,14 +184,12 @@ export default {
     getImageToken () {
       getQnToken('image').then(res => {
         this.upToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
       })
     },
     // 进入页面获取店铺信息
     getInitialSetData () {
       initialSetData('get').then(res => {
-        console.log(res.data)
+        // console.log(res.data)
         let data = res.data
 
         this.shopName = data.name
