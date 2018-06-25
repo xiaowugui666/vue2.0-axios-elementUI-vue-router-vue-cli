@@ -23,7 +23,7 @@
         </el-menu-item>
         <el-submenu index="9">
           <template slot="title">
-            <i class="icon-商品"></i>
+            <i class="icon-动态-6"></i>
             <span>动态</span>
           </template>
           <el-menu-item index="9-1" route="/trends-management">动态管理</el-menu-item>

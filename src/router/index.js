@@ -24,6 +24,7 @@ const login = r => require.ensure([], () => r(require('@/page/login')))
 const err404 = r => require.ensure([], () => r(require('@/page/404')))
 const bindingMp = r => require.ensure([], () => r(require('@/page/binding-mp')))
 const trendsManagement = r => require.ensure([], () => r(require('@/page/trends-management')))
+const addTrends = r => require.ensure([], () => r(require('@/page/add-trends')))
 const reviewApproval = r => require.ensure([], () => r(require('@/page/review-approval')))
 
 // import home from '@/page/home'
@@ -84,6 +85,11 @@ export default new Router({
       path: '/trends-management',
       name: 'trendsManagement',
       component: trendsManagement
+    },
+    {
+      path: '/add-trends',
+      name: 'addTrends',
+      component: addTrends
     },
     {
       path: '/review-approval',

@@ -30,6 +30,7 @@
           <el-button
             class="medium-button"
             size="small"
+            @click="dialogVisible = true"
             type="success">发布新动态</el-button>
         </div>
         <div class="trends" v-for="(item,index) in data" :key="index">
@@ -38,8 +39,8 @@
             <span :class="{'long-trend': (item.type == 1 ? true : false), 'short-trend': (item.type == 2 ? true : false)}">{{item.type == 1 ? '长动态' : '短动态'}}</span>
           </div>
           <div class="message">{{item.body}}</div>
-          <div class="imgs">
-            <div class="img-item" v-if="item.imgs" v-for="(ite,ind) in item.imgs" :key="ind">
+          <div class="imgs" v-if="item.imgs">
+            <div class="img-item" v-for="(ite,ind) in item.imgs" :key="ind">
               <img :src="ite.url">
             </div>
           </div>
@@ -52,6 +53,24 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="dialog" v-if="dialogVisible">
+        <el-dialog
+          title="发布新动态"
+          :visible.sync="dialogVisible"
+          width="600">
+          <hr style="color: #EFEFEF;border: 1px solid #EFEFEF;border-bottom: 0;"/>
+          <div class="dia-trends">
+            <div :class="{'dia-short': true,'active': shortSele}" @click="shortSele = true">短动态</div>
+            <div :class="{'dia-long': true,'active': !shortSele}" @click="shortSele = false">长动态</div>
+          </div>
+          <p class="explain-title">什么是短动态？长动态？</p>
+          <p class="explain-messa">短动态：类似于微博+朋友圈的结合，最大支持140个字的文字编辑+最多9张配图的动态展示；<br>长动态：更适合发布详细的商品资讯，图文搭配没有最大上限，也可添加微信支持的外部URL链接。</p>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false" size="small" type="success">确定</el-button>
+            <el-button class="return-button" @click="dialogVisible = false" size="small">返回</el-button>
+          </span>
+        </el-dialog>
       </div>
     </div>
   </div>
@@ -103,7 +122,9 @@ export default {
         comment: 1233,
         zhuanfa: 1231,
         dianzan: 12312
-      }]
+      }],
+      dialogVisible: false,
+      shortSele: true
     }
   },
   methods: {
@@ -146,9 +167,13 @@ export default {
   .el-date-editor .el-range-separator {
     line-height: 23px;
   }
+  .el-dialog {
+    width: 600px;
+  }
 }
 </style>
 <style scoped lang="less">
+@import '../fonts/icomoon.css';
 .trends-content {
   min-width: 1000px;
   margin: 0 20px 0 200px;
@@ -198,6 +223,7 @@ export default {
         span {
           display: inline-block;
           line-height: 22px;
+          user-select: none;
           &:last-child {
             text-align: center;
             width: 58px;
@@ -256,6 +282,8 @@ export default {
             color: #222222;
             text-align: center;
             margin-left: 10px;
+            user-select: none;
+            cursor: pointer;
             &:first-child {
               margin-left: 0;
               color: #58A8FF;
@@ -265,8 +293,63 @@ export default {
         .infor {
           float: left;
           margin-left: 30px;
+          display: flex;
+          align-items: center;
+          color: #888888;
+          user-select: none;
+          i {
+            font-size: 14px;
+            margin-right: 2px;
+          }
+          span {
+            margin-right: 12px;
+          }
         }
       }
+    }
+  }
+  .dialog {
+    .dia-trends {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      user-select: none;
+      >div {
+        height: 50px;
+        width: 150px;
+        line-height: 50px;
+        text-align: center;
+        border: 1px solid #D5D5D5;
+        font-size: 14px;
+        color: #888888;
+        border-radius: 4px;
+        cursor: pointer;
+        &:last-child {
+          margin-left: 50px;
+        }
+      }
+      div.active {
+        color: #FA505D;
+        border: 1px solid #FA505D;
+      }
+    }
+    .explain-title {
+      margin-top: 40px;
+      font-size: 12px;
+      color: #222222;
+      line-height: 16px;
+    }
+    .explain-messa {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #888888;
+      line-height: 22px;
+    }
+    .return-button {
+      background: white;
+      border: 1px solid #333333;
+      border-radius: 2px;
+      color: #333333;
     }
   }
   .el-button--small {
