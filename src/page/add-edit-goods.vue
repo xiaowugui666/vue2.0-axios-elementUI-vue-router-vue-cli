@@ -113,14 +113,15 @@
               <li>
                 <span class="name">商品量词：</span>
                 <div>
-                  <el-select v-model.trim="quantifier" clearable size="small" class="select-state">
+                  <!--<el-select v-model.trim="quantifier" clearable size="small" class="select-state">
                     <el-option
                       v-for="item in goodsQuantifier"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value">
                     </el-option>
-                  </el-select>
+                  </el-select>-->
+                  <input type="text" placeholder="请输入商品量词" v-model.trim="quantifier" maxlength="4">
                 </div>
               </li>
               <li class="keyword-box">
@@ -492,7 +493,7 @@ export default {
             this.quillContent = data.content
             this.weightNum = data.weight
             this.uniqueCoding = data.no
-            this.quantifier = data.unit
+            this.quantifier = data.unit ? data.unit : ''
             this.image_ids = data.image_ids
             this.sku_ids = data.sku_ids
             this.goods_detail_id = data.goods_detail_id
@@ -1000,7 +1001,7 @@ export default {
             content: this.quillContent ? this.quillContent : '',
             weight: this.getWeightGram(),
             no: this.uniqueCoding,
-            unit: this.getGoodsQuantifier(),
+            unit: this.quantifier,
             keywords: this.dynamicTags,
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
