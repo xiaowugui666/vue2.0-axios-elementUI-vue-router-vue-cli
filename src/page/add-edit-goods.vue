@@ -475,7 +475,6 @@ export default {
   },
   mounted () {
     this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
-    // console.log(this.hash)
   },
   methods: {
     // 若存在商品id，获取商品信息
@@ -537,7 +536,6 @@ export default {
         })
         .catch(() => {
           this.getGoods(this.hash)
-          // console.log(err)
         })
     },
     // 如果有规格，渲染skus和规格部分，如果没有则渲染下面的总体价格等
@@ -633,9 +631,7 @@ export default {
       getQnToken('image').then(res => {
         // console.log(res)
         this.upToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch()
     },
     // 商品图片验证是否重复
     goodsImageBeforeUpload (file) {
@@ -1045,13 +1041,9 @@ export default {
             data.goods_detail_id = this.goods_detail_id
           }
 
-          console.log(data)
           addEditGoods(id, data).then(res => {
-            // console.log(res)
             this.setRouter('/commodity-management')
-          }).catch(err => {
-            console.log(err)
-          })
+          }).catch()
         } else {
           if (this.goodsImages.length <= 0) {
             this.goodsImageValidate = true
