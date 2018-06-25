@@ -1,0 +1,131 @@
+body, div, span, header, footer, nav, section, aside, article, ul, dl, dt, dd, li, a, p, h1, h2, h3, h4,h5, h6, i, b, textarea, button, input, select, figure, figcaption {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-style: normal;
+    text-decoration: none;
+    border: none;
+    font-family: "Microsoft Yahei",sans-serif;
+    -webkit-tap-highlight-color:transparent;
+    -webkit-font-smoothing: antialiased;
+    &:focus {
+        outline: none;
+    }
+}
+
+input[type="button"], input[type="submit"], input[type="search"], input[type="reset"] {
+    -webkit-appearance: none;
+}
+
+textarea { -webkit-appearance: none;}
+
+html,body{
+    height: 100%;
+    width: 100%;
+    background: @bg;
+}
+
+.fillcontain{
+    height: 100%;
+    width: 100%;
+}
+.clear:after{
+    content: '';
+    display: block;
+    clear: both;
+}
+
+.clear{
+    zoom:1;
+}
+
+.back_img{
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
+
+.left{
+    float: left;
+}
+
+.right{
+    float: right;
+}
+
+.padding-top-20 {
+  padding-top: 20px;
+}
+
+.ellipsis{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+// 每个页面的主题内容box的样式
+.content-box {
+  margin-left: 200px;
+  margin-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  min-width: 1100px;
+}
+
+::-webkit-scrollbar-track-piece { //滚动条凹槽的颜色，还可以设置边框属性
+  background-color:#f8f8f8;
+}
+::-webkit-scrollbar {//滚动条的宽度
+  width:9px;
+  height:9px;
+}
+::-webkit-scrollbar-thumb {//滚动条的设置
+  background-color:#dddddd;
+  background-clip:padding-box;
+  min-height:28px;
+  border-radius: 10px 0 0 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color:#bbb;
+}
+// 设置分页栏样式
+.el-pagination.is-background .el-pager li:hover {
+  color: @mainC;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background: @mainC;
+  border-color: @mainC;
+}
+.reset() {
+  font-weight: normal;
+  color: @b3;
+  background: #fff;
+  border: 1px solid @bc;
+}
+.el-pagination.is-background {
+  padding: 0;
+  text-align: center;
+  .btn-prev {
+    .reset();
+    padding: 0 10px;
+    margin: 0 5px 0 0;
+    &:disabled {
+      color: @bc;
+      border-color: @bc;
+    }
+  }
+  .btn-next {
+    .reset();
+    padding: 0 10px;
+    margin: 0 0 0 5px;
+    &:disabled {
+      color: @bc;
+      border-color: @bc;
+    }
+  }
+  .el-pager li {
+    .reset();
+  }
+}
+.el-pagination.is-background .el-pager li:not(.active):hover {
+  color: @mainC;
+}
+
