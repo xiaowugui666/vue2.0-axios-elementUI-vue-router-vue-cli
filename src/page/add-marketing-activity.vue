@@ -143,8 +143,6 @@ export default {
       if (this.$route.query.id) {
         // 请求编辑推荐商品详情
         singleRecommendGood(this.$route.query.id).then(res => {
-          console.log(res)
-          console.log(this.recommendGoods)
           this.good = res.data
           this.activityTime = [res.data.begin_at, res.data.end_at]
         })
@@ -154,9 +152,7 @@ export default {
   methods: {
     // 删除当前选择商品
     deleteRecommend (index) {
-      console.log(index)
       this.recommendGoods.splice(index, 1)
-      console.log(this.recommendGoods)
     },
     getHandleClose (msg) {
       this.goodsDialogVisible = msg
@@ -174,9 +170,7 @@ export default {
       // 特价
       if (this.$route.params.class == 'special-offer') {
         this.good = value
-        console.log(value.price / 100)
         this.originalPrice = (value.price / 100).toFixed(2)
-        console.log(this.originalPrice)
       } else if (this.$route.params.class == 'recommend') {
         // 推荐
         if (this.recommendGoods.length == 0) {
@@ -221,8 +215,6 @@ export default {
               })
             }
           }).catch(res => {
-            console.log(res)
-            console.log(111111)
             this.$message({
               message: '数据请求错误，请稍后重试',
               type: 'error'
@@ -292,7 +284,6 @@ export default {
           if (JSON.stringify(this.$route.query) == '{}') { // 新建
             // 如果路由为special
             if (this.$route.params.class == 'special-offer' && this.stock.length) {
-              console.log(this.originalPrice)
               if (parseFloat(this.specialOffer) < this.originalPrice) {
                 addSpecialGood(params).then(res => {
                   if (res.data.success) {
@@ -301,7 +292,6 @@ export default {
                     this.$message('新增商品失败，请勿重复添加或确认时间段')
                   }
                 }).catch(err => {
-                  console.log(err.response.data)
                   this.$message(err.response.data.message)
                 })
               } else {
@@ -321,7 +311,6 @@ export default {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
                 }
               }).catch(err => {
-                console.log(1111)
                 if (err.status == 403) {
                   _this.$message(err.response.data.message)
                 } else {
@@ -344,14 +333,12 @@ export default {
                 if (res.status == 200) {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
                 } else {
-                  console.log(res)
                   _this.$message(res.data.message)
                 }
               })
             } else if (this.$route.params.class == 'recommend') {
               // 推荐
               closeRecommendGood(params).then(res => {
-                console.log('更新推荐商品成功')
                 _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
               })
             }

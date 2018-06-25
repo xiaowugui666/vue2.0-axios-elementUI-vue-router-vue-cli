@@ -488,8 +488,6 @@ export default {
             this.goodsType = data.type
             this.goodsName = data.name
             this.sharingDescription = data.description
-            this.renderingGoodsImageList(data.goods_images)
-            this.renderingSelectedOptions(data.category_id)
             this.quillContent = data.content
             this.weightNum = data.weight
             this.uniqueCoding = data.no
@@ -505,9 +503,9 @@ export default {
             this.free_return = data.free_return
             this.genuine_article = data.genuine_article
             this.quick_delivery = data.quick_delivery
+            this.renderingGoodsImageList(data.goods_images)
+            this.renderingSelectedOptions(data.category_id)
           }
-        }).catch(err => {
-          console.log(err)
         })
       }
     },
@@ -521,7 +519,7 @@ export default {
               label: v.name,
               value: v.id
             }
-            if (v.children.length > 0) {
+            if (v.children && v.children.length > 0) {
               option.children = []
               for (let w of v.children) {
                 option.children.push({
@@ -532,17 +530,14 @@ export default {
             }
             this.selectStateOptions.push(option)
           }
-        } else {
-          // this.setRouter('/category-management')
         }
-        // console.log(this.selectStateOptions)
       })
         .then(() => {
           this.getGoods(this.hash)
         })
-        .catch(err => {
+        .catch(() => {
           this.getGoods(this.hash)
-          console.log(err)
+          // console.log(err)
         })
     },
     // 如果有规格，渲染skus和规格部分，如果没有则渲染下面的总体价格等
@@ -593,7 +588,7 @@ export default {
             this.selectedOptions = [id]
             return false
           } else {
-            if (v.children.length > 0) {
+            if (v.children && v.children.length > 0) {
               for (let w of v.children) {
                 if (w.value === id) {
                   this.selectedOptions = [v.value, id]

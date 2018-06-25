@@ -32,9 +32,7 @@ export default {
         if (res.data.auth_url) {
           location.href = res.data.auth_url
         }
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch()
     }
   }
 }

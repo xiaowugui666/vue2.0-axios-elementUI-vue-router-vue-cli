@@ -159,7 +159,6 @@ export default {
   },
   mounted () {
     this.setMenuLeft('/customer-management')
-    console.log(this.$route.params.id)
     this.getData()
   },
   computed: {
