@@ -151,7 +151,6 @@ export default {
       }).then(({ value }) => {
         // 添加小程序体验者
         mpaExperience('post', {wechat_id: value}).then(res => {
-          console.log(res.data)
           // this.experienceUsersList.unshift(obj)
           this.page = 0
           this.getMpaExperience()
@@ -168,7 +167,6 @@ export default {
         type: 'warning'
       }).then(() => {
         mpaExperience('delete', {id: id, wechat_id: wid}).then(res => {
-          console.log(res.data)
           this.page = 0
           this.getMpaExperience()
         })

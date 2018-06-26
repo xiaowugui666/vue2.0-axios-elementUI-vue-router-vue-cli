@@ -186,8 +186,6 @@ export default {
           this.tableData = res.data
           this.page_count = res.headers.page_count
         }
-      }).catch(err => {
-        console.log(err)
       })
     },
     // 渲染商品价格
@@ -287,7 +285,6 @@ export default {
               message: `批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
             })
           }).catch(err => {
-            console.log(err)
             if (err.response.status === 404) {
               this.$message({
                 showClose: true,
@@ -301,7 +298,6 @@ export default {
             statusArr.push(v.id)
           }
           goodsDelete({'ids': statusArr}).then(res => {
-            console.log(res)
             this.getGoodsList()
             this.$message({
               showClose: true,
@@ -309,7 +305,6 @@ export default {
               message: `批量${status === 1 ? '上架' : (status === 2 ? '下架' : '删除')}成功`
             })
           }).catch(err => {
-            console.log(err)
             if (err.response.status === 404) {
               this.$message({
                 showClose: true,
@@ -350,7 +345,6 @@ export default {
         let s = data.status === 1 ? 2 : 1
         goodsStatus({'ids': [data.id],
           'status': s}).then(res => {
-          console.log(res)
           for (let k of _this.tableData) {
             // console.log(k['id'])
             if (k['id'] === data['id']) {
@@ -401,12 +395,11 @@ export default {
     },
     // 点击分页数
     currentChange (page) {
-      console.log(page)
       this.page = page - 1
       this.getGoodsList()
     },
     categoryChange (val) {
-      console.log(val)
+      // console.log(val)
     },
     setRouter (link) {
       this.$router.push({
