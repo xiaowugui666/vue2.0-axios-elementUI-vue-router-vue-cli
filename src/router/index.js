@@ -26,6 +26,7 @@ const bindingMp = r => require.ensure([], () => r(require('@/page/binding-mp')))
 const trendsManagement = r => require.ensure([], () => r(require('@/page/trends-management')))
 const addTrends = r => require.ensure([], () => r(require('@/page/add-trends')))
 const reviewApproval = r => require.ensure([], () => r(require('@/page/review-approval')))
+const viewTrends = r => require.ensure([], () => r(require('@/page/view-trends')))
 
 // import home from '@/page/home'
 // import initialSetting from '@/page/initial-setting'
@@ -90,6 +91,11 @@ export default new Router({
       path: '/add-trends',
       name: 'addTrends',
       component: addTrends
+    },
+    {
+      path: '/view-trends',
+      name: 'viewTrends',
+      component: viewTrends
     },
     {
       path: '/review-approval',

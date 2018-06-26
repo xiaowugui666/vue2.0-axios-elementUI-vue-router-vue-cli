@@ -16,9 +16,31 @@
             <span class="pre-text">简      述 ：</span>
             <textarea type="textarea" class="add-textarea" v-model="textContent"></textarea>
           </div>
+          <div class="add-thumbnail left-padding">
+            <span class="pre-text">缩 略 图 ： </span>
+            <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1180847171,539574302&fm=27&gp=0.jpg">
+          </div>
           <div class="add-message left-padding">
             <span class="pre-text required">内      容 ：</span>
-            <textarea type="textarea" class="add-textarea" v-model="textContent"></textarea>
+            <div class="rich-text-editor clear">
+              <!--商品图文详情编辑框-->
+              <quill-editor v-model.trim="quillContent"
+                            ref="myQuillEditor"
+                            :options="editorOption"
+                            @blur="onEditorBlur($event)"
+                            @focus="onEditorFocus($event)"
+                            @ready="onEditorReady($event)">
+              </quill-editor>
+              <!-- 文件上传input 将它隐藏-->
+              <el-upload :action="qiniuUploadUrl"
+                         :before-upload='beforeUpload'
+                         :data="upToken"
+                         accept=".jpg,.png"
+                         :on-success='quillUpScuccess'
+                         ref="quillUpload" style="display:none">
+                <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
+              </el-upload>
+            </div>
           </div>
           <div class="add-imgs left-padding">
             <span class="pre-text required">配      图 ：</span>
@@ -38,6 +60,12 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
+import { quillEditor } from 'vue-quill-editor' // 调用编辑器
+// import Quill from 'quill'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 export default {
   data () {
     return {
@@ -48,7 +76,11 @@ export default {
       // 文章内容
       textContent: '',
       // 图片上传列表
-      fileList: []
+      fileList: [],
+      // 七牛token
+      upToken: {},
+      editorOption: {},
+      quillContent: ''
     }
   },
   methods: {
@@ -59,10 +91,26 @@ export default {
     handleRemove (file) {
       console.log(2222)
       console.log(file)
+    },
+    // 富文本框操作
+    onEditorBlur (val) {
+      console.log(val)
+    },
+    onEditorFocus (val) {
+    },
+    onEditorReady (val) {
+    },
+    beforeUpload () {
+    },
+    quillUpScuccess () {
     }
   },
+  computed: {
+    ...mapState(['qiniuUploadUrl'])
+  },
   components: {
-    menuLeft
+    menuLeft,
+    quillEditor
   }
 }
 </script>
@@ -104,6 +152,7 @@ export default {
     .el-input__inner{
       height: 30px;
       line-height: 30px;
+      padding-left: 10px;
       border: 1px solid #D5D5D5;
       border-radius: 2px;
     }
@@ -112,6 +161,9 @@ export default {
       font-size: 12px;
       color: @b3;
       line-height: 15px;
+    }
+    .ql-editor {
+      min-height: 200px;
     }
   }
 </style>
@@ -159,9 +211,20 @@ export default {
     }
     .add-message {
       margin-top: 20px;
+      .rich-text-editor {
+        display: inline-block;
+        width: 90%;
+        min-height: 250px;
+      }
     }
     .add-description {
       margin-top: 20px;
+    }
+    .add-thumbnail {
+      margin-top: 20px;
+      img {
+        vertical-align: bottom;
+      }
     }
     .add-imgs {
       margin-top: 20px;
