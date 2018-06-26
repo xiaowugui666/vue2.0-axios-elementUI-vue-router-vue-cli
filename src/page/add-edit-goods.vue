@@ -1114,7 +1114,7 @@ export default {
       }
       .required::before {
         content: '*';
-        color: #DE5B67;
+        color: @mainC;
         margin-left: -10px;
         padding-right: 5px;
       }

@@ -24,7 +24,7 @@
                       <label><i>收货人名：</i>{{tradeList.consignee}}</label>
                       <label><i>收货人手机号：</i>{{tradeList.mobile}}</label>
                     </div>
-                    <div><i>收货地址：</i>{{tradeList.province + tradeList.city + tradeList.address_detail}}</div>
+                    <div><i>收货地址：</i>{{tradeList.province+tradeList.city+tradeList.county+tradeList.address_detail}}</div>
                     <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
                       <div>
                         <i>快递公司：</i>
@@ -190,8 +190,8 @@ export default {
       } else {
         this.tradeType = 4
       }
-      // 如果订单状态不为待付款，即tradeType > 0,请求快递公司信息
-      if (this.tradeType > 0 && this.tradeType < 4) {
+      // 如果订单状态为已付款时
+      if (this.tradeType === 1) {
         transComp().then(res => {
           this.transComp = res.data
         }).catch(() => {
