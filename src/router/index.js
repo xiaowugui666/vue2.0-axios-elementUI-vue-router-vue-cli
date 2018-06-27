@@ -27,6 +27,7 @@ const trendsManagement = r => require.ensure([], () => r(require('@/page/trends-
 const addTrends = r => require.ensure([], () => r(require('@/page/add-trends')))
 const reviewApproval = r => require.ensure([], () => r(require('@/page/review-approval')))
 const viewTrends = r => require.ensure([], () => r(require('@/page/view-trends')))
+const approvalDetail = r => require.ensure([], () => r(require('@/page/approval-detail')))
 
 // import home from '@/page/home'
 // import initialSetting from '@/page/initial-setting'
@@ -101,6 +102,11 @@ export default new Router({
       path: '/review-approval',
       name: 'reviewApproval',
       component: reviewApproval
+    },
+    {
+      path: '/approval-detail',
+      name: 'approvalDetail',
+      component: approvalDetail
     },
     {
       path: '/customer-order/:id',

@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%;">
+  <div style="min-height: 100%;">
     <menu-left routeIndex="9-2"></menu-left>
     <div class="review-content">
       <div class="review-header">
@@ -158,7 +158,7 @@ export default {
     .review-status {
       display: flex;
       height: 40px;
-      font-size: 14px;
+      font-size: 16px;
       color: #222222;
       line-height: 40px;
       border-bottom: 1px solid #d5d5d5;
@@ -212,7 +212,7 @@ export default {
             white-space: nowrap;
           }
           .title {
-            font-size: 14px;
+            font-size: 16px;
             color: #222222;
             font-weight: bold;
             margin-right: 20px;
