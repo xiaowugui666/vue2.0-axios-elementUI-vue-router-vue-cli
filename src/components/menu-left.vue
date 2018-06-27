@@ -145,7 +145,6 @@ export default {
   .el-menu {
     border-right: none;
     overflow-y: auto;
-    background: transparent;
     height: calc(100% - 133px);
     i {
       font-size: 20px;
