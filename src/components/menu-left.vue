@@ -145,6 +145,7 @@ export default {
   .el-menu {
     border-right: none;
     overflow-y: auto;
+    background: transparent;
     height: calc(100% - 133px);
     i {
       font-size: 20px;
@@ -177,14 +178,29 @@ export default {
   }
 }
 </style>
-<style>
-.el-submenu__title {
-  height: 40px;
-  line-height: 40px;
-}
-.el-menu-item-group__title {
-  height: 0;
-  padding: 0;
-  display: none;
-}
+<style lang="less">
+  .menu-left {
+    .el-menu {
+      background: transparent;
+    }
+    .el-submenu__title {
+      height: 40px;
+      line-height: 40px;
+      color: @b8;
+    }
+    .el-menu-item-group__title {
+      height: 0;
+      padding: 0;
+      display: none;
+    }
+    .el-submenu__title:hover, .el-menu-item:hover {
+      background: transparent;
+    }
+    .el-submenu.is-active .el-submenu__title{
+      color: @b2 !important;
+      i {
+        color: @b2 !important;
+      }
+    }
+  }
 </style>
