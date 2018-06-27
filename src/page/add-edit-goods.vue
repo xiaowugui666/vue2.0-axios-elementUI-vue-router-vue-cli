@@ -113,14 +113,15 @@
               <li>
                 <span class="name">商品量词：</span>
                 <div>
-                  <el-select v-model.trim="quantifier" clearable size="small" class="select-state">
+                  <!--<el-select v-model.trim="quantifier" clearable size="small" class="select-state">
                     <el-option
                       v-for="item in goodsQuantifier"
                       :key="item.value"
                       :label="item.label"
                       :value="item.value">
                     </el-option>
-                  </el-select>
+                  </el-select>-->
+                  <input type="text" placeholder="请输入商品量词" v-model.trim="quantifier" maxlength="4">
                 </div>
               </li>
               <li class="keyword-box">
@@ -212,11 +213,11 @@
                     </tr>
                     <tr v-for="(sku, index) in skus" :key="index">
                       <td v-for="(item, index2) in sku.specs" v-if="sku.specs.length>0" :key="index2">{{item.property}}</td>
-                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" type="text" maxlength="12"/>
+                      <td><span class="money-tips">￥</span><input v-model.trim="sku.price" v-validate="'required|decimal:2|min_value:0.01'" data-vv-as="价格" :name="`price-${index}`" @change="specPriceMin()" type="text" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`price-${index}`) }}</div>
                       </td>
                       <td>
-                        <input type="text" v-model.trim="sku.stock_count" v-validate="'required|numeric|max_value:1000000'" data-vv-as="库存" :name="`stock-${index}`" class="stock-quantity" maxlength="12"/>
+                        <input type="text" v-model.trim="sku.stock_count" v-validate="'required|numeric|max_value:1000000'" data-vv-as="库存" :name="`stock-${index}`" @change="calculateStockCount()" class="stock-quantity" maxlength="12"/>
                         <div class="err-tips">{{ errors.first(`stock-${index}`) }}</div>
                       </td>
                       <td><input type="text" v-model.trim="sku.sku_no" class="sku-code" maxlength="20"/></td>
@@ -474,7 +475,6 @@ export default {
   },
   mounted () {
     this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
-    // console.log(this.hash)
   },
   methods: {
     // 若存在商品id，获取商品信息
@@ -487,12 +487,10 @@ export default {
             this.goodsType = data.type
             this.goodsName = data.name
             this.sharingDescription = data.description
-            this.renderingGoodsImageList(data.goods_images)
-            this.renderingSelectedOptions(data.category_id)
             this.quillContent = data.content
             this.weightNum = data.weight
             this.uniqueCoding = data.no
-            this.quantifier = data.unit
+            this.quantifier = data.unit ? data.unit : ''
             this.image_ids = data.image_ids
             this.sku_ids = data.sku_ids
             this.goods_detail_id = data.goods_detail_id
@@ -504,9 +502,9 @@ export default {
             this.free_return = data.free_return
             this.genuine_article = data.genuine_article
             this.quick_delivery = data.quick_delivery
+            this.renderingGoodsImageList(data.goods_images)
+            this.renderingSelectedOptions(data.category_id)
           }
-        }).catch(err => {
-          console.log(err)
         })
       }
     },
@@ -520,7 +518,7 @@ export default {
               label: v.name,
               value: v.id
             }
-            if (v.children.length > 0) {
+            if (v.children && v.children.length > 0) {
               option.children = []
               for (let w of v.children) {
                 option.children.push({
@@ -531,17 +529,13 @@ export default {
             }
             this.selectStateOptions.push(option)
           }
-        } else {
-          // this.setRouter('/category-management')
         }
-        // console.log(this.selectStateOptions)
       })
         .then(() => {
           this.getGoods(this.hash)
         })
-        .catch(err => {
+        .catch(() => {
           this.getGoods(this.hash)
-          console.log(err)
         })
     },
     // 如果有规格，渲染skus和规格部分，如果没有则渲染下面的总体价格等
@@ -560,12 +554,12 @@ export default {
         }
         this.skus = sku
       } else {
-        this.goodsPrice = (price / 100).toFixed(2)
         if (displayPrice) {
           this.goodsLinePrice = (displayPrice / 100).toFixed(2)
         }
-        this.goodStock = stockCount
       }
+      this.goodsPrice = (price / 100).toFixed(2)
+      this.goodStock = stockCount
     },
     // 渲染是否包邮，不包邮的话邮费是多少
     renderingExpress (free, expressPrice) {
@@ -592,7 +586,7 @@ export default {
             this.selectedOptions = [id]
             return false
           } else {
-            if (v.children.length > 0) {
+            if (v.children && v.children.length > 0) {
               for (let w of v.children) {
                 if (w.value === id) {
                   this.selectedOptions = [v.value, id]
@@ -612,14 +606,32 @@ export default {
         }
       }
     },
+    // 若有规格，计算规格价格最小值
+    specPriceMin () {
+      let arr = []
+      for (let v of this.skus) {
+        if (v.price && !isNaN(v.price)) {
+          arr.push(v.price)
+        }
+      }
+      this.goodsPrice = Math.min.apply(null, arr).toFixed(2)
+    },
+    // 计算库存总量
+    calculateStockCount () {
+      let n = 0
+      for (let v of this.skus) {
+        if (v.stock_count && !isNaN(v.stock_count)) {
+          n += parseInt(v.stock_count, 10)
+        }
+      }
+      this.goodStock = n
+    },
     // 获取图片上传七牛的token
     getImageToken () {
       getQnToken('image').then(res => {
         // console.log(res)
         this.upToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch()
     },
     // 商品图片验证是否重复
     goodsImageBeforeUpload (file) {
@@ -1000,7 +1012,7 @@ export default {
             content: this.quillContent ? this.quillContent : '',
             weight: this.getWeightGram(),
             no: this.uniqueCoding,
-            unit: this.getGoodsQuantifier(),
+            unit: this.quantifier,
             keywords: this.dynamicTags,
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
@@ -1029,13 +1041,9 @@ export default {
             data.goods_detail_id = this.goods_detail_id
           }
 
-          console.log(data)
           addEditGoods(id, data).then(res => {
-            // console.log(res)
             this.setRouter('/commodity-management')
-          }).catch(err => {
-            console.log(err)
-          })
+          }).catch()
         } else {
           if (this.goodsImages.length <= 0) {
             this.goodsImageValidate = true
@@ -1106,7 +1114,7 @@ export default {
       }
       .required::before {
         content: '*';
-        color: #DE5B67;
+        color: @mainC;
         margin-left: -10px;
         padding-right: 5px;
       }

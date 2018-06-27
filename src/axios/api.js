@@ -395,7 +395,7 @@ export const deleteGoodsCategory = function (id, parentId) {
   })
 }
 
-// 增加商品分类图片
+// 修改商品分类
 export const updateGoodsCategoryPic = function (data, id) {
   return fetch({
     url: api.ip + '/management/category/' + id,

@@ -285,16 +285,12 @@ export default {
     getImageToken () {
       getQnToken('image').then(res => {
         this.upToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
       })
     },
     // 获取证书上传七牛的token
     getCertificateToken () {
       getQnToken('document').then(res => {
         this.docToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
       })
     },
     // 进入页面获取店铺信息

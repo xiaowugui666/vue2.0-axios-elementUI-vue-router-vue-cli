@@ -13,7 +13,7 @@
               </el-option>
             </el-select>
             <el-input
-              placeholder="订单号/退款单号/支付流水号"
+              placeholder="订单号"
               v-model="keyValue"
               maxlength="50"
               v-validate="'decimal'"
@@ -75,7 +75,7 @@
                         </div>
                         <div class="proNum">数量 x {{i.count}}</div>
                         <div class="price">
-                          <label>￥{{item.amount | money}}</label>
+                          <label>￥{{item.items[0].price | money}}</label>
                         </div>
                       </div>
                   </div>
@@ -166,7 +166,6 @@ export default {
     changeType () {
     },
     changeTime (res) {
-      console.log(111)
     },
     // 订单状态
     orderMessage (status) {
@@ -222,7 +221,7 @@ export default {
         params.page = 0
         params.per_page = 15
         order(params).then(res => {
-          console.log(res)
+          // console.log(res)
           this.totalPagina = res.headers.page_count
           this.ordersDetail = res.data
           if (!res.data) {
@@ -238,7 +237,6 @@ export default {
         this.timeBtn2 = false
         this.timeBtn1 = !this.timeBtn1
         if (this.timeBtn1) {
-          console.log(new Date().getTime())
           this.keyTime = [(new Date().getTime() - res * 24 * 3600 * 1000), (new Date().getTime())]
         } else {
           this.keyTime = []
@@ -256,7 +254,7 @@ export default {
     },
     // 订单分类状态点击
     handleClick (tab) {
-      console.log(tab.index)
+      // console.log(tab.index)
       this.currentPage = 1
       let params = {}
       if (this.flag) {
@@ -294,7 +292,7 @@ export default {
       }
       params.status = this.statu
       order(params).then(res => {
-        console.log(res)
+        // console.log(res)
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
         if (res.data == '') {
@@ -331,7 +329,6 @@ export default {
       order(params).then(res => {
         this.totalPagina = res.headers.page_count
         this.ordersDetail = res.data
-        console.log(res)
       })
     }
   },
@@ -339,10 +336,8 @@ export default {
     order({
       page: 0
     }).then(res => {
-      console.log(res)
       this.totalPagina = res.headers.page_count
       this.ordersDetail = res.data
-      // console.log(this.ordersDetail)
     })
   },
   components: {

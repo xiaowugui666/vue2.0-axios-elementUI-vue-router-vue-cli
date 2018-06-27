@@ -1,17 +1,14 @@
 <template>
-  <div class="menu-left" :style="{height: clientHeight}">
+  <div class="menu-left">
     <div class="mall-logo">
       <img src="../assets/logo.png" alt="">
       <span>一起选·商城</span>
     </div>
-    <div style="padding: 0 20px 0 12px;">
-      <el-menu
-        :default-active="routeIndex"
-        @open="handleOpen"
-        @close="handleClose"
-        text-color="#666"
-        active-text-color="#FA505D"
-        router
+    <el-menu
+      :default-active="routeIndex"
+      @open="handleOpen"
+      @close="handleClose"
+      router
       >
         <el-menu-item index="1" route="/">
           <i class="icon-概况"></i>
@@ -126,47 +123,49 @@ export default {
   left: 0;
   z-index: 99;
   width: 180px;
-  min-height: 600px;
-  overflow-y: auto;
-  background: @bg;
+  height: 100%;
   position: fixed;
-}
 .el-submenu .el-menu-item {
   min-width: auto;
   padding-left: 60px;
-  background: @bg;
 }
 .mall-logo {
   height: 76px;
   line-height: 76px;
   text-align: center;
-  border-bottom: 2px solid #f5f5f5;
-
   img {
     vertical-align: middle;
     margin-left: -10px;
     margin-right: 10px;
-    width: 34px;
+    width: 41px;
   }
   span {
     vertical-align: middle;
-    color: #666;
+    color: @b2;
     }
 }
 .el-menu {
   border-right: none;
-  background: @bg;
+  overflow-y: auto;
+  height: calc(100% - 133px);
   i {
-    font-size: 18px;
+    font-size: 20px;
     padding-right: 5px;
+  }
+  .el-menu--inline {
+    li {
+      margin-left: 10px;
+    }
   }
 }
 .el-menu-item {
   height: 40px;
   line-height: 40px;
+  color: @b8;
 
   &.is-active {
-    background: #FFFFFF;
+    background: #fff;
+    color: @mainC;
   }
 }
 .menu-left-bottom-logo {
@@ -175,7 +174,7 @@ export default {
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: #888;
+  color: @b6;
   z-index: -1;
 }
 </style>

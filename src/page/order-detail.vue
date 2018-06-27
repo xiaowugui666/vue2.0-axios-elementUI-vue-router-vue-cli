@@ -24,7 +24,7 @@
                       <label><i>收货人名：</i>{{tradeList.consignee}}</label>
                       <label><i>收货人手机号：</i>{{tradeList.mobile}}</label>
                     </div>
-                    <div><i>收货地址：</i>{{tradeList.province + tradeList.city + tradeList.address_detail}}</div>
+                    <div><i>收货地址：</i>{{tradeList.province+tradeList.city+tradeList.county+tradeList.address_detail}}</div>
                     <div v-if="tradeType == 1 || tradeType > 1 && tradeType < 4">
                       <div>
                         <i>快递公司：</i>
@@ -69,7 +69,7 @@
                 <div class="proNum">数量 x{{item.count}}</div>
                 <div class="price">
                   <label>￥</label>
-                  <label>{{(item.price * item.count) | money}}</label>
+                  <label>{{item.price | money}}</label>
                 </div>
               </div>
             </div>
@@ -131,7 +131,7 @@ export default {
         id: this.$route.params.id,
         amount: this.tradeList.amount
       }).then(res => {
-        console.log(res)
+        // console.log(res)
         if (res.status == 200) {
           this.$message({
             message: '修改价格成功！',
@@ -155,7 +155,7 @@ export default {
       params.express_no = this.expressNo
       if (params.express_no && params.express_code) {
         orderExpress(params).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.status == 200) {
             // 提交快递信息成功，请求订单信息，改变可视状态
             orderDetail(this.$route.params.id).then(res => {
@@ -190,8 +190,8 @@ export default {
       } else {
         this.tradeType = 4
       }
-      // 如果订单状态不为待付款，即tradeType > 0,请求快递公司信息
-      if (this.tradeType > 0 && this.tradeType < 4) {
+      // 如果订单状态为已付款时
+      if (this.tradeType === 1) {
         transComp().then(res => {
           this.transComp = res.data
         }).catch(() => {
