@@ -71,10 +71,8 @@
           <el-menu-item index="8-4" route="/mp-setting">小程序设置</el-menu-item>
         </el-submenu>
       </el-menu>
+      <div class="menu-left-bottom-logo">- 虎赞科技 -</div>
     </div>
-    <div class="menu-left-bottom-logo">- 虎赞科技 -</div>
-    <!--<div><router-link :to="{name:'marketingManagement',params:{user:'recommend'}}">123123213213</router-link></div>-->
-  </div>
 </template>
 
 <script>
@@ -125,57 +123,58 @@ export default {
   width: 180px;
   height: 100%;
   position: fixed;
-.el-submenu .el-menu-item {
-  min-width: auto;
-  padding-left: 60px;
-}
-.mall-logo {
-  height: 76px;
-  line-height: 76px;
-  text-align: center;
-  img {
-    vertical-align: middle;
-    margin-left: -10px;
-    margin-right: 10px;
-    width: 41px;
+  .el-submenu .el-menu-item {
+    min-width: auto;
+    padding-left: 60px;
   }
-  span {
-    vertical-align: middle;
-    color: @b2;
+  .mall-logo {
+    height: 76px;
+    line-height: 76px;
+    text-align: center;
+    img {
+      vertical-align: middle;
+      margin-left: -10px;
+      margin-right: 10px;
+      width: 41px;
     }
-}
-.el-menu {
-  border-right: none;
-  overflow-y: auto;
-  height: calc(100% - 133px);
-  i {
-    font-size: 20px;
-    padding-right: 5px;
-  }
-  .el-menu--inline {
-    li {
-      margin-left: 10px;
+    span {
+      vertical-align: middle;
+      color: @b2;
     }
   }
-}
-.el-menu-item {
-  height: 40px;
-  line-height: 40px;
-  color: @b8;
+  .el-menu {
+    border-right: none;
+    overflow-y: auto;
+    height: calc(100% - 133px);
+    i {
+      font-size: 20px;
+      padding-right: 5px;
+    }
+    .el-menu--inline {
+      li {
+        margin-left: 10px;
+      }
+    }
+  }
+  .el-menu-item {
+    height: 40px;
+    line-height: 40px;
+    color: @b8;
 
-  &.is-active {
-    background: #fff;
-    color: @mainC;
+    &.is-active {
+      background: #fff;
+      color: @mainC;
+    }
   }
-}
-.menu-left-bottom-logo {
-  position: absolute;
-  bottom: 20px;
-  width: 100%;
-  text-align: center;
-  font-size: 12px;
-  color: @b6;
-  z-index: -1;
+  .menu-left-bottom-logo {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: @b6;
+    z-index: -1;
+  }
 }
 </style>
 <style>
