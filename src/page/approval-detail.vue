@@ -108,7 +108,6 @@ export default {
     padding: 20px;
     .appro-content {
       box-sizing: border-box;
-      height: calc(100% - 40px);
       border: 1px solid #D5D5D5;
       padding: 25px 20px 0px;
       font-size: 12px;

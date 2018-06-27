@@ -157,10 +157,13 @@ export default {
         margin-bottom: 0;
       }
       .view-content {
+        display: flex;
         p {
           display: inline-block;
           width: 94%;
           font-size: 12px;
+          flex: 1;
+          overflow: hidden;
           color: #222222;
           line-height: 20px;
         }
@@ -179,6 +182,7 @@ export default {
         .appro-item {
           padding: 20px 0;
           border-bottom: 1px dashed #d5d5d5;
+          display: flex;
           position: relative;
           &:last-child {
             border-bottom: none;
@@ -193,6 +197,8 @@ export default {
             display: inline-block;
             margin-left: 15px;
             font-size: 12px;
+            flex: 1;
+            overflow: hidden;
             width: 95%;
             >p {
               margin-top: 10px;
@@ -212,13 +218,15 @@ export default {
               margin-top: 20px;
               background: #F5F5F5;
               padding: 20px 15px;
+              display: flex;
               position: relative;
               >span {
                 color: #58A8FF;
                 vertical-align: top;
               }
               div {
-                display: inline-block;
+                flex: 1;
+                overflow: hidden;
                 width: 95%;
                 p {
                   &:last-child {

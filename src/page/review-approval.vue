@@ -128,7 +128,7 @@ export default {
 </style>
 <style scoped lang="less">
 .review-content {
-  min-width: 1000px;
+  min-width: 1100px;
   margin: 0 20px 0 200px;
   padding-top: 20px;
   position: relative;
