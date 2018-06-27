@@ -462,6 +462,7 @@ export default {
             padding-right: 20px;
             .avatar-uploader-icon {
               font-size: 20px;
+              box-sizing: border-box;
               color: @bc;
               width: 80px;
               height: 80px;
