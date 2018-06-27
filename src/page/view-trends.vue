@@ -24,9 +24,12 @@
               <p><span>{{ite.nickname}}</span><span>手机号 ： {{ite.mobile}}</span></p>
               <p><span>{{ite.date}}</span></p>
               <p>{{ite.content}}</p>
-              <el-input
-                v-if="isReplay"
-                placeholder="巴拉巴拉巴拉"></el-input>
+              <!-- v-if判断条件须改动 -->
+              <div v-if="isReplay && ind == clickIndex">
+                <el-input
+                  placeholder="巴拉巴拉巴拉"></el-input>
+                <el-button class="replaying-button" type="primary" size="small" @click="clickSave(ind)">回复</el-button>
+              </div>
               <div class="replay" v-if="ite.replay">
                 <span>店家回复：</span>
                 <div>
@@ -36,11 +39,10 @@
               </div>
             </div>
             <img class="mark-img" v-if="ite.status == 3" src="../assets/Don't show_label@2x.png">
-            <el-button class="replay-button" v-if="ite.status == 2" type="primary" size="small" @click="isReplay = !isReplay">回复</el-button>
+            <el-button class="replay-button" v-if="ite.status == 2 && !isReplay" type="primary" size="small" @click="clickSave(ind)">回复</el-button>
           </div>
         </div>
         <el-pagination
-          v-if="totalPagina != 0"
           background
           :page-size="15"
           :page-count="6"
@@ -88,8 +90,21 @@ export default {
       }],
       // 是否点击回复
       isReplay: false,
+      // 点击回复时当前index：拿到数据时改为id判断
+      clickIndex: 0,
       // 当前页数
       currentPage: 1
+    }
+  },
+  methods: {
+    // 点击回复
+    clickSave (val) {
+      this.clickIndex = val
+      this.isReplay = !this.isReplay
+    },
+    // 点击分页
+    currentIndex (val) {
+      console.log(val)
     }
   },
   computed: {
@@ -244,6 +259,12 @@ export default {
               border-left: 10px solid transparent;
               border-right: 10px solid transparent;
               border-bottom: 10px solid #F5F5F5;
+            }
+            .replaying-button {
+              width: 80px;
+              height: 30px;
+              float: right;
+              margin-top: 20px;
             }
           }
           .mark-img {

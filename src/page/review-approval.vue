@@ -35,7 +35,9 @@
               <p><span class="title">{{item.title}}</span><span>{{item.date}}</span></p>
               <p class="content-mess" v-if="item.img">{{item.content}}</p>
             </div>
-            <div :class="{'item-status': true, 'active-statu': (item.status == 1 ? true : false)}">{{item.status == 1 ? '未审批' : (item.status == 2 ? '已通过' : '未通过')}}</div>
+            <div :class="{'item-status': true, 'active-statu': (item.status == 1 ? true : false)}" @click="itemDetail(item.status,index)">
+              {{item.status == 1 ? '未审批' : (item.status == 2 ? '已通过' : '未通过')}}
+            </div>
           </div>
         </div>
       </div>
@@ -78,6 +80,16 @@ export default {
     }
   },
   methods: {
+    // 点击查看动态详情
+    itemDetail (status, index) {
+      console.log(status)
+      console.log(index)
+      if (status == 1) {
+        this.$router.push({name: 'approvalDetail', query: {id: index}})
+      } else {
+        this.$router.push({name: 'approvalSolved', query: {id: index, type: status == 2 ? 1 : 2}})
+      }
+    },
     changeTime () {
     },
     changState (val) {
@@ -235,6 +247,7 @@ export default {
           margin-top: -12px;
           user-select: none;
           cursor: pointer;
+          background: #ffffff;
         }
         .item-status.active-statu {
           color: #FA505D;

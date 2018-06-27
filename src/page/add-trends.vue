@@ -1,28 +1,41 @@
 <template>
     <div style="height: 100%">
-      <menu-left></menu-left>
+      <menu-left routeIndex="9-1"></menu-left>
       <div class="add-trends-content">
         <div class="add-header">动态管理 > 新增/编辑动态</div>
         <div class="add-body">
           <div class="add-title"><span></span><span>内容编辑</span></div>
           <div class="hr"></div>
-          <div class="add-topic left-padding">
+          <div class="add-topic left-padding" v-if="trendType == 2">
             <span class="pre-text required">标      题 ：</span>
             <el-input
               size="small"
+              v-validate="'required'"
+              name="商品名称"
               v-model="title"></el-input>
+            <div class="err-tips">{{ errors.first('商品名称') }}</div>
           </div>
-          <div class="description left-padding">
+          <div class="description left-padding" v-if="trendType == 2">
             <span class="pre-text">简      述 ：</span>
             <textarea type="textarea" class="add-textarea" v-model="textContent"></textarea>
           </div>
-          <div class="add-thumbnail left-padding">
+          <div class="add-thumbnail left-padding" v-if="trendType == 2">
             <span class="pre-text">缩 略 图 ： </span>
-            <img src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1180847171,539574302&fm=27&gp=0.jpg">
+            <el-upload
+              class="avatar-uploader"
+              :action="qiniuUploadUrl"
+              :data="upToken"
+              accept=".jpg,.png"
+              :show-file-list="false"
+              :on-success="(res,file)=>handleAvatarSuccess(res,file)"
+              :before-upload="(value)=>beforeUpload(value)">
+              <img v-if="imgUrl" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1180847171,539574302&fm=27&gp=0.jpg">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
           </div>
           <div class="add-message left-padding">
             <span class="pre-text required">内      容 ：</span>
-            <div class="rich-text-editor clear">
+            <div class="rich-text-editor clear" v-if="trendType == 2">
               <!--商品图文详情编辑框-->
               <quill-editor v-model.trim="quillContent"
                             ref="myQuillEditor"
@@ -41,14 +54,17 @@
                 <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
               </el-upload>
             </div>
+            <textarea v-else class="add-textarea"></textarea>
           </div>
-          <div class="add-imgs left-padding">
+          <div class="add-imgs left-padding" v-if="trendType == 1">
             <span class="pre-text required">配      图 ：</span>
             <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="qiniuUploadUrl"
+              :data="upToken"
+              accept=".jpg,.png"
               list-type="picture-card"
-              :on-preview="handlePictureCardPreview"
-              :on-remove="handleRemove">
+              :before-upload="(value)=>beforeUpload(value)"
+              :on-success="(res,file)=>handlePictureList(res,file)">
               <i class="el-icon-plus"></i>
             </el-upload>
           </div>
@@ -60,6 +76,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {getQnToken} from '../axios/api'
 import {mapState} from 'vuex'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
 // import Quill from 'quill'
@@ -69,6 +86,8 @@ import 'quill/dist/quill.bubble.css'
 export default {
   data () {
     return {
+      // 动态类型
+      trendType: this.$route.query.type,
       // 长动态标题
       title: '',
       // 长动态简述
@@ -80,16 +99,32 @@ export default {
       // 七牛token
       upToken: {},
       editorOption: {},
-      quillContent: ''
+      quillContent: '',
+      imgUrl: true
     }
   },
+  mounted () {
+    this.getImageToken()
+  },
   methods: {
-    handlePictureCardPreview (file) {
+    // 获取图片上传七牛的token
+    getImageToken () {
+      getQnToken('image').then(res => {
+        this.upToken.token = res.data.token
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    handleAvatarSuccess (file) {
       console.log(1111)
       console.log(file)
     },
-    handleRemove (file) {
+    beforeUpload (file) {
       console.log(2222)
+      console.log(file)
+    },
+    handlePictureList (res, file) {
+      console.log(res)
       console.log(file)
     },
     // 富文本框操作
@@ -99,8 +134,6 @@ export default {
     onEditorFocus (val) {
     },
     onEditorReady (val) {
-    },
-    beforeUpload () {
     },
     quillUpScuccess () {
     }
@@ -208,6 +241,7 @@ export default {
     }
     .add-topic {
       padding-bottom: 20px;
+      position: relative;
     }
     .add-message {
       margin-top: 20px;
@@ -222,8 +256,18 @@ export default {
     }
     .add-thumbnail {
       margin-top: 20px;
-      img {
-        vertical-align: bottom;
+      .avatar-uploader {
+        display: inline-block;
+        width: 260px;
+        height: 140px;
+        img {
+          width: 260px;
+          height: 140px;
+          vertical-align: middle;
+        }
+        i {
+          border: 1px dashed #d5d5d5;
+        }
       }
     }
     .add-imgs {
@@ -267,6 +311,13 @@ export default {
       color: #DE5B67;
       margin-left: -10px;
       padding-right: 5px;
+    }
+    .err-tips {
+      position: absolute;
+      bottom: 4px;
+      font-size: 12px;
+      left: 78px;
+      color: @mainC;
     }
   }
 }

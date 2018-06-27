@@ -46,7 +46,7 @@
           </div>
           <div class="operations">
             <div class="operation">
-              <span>编辑</span><span>查看</span><span>删除</span>
+              <span @click="editorTrend(item,index)">编辑</span><span @click="viewTrend(item,index)">查看</span><span @click="deleteTrend(item,index)">删除</span>
             </div>
             <div class="infor">
               <i class="icon-查看"></i><span>9999</span><i class="icon-评论"></i><span>10.8W+</span><i class="icon-转发"></i><span>1.6W+</span><i class="icon-点赞"></i><span>9999</span>
@@ -67,7 +67,7 @@
           <p class="explain-title">什么是短动态？长动态？</p>
           <p class="explain-messa">短动态：类似于微博+朋友圈的结合，最大支持140个字的文字编辑+最多9张配图的动态展示；<br>长动态：更适合发布详细的商品资讯，图文搭配没有最大上限，也可添加微信支持的外部URL链接。</p>
           <span slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false" size="small" type="success">确定</el-button>
+            <el-button @click="dialogComfirm" size="small" type="success">确定</el-button>
             <el-button class="return-button" @click="dialogVisible = false" size="small">返回</el-button>
           </span>
         </el-dialog>
@@ -128,9 +128,26 @@ export default {
     }
   },
   methods: {
+    // 编辑动态
+    editorTrend (item, val) {
+      console.log(val)
+      this.$router.push({name: 'addTrends', query: {id: val, type: 1}})
+    },
+    // 查看动态
+    viewTrend (item, val) {
+      this.$router.push({name: 'viewTrends', query: {id: val}})
+    },
+    // 删除动态
+    deleteTrend (item, val) {
+      console.log(val)
+    },
     changeTime (value) {
       console.log(value)
       console.log(1111)
+    },
+    dialogComfirm () {
+      this.dialogVisible = false
+      this.$router.push({name: 'addTrends', query: {type: this.shortSele ? 1 : 2}})
     }
   },
   computed: {
