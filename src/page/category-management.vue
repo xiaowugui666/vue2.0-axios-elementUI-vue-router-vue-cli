@@ -86,7 +86,7 @@
                     </el-upload>
                   </div>
                   <p class="first-category-tips">图片请控制在1MB以内，支持jpg、jpeg、png格式的图片</p>
-                  <div class="err-tips" :style="{'display':firstCategoryImage?'none':'block'}">清先添加图片</div>
+                  <div class="err-tips" :style="{'display':firstCategoryImage?'none':'block'}">请先添加图片</div>
                 </li>
               </ul>
             </div>
@@ -211,7 +211,7 @@ export default {
     deleteGoodsCategoryConfirm (id, e) {
       // console.log(123)
       e.stopPropagation()
-      this.$confirm('确认关闭？')
+      this.$confirm('确认删除此分类？')
         .then(_ => {
           deleteGoodsCategory(id, 0).then(res => {
             this.$message('删除分类成功！')
