@@ -67,7 +67,7 @@
           </ul>
         </div>
       </div>
-      <select-production v-if="newGoods.length" :newGoods="newGoods" :yiqixuanDomainUrl="yiqixuanDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
+      <select-production :newGoods="newGoods" :yiqixuanDomainUrl="yiqixuanDomainUrl" @modalSearch="searchChange" @paginaNum="paginaChange" @goodsImgSrc="getGoodsImg" @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-production>
     </div>
   </div>
 </template>
@@ -258,7 +258,7 @@ export default {
           this.newGoods.totalPagina = res.headers.page_count
         })
       } else if (this.$route.params.class == 'recommend') {
-        goodsList({goods_name: value}).then(res => {
+        goodsList({status: 1, goods_name: value}).then(res => {
           this.newGoods = res.data
           this.newGoods.totalPagina = res.headers.page_count
           if (this.newGoods.length !== 0) {
@@ -291,14 +291,7 @@ export default {
                   } else {
                     this.$message('新增商品失败，请勿重复添加或确认时间段')
                   }
-                }).catch(err => {
-                  this.$message(err.response.data.message)
-                })
-              } else {
-                this.$message({
-                  message: '请确保特价小于原价',
-                  type: 'warning'
-                })
+                }).catch()
               }
             } else if (this.$route.params.class == 'recommend' && !this.stock.length) { // 路由为recommend
               let idArray = []
@@ -310,16 +303,7 @@ export default {
                 if (res.data.success) {
                   _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
                 }
-              }).catch(err => {
-                if (err.status == 403) {
-                  _this.$message(err.response.data.message)
-                } else {
-                  _this.$message({
-                    message: '添加商品失败',
-                    type: 'error'
-                  })
-                }
-              })
+              }).catch()
             } else {
               this.$message({
                 message: '请确保编辑信息完善',
@@ -481,6 +465,7 @@ export default {
               top: -8px;
               right: -8px;
               cursor: pointer;
+              border-radius: 50%;
             }
           }
           .select-goods {
