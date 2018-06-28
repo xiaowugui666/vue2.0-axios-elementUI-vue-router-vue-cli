@@ -5,7 +5,6 @@
       <div class="setting-step">
         <div class="el-steps-box">
           <el-steps :active="active" finish-status="success" align-center>
-            <el-step title="主体信息"></el-step>
             <el-step title="店铺信息"></el-step>
             <el-step title="支付信息"></el-step>
           </el-steps>
@@ -245,17 +244,9 @@ export default {
       // 支付部分
       readingProtocol: false,
       checked: true,
-      // 商家主营类目
-      categoryValue: 1,
-      shopChiefName: '',
-      telNum: '',
-      contactWeChat: '',
       customerServiceNum: '',
       logoImageUrl: 'shop_default_logo.png',
-      bannerImageUrl: '',
-      bannerErrorTips: false,
       textArea: '',
-      options: regionData,
       selectedOptions: [],
       contactAddress: '',
       busiInformation: {
@@ -301,33 +292,21 @@ export default {
         this.telNum = data.mobile
         this.shopName = data.name
         if (data.mpa) {
-          if (data.name && data.type) {
-            if (data.wechat && data.banner && data.customer_service_mobile) {
-              if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
-                this.setRouter('/')
-                this.active = 2
-              } else {
-                this.active = 2
-              }
+          this.busiInformation.merchant_no = data.mpa.merchant_no
+          this.busiInformation.merchant_key = data.mpa.merchant_key_encrypt
+          this.busiInformation.merchant_cert = data.mpa.merchant_cert_encrypt
+          if (data.name && data.logo_url && data.description && data.customer_service_mobile) {
+            if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
+              // this.setRouter('/')
+              this.active = 1
             } else {
-              if (data.logo_url) {
-                this.logoImageUrl = data.logo_url
-              }
-              this.textArea = data.description ? data.description : ''
-              if (data.banner) {
-                this.bannerImageUrl = data.banner
-              }
-              this.shopChiefName = data.owner_name ? data.owner_name : ''
-              this.contactWeChat = data.wechat ? data.wechat : ''
-              this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
-              this.getRegionCode(data.province, data.city, data.region)
-              this.contactAddress = data.address ? data.address : ''
               this.active = 1
             }
           } else {
-            if (data.type) {
-              this.categoryValue = data.type
-            }
+            this.logoImageUrl = data.logo_url
+            this.textArea = data.description
+            this.shopName = data.name
+            this.customerServiceNum = data.customer_service_mobile
             this.active = 0
           }
         } else {
