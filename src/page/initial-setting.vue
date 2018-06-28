@@ -9,38 +9,17 @@
             <el-step title="支付信息"></el-step>
           </el-steps>
         </div>
-        <div v-if="active == 0" class="subject-info plate">
-          <div class="plate-top">主体信息</div>
-          <div class="subject-info-setting">
-            <ul>
-              <li>
-                <span class="name required">商铺名称：</span>
-                <input type="text" v-validate="'required'" v-model.trim="shopName" name="店铺名称" placeholder="请输入店铺名称 (20个字符以内)" maxlength="20"/>
-                <div class="err-tips">{{ errors.first('店铺名称') }}</div>
-              </li>
-              <li>
-                <span class="name required">主营类目：</span>
-                <el-select v-model.trim="categoryValue" size="small" class="select-state">
-                  <el-option
-                    v-for="item in mainCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </li>
-            </ul>
-            <div class="next-step">
-              <el-button type="success" size="small" :disabled="false" @click="setStepActive(1)">下一步</el-button>
-            </div>
-          </div>
-        </div>
-        <div v-if="active == 1" class="store-information plate">
+        <div v-if="active == 0" class="store-information plate">
           <div class="plate-top">店铺信息</div>
           <div class="store-information-setting">
             <ul>
               <li>
-                <span class="name alignment-top">商铺logo：</span>
+                <span class="name required">商铺名称：</span>
+                <input type="text" v-validate="'required'" name="商铺名称" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="20"/>
+                <div class="err-tips">{{ errors.first('客服电话') }}</div>
+              </li>
+              <li>
+                <span class="name alignment-top required">商铺logo：</span>
                 <el-upload
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
@@ -57,58 +36,13 @@
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top">商铺描述：</span>
+                <span class="name alignment-top required">商铺描述：</span>
                 <textarea v-model.trim="textArea" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
-              </li>
-              <li>
-                <span class="name alignment-top required">banner：</span>
-                <el-upload
-                  class="avatar-uploader"
-                  :action="qiniuUploadUrl"
-                  :data="upToken"
-                  accept=".jpg,.png"
-                  :before-upload="beforeUpload"
-                  :show-file-list="false"
-                  :on-success="handleBannerSuccess">
-                  <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
-                  <div class="alignment-tip">
-                    <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
-                  </div>
-                </el-upload>
-                <div class="err-tips" :style="{'display': bannerErrorTips?'block':'none'}">请先上传banner图！</div>
-              </li>
-              <li>
-                <span class="name">店长姓名：</span>
-                <input type="text" v-model.trim="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
-              </li>
-              <li>
-                <span class="name">联系电话：</span>
-                <span>{{telNum}}</span>
-              </li>
-              <li>
-                <span class="name required">联系微信：</span>
-                <input type="text" v-validate="{required: true, regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model.trim="contactWeChat" placeholder="请输入联系微信号"/>
-                <div class="err-tips">{{ errors.first('微信号') }}</div>
               </li>
               <li>
                 <span class="name required">客服电话：</span>
                 <input type="text" v-validate="{required: true, regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
                 <div class="err-tips">{{ errors.first('客服电话') }}</div>
-              </li>
-              <li>
-                <span class="name">联系地址：</span>
-                <div class="el-cascader-box">
-                  <el-cascader
-                    size="small"
-                    :options="options"
-                    v-model.trim="selectedOptions"
-                    placeholder="省 / 市 / 区"
-                    @change="handleChange">
-                  </el-cascader>
-                  <input class="contact-address-input" type="text" v-model.trim="contactAddress" placeholder="请输入详细地址" maxlength="50"/>
-                </div>
               </li>
             </ul>
             <div class="next-step">
@@ -116,7 +50,7 @@
             </div>
           </div>
         </div>
-        <div v-if="active == 2" class="pay-information plate">
+        <div v-if="active == 1" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
             <div class="pay-information-setting">
@@ -231,7 +165,6 @@
 <script>
 import firstSettingMenu from '@/components/first-setting-menu'
 import {initialSetData, getQnToken, paySetting} from '../axios/api'
-import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {mapState} from 'vuex'
 export default {
   data () {
@@ -265,8 +198,7 @@ export default {
   mounted () {
   },
   components: {
-    firstSettingMenu,
-    CodeToText
+    firstSettingMenu
   },
   computed: {
     ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
@@ -326,14 +258,7 @@ export default {
         data = {
           logo_url: this.logoImageUrl,
           description: this.textArea,
-          banner: this.bannerImageUrl,
-          owner_name: this.shopChiefName,
-          wechat: this.contactWeChat,
-          customer_service_mobile: this.customerServiceNum,
-          province: CodeToText[this.selectedOptions[0]],
-          city: CodeToText[this.selectedOptions[1]],
-          region: CodeToText[this.selectedOptions[2]],
-          address: this.contactAddress
+          customer_service_mobile: this.customerServiceNum
         }
       } else if (step === 3) {
         this.paySettingVerification()
@@ -355,22 +280,9 @@ export default {
         }
       })
     },
-    // 根据主营类目的value获取类目名称
-    getCategory () {
-      for (let v of this.mainCategory) {
-        if (v.value === this.categoryValue) {
-          return v.label
-        }
-      }
-    },
     // 商铺logo图片上传成功后的操作
     handleLogoSuccess (res, file) {
       this.logoImageUrl = res.key
-    },
-    // 商铺banner图片上传成功后的操作
-    handleBannerSuccess (res, file) {
-      // this.bannerImageUrl = URL.createObjectURL(file.raw)
-      this.bannerImageUrl = res.key
     },
     // 上传文件之前对上传内容的验证
     beforeUpload (file) {
@@ -388,16 +300,6 @@ export default {
       if (!isMt10K) {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
-      }
-    },
-    // 省市区三级联动改变时的操作
-    handleChange (value) {
-      // console.log(CodeToText[value[0]], CodeToText[value[1]], CodeToText[value[2]])
-    },
-    // 获取省市区信息，赋值给 selectedOptions 变量
-    getRegionCode (province, city, region) {
-      if (province && city && region) {
-        this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
       }
     },
     setMerchantCert () {
@@ -456,7 +358,7 @@ export default {
         localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
         localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 
-        this.active = 3
+        this.active = 2
         this.setRouter('/')
       })
     },
