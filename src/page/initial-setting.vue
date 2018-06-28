@@ -300,34 +300,38 @@ export default {
         let data = res.data
         this.telNum = data.mobile
         this.shopName = data.name
-        if (data.name && data.type) {
-          if (data.wechat && data.banner && data.customer_service_mobile) {
-            if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
-              this.setRouter('/')
-              this.active = 2
+        if (data.mpa) {
+          if (data.name && data.type) {
+            if (data.wechat && data.banner && data.customer_service_mobile) {
+              if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
+                this.setRouter('/')
+                this.active = 2
+              } else {
+                this.active = 2
+              }
             } else {
-              this.active = 2
+              if (data.logo_url) {
+                this.logoImageUrl = data.logo_url
+              }
+              this.textArea = data.description ? data.description : ''
+              if (data.banner) {
+                this.bannerImageUrl = data.banner
+              }
+              this.shopChiefName = data.owner_name ? data.owner_name : ''
+              this.contactWeChat = data.wechat ? data.wechat : ''
+              this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
+              this.getRegionCode(data.province, data.city, data.region)
+              this.contactAddress = data.address ? data.address : ''
+              this.active = 1
             }
           } else {
-            if (data.logo_url) {
-              this.logoImageUrl = data.logo_url
+            if (data.type) {
+              this.categoryValue = data.type
             }
-            this.textArea = data.description ? data.description : ''
-            if (data.banner) {
-              this.bannerImageUrl = data.banner
-            }
-            this.shopChiefName = data.owner_name ? data.owner_name : ''
-            this.contactWeChat = data.wechat ? data.wechat : ''
-            this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
-            this.getRegionCode(data.province, data.city, data.region)
-            this.contactAddress = data.address ? data.address : ''
-            this.active = 1
+            this.active = 0
           }
         } else {
-          if (data.type) {
-            this.categoryValue = data.type
-          }
-          this.active = 0
+          this.setRouter('/binding-mp')
         }
       })
     },
