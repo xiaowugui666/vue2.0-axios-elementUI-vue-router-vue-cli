@@ -96,7 +96,7 @@ export default {
     width: 100%;
     text-align: center;
     font-size: 12px;
-    color: #888;
+    color: @b6;
     z-index: -1;
   }
 </style>

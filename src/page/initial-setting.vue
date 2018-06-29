@@ -15,8 +15,8 @@
             <ul>
               <li>
                 <span class="name required">商铺名称：</span>
-                <input type="text" v-validate="'required'" name="商铺名称" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="20"/>
-                <div class="err-tips">{{ errors.first('客服电话') }}</div>
+                <input type="text" v-validate="'required'" name="商铺名称" v-model.trim="shopName" placeholder="请输入商铺名称" maxlength="20"/>
+                <div class="err-tips">{{ errors.first('商铺名称') }}</div>
               </li>
               <li>
                 <span class="name alignment-top required">商铺logo：</span>
@@ -37,7 +37,8 @@
               </li>
               <li>
                 <span class="name alignment-top required">商铺描述：</span>
-                <textarea v-model.trim="textArea" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
+                <textarea v-validate="'required'" name="商铺描述" v-model.trim="textArea" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
+                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
               </li>
               <li>
                 <span class="name required">客服电话：</span>
@@ -46,7 +47,7 @@
               </li>
             </ul>
             <div class="next-step">
-              <el-button type="success" size="small" :disabled="false" @click="setStepActive(2)">下一步</el-button>
+              <el-button type="success" size="small" :disabled="false" @click="setStepActive(1)">下一步</el-button>
             </div>
           </div>
         </div>
@@ -153,7 +154,7 @@
               </el-dialog>
             </div>
             <div class="next-step">
-              <el-button type="success" size="small" @click="setStepActive(3)">完成</el-button>
+              <el-button type="success" size="small" @click="setStepActive(2)">完成</el-button>
             </div>
           </div>
         </div>
@@ -171,6 +172,7 @@ export default {
     return {
       active: -1,
       shopName: '',
+      telNum: '',
       // 图片上传需要的token
       upToken: {},
       docToken: {},
@@ -222,14 +224,13 @@ export default {
         // console.log(res.data)
         let data = res.data
         this.telNum = data.mobile
-        this.shopName = data.name
         if (data.mpa) {
-          this.busiInformation.merchant_no = data.mpa.merchant_no
-          this.busiInformation.merchant_key = data.mpa.merchant_key_encrypt
-          this.busiInformation.merchant_cert = data.mpa.merchant_cert_encrypt
+          // this.busiInformation.merchant_no = data.mpa.merchant_no
+          // this.busiInformation.merchant_key = data.mpa.merchant_key_encrypt
+          // this.busiInformation.merchant_cert = data.mpa.merchant_cert_encrypt
           if (data.name && data.logo_url && data.description && data.customer_service_mobile) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
-              // this.setRouter('/')
+              this.setRouter('/')
               this.active = 1
             } else {
               this.active = 1
@@ -251,32 +252,21 @@ export default {
       let data = {}
       if (step === 1) {
         data = {
+          mobile: this.telNum,
           name: this.shopName,
-          type: this.getCategory()
-        }
-      } else if (step === 2) {
-        data = {
           logo_url: this.logoImageUrl,
           description: this.textArea,
           customer_service_mobile: this.customerServiceNum
         }
-      } else if (step === 3) {
+      } else if (step === 2) {
         this.paySettingVerification()
         return false
       }
       this.$validator.validateAll().then((msg) => {
         if (msg) {
-          if (step === 2 && this.bannerImageUrl === '') {
-            this.bannerErrorTips = true
-            return false
-          }
           initialSetData('put', data).then(res => {
             this.active = step
           })
-        } else {
-          if (step === 2 && this.bannerImageUrl === '') {
-            this.bannerErrorTips = true
-          }
         }
       })
     },

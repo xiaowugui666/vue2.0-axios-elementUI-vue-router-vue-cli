@@ -413,6 +413,15 @@ export const initialSetData = function (type, data) {
   })
 }
 
+// 首页分享设置单独put接口
+export const sharingInfo = function (data) {
+  return fetch({
+    url: api.ip + '/management/merchant/share_info',
+    method: 'put', // 请求方法
+    data: data
+  })
+}
+
 // 绑定小程序
 export const bindingMp = function () {
   return fetch({
@@ -453,5 +462,21 @@ export const mpaExperience = function (type, data) {
     method: type, // 请求方法
     data: data,
     params: data
+  })
+}
+
+// 小程序审核提交, 获取审核进度
+export const mpaAudit = function (type) {
+  return fetch({
+    url: api.ip + '/management/mpa/audit',
+    method: type // 请求方法
+  })
+}
+
+// 获取小程序历史版本更新记录
+export const mpaHistory = function () {
+  return fetch({
+    url: api.ip + '/management/mpa/history',
+    method: 'get' // 请求方法
   })
 }
