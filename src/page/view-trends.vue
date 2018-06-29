@@ -21,12 +21,12 @@
           <span class="pre-text">配      图 ：</span>
           <img v-for="(item,index) in imgs" :key="index" :src="item">
         </div>
-        <div class="view-title approval"><span></span><span>评论</span><span>( 88888 )</span></div>
+        <div class="view-title approval"><span></span><span>评论</span><span v-if="commentData.length">( {{trendData.comment_success_count + trendData.comment_fail_count}} )</span></div>
         <div class="hr appro-hr"></div>
         <div class="approvals" v-if="commentData.length">
           <div class="appro-item" v-for="(ite,ind) in commentData" :key="ind">
             <div class="appro-info">
-              <p v-if="ite.user_wechat"><span>{{ite.user_wechat.nick_name}}</span><span>手机号 ： {{ite.mobile}}</span></p>
+              <p><span>{{ite.nick_name}}</span><span v-if="ite.user">手机号 ： {{ite.user.mobile}}</span></p>
               <p><span>{{ite.created_at}}</span></p>
               <p>{{ite.content}}</p>
               <!-- v-if判断条件须改动 -->
@@ -59,7 +59,7 @@
           next-text="下一页 >"
           layout="prev, pager, next"
           @current-change="currentIndex"
-          :total="30">
+          :total="totalPagina * 15">
         </el-pagination>
       </div>
     </div>
@@ -79,6 +79,7 @@ export default {
       isReplay: false,
       // 点击回复时当前index：拿到数据时改为id判断
       clickIndex: 0,
+      totalPagina: 0,
       // 当前页数
       currentPage: 1,
       // 动态数据
@@ -97,9 +98,16 @@ export default {
       this.trendData = res.data
       this.trendType = res.data.type
     })
-    this.getFeedComments()
+    this.getFeedComments({feed_id: this.$route.query.id})
   },
   methods: {
+    // 点击分页
+    currentIndex (val) {
+      let params = {}
+      params.feed_id = this.$route.query.id
+      params.page = val - 1
+      this.getFeedComments(params)
+    },
     // 点击回复，仅改变视图
     clickSaveChang (val) {
       this.clickIndex = val
@@ -119,15 +127,12 @@ export default {
         }
       })
     },
-    // 点击分页
-    currentIndex (val) {
-      console.log(val)
-    },
     // 获取评论列表
-    getFeedComments () {
-      getComments({feed_id: this.$route.query.id}).then(res => {
+    getFeedComments (params) {
+      getComments(params).then(res => {
         console.log(res)
         this.commentData = res.data
+        this.totalPagina = res.headers.page_count
         console.log(this.commentData)
       })
     }

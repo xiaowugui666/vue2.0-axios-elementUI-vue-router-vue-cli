@@ -24,6 +24,19 @@
               <span class="pass button" @click="changeStatus(2, ite.id)">通过</span>
               <span class="close button" @click="changeStatus(3, ite.id)">关闭</span>
             </div>
+            <el-pagination
+              v-if="totalPagina != 0"
+              background
+              :page-size="15"
+              :page-count="6"
+              :current-page="currentPage"
+              style="padding-top: 20px;padding-bottom: 20px;"
+              prev-text="< 上一页"
+              next-text="下一页 >"
+              layout="prev, pager, next"
+              @current-change="currentIndex"
+              :total="totalPagina * 15">
+            </el-pagination>
           </div>
           <div class="no-data inner" v-else>暂无未评审评论</div>
         </div>
@@ -42,7 +55,9 @@ export default {
       content: {},
       approvals: [],
       id: this.$route.query.id,
-      status: this.$route.query.status
+      status: this.$route.query.status,
+      totalPagina: 1,
+      currentPage: 1
     }
   },
   mounted () {
@@ -51,17 +66,21 @@ export default {
       console.log(res)
       this.content = res.data
     })
-    this.getFeedComment()
+    this.getFeedComment({})
   },
   methods: {
+    // 点击分页
+    currentIndex (val) {
+      this.getFeedComment({page: val - 1})
+    },
     // 获取对应评论列表
-    getFeedComment () {
-      let params = {}
+    getFeedComment (params) {
       params.feed_id = this.id
       params.status = this.status
       getComments(params).then(res => {
         console.log(res)
         this.approvals = res.data
+        this.totalPagina = res.headers.page_count
       })
     },
     // 跳转动态详情

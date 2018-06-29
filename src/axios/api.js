@@ -67,10 +67,11 @@ export function tableData (params) {
 
 /* 动态模块 */
 // 动态管理,获取动态列表
-export function getTrends () {
+export function getTrends (params) {
   return fetch({
     url: api.ip + '/management/feed',
-    method: 'GET'
+    method: 'GET',
+    params: params
   })
 }
 

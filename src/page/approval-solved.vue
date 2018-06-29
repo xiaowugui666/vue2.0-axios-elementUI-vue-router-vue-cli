@@ -27,6 +27,19 @@
               <img class="mark-img" v-if="status == 2" src="../assets/pass_label@2x.png">
               <img class="mark-img" v-else src="../assets/not pass_label@2x.png">
             </div>
+            <el-pagination
+              v-if="totalPagina != 0"
+              background
+              :page-size="15"
+              :page-count="6"
+              :current-page="currentPage"
+              style="padding-top: 20px;padding-bottom: 20px;"
+              prev-text="< 上一页"
+              next-text="下一页 >"
+              layout="prev, pager, next"
+              @current-change="currentIndex"
+              :total="totalPagina * 15">
+            </el-pagination>
           </div>
           <div class="no-data bottom" v-else>暂无评论数据</div>
         </div>
@@ -46,7 +59,9 @@ export default {
       approvals: [],
       status: this.$route.query.status,
       // 动态id
-      id: this.$route.query.id
+      id: this.$route.query.id,
+      totalPagina: 1,
+      currentPage: 1
     }
   },
   mounted () {
@@ -55,14 +70,21 @@ export default {
       console.log(res)
       this.content = res.data
     })
-    this.getComments()
+    this.getComments({})
   },
   methods: {
+    // 点击分页
+    currentIndex (val) {
+      this.getFeedComment({page: val - 1})
+    },
     // 获取评论详情
-    getComments () {
-      getComments({feed_id: this.id, status: this.status}).then(res => {
+    getComments (params) {
+      params.feed_id = this.id
+      params.status = this.status
+      getComments(params).then(res => {
         console.log(res)
         this.approvals = res.data
+        this.totalPagina = res.headers.page_count
       })
     },
     // 跳转动态详情

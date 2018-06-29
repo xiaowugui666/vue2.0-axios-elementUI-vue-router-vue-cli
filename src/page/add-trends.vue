@@ -27,8 +27,7 @@
               :data="upToken"
               accept=".jpg,.png"
               :show-file-list="false"
-              :on-success="(res,file)=>handleAvatarSuccess(res,file)"
-              :before-upload="(value)=>beforeUpload(value)">
+              :on-success="(res,file)=>handleAvatarSuccess(res,file)">
               <img v-if="imgUrl" :src="yiqixuanDomainUrl + imgUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
@@ -65,7 +64,9 @@
               :data="upToken"
               accept=".jpg,.png"
               list-type="picture-card"
-              :before-upload="(value)=>beforeUpload(value)"
+              :file-list="fileList"
+              :on-remove="removeFileList"
+              :before-upload="(value)=>imgsBeforeUpload(value)"
               :on-success="(res,file, fileList)=>handlePictureList(res,file, fileList)">
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -132,7 +133,9 @@ export default {
     }
   },
   mounted () {
-    this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
+    if (this.addType == 2) {
+      this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
+    }
     // 如果为编辑动态，获取动态详情
     if (this.$route.query.id) {
       getTrendDetail(this.$route.query.id).then(res => {
@@ -143,6 +146,12 @@ export default {
         this.title = res.data.title
         this.textContent = res.data.description
         this.quillContent = res.data.content
+        for (let x = 0; x < res.data.images.length; x++) {
+          res.data.images[x].url = this.yiqixuanDomainUrl + res.data.images[x].img_url
+          res.data.images[x].icon_url = res.data.images[x].img_url
+        }
+        this.fileList = res.data.images
+        console.log(this.fileList)
         // 图片路径赋值 ///////////////////////////////////////须修改
         this.imgUrl = res.data.cover_url
       }).catch(err => {
@@ -167,11 +176,15 @@ export default {
       if (this.$route.query.id) {
         let params = {}
         params.type = this.trendType
-        params.title = this.title
-        params.description = this.textContent
         params.content = this.quillContent
-        params.cover_url = this.imgUrl
-        params.feed_images = this.fileList
+        // 如果为编辑短动态
+        if (this.trendType == 1) {
+          params.feed_images = this.fileList
+        } else {
+          params.title = this.title
+          params.description = this.textContent
+          params.cover_url = this.imgUrl
+        }
         putTrendDetail(params, this.$route.query.id).then(res => {
           console.log(res)
           if (res.status == 200) {
@@ -184,42 +197,86 @@ export default {
           })
         })
       } else {
-        // 新增动态
-        let params = {}
-        params.content = this.quillContent
-        params.type = this.addType
-        if (this.addType == 1) { // 发布短动态
-          params.feed_imgaes = this.fileList
-        } else {
-          params.title = this.title
-          params.description = this.textContent
-          params.cover_url = this.imgUrl
-        }
-        addTrends(params).then(res => {
-          this.$router.push({name: 'trendsManagement'})
-        }).catch(err => {
-          console.log('新增动态打印错误：')
-          console.log(err)
-          this.$message({
-            message: '新增动态失败，请稍后重试',
-            type: 'error'
+        if (this.quillContent && (this.fileList.length || this.title)) {
+          // 新增动态
+          let params = {}
+          params.content = this.quillContent
+          params.type = this.addType
+          if (this.addType == 1) { // 发布短动态
+            params.feed_images = this.fileList
+          } else {
+            params.title = this.title
+            params.description = this.textContent
+            params.cover_url = this.imgUrl
+          }
+          addTrends(params).then(res => {
+            this.$router.push({name: 'trendsManagement'})
+          }).catch(err => {
+            console.log('新增动态打印错误：')
+            console.log(err)
+            this.$message({
+              message: '新增动态失败，请稍后重试',
+              type: 'error'
+            })
           })
-        })
+        } else {
+          this.$message({
+            message: '请完善必填项',
+            type: 'info'
+          })
+        }
       }
     },
+    // 上传缩略图
     handleAvatarSuccess (file) {
       console.log(1111)
       console.log(file)
       this.imgUrl = file.key
     },
-    beforeUpload (file) {
-      console.log(2222)
-      console.log(file)
+    // 点击缩略图删除
+    removeFileList (file, fileList) {
+      this.fileList = fileList
     },
-    handlePictureList (res, file, fileList) {
-      console.log(res)
+    // 判断配图是否重复
+    imgsBeforeUpload (file) {
       console.log(file)
-      console.log(fileList)
+      for (let v of this.fileList) {
+        if (file.name === v.modified) {
+          this.$message.error('不能上传重复的图片!')
+          return false
+        }
+      }
+      this.beforeUpload(file)
+      if (this.fileList.length == 8) {
+        this.$message({
+          message: '一次最多上传8张图片',
+          type: 'info'
+        })
+        return false
+      }
+    },
+    // 图片上传之前的验证
+    beforeUpload (file) {
+      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      const isMt = file.size > 100
+      if (!isJPG) {
+        this.$message.error('上传图片只能是 JPG 或者 PNG 格式!')
+        return false
+      }
+      if (!isLt2M) {
+        this.$message.error('上传图片大小不能超过 2MB!')
+        return false
+      }
+      if (!isMt) {
+        this.$message.error('上传图片大小不能小于 100B!')
+        return false
+      }
+    },
+    // 新增配图
+    handlePictureList (res, file) {
+      this.fileList.push({url: this.yiqixuanDomainUrl + file.response.key, icon_url: file.response.key})
+      console.log(this.fileList)
     },
     // 富文本框操作
     onEditorBlur (val) {

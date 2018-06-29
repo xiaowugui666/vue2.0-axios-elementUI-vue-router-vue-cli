@@ -19,6 +19,7 @@
         </div>
         <el-button
           type="success"
+          @click="search"
           size="small">搜索</el-button>
       </div>
       <div class="review-body">
@@ -40,6 +41,19 @@
               <span>( {{reviewStatu == 1 ? item.comment_rank_count : (reviewStatu == 2 ? item.comment_success_count : item.comment_fail_count)}} )</span>
             </div>
           </div>
+          <el-pagination
+            v-if="totalPagina != 0"
+            background
+            :page-size="15"
+            :page-count="6"
+            :current-page="currentPage"
+            style="padding-top: 20px;"
+            prev-text="< 上一页"
+            next-text="下一页 >"
+            layout="prev, pager, next"
+            @current-change="currentIndex"
+            :total="totalPagina * 15">
+          </el-pagination>
         </div>
         <div v-else class="no-data">
           暂无数据
@@ -59,13 +73,36 @@ export default {
       keyTime: [],
       reviewStatu: 1,
       items: [],
-      tabCount: 0
+      tabCount: 0,
+      searchObj: {},
+      totalPagina: 1,
+      currentPage: 1
     }
   },
   mounted () {
-    this.getFeedComment()
+    let params = {}
+    params.status = this.reviewStatu
+    this.getFeedComment(params)
   },
   methods: {
+    // 点击分页
+    currentIndex (val) {
+      this.getFeedComment({status: this.reviewStatu, page: val - 1})
+    },
+    // 点击搜索
+    search () {
+      let dateBegin = new Date(this.keyTime[0])
+      let dateEnd = new Date(this.keyTime[1])
+      this.searchObj.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+      this.searchObj.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
+      let params = this.searchObj
+      params.status = this.reviewStatu
+      getFeedComment(params).then(res => {
+        console.log(res)
+        this.items = res.data.data
+        this.tabCount = res.data.tab_count
+      })
+    },
     // 点击查看动态详情
     itemDetail (id) {
       if (this.reviewStatu == 1) {
@@ -78,14 +115,17 @@ export default {
     },
     // 查看不同评论状态
     changState (val) {
+      this.tabCount = 0
+      this.getFeedComment({status: val})
       this.reviewStatu = val
-      this.getFeedComment()
     },
-    getFeedComment () {
-      getFeedComment({status: this.reviewStatu}).then(res => {
+    // 获取列表数据
+    getFeedComment (params) {
+      getFeedComment(params).then(res => {
         console.log(res)
         this.items = res.data.data
         this.tabCount = res.data.tab_count
+        this.totalPagina = res.headers.page_count
         // this.tabCount = res.headers.
       })
     }

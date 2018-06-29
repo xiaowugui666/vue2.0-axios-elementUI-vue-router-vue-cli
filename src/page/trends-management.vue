@@ -3,10 +3,6 @@
     <menu-left routeIndex="9-1"></menu-left>
     <div class="trends-content">
       <div class="trends-header">
-        <div>
-          <span>关键字</span>
-          <input type="text" v-model="keyWord">
-        </div>
         <div class="time-picker">
           <span>发布时间</span>
           <el-date-picker
@@ -23,6 +19,7 @@
         </div>
         <el-button
           type="success"
+          @click="search"
           size="small">搜索</el-button>
       </div>
       <div class="trends-editor">
@@ -39,11 +36,17 @@
               <span>{{item.title}}</span>
               <span :class="{'long-trend': (item.type == 2 ? true : false), 'short-trend': (item.type == 1 ? true : false)}">{{item.type == 2 ? '长动态' : '短动态'}}</span>
             </div>
-            <div class="message" v-html="item.content"></div>
+            <div class="message" v-if="item.type == 1" v-html="item.content"></div>
+            <div class="message" v-if="item.type == 2">
+              <p>{{item.description}}</p>
+            </div>
             <div class="imgs" v-if="item.images">
               <div class="img-item" v-for="(ite,ind) in item.images" :key="ind">
-                <img :src="ite.url">
+                <img :src="yiqixuanDomainUrl + ite.img_url">
               </div>
+            </div>
+            <div class="thumbnail" v-if="item.type == 2">
+              <img :src="yiqixuanDomainUrl + item.cover_url">
             </div>
             <div class="operations">
               <div class="operation">
@@ -54,6 +57,19 @@
               </div>
             </div>
           </div>
+          <el-pagination
+            v-if="totalPagina != 0"
+            background
+            :page-size="15"
+            :page-count="6"
+            :current-page="currentPage"
+            style="padding-top: 20px;"
+            prev-text="< 上一页"
+            next-text="下一页 >"
+            layout="prev, pager, next"
+            @current-change="currentIndex"
+            :total="totalPagina * 15">
+          </el-pagination>
         </div>
         <div v-else class="no-data">
           暂无数据
@@ -83,6 +99,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import {getTrends, deleteTrend} from '../axios/api'
 export default {
   data () {
@@ -91,13 +108,33 @@ export default {
       keyWord: '',
       data: [],
       dialogVisible: false,
-      shortSele: true
+      shortSele: true,
+      totalPagina: 1,
+      currentPage: 1
     }
   },
   mounted () {
     this.getTrends()
   },
   methods: {
+    // 点击分页
+    currentIndex (val) {
+      this.getTrends({page: val - 1})
+    },
+    // 点击搜索
+    search () {
+      let params = {}
+      let dateBegin = new Date(this.keyTime[0])
+      let dateEnd = new Date(this.keyTime[1])
+      params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+      params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
+      getTrends(params).then(res => {
+        console.log(res)
+        this.data = res.data
+      }).catch(error => {
+        console.log(error)
+      })
+    },
     // 编辑动态
     editorTrend (val) {
       console.log(val)
@@ -130,10 +167,11 @@ export default {
       console.log(1111)
     },
     // 请求动态列表数据
-    getTrends () {
-      getTrends().then(res => {
+    getTrends (params) {
+      getTrends(params).then(res => {
         console.log(res)
         this.data = res.data
+        this.totalPagina = res.headers.page_count
       }).catch(error => {
         console.log(error)
       })
@@ -145,6 +183,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   },
   components: {
     menuLeft
@@ -262,6 +301,13 @@ export default {
           color: #FF9D3C;
         }
       }
+      .thumbnail {
+        img {
+          width: 60px;
+          height: 60px;
+          display: block;
+        }
+      }
       .imgs {
         margin-top: 10px;
         overflow: hidden;
@@ -283,6 +329,8 @@ export default {
         font-size: 12px;
         color: #888888;
         line-height: 20px;
+        max-height: 280px;
+        overflow: hidden;
       }
       .operations {
         margin-top: 30px;
