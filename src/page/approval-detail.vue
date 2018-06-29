@@ -93,9 +93,14 @@ export default {
       param.feed_id = this.id
       param.status = val
       putComment(param, id).then(res => {
-        this.getFeedComment()
+        console.log(res)
+        this.getFeedComment({})
+        this.$message({
+          message: '审批成功',
+          type: 'success'
+        })
       }).catch(err => {
-        console.log(err)
+        console.dir(err)
         this.$message({
           message: '审批评论失败，请稍后重试',
           type: 'error'
