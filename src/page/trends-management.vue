@@ -33,25 +33,30 @@
             @click="dialogVisible = true"
             type="success">发布新动态</el-button>
         </div>
-        <div class="trends" v-for="(item,index) in data" :key="index">
-          <div class="title">
-            <span>{{item.title}}</span>
-            <span :class="{'long-trend': (item.type == 1 ? true : false), 'short-trend': (item.type == 2 ? true : false)}">{{item.type == 1 ? '长动态' : '短动态'}}</span>
-          </div>
-          <div class="message">{{item.body}}</div>
-          <div class="imgs" v-if="item.imgs">
-            <div class="img-item" v-for="(ite,ind) in item.imgs" :key="ind">
-              <img :src="ite.url">
+        <div v-if="data.length">
+          <div class="trends" v-for="(item,index) in data" :key="index">
+            <div class="title">
+              <span>{{item.title}}</span>
+              <span :class="{'long-trend': (item.type == 2 ? true : false), 'short-trend': (item.type == 1 ? true : false)}">{{item.type == 2 ? '长动态' : '短动态'}}</span>
+            </div>
+            <div class="message" v-html="item.content"></div>
+            <div class="imgs" v-if="item.images">
+              <div class="img-item" v-for="(ite,ind) in item.images" :key="ind">
+                <img :src="ite.url">
+              </div>
+            </div>
+            <div class="operations">
+              <div class="operation">
+                <span @click="editorTrend(item.id)">编辑</span><span @click="viewTrend(item.id)">查看</span><span @click="deleteTrend(item.id)">删除</span>
+              </div>
+              <div class="infor">
+                <i class="icon-查看"></i><span>{{item.pv_browse}}</span><i class="icon-评论"></i><span>{{item.comment_success_count + item.comment_fail_count}}</span><i class="icon-点赞"></i><span>{{item.pv_vote}}</span>
+              </div>
             </div>
           </div>
-          <div class="operations">
-            <div class="operation">
-              <span @click="editorTrend(item,index)">编辑</span><span @click="viewTrend(item,index)">查看</span><span @click="deleteTrend(item,index)">删除</span>
-            </div>
-            <div class="infor">
-              <i class="icon-查看"></i><span>9999</span><i class="icon-评论"></i><span>10.8W+</span><i class="icon-转发"></i><span>1.6W+</span><i class="icon-点赞"></i><span>9999</span>
-            </div>
-          </div>
+        </div>
+        <div v-else class="no-data">
+          暂无数据
         </div>
       </div>
       <div class="dialog" v-if="dialogVisible">
@@ -78,73 +83,62 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {getTrends, deleteTrend} from '../axios/api'
 export default {
   data () {
     return {
       keyTime: [],
       keyWord: '',
-      data: [{
-        title: '手机卡基多拉空间',
-        body: '爱神的箭啊啥看啥看动画',
-        type: 1,
-        pv: 9999,
-        comment: 1233,
-        zhuanfa: 1231,
-        dianzan: 12312,
-        imgs: [{
-          url: 'http://imgsrc.baidu.com/imgad/pic/item/eaf81a4c510fd9f900630df72f2dd42a2834a43c.jpg'
-        }, {
-          url: 'http://imgsrc.baidu.com/imgad/pic/item/d439b6003af33a87589a973ccc5c10385343b525.jpg'
-        }, {
-          url: 'http://imgsrc.baidu.com/image/c0%3Dshijue1%2C0%2C0%2C294%2C40/sign=453c53fbfa1f3a294ec5dd8df14cd644/2cf5e0fe9925bc319508f3bd54df8db1cb1370ba.jpg'
-        }]
-      }, {
-        title: '手机卡基多拉空间',
-        body: '爱神的箭啊啥看啥看动画',
-        type: 2,
-        pv: 9999,
-        comment: 1233,
-        zhuanfa: 1231,
-        dianzan: 12312
-      }, {
-        title: '手机卡基多拉空间',
-        body: '爱神的箭啊啥看啥看动画',
-        type: 1,
-        pv: 9999,
-        comment: 1233,
-        zhuanfa: 1231,
-        dianzan: 12312
-      }, {
-        title: '手机卡基多拉空间',
-        body: '爱神的箭啊啥看啥看动画',
-        type: 2,
-        pv: 9999,
-        comment: 1233,
-        zhuanfa: 1231,
-        dianzan: 12312
-      }],
+      data: [],
       dialogVisible: false,
       shortSele: true
     }
   },
+  mounted () {
+    this.getTrends()
+  },
   methods: {
     // 编辑动态
-    editorTrend (item, val) {
+    editorTrend (val) {
       console.log(val)
-      this.$router.push({name: 'addTrends', query: {id: val, type: 1}})
+      this.$router.push({name: 'addTrends', query: {id: val}})
     },
     // 查看动态
-    viewTrend (item, val) {
+    viewTrend (val) {
       this.$router.push({name: 'viewTrends', query: {id: val}})
     },
     // 删除动态
-    deleteTrend (item, val) {
-      console.log(val)
+    deleteTrend (val) {
+      this.$confirm('确定删除该条动态？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteTrend(val).then(res => {
+          console.log(res)
+          // 重新请求动态列表数据
+          this.getTrends()
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+      })
     },
     changeTime (value) {
       console.log(value)
       console.log(1111)
     },
+    // 请求动态列表数据
+    getTrends () {
+      getTrends().then(res => {
+        console.log(res)
+        this.data = res.data
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    // 模态框点击确定
     dialogComfirm () {
       this.dialogVisible = false
       this.$router.push({name: 'addTrends', query: {type: this.shortSele ? 1 : 2}})
@@ -225,6 +219,14 @@ export default {
     margin-top: 20px;
     background: #FFFFFF;
     padding: 20px;
+    .no-data {
+      height: 50px;
+      border: 1px solid #d5d5d5;
+      text-align: center;
+      color: #222222;
+      margin-top: 20px;
+      line-height: 50px;
+    }
     .trends {
       border: 1px solid @bc;
       margin-top: 10px;

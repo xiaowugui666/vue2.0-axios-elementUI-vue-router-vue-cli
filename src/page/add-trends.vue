@@ -6,7 +6,7 @@
         <div class="add-body">
           <div class="add-title"><span></span><span>内容编辑</span></div>
           <div class="hr"></div>
-          <div class="add-topic left-padding" v-if="trendType == 2">
+          <div class="add-topic left-padding" v-if="trendType == 2 || addType == 2">
             <span class="pre-text required">标      题 ：</span>
             <el-input
               size="small"
@@ -15,11 +15,11 @@
               v-model="title"></el-input>
             <div class="err-tips">{{ errors.first('商品名称') }}</div>
           </div>
-          <div class="description left-padding" v-if="trendType == 2">
+          <div class="description left-padding" v-if="trendType == 2 || addType == 2">
             <span class="pre-text">简      述 ：</span>
             <textarea type="textarea" class="add-textarea" v-model="textContent"></textarea>
           </div>
-          <div class="add-thumbnail left-padding" v-if="trendType == 2">
+          <div class="add-thumbnail left-padding" v-if="trendType == 2 || addType == 2">
             <span class="pre-text">缩 略 图 ： </span>
             <el-upload
               class="avatar-uploader"
@@ -29,16 +29,18 @@
               :show-file-list="false"
               :on-success="(res,file)=>handleAvatarSuccess(res,file)"
               :before-upload="(value)=>beforeUpload(value)">
-              <img v-if="imgUrl" src="https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1180847171,539574302&fm=27&gp=0.jpg">
+              <img v-if="imgUrl" :src="yiqixuanDomainUrl + imgUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
           <div class="add-message left-padding">
             <span class="pre-text required">内      容 ：</span>
-            <div class="rich-text-editor clear" v-if="trendType == 2">
+            <div class="rich-text-editor clear" v-if="trendType == 2 || addType == 2">
               <!--商品图文详情编辑框-->
               <quill-editor v-model.trim="quillContent"
                             ref="myQuillEditor"
+                            v-validate="'required'"
+                            name="富文本内容"
                             :options="editorOption"
                             @blur="onEditorBlur($event)"
                             @focus="onEditorFocus($event)"
@@ -54,9 +56,9 @@
                 <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
               </el-upload>
             </div>
-            <textarea v-else class="add-textarea"></textarea>
+            <textarea v-else class="add-textarea" v-model="quillContent"></textarea>
           </div>
-          <div class="add-imgs left-padding" v-if="trendType == 1">
+          <div class="add-imgs left-padding" v-if="trendType == 1 || addType == 1">
             <span class="pre-text required">配      图 ：</span>
             <el-upload
               :action="qiniuUploadUrl"
@@ -64,11 +66,11 @@
               accept=".jpg,.png"
               list-type="picture-card"
               :before-upload="(value)=>beforeUpload(value)"
-              :on-success="(res,file)=>handlePictureList(res,file)">
+              :on-success="(res,file, fileList)=>handlePictureList(res,file, fileList)">
               <i class="el-icon-plus"></i>
             </el-upload>
           </div>
-          <el-button class="add-button" size="small" type="success">保存</el-button>
+          <el-button class="add-button" size="small" type="success" @click="saveTrends">保存</el-button>
         </div>
       </div>
     </div>
@@ -76,34 +78,78 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
-import {getQnToken} from '../axios/api'
+import {getQnToken, getTrendDetail, putTrendDetail, addTrends} from '../axios/api'
 import {mapState} from 'vuex'
 import { quillEditor } from 'vue-quill-editor' // 调用编辑器
-// import Quill from 'quill'
+import Quill from 'quill'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 export default {
   data () {
+    // 工具栏配置
+    const toolbarOptions = [
+      ['bold', 'italic', 'underline', 'strike'],
+      ['blockquote', 'code-block'],
+
+      [{'header': 1}, {'header': 2}],
+      [{'list': 'ordered'}, {'list': 'bullet'}],
+      [{'script': 'sub'}, {'script': 'super'}],
+      [{'indent': '-1'}, {'indent': '+1'}],
+      [{'direction': 'rtl'}],
+      [{'size': ['small', false, 'large', 'huge']}],
+      [{'header': [1, 2, 3, 4, 5, 6, false]}],
+      [{'color': []}, {'background': []}],
+      [{'font': []}],
+      [{'align': []}],
+      ['link', 'image'],
+      ['clean']
+    ]
     return {
       // 动态类型
-      trendType: this.$route.query.type,
+      trendType: '',
       // 长动态标题
       title: '',
+      // 新增动态类型
+      addType: this.$route.query.type || 0,
       // 长动态简述
-      description: '',
-      // 文章内容
       textContent: '',
       // 图片上传列表
       fileList: [],
+      // 动态数据
+      data: {},
       // 七牛token
       upToken: {},
-      editorOption: {},
       quillContent: '',
-      imgUrl: true
+      editorOption: {
+        modules: {
+          toolbar: {
+            container: toolbarOptions
+          }
+        }
+      },
+      imgUrl: ''
     }
   },
   mounted () {
+    this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
+    // 如果为编辑动态，获取动态详情
+    if (this.$route.query.id) {
+      getTrendDetail(this.$route.query.id).then(res => {
+        console.log(res)
+        // 赋值操作
+        this.data = res.data
+        this.trendType = res.data.type
+        this.title = res.data.title
+        this.textContent = res.data.description
+        this.quillContent = res.data.content
+        // 图片路径赋值 ///////////////////////////////////////须修改
+        this.imgUrl = res.data.cover_url
+      }).catch(err => {
+        console.log(err)
+      })
+    }
+    // 获取七牛token
     this.getImageToken()
   },
   methods: {
@@ -115,31 +161,106 @@ export default {
         console.log(err)
       })
     },
+    // 点击保存
+    saveTrends () {
+      // 编辑动态
+      if (this.$route.query.id) {
+        let params = {}
+        params.type = this.trendType
+        params.title = this.title
+        params.description = this.textContent
+        params.content = this.quillContent
+        params.cover_url = this.imgUrl
+        params.feed_images = this.fileList
+        putTrendDetail(params, this.$route.query.id).then(res => {
+          console.log(res)
+          if (res.status == 200) {
+            this.$router.push({name: 'trendsManagement'})
+          }
+        }).catch(() => {
+          this.$message({
+            message: '保存动态失败，请稍后重试',
+            type: 'error'
+          })
+        })
+      } else {
+        // 新增动态
+        let params = {}
+        params.content = this.quillContent
+        params.type = this.addType
+        if (this.addType == 1) { // 发布短动态
+          params.feed_imgaes = this.fileList
+        } else {
+          params.title = this.title
+          params.description = this.textContent
+          params.cover_url = this.imgUrl
+        }
+        addTrends(params).then(res => {
+          this.$router.push({name: 'trendsManagement'})
+        }).catch(err => {
+          console.log('新增动态打印错误：')
+          console.log(err)
+          this.$message({
+            message: '新增动态失败，请稍后重试',
+            type: 'error'
+          })
+        })
+      }
+    },
     handleAvatarSuccess (file) {
       console.log(1111)
       console.log(file)
+      this.imgUrl = file.key
     },
     beforeUpload (file) {
       console.log(2222)
       console.log(file)
     },
-    handlePictureList (res, file) {
+    handlePictureList (res, file, fileList) {
       console.log(res)
       console.log(file)
+      console.log(fileList)
     },
     // 富文本框操作
     onEditorBlur (val) {
       console.log(val)
+      console.log(this.quillContent)
     },
     onEditorFocus (val) {
     },
     onEditorReady (val) {
     },
-    quillUpScuccess () {
+    // 点击图片ICON触发事件
+    imgHandler (state) {
+      this.addRange = this.$refs.myQuillEditor.quill.getSelection()
+      if (state) {
+        let fileInput = this.$refs.quillUploadButton.$el
+        fileInput.click() // 加一个触发事件
+      }
+    },
+    // 商品卖点详情，图片上传成功后的操作
+    quillUpScuccess (e, file, fileList) {
+      let vm = this
+      let url = this.yiqixuanDomainUrl + e.key
+      if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
+        let value = url
+        // API: https://segmentfault.com/q/1010000008951906
+        // this.$refs.myTextEditor.quillEditor.getSelection();
+        // 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
+        vm.addRange = vm.$refs.myQuillEditor.quill.getSelection()
+        value = value.indexOf('http') !== -1 ? value : 'http:' + value
+        vm.$refs.myQuillEditor.quill.insertEmbed(vm.addRange !== null ? vm.addRange.index : 0, 'image', value, Quill.sources.USER) // 调用编辑器的 insertEmbed 方法，插入URL
+      } else {
+        this.$message.error(`插入失败`)
+      }
+      this.$refs['quillUpload'].clearFiles() // 插入成功后清除input的内容
     }
   },
   computed: {
-    ...mapState(['qiniuUploadUrl'])
+    ...mapState(['qiniuUploadUrl', 'yiqixuanDomainUrl']),
+    editor () {
+      return this.$refs.myQuillEditor.quill
+    }
   },
   components: {
     menuLeft,
@@ -165,10 +286,22 @@ export default {
       vertical-align: top;
       font-size: 20px;
       text-align: center;
-      line-height: 78px;
-      width: 78px;
-      height: 78px;
+      line-height: 80px;
+      width: 80px;
+      height: 80px;
       color: #d5d5d5;
+    }
+    .add-thumbnail {
+      .el-upload {
+        width: 260px;
+        height: 140px;
+      }
+      .el-icon-plus {
+        line-height: 140px;
+        width: 260px;
+        height: 140px;
+        vertical-align: middle;
+      }
     }
     .el-upload-list--picture-card {
       display: inline-block;
@@ -187,6 +320,7 @@ export default {
       line-height: 30px;
       padding-left: 10px;
       border: 1px solid #D5D5D5;
+      color: #222222;
       border-radius: 2px;
     }
     .el-input--suffix .el-input__inner {

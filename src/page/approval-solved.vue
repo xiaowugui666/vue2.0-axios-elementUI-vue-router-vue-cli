@@ -2,32 +2,33 @@
   <div style="min-height: 100%;">
     <menu-left routeIndex="9-2"></menu-left>
     <div class="solved-content">
-      <div class="solved-header">动态 > 评论审批 > {{type == 1 ? '未通过' : '已通过'}}</div>
+      <div class="solved-header">动态 > 评论审批 > {{status == 3 ? '未通过' : '已通过'}}</div>
       <div class="solved-body">
         <div class="solved-container">
-          <div class="container-header">
-            <img :src="content.img">
+          <div class="container-header" v-if="JSON.stringify(content) != '{}'">
+            <img :src="yiqixuanDomainUrl + content.cover_url">
             <div class="container-content">
               <p><span class="container-title">{{content.title}}</span><span>{{content.date}}</span></p>
               <div>
                 <p class="container-mess">{{content.content}}</p>
-                <span>全文 ></span>
+                <span @click="navigateTo">全文 ></span>
               </div>
             </div>
           </div>
+          <div class="no-data" v-else>请求动态数据失败</div>
           <div class="hr"></div>
-          <div class="container-items">
+          <div class="container-items" v-if="approvals.length">
             <div class="appro-item" v-for="(ite,ind) in approvals" :key="ind">
-              <img class="avatar" :src="ite.img">
               <div class="appro-info">
-                <p><span>{{ite.nickname}}</span><span>手机号 ： {{ite.mobile}}</span></p>
-                <p><span>{{ite.date}}</span></p>
+                <p><span>{{ite.nick_name}}</span><span>手机号 ： {{ite.user.mobile}}</span></p>
+                <p><span>{{ite.updated_at}}</span></p>
                 <p>{{ite.content}}</p>
               </div>
-              <img class="mark-img" v-if="type == 1" src="../assets/Don't show_label@2x.png">
+              <img class="mark-img" v-if="status == 2" src="../assets/pass_label@2x.png">
               <img class="mark-img" v-else src="../assets/not pass_label@2x.png">
             </div>
           </div>
+          <div class="no-data bottom" v-else>暂无评论数据</div>
         </div>
       </div>
     </div>
@@ -36,45 +37,41 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
+import {getTrendDetail, getComments} from '../axios/api'
 export default {
   data () {
     return {
-      content: {
-        img: 'http://imgsrc.baidu.com/imgad/pic/item/eaf81a4c510fd9f900630df72f2dd42a2834a43c.jpg',
-        title: '智能计算，唤醒万物',
-        content: '绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。',
-        status: 1,
-        date: '2018-12-12   23:23:33'
-      },
-      approvals: [{
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529995158190&di=bceedad7f7edfcee5d3fff7eef36ff72&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F1b4c510fd9f9d72af17e9109de2a2834349bbb88.jpg',
-        nickname: '小明',
-        mobile: '123456789101',
-        status: 3,
-        date: '2017-6-26  23:23:23',
-        content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈！'
-      }, {
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529995158190&di=bceedad7f7edfcee5d3fff7eef36ff72&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F1b4c510fd9f9d72af17e9109de2a2834349bbb88.jpg',
-        nickname: '小明',
-        mobile: '123456789101',
-        status: 2,
-        date: '2017-6-26  23:23:23',
-        content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈！'
-      }, {
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529995158190&di=bceedad7f7edfcee5d3fff7eef36ff72&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F1b4c510fd9f9d72af17e9109de2a2834349bbb88.jpg',
-        nickname: '小明',
-        mobile: '123456789101',
-        status: 1,
-        date: '2017-6-26  23:23:23',
-        content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈！',
-        replay: '呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵'
-      }],
-      type: 1
+      content: {},
+      approvals: [],
+      status: this.$route.query.status,
+      // 动态id
+      id: this.$route.query.id
     }
   },
+  mounted () {
+    // 获取动态详情
+    getTrendDetail(this.id).then(res => {
+      console.log(res)
+      this.content = res.data
+    })
+    this.getComments()
+  },
   methods: {
+    // 获取评论详情
+    getComments () {
+      getComments({feed_id: this.id, status: this.status}).then(res => {
+        console.log(res)
+        this.approvals = res.data
+      })
+    },
+    // 跳转动态详情
+    navigateTo () {
+      this.$router.push({name: 'viewTrends', query: {id: this.id}})
+    }
   },
   computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   },
   components: {
     menuLeft
@@ -100,6 +97,16 @@ export default {
     background: #ffffff;
     min-height: 90%;
     padding: 20px;
+    .no-data {
+      height: 50px;
+      border: 1px solid #d5d5d5;
+      text-align: center;
+      color: #222222;
+      line-height: 50px;
+    }
+    .no-data.bottom {
+      margin: 20px 0;
+    }
     .solved-container {
       box-sizing: border-box;
       border: 1px solid #D5D5D5;
@@ -129,13 +136,14 @@ export default {
           >div {
             display: flex;
             p {
-              width: 95%;
+              max-width: 95%;
             }
             span {
               display: inline-block;
               margin-top: 10px;
               color: #58A8FF;
               margin-left: 10px;
+              cursor: pointer;
             }
           }
           .container-title {

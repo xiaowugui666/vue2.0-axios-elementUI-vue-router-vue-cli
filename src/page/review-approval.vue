@@ -23,22 +23,26 @@
       </div>
       <div class="review-body">
         <ul class="review-status">
-          <li :class="{'active':reviewStatu == 1}" @click="changState(1)">未审批</li>
-          <li :class="{'active':reviewStatu == 2}" @click="changState(2)">已通过</li>
-          <li :class="{'active':reviewStatu == 3}" @click="changState(3)">未通过</li>
+          <li :class="{'active':reviewStatu == 1}" @click="changState(1)">未审批<span v-if="reviewStatu == 1 && tabCount"> ( {{tabCount}} ) </span></li>
+          <li :class="{'active':reviewStatu == 2}" @click="changState(2)">已通过<span v-if="reviewStatu == 2 && tabCount"> ( {{tabCount}} ) </span></li>
+          <li :class="{'active':reviewStatu == 3}" @click="changState(3)">未通过<span v-if="reviewStatu == 3 && tabCount"> ( {{tabCount}} ) </span></li>
         </ul>
-        <div class="review-items">
+        <div v-if="items.length" class="review-items">
           <div class="review-item" v-for="(item,index) in items" :key="index">
-            <img :src="item.img" v-if="item.img">
+            <img :src="yiqixuanDomainUrl + item.cover_url" v-if="item.cover_url">
             <span class="item-point" v-else></span>
             <div class="item-content" :style="{'margin-left':(item.img ? '15px' : '25px')}">
               <p><span class="title">{{item.title}}</span><span>{{item.date}}</span></p>
-              <p class="content-mess" v-if="item.img">{{item.content}}</p>
+              <p class="content-mess" v-if="item.cover_url">{{item.content}}</p>
             </div>
-            <div :class="{'item-status': true, 'active-statu': (item.status == 1 ? true : false)}" @click="itemDetail(item.status,index)">
-              {{item.status == 1 ? '未审批' : (item.status == 2 ? '已通过' : '未通过')}}
+            <div :class="{'item-status': true, 'active-statu': (reviewStatu == 1 ? true : false)}" @click="itemDetail(item.id)">
+              {{reviewStatu == 1 ? '未审批' : (reviewStatu == 2 ? '已通过' : '未通过')}}
+              <span>( {{reviewStatu == 1 ? item.comment_rank_count : (reviewStatu == 2 ? item.comment_success_count : item.comment_fail_count)}} )</span>
             </div>
           </div>
+        </div>
+        <div v-else class="no-data">
+          暂无数据
         </div>
       </div>
     </div>
@@ -47,56 +51,47 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {getFeedComment} from '../axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
       keyTime: [],
       reviewStatu: 1,
-      items: [{
-        img: 'http://imgsrc.baidu.com/imgad/pic/item/eaf81a4c510fd9f900630df72f2dd42a2834a43c.jpg',
-        title: '智能计算，唤醒万物',
-        content: '绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。',
-        status: 1,
-        date: '2018-12-12   23:23:33'
-      }, {
-        img: 'http://imgsrc.baidu.com/imgad/pic/item/eaf81a4c510fd9f900630df72f2dd42a2834a43c.jpg',
-        title: '智能计算，唤醒万物',
-        content: '绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。',
-        status: 2,
-        date: '2018-12-12   23:23:33'
-      }, {
-        img: '',
-        title: '智能计算，唤醒万物',
-        content: '绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。',
-        status: 2,
-        date: '2018-12-12   23:23:33'
-      }, {
-        img: '',
-        title: '智能计算，唤醒万物',
-        content: '绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。绵阳千佛山，位于绵阳安州、北川和阿坝茂县交界处，海拔3033m，岷山山脉分支，四川360度观景平台之一，无限风光一览无余。',
-        status: 3,
-        date: '2018-12-12   23:23:33'
-      }]
+      items: [],
+      tabCount: 0
     }
+  },
+  mounted () {
+    this.getFeedComment()
   },
   methods: {
     // 点击查看动态详情
-    itemDetail (status, index) {
-      console.log(status)
-      console.log(index)
-      if (status == 1) {
-        this.$router.push({name: 'approvalDetail', query: {id: index}})
+    itemDetail (id) {
+      if (this.reviewStatu == 1) {
+        this.$router.push({name: 'approvalDetail', query: {id: id, status: 1}})
       } else {
-        this.$router.push({name: 'approvalSolved', query: {id: index, type: status == 2 ? 1 : 2}})
+        this.$router.push({name: 'approvalSolved', query: {id: id, status: this.reviewStatu}})
       }
     },
     changeTime () {
     },
+    // 查看不同评论状态
     changState (val) {
       this.reviewStatu = val
+      this.getFeedComment()
+    },
+    getFeedComment () {
+      getFeedComment({status: this.reviewStatu}).then(res => {
+        console.log(res)
+        this.items = res.data.data
+        this.tabCount = res.data.tab_count
+        // this.tabCount = res.headers.
+      })
     }
   },
   computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   },
   components: {
     menuLeft
@@ -167,6 +162,15 @@ export default {
     margin-top: 20px;
     background: #FFFFFF;
     min-height: 85%;
+    overflow: hidden;
+    .no-data {
+      margin: 20px;
+      height: 50px;
+      border: 1px solid #d5d5d5;
+      text-align: center;
+      color: #222222;
+      line-height: 50px;
+    }
     .review-status {
       display: flex;
       height: 40px;

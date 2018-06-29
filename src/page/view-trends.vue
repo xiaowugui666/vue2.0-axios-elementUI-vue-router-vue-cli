@@ -6,46 +6,53 @@
       <div class="view-body">
         <div class="view-title"><span></span><span>内容编辑</span></div>
         <div class="hr"></div>
+        <div class="view-mess-title" v-if="trendType == 2">
+          <span class="pre-text">标      题 ：</span>
+          <p>{{trendData.title}}</p>
+        </div>
         <div class="view-content">
           <span class="pre-text">内      容 ：</span>
-          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean euismod bibendum laoreet. Proin gravida dolor sit amet lacus accumsan et viverra justo commodo. Proin sodales pulvinar tempor. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nam fermentum, nulla luctus pharetra vulputate, felis tellus mollis orci, sed rhoncus sapien nunc eget.</p>
+          <div>
+            <p v-html="trendData.content"></p>
+            <p v-if="trendType == 2">修改时间： {{trendData.updated_at}}</p>
+          </div>
         </div>
-        <div class="view-imgs">
+        <div class="view-imgs" v-if="trendType == 1">
           <span class="pre-text">配      图 ：</span>
           <img v-for="(item,index) in imgs" :key="index" :src="item">
         </div>
         <div class="view-title approval"><span></span><span>评论</span><span>( 88888 )</span></div>
         <div class="hr appro-hr"></div>
-        <div class="approvals">
-          <div class="appro-item" v-for="(ite,ind) in approvals" :key="ind">
-            <img class="avatar" :src="ite.img">
+        <div class="approvals" v-if="commentData.length">
+          <div class="appro-item" v-for="(ite,ind) in commentData" :key="ind">
             <div class="appro-info">
-              <p><span>{{ite.nickname}}</span><span>手机号 ： {{ite.mobile}}</span></p>
-              <p><span>{{ite.date}}</span></p>
+              <p v-if="ite.user_wechat"><span>{{ite.user_wechat.nick_name}}</span><span>手机号 ： {{ite.mobile}}</span></p>
+              <p><span>{{ite.created_at}}</span></p>
               <p>{{ite.content}}</p>
               <!-- v-if判断条件须改动 -->
-              <div v-if="isReplay && ind == clickIndex">
+              <div v-if="isReplay && ite.id == clickIndex">
                 <el-input
-                  placeholder="巴拉巴拉巴拉"></el-input>
-                <el-button class="replaying-button" type="primary" size="small" @click="clickSave(ind)">回复</el-button>
+                  placeholder="巴拉巴拉巴拉" v-model="content"></el-input>
+                <el-button class="replaying-button" type="primary" size="small" @click="clickSave(ite.id)">回复</el-button>
               </div>
-              <div class="replay" v-if="ite.replay">
+              <div class="replay" v-if="ite.reply">
                 <span>店家回复：</span>
                 <div>
-                  <p>{{ite.replay}}</p>
-                  <p>{{ite.date}}</p>
+                  <p>{{ite.reply.content}}</p>
+                  <p>{{ite.reply.created_at}}</p>
                 </div>
               </div>
             </div>
             <img class="mark-img" v-if="ite.status == 3" src="../assets/Don't show_label@2x.png">
-            <el-button class="replay-button" v-if="ite.status == 2 && !isReplay" type="primary" size="small" @click="clickSave(ind)">回复</el-button>
+            <el-button class="replay-button" v-if="ite.status == 2 && !isReplay && !ite.reply" type="primary" size="small" @click="clickSaveChang(ite.id)">回复</el-button>
           </div>
         </div>
+        <div class="no-data" v-else>暂无数据</div>
         <el-pagination
           background
           :page-size="15"
           :page-count="6"
+          v-if="commentData.length"
           :current-page="currentPage"
           style="padding-top: 20px;"
           prev-text="< 上一页"
@@ -61,50 +68,68 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {getTrendDetail, getComments, postComment} from '../axios/api'
 export default {
   data () {
     return {
-      imgs: ['https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529994182978&di=08da2f8ad2073f864b4dbecb116e2b65&imgtype=0&src=http%3A%2F%2Fscimg.jb51.net%2Fallimg%2F151006%2F14-151006114S1135.jpg', 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529994182978&di=08da2f8ad2073f864b4dbecb116e2b65&imgtype=0&src=http%3A%2F%2Fscimg.jb51.net%2Fallimg%2F151006%2F14-151006114S1135.jpg', 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529994182978&di=08da2f8ad2073f864b4dbecb116e2b65&imgtype=0&src=http%3A%2F%2Fscimg.jb51.net%2Fallimg%2F151006%2F14-151006114S1135.jpg'],
-      approvals: [{
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529995158190&di=bceedad7f7edfcee5d3fff7eef36ff72&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F1b4c510fd9f9d72af17e9109de2a2834349bbb88.jpg',
-        nickname: '小明',
-        mobile: '123456789101',
-        status: 3,
-        date: '2017-6-26  23:23:23',
-        content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈！'
-      }, {
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529995158190&di=bceedad7f7edfcee5d3fff7eef36ff72&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F1b4c510fd9f9d72af17e9109de2a2834349bbb88.jpg',
-        nickname: '小明',
-        mobile: '123456789101',
-        status: 2,
-        date: '2017-6-26  23:23:23',
-        content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈！'
-      }, {
-        img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1529995158190&di=bceedad7f7edfcee5d3fff7eef36ff72&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimgad%2Fpic%2Fitem%2F1b4c510fd9f9d72af17e9109de2a2834349bbb88.jpg',
-        nickname: '小明',
-        mobile: '123456789101',
-        status: 1,
-        date: '2017-6-26  23:23:23',
-        content: '哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈，哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈！',
-        replay: '呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵呵'
-      }],
+      trendType: '',
+      imgs: [],
+      approvals: [],
       // 是否点击回复
       isReplay: false,
       // 点击回复时当前index：拿到数据时改为id判断
       clickIndex: 0,
       // 当前页数
-      currentPage: 1
+      currentPage: 1,
+      // 动态数据
+      trendData: {},
+      // 回复内容
+      content: '',
+      // 评论数据
+      commentData: []
     }
   },
+  mounted () {
+    // 获取动态数据
+    getTrendDetail(this.$route.query.id).then(res => {
+      console.log(res)
+      // 赋值
+      this.trendData = res.data
+      this.trendType = res.data.type
+    })
+    this.getFeedComments()
+  },
   methods: {
+    // 点击回复，仅改变视图
+    clickSaveChang (val) {
+      this.clickIndex = val
+      this.isReplay = true
+    },
     // 点击回复
     clickSave (val) {
       this.clickIndex = val
       this.isReplay = !this.isReplay
+      let params = {}
+      params.id = val
+      params.feed_id = this.$route.query.id
+      params.content = this.content
+      postComment(params).then(res => {
+        if (res.status == 200) {
+          this.getFeedComments()
+        }
+      })
     },
     // 点击分页
     currentIndex (val) {
       console.log(val)
+    },
+    // 获取评论列表
+    getFeedComments () {
+      getComments({feed_id: this.$route.query.id}).then(res => {
+        console.log(res)
+        this.commentData = res.data
+        console.log(this.commentData)
+      })
     }
   },
   computed: {
@@ -147,6 +172,14 @@ export default {
       height: auto;
       min-height: 88%;
       padding: 20px;
+      .no-data {
+        margin: 20px 0;
+        height: 50px;
+        border: 1px solid #d5d5d5;
+        text-align: center;
+        color: #222222;
+        line-height: 50px;
+      }
       .view-title {
         font-size: 14px;
         color: #222222;
@@ -171,9 +204,9 @@ export default {
       .appro-hr {
         margin-bottom: 0;
       }
-      .view-content {
+      .view-content, .view-mess-title {
         display: flex;
-        p {
+        div, >p {
           display: inline-block;
           width: 94%;
           font-size: 12px;
@@ -181,6 +214,17 @@ export default {
           overflow: hidden;
           color: #222222;
           line-height: 20px;
+        }
+        >div>p:nth-child(2) {
+          color: #888888;
+          margin-top: 10px;
+        }
+      }
+      .view-mess-title {
+        margin-bottom: 20px;
+        p {
+          font-size: 14px;
+          font-weight: bold;
         }
       }
       .view-imgs {
