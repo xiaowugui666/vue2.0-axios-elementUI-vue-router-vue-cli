@@ -117,6 +117,7 @@ export default {
       textContent: '',
       // 图片上传列表
       fileList: [],
+      imgsList: [],
       // 动态数据
       data: {},
       // 七牛token
@@ -139,19 +140,21 @@ export default {
     // 如果为编辑动态，获取动态详情
     if (this.$route.query.id) {
       getTrendDetail(this.$route.query.id).then(res => {
-        console.log(res)
+        console.log(res.data.images)
         // 赋值操作
         this.data = res.data
         this.trendType = res.data.type
         this.title = res.data.title
         this.textContent = res.data.description
         this.quillContent = res.data.content
-        for (let x = 0; x < res.data.images.length; x++) {
-          res.data.images[x].url = this.yiqixuanDomainUrl + res.data.images[x].img_url
-          res.data.images[x].icon_url = res.data.images[x].img_url
+        let tempArr = res.data.images
+        for (let x = 0; x < tempArr.length; x++) {
+          tempArr[x].url = this.yiqixuanDomainUrl + tempArr[x].img_url
+          tempArr[x].icon_url = tempArr[x].img_url
+          this.imgsList.push(tempArr[x].img_url)
         }
-        this.fileList = res.data.images
-        console.log(this.fileList)
+        console.log(this.imgsList)
+        this.fileList = tempArr
         // 图片路径赋值 ///////////////////////////////////////须修改
         this.imgUrl = res.data.cover_url
       }).catch(err => {
@@ -179,7 +182,7 @@ export default {
         params.content = this.quillContent
         // 如果为编辑短动态
         if (this.trendType == 1) {
-          params.feed_images = this.fileList
+          params.feed_images = this.imgsList
         } else {
           params.title = this.title
           params.description = this.textContent
@@ -203,7 +206,7 @@ export default {
           params.content = this.quillContent
           params.type = this.addType
           if (this.addType == 1) { // 发布短动态
-            params.feed_images = this.fileList
+            params.feed_images = this.imgsList
           } else {
             params.title = this.title
             params.description = this.textContent
@@ -236,6 +239,13 @@ export default {
     // 点击缩略图删除
     removeFileList (file, fileList) {
       this.fileList = fileList
+      // 遍历删除imgsList当前删除项
+      for (let i = 0; i < this.imgsList.length; i++) {
+        if (this.imgsList[i] == file.img_url) {
+          this.imgsList.splice(i, 1)
+        }
+      }
+      console.log(this.imgsList)
     },
     // 判断配图是否重复
     imgsBeforeUpload (file) {
@@ -276,7 +286,9 @@ export default {
     // 新增配图
     handlePictureList (res, file) {
       this.fileList.push({url: this.yiqixuanDomainUrl + file.response.key, icon_url: file.response.key})
+      this.imgsList.push(file.response.key)
       console.log(this.fileList)
+      console.log(this.imgsList)
     },
     // 富文本框操作
     onEditorBlur (val) {
