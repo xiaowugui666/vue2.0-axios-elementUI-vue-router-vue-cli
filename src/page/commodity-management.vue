@@ -51,6 +51,7 @@
             </el-table-column>
             <el-table-column
               label="商品"
+              show-overflow-tooltip
               min-width="300">
               <template slot-scope="scope">
                 <div class="goods-info-box">
