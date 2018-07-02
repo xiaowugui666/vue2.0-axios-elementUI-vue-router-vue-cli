@@ -56,7 +56,7 @@
           <i class="icon-设置"></i>
           <span>设置</span>
         </template>
-          <el-menu-item index="8-1" route="/information-setting">信息设置</el-menu-item>
+          <!--<el-menu-item index="8-1" route="/information-setting">信息设置</el-menu-item>-->
           <el-menu-item index="8-2" route="/order-setting">订单设置</el-menu-item>
           <el-menu-item index="8-3" route="/pay-setting">支付设置</el-menu-item>
           <el-menu-item index="8-4" route="/mp-setting">小程序设置</el-menu-item>
@@ -115,6 +115,8 @@ export default {
   width: 180px;
   height: 100%;
   position: fixed;
+  background: #fff;
+  box-shadow: 3px 0 2px #eee;
 .el-submenu .el-menu-item {
   min-width: auto;
   padding-left: 60px;
@@ -132,30 +134,34 @@ export default {
   span {
     vertical-align: middle;
     color: @b2;
-    }
+  }
 }
 .el-menu {
   border-right: none;
   overflow-y: auto;
   height: calc(100% - 133px);
   i {
-    font-size: 20px;
+    font-size: 18px;
     padding-right: 5px;
-  }
-  .el-menu--inline {
-    li {
-      margin-left: 10px;
-    }
   }
 }
 .el-menu-item {
   height: 40px;
   line-height: 40px;
-  color: @b8;
+  color: @b6;
 
   &.is-active {
-    background: #fff;
-    color: @mainC;
+    background: #EFEFEF;
+  }
+  &.is-active::before {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: @mainC;
   }
 }
 .menu-left-bottom-logo {
@@ -164,34 +170,22 @@ export default {
   width: 100%;
   text-align: center;
   font-size: 12px;
-  color: @b6;
+  color: @b8;
   z-index: -1;
 }
 }
 </style>
 <style lang="less">
 .menu-left {
-  .el-menu {
-    background: transparent;
-  }
   .el-submenu__title {
     height: 40px;
     line-height: 40px;
-    color: @b8;
+    color: @b6;
   }
   .el-menu-item-group__title {
     height: 0;
     padding: 0;
     display: none;
-  }
-  .el-submenu__title:hover, .el-menu-item:hover {
-    background: transparent;
-  }
-  .el-submenu.is-active .el-submenu__title{
-    color: @b2 !important;
-    i {
-      color: @b2 !important;
-    }
   }
 }
 </style>
