@@ -34,7 +34,8 @@
             <span class="item-point" v-else></span>
             <div class="item-content" :style="{'margin-left':(item.img ? '15px' : '25px')}">
               <p><span class="title">{{item.title}}</span><span>{{item.date}}</span></p>
-              <p class="content-mess" v-if="item.cover_url">{{item.content}}</p>
+              <p class="content-mess" v-if="item.cover_url">{{item.description}}</p>
+              <p class="content-mess" v-else>{{item.content}}</p>
             </div>
             <div :class="{'item-status': true, 'active-statu': (reviewStatu == 1 ? true : false)}" @click="itemDetail(item.id)">
               {{reviewStatu == 1 ? '未审批' : (reviewStatu == 2 ? '已通过' : '未通过')}}
@@ -123,8 +124,8 @@ export default {
     getFeedComment (params) {
       getFeedComment(params).then(res => {
         console.log(res)
-        this.items = res.data.data
-        this.tabCount = res.data.tab_count
+        this.items = res.data
+        this.tabCount = res.headers.data_count
         this.totalPagina = res.headers.page_count
         // this.tabCount = res.headers.
       })

@@ -10,7 +10,7 @@
             <div class="container-content">
               <p><span class="container-title">{{content.title}}</span><span>{{content.date}}</span></p>
               <div>
-                <p class="container-mess">{{content.content}}</p>
+                <p class="container-mess" v-html="content.content"></p>
                 <span @click="navigateTo">全文 ></span>
               </div>
             </div>

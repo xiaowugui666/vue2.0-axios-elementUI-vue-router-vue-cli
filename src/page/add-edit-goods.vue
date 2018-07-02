@@ -1025,7 +1025,7 @@ export default {
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
             free_express_price: Math.round(this.postage.money * 100),
-            sync_feed_status: this.sync ? 1 : 2,
+            sync_feed_status: this.sync,
             status: this.grounding ? 1 : 2,
             free_return: this.free_return,
             genuine_article: this.genuine_article,
