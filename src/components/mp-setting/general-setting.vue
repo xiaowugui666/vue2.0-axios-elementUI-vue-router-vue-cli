@@ -283,8 +283,8 @@ export default {
         this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
         this.searchDefaultText = data.search_default_text
         this.getRegionCode(data.province, data.city, data.region)
-        this.contactAddress = data.address
-        this.shareText = data.share_text !== null ? data.share_text : ''
+        this.contactAddress = data.address ? data.address : ''
+        this.shareText = data.share_text ? data.share_text : ''
         this.shareImage = data.share_logo_url ? data.share_logo_url : ''
       })
     },
