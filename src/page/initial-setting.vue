@@ -36,9 +36,9 @@
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top required">商铺描述：</span>
-                <textarea v-validate="'required'" name="商铺描述" v-model.trim="textArea" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
-                <div class="err-tips">{{ errors.first('商铺描述') }}</div>
+                <span class="name alignment-top required">欢迎文案：</span>
+                <textarea v-validate="'required'" name="欢迎文案" v-model.trim="textArea" maxlength="45" class="shop-description-textarea" placeholder="请输入欢迎文案"></textarea>
+                <div class="err-tips">{{ errors.first('欢迎文案') }}</div>
               </li>
               <li>
                 <span class="name required">客服电话：</span>
@@ -236,7 +236,9 @@ export default {
               this.active = 1
             }
           } else {
-            this.logoImageUrl = data.logo_url
+            if (data.logo_url) {
+              this.logoImageUrl = data.logo_url
+            }
             this.textArea = data.description
             this.shopName = data.name
             this.customerServiceNum = data.customer_service_mobile

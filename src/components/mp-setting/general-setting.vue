@@ -68,10 +68,6 @@
             <span>{{telNum}}</span>
           </li>
           <li>
-            <span class="name">联系微信：</span>
-            <span>{{contactWeChat}}</span>
-          </li>
-          <li>
             <span class="name required">客服电话：</span>
             <span>{{customerServiceNum}}</span>
           </li>
@@ -111,7 +107,7 @@
           </li>
           <li>
             <span class="name required alignment-top">欢迎文案：</span>
-            <textarea v-validate="'required'" name="欢迎文案" class="shop-description-textarea" v-model="textArea" placeholder="请输入商品描述" maxlength="45"></textarea>
+            <textarea v-validate="'required'" name="欢迎文案" class="shop-description-textarea" v-model="textArea" placeholder="请输入欢迎文案" maxlength="45"></textarea>
             <div class="err-tips">{{ errors.first('欢迎文案') }}</div>
           </li>
           <li>
@@ -141,10 +137,10 @@
             <span class="name">联系电话：</span>
             <span>{{telNum}}</span>
           </li>
-          <li>
+          <!--<li>
             <span class="name">联系微信：</span>
             <span>{{contactWeChat}}</span>
-          </li>
+          </li>-->
           <li>
             <span class="name required">客服电话：</span>
             <input type="text" v-validate="{required: true, regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
