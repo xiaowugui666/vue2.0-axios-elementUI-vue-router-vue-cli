@@ -19,7 +19,7 @@
         </div>
         <div class="view-imgs" v-if="trendType == 1">
           <span class="pre-text">配      图 ：</span>
-          <img v-for="(item,index) in imgs" :key="index" :src="item">
+          <img v-for="(item,index) in trendData.images" :key="index" :src="yiqixuanDomainUrl + item.img_url">
         </div>
         <div class="view-title approval"><span></span><span>评论</span><span v-if="commentData.length">( {{trendData.comment_success_count + trendData.comment_fail_count}} )</span></div>
         <div class="hr appro-hr"></div>
@@ -69,6 +69,7 @@
 <script>
 import menuLeft from '@/components/menu-left'
 import {getTrendDetail, getComments, postComment} from '../axios/api'
+import {mapState} from 'vuex'
 export default {
   data () {
     return {
@@ -138,6 +139,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   },
   components: {
     menuLeft
