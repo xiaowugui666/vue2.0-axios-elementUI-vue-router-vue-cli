@@ -23,6 +23,13 @@ const orderRebate = r => require.ensure([], () => r(require('@/page/order-rebate
 const login = r => require.ensure([], () => r(require('@/page/login')))
 const err404 = r => require.ensure([], () => r(require('@/page/404')))
 const bindingMp = r => require.ensure([], () => r(require('@/page/binding-mp')))
+const trendsManagement = r => require.ensure([], () => r(require('@/page/trends-management')))
+const addTrends = r => require.ensure([], () => r(require('@/page/add-trends')))
+const reviewApproval = r => require.ensure([], () => r(require('@/page/review-approval')))
+const viewTrends = r => require.ensure([], () => r(require('@/page/view-trends')))
+const approvalDetail = r => require.ensure([], () => r(require('@/page/approval-detail')))
+const approvalSolved = r => require.ensure([], () => r(require('@/page/approval-solved')))
+
 // import home from '@/page/home'
 // import initialSetting from '@/page/initial-setting'
 // import commodityManagement from '@/page/commodity-management'
@@ -76,6 +83,36 @@ export default new Router({
       path: '/customer-management',
       name: 'customerManagement',
       component: customerManagement
+    },
+    {
+      path: '/trends-management',
+      name: 'trendsManagement',
+      component: trendsManagement
+    },
+    {
+      path: '/add-trends',
+      name: 'addTrends',
+      component: addTrends
+    },
+    {
+      path: '/view-trends',
+      name: 'viewTrends',
+      component: viewTrends
+    },
+    {
+      path: '/review-approval',
+      name: 'reviewApproval',
+      component: reviewApproval
+    },
+    {
+      path: '/approval-detail',
+      name: 'approvalDetail',
+      component: approvalDetail
+    },
+    {
+      path: '/approval-solved',
+      name: 'approvalSolved',
+      component: approvalSolved
     },
     {
       path: '/customer-order/:id',
