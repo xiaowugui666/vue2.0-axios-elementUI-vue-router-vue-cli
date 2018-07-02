@@ -8,7 +8,7 @@
           <div>
             <div class="appro-content-title"><span>{{content.title}}</span><span>{{content.created_at}}</span></div>
             <div class="appro-content-messa">
-              <p>{{content.content}}</p>
+              <p v-html="content.content"></p>
               <span @click="navigateTo">全文 ></span>
             </div>
             <img v-for="(item,index) in content.imgs" :key="index" :src="item.url">
