@@ -26,7 +26,7 @@
                   <div class="goods-info-box">
                     <span class="goods-img"><img :src="yiqixuanDomainUrl + scope.row.cover_url" alt=""></span>
                     <div class="goods-info">
-                      <p class="goods-info-name">{{compGoodsName(scope.row)}}</p>
+                      <p class="goods-info-name" :title="compGoodsName(scope.row)">{{compGoodsName(scope.row)}}</p>
                       <div class="goods-info-price-category">
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}
@@ -97,14 +97,7 @@ export default {
     },
     // 点击搜索
     diaSearch () {
-      if (this.productionKey !== '') {
-        this.$emit('modalSearch', this.productionKey)
-      } else {
-        this.$message({
-          message: '请输入要搜索的商品名称',
-          type: 'warning'
-        })
-      }
+      this.$emit('modalSearch', this.productionKey)
     },
     // 点击分页,通知父组件改变状态
     currentChange (e) {
