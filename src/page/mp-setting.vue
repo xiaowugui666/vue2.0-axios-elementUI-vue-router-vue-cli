@@ -69,7 +69,7 @@ import {mapState} from 'vuex'
 export default {
   data () {
     return {
-      tabOption: 2,
+      tabOption: 0,
       dialogVisible: false,
       mpaName: '',
       mpaId: '',

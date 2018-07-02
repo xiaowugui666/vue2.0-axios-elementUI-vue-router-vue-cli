@@ -10,19 +10,31 @@
     <div class="history-version-update-record">
       <div class="title">历史版本更新记录</div>
       <el-collapse>
-        <el-collapse-item>
+        <el-collapse-item v-for="(item,index) in versionRecordArray" :key="index">
           <template slot="title">
             <div class="version-number-time">
-              <span class="version-number">版本号：V1.0.1</span>
-              <span class="version-time">（2018-08-12）</span>
+              <span class="version-number">版本号：{{item.template.version}}</span>
+              <span class="version-time">（{{item.release_at}}）</span>
             </div>
           </template>
-          <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
-          <div>在界面中一致：所有的元素和结构需保持一致，比如：设计样式、图标和文本、元素的位置等。</div>
-        </el-collapse-item>
-        <el-collapse-item title="反馈 Feedback">
-          <div>控制反馈：通过界面样式和交互动效让用户可以清晰的感知自己的操作；</div>
-          <div>页面反馈：操作后，通过页面元素的变化清晰地展现当前状态。</div>
+          <div class="version-update-inner">
+            <ul>
+              <li>
+                <div class="column-title">新功能：</div>
+                <p class="column-inner">{{item.template.description}}</p>
+              </li>
+              <li>
+                <div class="column-title">改进：</div>
+                <p class="column-inner">{{item.template.improvement}}</p>
+              </li>
+              <li>
+                <div class="column-title">BUG修复：</div>
+                <ol class="column-inner">
+                  <li v-for="(item2,index2) in item.template.bug" :key="index2">{{item2}}</li>
+                </ol>
+              </li>
+            </ul>
+          </div>
         </el-collapse-item>
       </el-collapse>
     </div>
@@ -34,7 +46,8 @@ import {mpaAudit, mpaHistory} from '@/axios/api'
 export default {
   data () {
     return {
-      mpaAudit: 1
+      mpaAudit: 1,
+      versionRecordArray: []
     }
   },
   created () {
@@ -58,7 +71,19 @@ export default {
     // 获取小程序更新记录
     getMpaHistory () {
       mpaHistory().then(res => {
+        this.versionRecordArray = res.data
+        this.setVersionRecordArray()
       })
+    },
+    // 修改更新记录的数据
+    setVersionRecordArray () {
+      if (this.versionRecordArray.length > 0) {
+        for (let v of this.versionRecordArray) {
+          v.release_at = v.release_at.split(' ')[0]
+          // console.log(v.template.bug.indexOf('\n'))
+          v.template.bug = v.template.bug.split('\n')
+        }
+      }
     }
   }
 }
@@ -119,6 +144,30 @@ export default {
       .version-time {
         font-size: 12px;
         color: @b9;
+      }
+    }
+    .version-update-inner {
+      padding-left: 15px;
+      padding-top: 10px;
+      >ul >li {
+        padding-bottom: 10px;
+        .column-title {
+          color: @b3;
+          font-size: 12px;
+          padding-bottom: 5px;
+        }
+        .column-inner {
+          color: @b9;
+          font-size: 12px;
+          padding-left: 27px;
+          word-wrap: break-word;
+        }
+        ol.column-inner {
+          /*list-style-type: decimal;*/
+          >li {
+            /*list-style: inherit;*/
+          }
+        }
       }
     }
   }

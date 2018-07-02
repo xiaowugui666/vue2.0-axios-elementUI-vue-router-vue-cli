@@ -374,6 +374,7 @@ export default {
           }
         }
         .collapse-body {
+          padding: 20px;
           .tag-img {
             width: 85px;
             height: 85px;
@@ -520,7 +521,6 @@ export default {
       color: @b8;
     }
     .el-collapse-item__wrap {
-      padding: 20px;
       background: #EFEFEF;
     }
     .el-collapse-item__content {
