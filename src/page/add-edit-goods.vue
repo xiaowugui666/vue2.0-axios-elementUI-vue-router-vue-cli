@@ -942,7 +942,7 @@ export default {
       } else if (this.weightUnitValue === 3) {
         return this.weightNum * 1000000
       }
-      return this.weightNum
+      return parseInt(this.weightNum)
     },
     // 获取商品量词
     getGoodsQuantifier () {
