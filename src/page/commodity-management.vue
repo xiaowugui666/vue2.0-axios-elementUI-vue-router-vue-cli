@@ -111,7 +111,7 @@
               label="操作"
               min-width="140">
               <template slot-scope="scope">
-                <el-button @click="setRouter('/add-edit-goods?gid='+scope.row.id)" :disabled="scope.row.status==1" type="text" size="small">编辑</el-button>
+                <el-button @click="setRouter('/add-edit-goods?gid='+scope.row.id)" type="text" size="small">编辑</el-button>
                 <el-button  :disabled="scope.row.status==3" @click="upperLowerFrame(scope.row)" type="text" size="small" class="black-btn">{{scope.row.status===1?'下架':'上架'}}</el-button>
                 <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
                 <!--<el-button type="text" size="small" class="black-btn">浏览</el-button>-->
