@@ -21,12 +21,13 @@
               @selection-change="handleSelectionChange">
               <el-table-column
                 label="商品"
-                width="400">
+                width="400"
+                show-overflow-tooltip>
                 <template slot-scope="scope">
                   <div class="goods-info-box">
                     <span class="goods-img"><img :src="yiqixuanDomainUrl + scope.row.cover_url" alt=""></span>
                     <div class="goods-info">
-                      <p class="goods-info-name" :title="compGoodsName(scope.row)">{{compGoodsName(scope.row)}}</p>
+                      <p class="goods-info-name">{{compGoodsName(scope.row)}}</p>
                       <div class="goods-info-price-category">
                       <span v-if="specVisible(scope.row)" class="goods-info-category">
                         {{showSpecific(scope.$index)}}

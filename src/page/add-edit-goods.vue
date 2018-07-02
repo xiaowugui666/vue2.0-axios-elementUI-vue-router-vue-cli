@@ -937,24 +937,15 @@ export default {
     beforeAvatarUpload (file, index) {},
     // 处理商品重量，以‘克’为单位，保留小数点后两位
     getWeightGram () {
-      if (this.weightUnitValue === 2) {
-        return this.weightNum * 1000
-      } else if (this.weightUnitValue === 3) {
-        return this.weightNum * 1000000
-      }
-      return parseInt(this.weightNum)
-    },
-    // 获取商品量词
-    getGoodsQuantifier () {
-      if (this.quantifier !== '') {
-        for (let v of this.goodsQuantifier) {
-          if (v.value === this.quantifier) {
-            return v.label
-          }
+      if (this.weightNum) {
+        if (this.weightUnitValue === 2) {
+          return this.weightNum * 1000
+        } else if (this.weightUnitValue === 3) {
+          return this.weightNum * 1000000
         }
-      } else {
-        return this.quantifier
+        return parseInt(this.weightNum)
       }
+      return 0
     },
     // 处理商品图片列表，将图片展示列表的内容转换到 goodsImages
     getGoodsImages () {
