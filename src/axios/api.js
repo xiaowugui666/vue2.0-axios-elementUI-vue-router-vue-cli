@@ -65,6 +65,86 @@ export function tableData (params) {
   })
 }
 
+/* 动态模块 */
+// 动态管理,获取动态列表
+export function getTrends (params) {
+  return fetch({
+    url: api.ip + '/management/feed',
+    method: 'GET',
+    params: params
+  })
+}
+
+// 获取动态详情
+export function getTrendDetail (id) {
+  return fetch({
+    url: api.ip + '/management/feed/' + id,
+    method: 'GET'
+  })
+}
+
+// 新增动态
+export function addTrends (data) {
+  return fetch({
+    url: api.ip + '/management/feed',
+    method: 'POST',
+    data: data
+  })
+}
+
+// 编辑动态
+export function putTrendDetail (data, id) {
+  return fetch({
+    url: api.ip + '/management/feed/' + id,
+    method: 'PUT',
+    data: data
+  })
+}
+
+// 删除动态
+export function deleteTrend (id) {
+  return fetch({
+    url: api.ip + '/management/feed/' + id,
+    method: 'DELETE'
+  })
+}
+
+// 获取评论列表
+export function getComments (params) {
+  return fetch({
+    url: api.ip + '/management/comment',
+    method: 'GET',
+    params: params
+  })
+}
+
+// 回复评论
+export function postComment (data) {
+  return fetch({
+    url: api.ip + '/management/comment',
+    method: 'POST',
+    data: data
+  })
+}
+
+// 获取评论审批列表
+export function getFeedComment (params) {
+  return fetch({
+    url: api.ip + '/management/feed/comment',
+    method: 'GET',
+    params: params
+  })
+}
+
+// 评论审批
+export function putComment (data, id) {
+  return fetch({
+    url: api.ip + '/management/comment/' + id,
+    method: 'PUT',
+    data: data
+  })
+}
+
 /* 订单模块 */
 // 获取订单列表
 export function order (data) {

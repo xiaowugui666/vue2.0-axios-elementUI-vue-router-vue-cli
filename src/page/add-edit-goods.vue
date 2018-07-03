@@ -298,6 +298,13 @@
               </div>
             </li>
             <li>
+              <span class="required name">同步动态：</span>
+              <div>
+                <el-button type="success" size="small" :class="{'active':sync}" @click="sync=true" style="margin-left: 0;">同步</el-button>
+                <el-button type="success" size="small" :class="{'active':!sync}" @click="sync=false">不同步</el-button>
+              </div>
+            </li>
+            <li>
               <span class="name">商家承诺：</span>
               <div>
                 <el-button type="success" size="small" :class="{'active':free_return==1}" @click="free_return==1?free_return=2:free_return=1" style="margin-left: 0;">7天包退换</el-button>
@@ -376,6 +383,7 @@ export default {
       // 商品信息
       goodsName: '',
       sharingDescription: '',
+      sync: true,
       grounding: true,
       free_return: 2,
       genuine_article: 2,
@@ -1008,6 +1016,7 @@ export default {
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
             free_express_price: Math.round(this.postage.money * 100),
+            sync_feed_status: this.sync,
             status: this.grounding ? 1 : 2,
             free_return: this.free_return,
             genuine_article: this.genuine_article,
