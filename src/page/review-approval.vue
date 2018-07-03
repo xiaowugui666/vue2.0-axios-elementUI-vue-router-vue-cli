@@ -96,12 +96,17 @@ export default {
       let dateEnd = new Date(this.keyTime[1])
       this.searchObj.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
       this.searchObj.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
-      let params = this.searchObj
+      let params = {}
+      if (this.keyTime && this.keyTime.length > 0) {
+        params = this.searchObj
+      }
       params.status = this.reviewStatu
       getFeedComment(params).then(res => {
-        console.log(res)
-        this.items = res.data.data
-        this.tabCount = res.data.tab_count
+        this.$message.success('获取数据成功！')
+        if (res.data.length > 0) {
+          this.items = res.data.data
+          this.tabCount = res.data.tab_count
+        }
       })
     },
     // 点击查看动态详情
@@ -123,7 +128,6 @@ export default {
     // 获取列表数据
     getFeedComment (params) {
       getFeedComment(params).then(res => {
-        console.log(res)
         this.items = res.data
         this.tabCount = res.headers.data_count
         this.totalPagina = res.headers.page_count
@@ -207,18 +211,18 @@ export default {
     .no-data {
       margin: 20px;
       height: 50px;
-      border: 1px solid #d5d5d5;
       text-align: center;
-      color: #222222;
+      color: @b8;
+      font-size: 12px;
       line-height: 50px;
     }
     .review-status {
       display: flex;
       height: 40px;
-      font-size: 16px;
+      font-size: 14px;
       color: #222222;
       line-height: 40px;
-      border-bottom: 1px solid #d5d5d5;
+      border-bottom: 1px solid @bg;
       user-select: none;
       li {
         margin: 0 45px;

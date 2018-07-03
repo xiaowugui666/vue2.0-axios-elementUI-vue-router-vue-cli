@@ -33,10 +33,10 @@
         <div v-if="data.length">
           <div class="trends" v-for="(item,index) in data" :key="index">
             <div class="title">
-              <span>{{item.title}}</span>
+              <span class="title-txt">{{item.title || item.content}}</span>
               <span :class="{'long-trend': (item.type == 2 ? true : false), 'short-trend': (item.type == 1 ? true : false)}">{{item.type == 2 ? '长动态' : '短动态'}}</span>
             </div>
-            <div class="message" v-if="item.type == 1" v-html="item.content"></div>
+            <!--<div class="message" v-if="item.type == 1" v-html="item.content"></div>-->
             <div class="message" v-if="item.type == 2">
               <p>{{item.description}}</p>
             </div>
@@ -45,7 +45,7 @@
                 <img :src="yiqixuanDomainUrl + ite.img_url">
               </div>
             </div>
-            <div class="thumbnail" v-if="item.type == 2">
+            <div class="thumbnail" v-if="item.type == 2 && item.cover_url">
               <img :src="yiqixuanDomainUrl + item.cover_url">
             </div>
             <div class="operations">
@@ -124,20 +124,18 @@ export default {
     // 点击搜索
     search () {
       let params = {}
-      let dateBegin = new Date(this.keyTime[0])
-      let dateEnd = new Date(this.keyTime[1])
-      params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
-      params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
+      if (this.keyTime && this.keyTime.length > 0) {
+        let dateBegin = new Date(this.keyTime[0])
+        let dateEnd = new Date(this.keyTime[1])
+        params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+        params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
+      }
       getTrends(params).then(res => {
-        console.log(res)
         this.data = res.data
-      }).catch(error => {
-        console.log(error)
-      })
+      }).catch()
     },
     // 编辑动态
     editorTrend (val) {
-      console.log(val)
       this.$router.push({name: 'addTrends', query: {id: val}})
     },
     // 查看动态
@@ -152,7 +150,6 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteTrend(val).then(res => {
-          console.log(res)
           // 重新请求动态列表数据
           this.getTrends()
           this.$message({
@@ -163,18 +160,13 @@ export default {
       })
     },
     changeTime (value) {
-      console.log(value)
-      console.log(1111)
     },
     // 请求动态列表数据
     getTrends (params) {
       getTrends(params).then(res => {
-        console.log(res)
         this.data = res.data
         this.totalPagina = res.headers.page_count
-      }).catch(error => {
-        console.log(error)
-      })
+      }).catch()
     },
     // 模态框点击确定
     dialogComfirm () {
@@ -226,7 +218,7 @@ export default {
 @import '../fonts/icomoon.css';
 .trends-content {
   min-width: 1000px;
-  margin: 0 20px 0 200px;
+  margin: 0 20px 20px 200px;
   padding-top: 20px;
   position: relative;
   .trends-header {
@@ -260,16 +252,16 @@ export default {
     padding: 20px;
     .no-data {
       height: 50px;
-      border: 1px solid #d5d5d5;
       text-align: center;
-      color: #222222;
+      color: @b8;
+      font-size: 12px;
       margin-top: 20px;
       line-height: 50px;
     }
     .trends {
-      border: 1px solid @bc;
-      margin-top: 10px;
-      padding: 20px 28px 20px 20px;
+      border: 1px solid #EAEAEA;
+      margin-top: 20px;
+      padding: 20px;
       overflow: hidden;
       &:nth-child(2) {
         margin-top: 20px;
@@ -280,8 +272,8 @@ export default {
         color: #222222;
         span {
           display: inline-block;
+          vertical-align: middle;
           line-height: 22px;
-          user-select: none;
           &:last-child {
             text-align: center;
             width: 58px;
@@ -291,6 +283,12 @@ export default {
             font-size: 12px;
             border-radius: 10px;
           }
+        }
+        .title-txt {
+          max-width: 500px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .long-trend {
           background: #E6F2FF;
@@ -331,6 +329,7 @@ export default {
         line-height: 20px;
         max-height: 280px;
         overflow: hidden;
+        word-wrap: break-word;
       }
       .operations {
         margin-top: 30px;
@@ -344,6 +343,7 @@ export default {
             display: inline-block;
             width: 40px;
             height: 24px;
+            line-height: 24px;
             border: 1px solid #D5D5D5;
             border-radius: 2px;
             color: #222222;

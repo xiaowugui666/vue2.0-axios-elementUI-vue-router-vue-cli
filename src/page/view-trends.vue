@@ -2,7 +2,7 @@
   <div style="height: 100%;">
     <menu-left routeIndex="9-1"></menu-left>
     <div class="view-trends-content">
-      <div class="view-header">动态管理 > 新增/编辑动态</div>
+      <div class="view-header">动态管理 > 查看动态</div>
       <div class="view-body">
         <div class="view-title"><span></span><span>内容编辑</span></div>
         <div class="hr"></div>
@@ -94,7 +94,6 @@ export default {
   mounted () {
     // 获取动态数据
     getTrendDetail(this.$route.query.id).then(res => {
-      console.log(res)
       // 赋值
       this.trendData = res.data
       this.trendType = res.data.type
@@ -124,17 +123,15 @@ export default {
       params.content = this.content
       postComment(params).then(res => {
         if (res.status == 200) {
-          this.getFeedComments()
+          this.getFeedComments({feed_id: this.$route.query.id})
         }
       })
     },
     // 获取评论列表
     getFeedComments (params) {
       getComments(params).then(res => {
-        console.log(res)
         this.commentData = res.data
         this.totalPagina = res.headers.page_count
-        console.log(this.commentData)
       })
     }
   },
@@ -180,11 +177,11 @@ export default {
       min-height: 88%;
       padding: 20px;
       .no-data {
-        margin: 20px 0;
+        margin-top: 20px;
         height: 50px;
-        border: 1px solid #d5d5d5;
         text-align: center;
-        color: #222222;
+        color: @b8;
+        font-size: 12px;
         line-height: 50px;
       }
       .view-title {
@@ -204,7 +201,7 @@ export default {
       }
       .hr {
         height: 2px;
-        background: #D5D5D5;
+        background: @bg;
         margin-top: 20px;
         margin-bottom: 20px;
       }
@@ -215,12 +212,12 @@ export default {
         display: flex;
         div, >p {
           display: inline-block;
+          vertical-align: middle;
           width: 94%;
           font-size: 12px;
           flex: 1;
           overflow: hidden;
           color: #222222;
-          line-height: 20px;
         }
         >div>p:nth-child(2) {
           color: #888888;
@@ -229,6 +226,7 @@ export default {
       }
       .view-mess-title {
         margin-bottom: 20px;
+        word-wrap: break-word;
         p {
           font-size: 14px;
           font-weight: bold;
@@ -338,23 +336,14 @@ export default {
       .pre-text {
         font-size: 12px;
         display: inline-block;
-        padding-top: 5px;
+        vertical-align: middle;
         color: #3A3A3A;
         text-align: right;
-        line-height: 15px;
-        vertical-align: top;
         white-space:pre;
         margin-right: 9px;
       }
       .approval {
         margin-top: 40px;
-        span:last-child {
-          margin-left: 10px;
-          font-size: 12px;
-          color: #888888;
-          white-space:pre;
-          letter-spacing: 0.5px;
-        }
       }
     }
   }
