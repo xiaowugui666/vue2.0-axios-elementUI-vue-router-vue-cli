@@ -154,7 +154,6 @@ export default {
         .column-title {
           color: @b3;
           font-size: 12px;
-          padding-bottom: 5px;
         }
         .column-inner {
           color: @b9;
