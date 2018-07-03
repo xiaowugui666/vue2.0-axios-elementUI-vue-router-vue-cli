@@ -1,17 +1,22 @@
 <template>
   <div>
     <menu-left routeIndex="3-2"></menu-left>
-    <div class="category-management-object">
+    <div class="category-management-object content-box">
       <div class="category-management-content">
-        <el-button @click="dialogVisible = true" type="primary" size="small" class="first-category-management">一级类目编辑管理</el-button>
+        <el-button @click="dialogVisible=true;addFirstCategory=true" type="primary" size="small" class="first-category-management">新增一级类目</el-button>
         <div class="two-level-category-list">
           <ul>
             <li v-for="(item, index) in categoryList" :key="index">
               <el-collapse accordion>
                 <el-collapse-item>
                   <template slot="title">
-                    <span class="one-level-category">{{item.name}}</span>
-                    <span class="two-level-category">二级分类有 {{item.children?item.children.length:0}} 项</span>
+                    <div class="one-level-img"><img :src="yiqixuanDomainUrl+item.icon_url" alt=""></div>
+                    <div class="one-level-name">
+                      <p class="one-level-category">{{item.name}}</p>
+                      <p class="two-level-category">二级分类有 {{item.children?item.children.length:0}} 项</p>
+                    </div>
+                    <el-button @click="(event)=>editFirstCategoryBtn(item.id, item.icon_url, item.name, event)" type="primary" size="mini" class="edit-first-category">编辑</el-button>
+                    <el-button @click="(event)=>deleteGoodsCategoryConfirm(item.id,event)" class="one-level-delete" type="primary" size="mini" >删除</el-button>
                   </template>
                   <div class="collapse-body clear">
                     <el-tag
@@ -38,7 +43,7 @@
                       class="input-new-tag"
                       v-if="inputSpacVisible[index]"
                       v-model="inputSpacValue"
-                      :ref="'saveSpecTagInput'+index"
+                      :ref="'saveSpecTagInput'"
                       size="small"
                       maxlength="20"
                       @keyup.enter.native="handleInputSpec(index, item.id)"
@@ -54,13 +59,35 @@
         </div>
         <div class="category-management-dialog">
           <el-dialog
-            title="请选择要编辑的一级类目"
+            :title="addFirstCategory?'新增一级分类':'编辑一级分类'"
             :visible.sync="dialogVisible"
             width="620px"
             :before-close="handleClose">
             <div class="first-category-list">
               <ul>
-                <li @click="selectFirstCategory(index)" v-for="(item, index) in firstCategoryList" :class="{'active':item.selected}" :key="index">{{item.label}}</li>
+                <li>
+                  <span class="name required">类目名称：</span>
+                  <input v-validate="'required'" name="类目名称" v-model.trim="firstCategory.name" class="category-name-input" type="text" maxlength="20">
+                  <div class="err-tips">{{ errors.first('类目名称') }}</div>
+                </li>
+                <li>
+                  <span class="name required alignment-top">添加图片：</span>
+                  <div class="first-category-upload">
+                    <el-upload
+                      class="avatar-uploader"
+                      :action="qiniuUploadUrl"
+                      :data="upToken"
+                      accept=".jpg,.png"
+                      :show-file-list="false"
+                      :on-success="firstCategorySuccess"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="firstCategory.icon_url" :src="yiqixuanDomainUrl+firstCategory.icon_url" class="avatar">
+                      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-upload>
+                  </div>
+                  <p class="first-category-tips">图片请控制在1MB以内，支持jpg、jpeg、png格式的图片</p>
+                  <div class="err-tips" :style="{'display':firstCategoryImage?'none':'block'}">请先添加图片</div>
+                </li>
               </ul>
             </div>
             <span slot="footer" class="dialog-footer">
@@ -85,186 +112,16 @@ export default {
       categoryList: [],
       inputSpacVisible: [],
       inputSpacValue: '',
+      firstCategory: {
+        parent_id: 0,
+        name: '',
+        icon_url: ''
+      },
+      firstCategoryId: 0,
+      addFirstCategory: true, // 新增或者编辑一级分类
+      firstCategoryImage: true,
       // 七牛上传图片所需要的token
-      upToken: {},
-      firstCategoryList: [
-        {
-          value: 1,
-          label: '食品',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 2,
-          label: '数码家电',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 3,
-          label: '女装',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 4,
-          label: '美妆',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 5,
-          label: '日用百货',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 6,
-          label: '休闲娱乐',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 7,
-          label: '男装',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 8,
-          label: '亲子',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 9,
-          label: '教育培训',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 10,
-          label: '餐饮外卖',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 11,
-          label: '箱包配饰',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 12,
-          label: '家居家纺',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 13,
-          label: '媒体服务',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 14,
-          label: '海外购',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 15,
-          label: '运动户外',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 16,
-          label: '礼品鲜花',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 17,
-          label: '医疗健康',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 18,
-          label: '酒店旅游',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 19,
-          label: '票务卡券',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 20,
-          label: '汽车养护',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 21,
-          label: '丽人健身',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 22,
-          label: '家装建材',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 23,
-          label: '充值缴费',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 24,
-          label: '图书音像',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 25,
-          label: '家政服务',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 26,
-          label: '名俗文化',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 27,
-          label: '鞋靴',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 28,
-          label: '宠物',
-          selected: false,
-          changed: false
-        },
-        {
-          value: 29,
-          label: '其他',
-          selected: false,
-          changed: false
-        }
-      ],
-      changedNum: 0, // 修改的一级分类个数
-      count: 0 // 已修改完成的一级分类个数
+      upToken: {}
     }
   },
   created () {
@@ -275,29 +132,14 @@ export default {
     // 获取商品类目列表
     getCategoryList () {
       goodsCategory().then(res => {
-        this.changedNum = 0
-        this.count = 0
         if (res.data) {
           this.categoryList = res.data
-          this.setFirstCategoryListSelect()
         } else {
           this.dialogVisible = true
         }
       }, res => {
         this.categoryList = []
         this.dialogVisible = true
-      })
-    },
-    // 获取一级类目列表,设置被选择的内容
-    setFirstCategoryListSelect () {
-      let self = this
-      this.firstCategoryList.forEach(function (v, k) {
-        self.categoryList.forEach(function (val, key) {
-          if (v.label === val.name) {
-            v.selected = true
-            v.id = val.id
-          }
-        })
       })
     },
     // 获取图片上传七牛的token
@@ -307,65 +149,100 @@ export default {
       })
     },
     // 关闭一级类目选择框之前的动作
-    handleClose (done) {
+    handleClose () {
+      this.firstCategory.name = ''
+      this.firstCategory.icon_url = ''
       this.dialogVisible = false
-      for (let k of this.firstCategoryList) {
-        if (k.changed) {
-          k.selected = !k.selected
-          k.changed = !k.changed
-        }
-      }
     },
     // 确认修改一级类目
     confirmationModification () {
-      this.dialogVisible = false
-      for (let v of this.firstCategoryList) {
-        if (v.changed) {
-          this.changedNum++
-        }
-      }
-      for (let v of this.firstCategoryList) {
-        if (v.changed) {
-          if (v.selected === true) {
-            addGoodsCategory({
-              'name': v.label,
-              'parent_id': 0
-            }).then(res => {
+      this.$validator.validateAll().then((msg) => {
+        if (msg) {
+          if (!this.firstCategory.icon_url) {
+            this.firstCategoryImage = false
+            return false
+          }
+          this.firstCategoryImage = true
+          if (this.addFirstCategory) {
+            // 判断一级分类名称是否重复
+            for (let v of this.categoryList) {
+              if (v.name === this.firstCategory.name) {
+                this.$message.warning('一级分类名称重复！')
+                return false
+              }
+            }
+            // 添加一级分类
+            addGoodsCategory(this.firstCategory).then(res => {
               this.$message.success('添加分类成功！')
-              this.count++
-              v.changed = false
-            })
+              let data = res.data
+              let cate = {
+                id: data.id,
+                name: data.name,
+                icon_url: data.icon_url,
+                parent_id: 0,
+                children: []
+              }
+              this.categoryList.push(cate)
+              this.handleClose()
+            }).catch()
           } else {
-            // 删除商品分类
-            deleteGoodsCategory(v.id, 0).then(res => {
-              this.$message('删除分类成功！')
-              this.count++
-              v.changed = false
-            })
+            // 编辑一级分类
+            updateGoodsCategoryPic(this.firstCategory, this.firstCategoryId).then(res => {
+              this.$message.success('修改分类成功！')
+              for (let v of this.categoryList) {
+                if (v.id === this.firstCategoryId) {
+                  v.name = this.firstCategory.name
+                  v.icon_url = this.firstCategory.icon_url
+                }
+              }
+              // this.getCategoryList()
+              this.handleClose()
+            }).catch()
+          }
+        } else {
+          if (!this.firstCategory.icon_url) {
+            this.firstCategoryImage = false
+            return false
           }
         }
-      }
+      })
     },
-    // 选择一级类目
-    selectFirstCategory (index) {
-      this.firstCategoryList[index].selected = !this.firstCategoryList[index].selected
-      this.firstCategoryList[index].changed = !this.firstCategoryList[index].changed
+    // 删除一级商品分类
+    deleteGoodsCategoryConfirm (id, e) {
+      // console.log(123)
+      e.stopPropagation()
+      this.$confirm('确认删除此分类？')
+        .then(_ => {
+          deleteGoodsCategory(id, 0).then(res => {
+            this.$message('删除分类成功！')
+            for (let [i, v] of this.categoryList.entries()) {
+              if (v.id === id) {
+                this.categoryList.splice(i, 1)
+              }
+            }
+          })
+        })
+        .catch(_ => {})
     },
     // 删除选中的规则值
     alignmentHandleClose (tag, index) {
       let values = this.categoryList[index].children
       // 删除选择的二级分类
       deleteGoodsCategory(tag.id, this.categoryList[index].id).then(res => {
-        // this.$message('删除二级分类成功！')
+        this.$message.error('删除二级分类成功！')
         this.categoryList[index].children.splice(values.indexOf(tag), 1)
       })
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
-      this.$set(this.inputSpacVisible, index, true)
-      this.$nextTick(_ => {
-        this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
-      })
+      if (this.categoryList[index].children.length >= 30) {
+        this.$message.warning('二级分类不能超过30个！')
+      } else {
+        this.$set(this.inputSpacVisible, index, true)
+        this.$nextTick(_ => {
+          this.$refs['saveSpecTagInput'][0].$refs.input.focus()
+        })
+      }
     },
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
     handleInputSpec (index, id) {
@@ -380,7 +257,7 @@ export default {
           }
           // 请求接口，保存二级商品分类
           addGoodsCategory(data).then(res => {
-            // this.$message.success('添加二级分类成功！')
+            this.$message.success('添加二级分类成功！')
             data.id = res.data.id
             this.categoryList[index].children.push(data)
           })
@@ -431,51 +308,73 @@ export default {
       }, children.id).then(resp => {
         children.icon_url = res.key
       })
+    },
+    firstCategorySuccess (res, file) {
+      this.firstCategory.icon_url = res.key
+    },
+    editFirstCategoryBtn (id, url, name, e) {
+      e.stopPropagation()
+      this.addFirstCategory = false
+      this.firstCategoryId = id
+      this.firstCategory.icon_url = url
+      this.firstCategory.name = name
+      this.dialogVisible = true
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
+    ...mapState(['yiqixuanDomainUrl', 'qiniuUploadUrl'])
   },
   components: {
     menuLeft
-  },
-  watch: {
-    // 监测发送请求完成的计数
-    // 重新请求接口，获取修改后的页面显示数据
-    count () {
-      if (this.changedNum !== 0 && this.count !== 0) {
-        if (this.count === this.changedNum) {
-          this.getCategoryList()
-        }
-      }
-    }
   }
 }
 </script>
 
 <style scoped lang="less">
   .category-management-object {
-    margin-left: 200px;
-    margin-right: 20px;
-    padding-top: 20px;
-    min-width: 1100px;
     .category-management-content {
       background: #fff;
       padding: 20px;
     }
     .two-level-category-list {
       li {
+        position: relative;
         background: #EFEFEF;
-        margin-top: 10px;
-        .one-level-category {
-          width: 100px;
-          display: inline-block;
+        margin-top: 20px;
+        .edit-first-category {
+          margin-left: 20px;
+          vertical-align: middle;
         }
-        .two-level-category {
-          color: #666;
-          font-size: 12px;
+        .one-level-img {
+          display: inline-block;
+          vertical-align: middle;
+          margin-right: 20px;
+          width: 60px;
+          height: 60px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .one-level-delete {
+          display: inline-block;
+          vertical-align: middle;
+        }
+        .one-level-name {
+          display: inline-block;
+          vertical-align: middle;
+          .one-level-category {
+            font-size: 14px;
+            color: @b2;
+            margin-bottom: 20px;
+          }
+          .two-level-category {
+            color: @b8;
+            font-size: 12px;
+          }
         }
         .collapse-body {
+          padding: 20px;
           .tag-img {
             width: 85px;
             height: 85px;
@@ -517,13 +416,13 @@ export default {
             .el-tag-bar {
               border:1px solid #d5d5d5;
               border-radius: 3px;
-              line-height: 32px;
+              line-height: 30px;
               height: 32px;
               display: inline-block;
               width: 100%;
               background: #fff;
               box-sizing: border-box;
-              padding: 0 15px 0 10px;
+              padding: 0 20px 0 10px;
             }
           }
         }
@@ -532,31 +431,70 @@ export default {
     .category-management-dialog {
       .first-category-list {
         font-size: 0;
-        padding-bottom: 20px;
         border-top: 2px solid #f5f5f5;
         border-bottom: 2px solid #f5f5f5;
+        padding: 20px 20px 0;
         li {
-          font-size: 12px;
-          color: #999;
-          text-align: center;
-          width: 100px;
-          height: 30px;
-          line-height: 30px;
-          border: 1px solid #d5d5d5;
-          margin-right: 20px;
-          margin-top: 20px;
-          display: inline-block;
-          vertical-align: middle;
-          box-sizing: border-box;
-          border-radius: 3px;
-          cursor: pointer;
-          user-select:none;
-          &:nth-child(5n) {
-            margin-right: 0;
+          padding-bottom: 20px;
+          position: relative;
+          .name {
+            display: inline-block;
+            vertical-align: middle;
+            width: 70px;
+            color: #3a3a3a;
+            font-size: 12px;
           }
-          &.active {
-            color: #DE5B67;
-            border-color: #DE5B67;
+          .name.alignment-top {
+            vertical-align: top;
+            padding-top: 7px;
+          }
+          .required::before {
+            content: '*';
+            color: @mainC;
+            margin-left: -10px;
+            padding-right: 5px;
+          }
+          .err-tips {
+            position: absolute;
+            bottom: 4px;
+            left: 70px;
+            color: @mainC;
+            font-size: 12px;
+          }
+          .first-category-upload {
+            display: inline-block;
+            vertical-align: middle;
+            padding-right: 20px;
+            .avatar-uploader-icon {
+              font-size: 20px;
+              box-sizing: border-box;
+              color: @bc;
+              width: 80px;
+              height: 80px;
+              line-height: 80px;
+              text-align: center;
+              border: 1px dashed @bc;
+            }
+            .avatar {
+              width: 80px;
+              height: 80px;
+              display: block;
+            }
+          }
+          .first-category-tips {
+            display: inline-block;
+            vertical-align: middle;
+            font-size: 12px;
+            color: @b8;
+          }
+          input {
+            width: 234px;
+            padding: 0 10px;
+            border: 1px solid @bc;
+            display: inline-block;
+            height: 30px;
+            line-height: 30px;
+            vertical-align: middle;
           }
         }
       }
@@ -572,11 +510,17 @@ export default {
     .el-collapse-item__header {
       background: #EFEFEF;
       border-bottom-color: #fff;
-      padding-left: 20px;
-      padding-right: 10px;
+      height: auto;
+      line-height: normal;
+      padding: 20px 15px 20px 20px;
+      font-size: 0;
+    }
+    .el-collapse-item__arrow {
+      margin-top: 6px;
+      font-size: 14px;
+      color: @b8;
     }
     .el-collapse-item__wrap {
-      padding: 20px;
       background: #EFEFEF;
     }
     .el-collapse-item__content {
@@ -585,9 +529,8 @@ export default {
     .collapse-body {
       .el-tag__close {
         position: absolute;
-        right: 0;
-        top: 0;
-        margin: 8px 0 0 5px;
+        right: 3px;
+        top: 8px;
       }
       .button-new-tag {
         display: inline-block;
@@ -604,6 +547,11 @@ export default {
     }
     .el-dialog__footer {
       padding-top: 20px;
+    }
+    .el-dialog__title {
+      font-size: 14px;
+      font-weight: bold;
+      color: @b2;
     }
   }
 </style>
