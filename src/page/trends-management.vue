@@ -131,6 +131,7 @@ export default {
         params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
       }
       getTrends(params).then(res => {
+        this.$message.success('获取数据成功！')
         this.data = res.data
       }).catch()
     },
