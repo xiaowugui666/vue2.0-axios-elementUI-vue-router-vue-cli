@@ -67,7 +67,6 @@ export default {
   mounted () {
     // 获取动态详情
     getTrendDetail(this.id).then(res => {
-      console.log(res)
       this.content = res.data
     })
     this.getComments({})
@@ -82,7 +81,6 @@ export default {
       params.feed_id = this.id
       params.status = this.status
       getComments(params).then(res => {
-        console.log(res)
         this.approvals = res.data
         this.totalPagina = res.headers.page_count
       })
