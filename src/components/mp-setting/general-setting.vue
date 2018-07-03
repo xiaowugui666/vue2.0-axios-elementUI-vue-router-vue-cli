@@ -161,7 +161,7 @@
           </li>
           <li>
             <span class="name">搜索文案：</span>
-            <input type="text" v-model="searchDefaultText" maxlength="30"/>
+            <input type="text" v-model="searchDefaultText" maxlength="10"/>
           </li>
         </ul>
       </div>
@@ -190,7 +190,7 @@
         <ul>
           <li>
             <span class="name">分享文案：</span>
-            <input v-model="shareText" placeholder="请输入分享文案" maxlength="60" type="text"/>
+            <input v-model="shareText" placeholder="请输入分享文案" maxlength="45" type="text"/>
           </li>
           <li>
             <span class="name alignment-top">分享图片：</span>
