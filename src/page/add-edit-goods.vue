@@ -297,7 +297,7 @@
                 <el-button type="success" size="small" :class="{'active':!grounding}" @click="grounding=false">下架</el-button>
               </div>
             </li>
-            <li>
+            <li v-if="!hash">
               <span class="required name">同步动态：</span>
               <div>
                 <el-button type="success" size="small" :class="{'active':sync}" @click="sync=true" style="margin-left: 0;">同步</el-button>
@@ -650,7 +650,9 @@ export default {
           return false
         }
       }
-      this.beforeUpload(file)
+      if (!this.beforeUpload(file)) {
+        return false
+      }
     },
     // 图片上传之前的验证
     beforeUpload (file) {
@@ -669,6 +671,7 @@ export default {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
+      return true
     },
     // 商品图片超出个数限制
     beyondNumberLimit () {
@@ -1025,7 +1028,6 @@ export default {
             stock_shown: this.showStock,
             is_free_express: this.postage.freeShipping ? 1 : 2,
             free_express_price: Math.round(this.postage.money * 100),
-            sync_feed_status: this.sync,
             status: this.grounding ? 1 : 2,
             free_return: this.free_return,
             genuine_article: this.genuine_article,
@@ -1048,6 +1050,8 @@ export default {
             data.image_ids = this.image_ids
             data.sku_ids = this.sku_ids
             data.goods_detail_id = this.goods_detail_id
+          } else {
+            data.sync_feed_status = this.sync
           }
 
           addEditGoods(id, data).then(res => {

@@ -12,12 +12,13 @@
               size="small"
               v-validate="'required'"
               name="商品名称"
+              maxlength="140"
               v-model="title"></el-input>
             <div class="err-tips">{{ errors.first('商品名称') }}</div>
           </div>
           <div class="description left-padding" v-if="trendType == 2 || addType == 2">
             <span class="pre-text">简      述 ：</span>
-            <textarea type="textarea" class="add-textarea" v-model="textContent"></textarea>
+            <textarea type="textarea" class="add-textarea" v-model="textContent" maxlength="140"></textarea>
           </div>
           <div class="add-thumbnail left-padding" v-if="trendType == 2 || addType == 2">
             <span class="pre-text">缩 略 图 ： </span>
@@ -27,6 +28,7 @@
               :data="upToken"
               accept=".jpg,.png"
               :show-file-list="false"
+              :before-upload='beforeUpload'
               :on-success="(res,file)=>handleAvatarSuccess(res,file)">
               <img v-if="imgUrl" :src="yiqixuanDomainUrl + imgUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -55,7 +57,7 @@
                 <el-button size="small" type="primary" ref="quillUploadButton">点击上传</el-button>
               </el-upload>
             </div>
-            <textarea v-else class="add-textarea" v-model="quillContent"></textarea>
+            <textarea v-else class="add-textarea" v-model="quillContent" maxlength="140"></textarea>
           </div>
           <div class="add-imgs left-padding" v-if="trendType == 1 || addType == 1">
             <span class="pre-text required">配      图 ：</span>
@@ -66,7 +68,7 @@
               list-type="picture-card"
               :file-list="fileList"
               :on-remove="removeFileList"
-              :before-upload="(value)=>imgsBeforeUpload(value)"
+              :before-upload="imgsBeforeUpload"
               :on-success="(res,file, fileList)=>handlePictureList(res,file, fileList)">
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -140,7 +142,6 @@ export default {
     // 如果为编辑动态，获取动态详情
     if (this.$route.query.id) {
       getTrendDetail(this.$route.query.id).then(res => {
-        console.log(res.data.images)
         // 赋值操作
         this.data = res.data
         this.trendType = res.data.type
@@ -153,13 +154,10 @@ export default {
           tempArr[x].icon_url = tempArr[x].img_url
           this.imgsList.push(tempArr[x].img_url)
         }
-        console.log(this.imgsList)
         this.fileList = tempArr
         // 图片路径赋值 ///////////////////////////////////////须修改
         this.imgUrl = res.data.cover_url
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch()
     }
     // 获取七牛token
     this.getImageToken()
@@ -169,9 +167,7 @@ export default {
     getImageToken () {
       getQnToken('image').then(res => {
         this.upToken.token = res.data.token
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch()
     },
     // 点击保存
     saveTrends () {
@@ -189,7 +185,6 @@ export default {
           params.cover_url = this.imgUrl
         }
         putTrendDetail(params, this.$route.query.id).then(res => {
-          console.log(res)
           if (res.status == 200) {
             this.$router.push({name: 'trendsManagement'})
           }
@@ -214,9 +209,7 @@ export default {
           }
           addTrends(params).then(res => {
             this.$router.push({name: 'trendsManagement'})
-          }).catch(err => {
-            console.log('新增动态打印错误：')
-            console.log(err)
+          }).catch(() => {
             this.$message({
               message: '新增动态失败，请稍后重试',
               type: 'error'
@@ -232,8 +225,6 @@ export default {
     },
     // 上传缩略图
     handleAvatarSuccess (file) {
-      console.log(1111)
-      console.log(file)
       this.imgUrl = file.key
     },
     // 点击缩略图删除
@@ -245,21 +236,21 @@ export default {
           this.imgsList.splice(i, 1)
         }
       }
-      console.log(this.imgsList)
     },
     // 判断配图是否重复
     imgsBeforeUpload (file) {
-      console.log(file)
-      for (let v of this.fileList) {
-        if (file.name === v.modified) {
-          this.$message.error('不能上传重复的图片!')
-          return false
-        }
+      // for (let v of this.fileList) {
+      //   if (file.name === v.modified) {
+      //     this.$message.error('不能上传重复的图片!')
+      //     return false
+      //   }
+      // }
+      if (!this.beforeUpload(file)) {
+        return false
       }
-      this.beforeUpload(file)
-      if (this.fileList.length == 8) {
+      if (this.fileList.length >= 9) {
         this.$message({
-          message: '一次最多上传8张图片',
+          message: '一次最多上传9张图片',
           type: 'info'
         })
         return false
@@ -282,18 +273,15 @@ export default {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
+      return true
     },
     // 新增配图
     handlePictureList (res, file) {
       this.fileList.push({url: this.yiqixuanDomainUrl + file.response.key, icon_url: file.response.key})
       this.imgsList.push(file.response.key)
-      console.log(this.fileList)
-      console.log(this.imgsList)
     },
     // 富文本框操作
     onEditorBlur (val) {
-      console.log(val)
-      console.log(this.quillContent)
     },
     onEditorFocus (val) {
     },
@@ -361,14 +349,10 @@ export default {
       color: #d5d5d5;
     }
     .add-thumbnail {
-      .el-upload {
-        width: 260px;
-        height: 140px;
-      }
       .el-icon-plus {
-        line-height: 140px;
-        width: 260px;
-        height: 140px;
+        line-height: 80px;
+        width: 80px;
+        height: 80px;
         vertical-align: middle;
       }
     }
@@ -438,7 +422,7 @@ export default {
     }
     .hr {
       height: 2px;
-      background: #D5D5D5;
+      background: @bg;
       margin-top: 20px;
       margin-bottom: 20px;
     }
@@ -461,12 +445,10 @@ export default {
       margin-top: 20px;
       .avatar-uploader {
         display: inline-block;
-        width: 260px;
-        height: 140px;
         img {
-          width: 260px;
-          height: 140px;
           vertical-align: middle;
+          width: 100%;
+          height: 100%;
         }
         i {
           border: 1px dashed #d5d5d5;
