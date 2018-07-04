@@ -31,8 +31,7 @@
               <p>{{ite.content}}</p>
               <!-- v-if判断条件须改动 -->
               <div v-if="isReplay && ite.id == clickIndex">
-                <el-input
-                  placeholder="巴拉巴拉巴拉" v-model="content"></el-input>
+                <el-input :placeholder="'回复：'+ite.nick_name" v-model="content" ref="replyinput"></el-input>
                 <el-button class="replaying-button" type="primary" size="small" @click="clickSave(ite.id)">回复</el-button>
               </div>
               <div class="replay" v-if="ite.reply">
@@ -112,20 +111,28 @@ export default {
     clickSaveChang (val) {
       this.clickIndex = val
       this.isReplay = true
+      this.$nextTick(_ => {
+        this.$refs.replyinput[0].$refs.input.focus()
+      })
     },
     // 点击回复
     clickSave (val) {
       this.clickIndex = val
-      this.isReplay = !this.isReplay
-      let params = {}
-      params.id = val
-      params.feed_id = this.$route.query.id
-      params.content = this.content
-      postComment(params).then(res => {
-        if (res.status == 200) {
-          this.getFeedComments({feed_id: this.$route.query.id})
-        }
-      })
+      if (this.content) {
+        let params = {}
+        params.id = val
+        params.feed_id = this.$route.query.id
+        params.content = this.content
+        postComment(params).then(res => {
+          if (res.status == 200) {
+            this.getFeedComments({feed_id: this.$route.query.id})
+            this.content = ''
+            this.isReplay = !this.isReplay
+          }
+        })
+      } else {
+        this.isReplay = !this.isReplay
+      }
     },
     // 获取评论列表
     getFeedComments (params) {
@@ -152,8 +159,7 @@ export default {
       height: 40px;
       padding-left: 15px;
       font-size: 12px;
-      color: #888888;
-      line-height: 20px;
+      color: #222;
       margin-top: 15px;
     }
   }
