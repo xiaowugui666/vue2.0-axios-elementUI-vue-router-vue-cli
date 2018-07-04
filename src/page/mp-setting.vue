@@ -3,56 +3,26 @@
     <menu-left routeIndex="8-4"></menu-left>
     <div class="mp-setting-object content-box">
       <div class="mp-setting-content">
-        <!--<div class="mp-setting-module plate">-->
-          <!--<div class="plate-top">小程序设置</div>-->
-          <!--<p>-->
-            <!--<span class="">小程序名称：</span>-->
-            <!--<span>{{mpaName}}</span>-->
-          <!--</p>-->
-          <!--<p>-->
-            <!--<span>小程序ID：</span>-->
-            <!--<span>{{mpaId}}</span>-->
-          <!--</p>-->
-          <!--<el-button type="success" size="small" @click="dialogVisible = true">解除绑定</el-button>-->
-        <!--</div>-->
-        <div class="experience-setting plate">
-          <div class="plate-top">小程序体验设置</div>
-          <el-button @click="setWechat()" class="add-experience-users" type="success" size="small">添加</el-button>
-          <div class="experience-setting-table">
-            <el-table
-              :data="experienceUsersList"
-              border
-              show-overflow-tooltip>
-              <el-table-column
-                prop="wechat_id"
-                label="用户微信号">
-              </el-table-column>
-              <el-table-column
-                prop="created_at"
-                label="添加时间">
-              </el-table-column>
-              <el-table-column
-                label="操作"
-                width="200">
-                <template slot-scope="scope">
-                  <el-button @click="deleteWechat(scope.row.id, scope.row.wechat_id)" type="text">删除</el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <div class="paging-box" v-if="experienceUsersList.length>0">
-              <el-pagination
-                background
-                prev-text="< 上一页"
-                :page-size="1"
-                next-text="下一页 >"
-                :current-page="page+1"
-                @current-change="changePage"
-                layout="prev, pager, next"
-                :total="totalPage">
-              </el-pagination>
-            </div>
-          </div>
-        </div>
+        <!--<div class="mp-setting-module plate">
+          <div class="plate-top">小程序设置</div>
+          <p>
+            <span class="">小程序名称：</span>
+            <span>{{mpaName}}</span>
+          </p>
+          <p>
+            <span>小程序ID：</span>
+            <span>{{mpaId}}</span>
+          </p>
+          <el-button type="success" size="small" @click="dialogVisible = true">解除绑定</el-button>
+        </div>-->
+        <ul class="mp-setting-bar">
+          <li @click="setTabOption(0)"><span :class="{'active':tabOption===0}">通用设置</span></li>
+          <li @click="setTabOption(1)"><span :class="{'active':tabOption===1}">设置体验账号</span></li>
+          <li @click="setTabOption(2)"><span :class="{'active':tabOption===2}">版本管理</span></li>
+        </ul>
+        <general v-if="tabOption===0"></general>
+        <experience v-if="tabOption===1"></experience>
+        <version v-if="tabOption===2"></version>
       </div>
       <div class="QR-code">
         <el-popover
@@ -67,7 +37,6 @@
           <el-button slot="reference">小<br>程<br>序<br>体<br>验<br></el-button>
         </el-popover>
       </div>
-
       <!--<div class="unbind-dialog">
         <el-dialog
           title="解除绑定"
@@ -91,12 +60,16 @@
 </template>
 
 <script>
-import {mpaExperience, getQRCode} from '../axios/api'
+import {getQRCode} from '../axios/api'
 import menuLeft from '@/components/menu-left'
+import general from '@/components/mp-setting/general-setting'
+import experience from '@/components/mp-setting/experience-setting'
+import version from '@/components/mp-setting/version-management'
 import {mapState} from 'vuex'
 export default {
   data () {
     return {
+      tabOption: 0,
       dialogVisible: false,
       mpaName: '',
       mpaId: '',
@@ -107,8 +80,6 @@ export default {
     }
   },
   created () {
-    // this.getMpInfo()
-    this.getMpaExperience()
     this.getMpQRCode()
   },
   methods: {
@@ -128,63 +99,24 @@ export default {
     //     console.dir(err.request, '失败')
     //   })
     // },
+    // 小程序二维码
     getMpQRCode () {
       getQRCode().then(res => {
         this.mpaQRUrl = res.data.exp_code_url
       })
     },
-    // 添加体验用户的微信号
-    // 获取体验用户列表
-    getMpaExperience () {
-      mpaExperience('get', {page: this.page}).then(res => {
-        this.totalPage = parseInt(res.headers.page_count)
-        this.experienceUsersList = res.data
-      })
-    },
-    // 添加体验用户
-    setWechat () {
-      this.$prompt('微信号：', '添加体验用户', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        inputPattern: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/,
-        inputErrorMessage: '微信号格式错误！'
-      }).then(({ value }) => {
-        // 添加小程序体验者
-        mpaExperience('post', {wechat_id: value}).then(res => {
-          // this.experienceUsersList.unshift(obj)
-          this.page = 0
-          this.getMpaExperience()
-        }).catch(err => {
-          this.$message.error(err.response.data.message)
-        })
-      })
-    },
-    // 是否删除这个体验账号
-    deleteWechat (id, wid) {
-      this.$confirm(`确认删除此账号的体验权限？`, '确认操作', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        mpaExperience('delete', {id: id, wechat_id: wid}).then(res => {
-          this.page = 0
-          this.getMpaExperience()
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: `已取消`
-        })
-      })
-    },
-    // 分页
-    changePage (val) {
-      this.page = val - 1
-      this.getMpaExperience()
+    // 小程序设置的选项
+    setTabOption (index) {
+      if (index === 0) {
+      }
+      this.tabOption = index
     }
   },
   components: {
-    menuLeft
+    menuLeft,
+    general,
+    experience,
+    version
   },
   computed: {
     ...mapState(['yiqixuanDomainUrl'])
@@ -195,31 +127,31 @@ export default {
 <style scoped lang="less">
   .mp-setting-object {
     margin-right: 60px;
+    min-width: 970px;
     .mp-setting-content {
-      .plate {
-        padding: 20px;
-        margin-bottom: 20px;
+      .mp-setting-bar {
+        border-bottom: 1px solid @bg;
+        font-size: 0;
         background: #fff;
-        color: #333;
-        font-size: 12px;
-        .plate-top {
+        li {
+          display: inline-block;
+          vertical-align: middle;
+          width: 160px;
+          text-align: center;
           font-size: 14px;
-          border-bottom: 2px solid #f5f5f5;
-          padding-bottom: 20px;
-          padding-left: 5px;
-          &::before {
-            content: '';
-            display: block;
-            float: left;
-            width: 3px;
-            height: 14px;
-            margin-top: 3px;
-            margin-right: 10px;
-            background: @mainC;
+          color: @fMain;
+          cursor: pointer;
+          span {
+            display: inline-block;
+            padding: 11px 12px 8px;
+            border-bottom: 3px solid #fff;
+            &.active {
+              border-bottom-color: @mainC;
+            }
           }
         }
       }
-      .mp-setting-module {
+      /*.mp-setting-module {
         p {
           padding-top: 20px;
           font-size: 12px;
@@ -239,32 +171,9 @@ export default {
           margin-left: 78px;
           margin-bottom: 10px;
         }
-      }
-      .experience-setting {
-        .add-experience-users {
-          margin-top: 20px;
-          margin-bottom: 20px;
-        }
-        .experience-setting-table {
-          .el-table {
-            font-size: 12px;
-            text-align: center;
-            color: #666;
-            .profit {
-              color: #DE5B67;
-            }
-            .loss {
-              color: #6BA725;
-            }
-          }
-          .paging-box {
-            padding-top: 30px;
-            padding-bottom: 10px;
-          }
-        }
-      }
+      }*/
     }
-    .unbind-dialog {
+    /*.unbind-dialog {
       p {
         font-size: 12px;
         color: #666;
@@ -277,8 +186,8 @@ export default {
           padding-right: 20px;
         }
       }
-    }
-    .QR-code{
+    }*/
+    .QR-code {
       top: 220px;
       position: fixed;
       z-index: 99;
@@ -318,16 +227,16 @@ export default {
       color: #333333;
     }
   }
-  .el-button--small {
-    width: 80px;
-    height: 30px;
-    padding: 0;
-    vertical-align: middle;
-  }
 </style>
 <style lang="less">
   .mp-setting-object {
-    .el-dialog__header {
+    .el-button--small {
+      width: 80px;
+      height: 30px;
+      padding: 0;
+      vertical-align: middle;
+    }
+    /*.el-dialog__header {
       font-size: 14px;
       color: #333;
       font-weight: bold;
@@ -335,7 +244,7 @@ export default {
     }
     .el-dialog__body {
       padding: 20px;
-    }
+    }*/
     .el-table {
       th, td {
         padding: 8px 0;
