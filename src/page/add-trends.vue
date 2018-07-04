@@ -28,6 +28,7 @@
               :data="upToken"
               accept=".jpg,.png"
               :show-file-list="false"
+              :before-upload='beforeUpload'
               :on-success="(res,file)=>handleAvatarSuccess(res,file)">
               <img v-if="imgUrl" :src="yiqixuanDomainUrl + imgUrl">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -67,7 +68,7 @@
               list-type="picture-card"
               :file-list="fileList"
               :on-remove="removeFileList"
-              :before-upload="(value)=>imgsBeforeUpload(value)"
+              :before-upload="imgsBeforeUpload"
               :on-success="(res,file, fileList)=>handlePictureList(res,file, fileList)">
               <i class="el-icon-plus"></i>
             </el-upload>
@@ -244,7 +245,9 @@ export default {
       //     return false
       //   }
       // }
-      this.beforeUpload(file)
+      if (!this.beforeUpload(file)) {
+        return false
+      }
       if (this.fileList.length >= 9) {
         this.$message({
           message: '一次最多上传9张图片',
@@ -270,6 +273,7 @@ export default {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
+      return true
     },
     // 新增配图
     handlePictureList (res, file) {
@@ -345,14 +349,10 @@ export default {
       color: #d5d5d5;
     }
     .add-thumbnail {
-      .el-upload {
-        width: 260px;
-        height: 140px;
-      }
       .el-icon-plus {
-        line-height: 140px;
-        width: 260px;
-        height: 140px;
+        line-height: 80px;
+        width: 80px;
+        height: 80px;
         vertical-align: middle;
       }
     }
@@ -445,12 +445,10 @@ export default {
       margin-top: 20px;
       .avatar-uploader {
         display: inline-block;
-        width: 260px;
-        height: 140px;
         img {
-          width: 260px;
-          height: 140px;
           vertical-align: middle;
+          width: 100%;
+          height: 100%;
         }
         i {
           border: 1px dashed #d5d5d5;

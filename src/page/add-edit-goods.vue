@@ -650,7 +650,9 @@ export default {
           return false
         }
       }
-      this.beforeUpload(file)
+      if (!this.beforeUpload(file)) {
+        return false
+      }
     },
     // 图片上传之前的验证
     beforeUpload (file) {
@@ -669,6 +671,7 @@ export default {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
       }
+      return true
     },
     // 商品图片超出个数限制
     beyondNumberLimit () {
