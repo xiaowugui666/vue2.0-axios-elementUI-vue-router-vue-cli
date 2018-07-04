@@ -5,43 +5,21 @@
       <div class="setting-step">
         <div class="el-steps-box">
           <el-steps :active="active" finish-status="success" align-center>
-            <el-step title="主体信息"></el-step>
             <el-step title="店铺信息"></el-step>
             <el-step title="支付信息"></el-step>
           </el-steps>
         </div>
-        <div v-if="active == 0" class="subject-info plate">
-          <div class="plate-top">主体信息</div>
-          <div class="subject-info-setting">
-            <ul>
-              <li>
-                <span class="name required">商铺名称：</span>
-                <input type="text" v-validate="'required'" v-model.trim="shopName" name="店铺名称" placeholder="请输入店铺名称 (20个字符以内)" maxlength="20"/>
-                <div class="err-tips">{{ errors.first('店铺名称') }}</div>
-              </li>
-              <li>
-                <span class="name required">主营类目：</span>
-                <el-select v-model.trim="categoryValue" size="small" class="select-state">
-                  <el-option
-                    v-for="item in mainCategory"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                  </el-option>
-                </el-select>
-              </li>
-            </ul>
-            <div class="next-step">
-              <el-button type="success" size="small" :disabled="false" @click="setStepActive(1)">下一步</el-button>
-            </div>
-          </div>
-        </div>
-        <div v-if="active == 1" class="store-information plate">
+        <div v-if="active == 0" class="store-information plate">
           <div class="plate-top">店铺信息</div>
           <div class="store-information-setting">
             <ul>
               <li>
-                <span class="name alignment-top">商铺logo：</span>
+                <span class="name required">商铺名称：</span>
+                <input type="text" v-validate="'required'" name="商铺名称" v-model.trim="shopName" placeholder="请输入商铺名称" maxlength="20"/>
+                <div class="err-tips">{{ errors.first('商铺名称') }}</div>
+              </li>
+              <li>
+                <span class="name alignment-top required">商铺logo：</span>
                 <el-upload
                   class="avatar-uploader"
                   :action="qiniuUploadUrl"
@@ -58,66 +36,22 @@
                 </el-upload>
               </li>
               <li>
-                <span class="name alignment-top">商铺描述：</span>
-                <textarea v-model.trim="textArea" maxlength="1000" class="shop-description-textarea" placeholder="请输入商铺描述"></textarea>
-              </li>
-              <li>
-                <span class="name alignment-top required">banner：</span>
-                <el-upload
-                  class="avatar-uploader"
-                  :action="qiniuUploadUrl"
-                  :data="upToken"
-                  accept=".jpg,.png"
-                  :before-upload="beforeUpload"
-                  :show-file-list="false"
-                  :on-success="handleBannerSuccess">
-                  <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
-                  <div class="alignment-tip">
-                    <el-button size="small" type="primary">点击上传</el-button>
-                    <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
-                    <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
-                  </div>
-                </el-upload>
-                <div class="err-tips" :style="{'display': bannerErrorTips?'block':'none'}">请先上传banner图！</div>
-              </li>
-              <li>
-                <span class="name">店长姓名：</span>
-                <input type="text" v-model.trim="shopChiefName" placeholder="请输入店长姓名" maxlength="20"/>
-              </li>
-              <li>
-                <span class="name">联系电话：</span>
-                <span>{{telNum}}</span>
-              </li>
-              <li>
-                <span class="name required">联系微信：</span>
-                <input type="text" v-validate="{required: true, regex: /^[a-zA-Z]([-_a-zA-Z0-9]{5,19})+$/}" name="微信号" v-model.trim="contactWeChat" placeholder="请输入联系微信号"/>
-                <div class="err-tips">{{ errors.first('微信号') }}</div>
+                <span class="name alignment-top required">欢迎文案：</span>
+                <textarea v-validate="'required'" name="欢迎文案" v-model.trim="textArea" maxlength="45" class="shop-description-textarea" placeholder="请输入欢迎文案"></textarea>
+                <div class="err-tips">{{ errors.first('欢迎文案') }}</div>
               </li>
               <li>
                 <span class="name required">客服电话：</span>
                 <input type="text" v-validate="{required: true, regex: /(^[0-9]{3,4}-[0-9]{3,8}$)|(^[0-9]{3,4} [0-9]{3,8}$)|(^0{0,1}1[3|4|5|6|7|8][0-9]{9}$)/}" name="客服电话" v-model.trim="customerServiceNum" placeholder="请输入客服电话" maxlength="12"/>
                 <div class="err-tips">{{ errors.first('客服电话') }}</div>
               </li>
-              <li>
-                <span class="name">联系地址：</span>
-                <div class="el-cascader-box">
-                  <el-cascader
-                    size="small"
-                    :options="options"
-                    v-model.trim="selectedOptions"
-                    placeholder="省 / 市 / 区"
-                    @change="handleChange">
-                  </el-cascader>
-                  <input class="contact-address-input" type="text" v-model.trim="contactAddress" placeholder="请输入详细地址" maxlength="50"/>
-                </div>
-              </li>
             </ul>
             <div class="next-step">
-              <el-button type="success" size="small" :disabled="false" @click="setStepActive(2)">下一步</el-button>
+              <el-button type="success" size="small" :disabled="false" @click="setStepActive(1)">下一步</el-button>
             </div>
           </div>
         </div>
-        <div v-if="active == 2" class="pay-information plate">
+        <div v-if="active == 1" class="pay-information plate">
           <div class="plate-top">支付信息</div>
           <div>
             <div class="pay-information-setting">
@@ -220,7 +154,7 @@
               </el-dialog>
             </div>
             <div class="next-step">
-              <el-button type="success" size="small" @click="setStepActive(3)">完成</el-button>
+              <el-button type="success" size="small" @click="setStepActive(2)">完成</el-button>
             </div>
           </div>
         </div>
@@ -232,30 +166,22 @@
 <script>
 import firstSettingMenu from '@/components/first-setting-menu'
 import {initialSetData, getQnToken, paySetting} from '../axios/api'
-import { regionData, CodeToText, TextToCode } from 'element-china-area-data'
 import {mapState} from 'vuex'
 export default {
   data () {
     return {
       active: -1,
       shopName: '',
+      telNum: '',
       // 图片上传需要的token
       upToken: {},
       docToken: {},
       // 支付部分
       readingProtocol: false,
       checked: true,
-      // 商家主营类目
-      categoryValue: 1,
-      shopChiefName: '',
-      telNum: '',
-      contactWeChat: '',
       customerServiceNum: '',
       logoImageUrl: 'shop_default_logo.png',
-      bannerImageUrl: '',
-      bannerErrorTips: false,
       textArea: '',
-      options: regionData,
       selectedOptions: [],
       contactAddress: '',
       busiInformation: {
@@ -274,8 +200,7 @@ export default {
   mounted () {
   },
   components: {
-    firstSettingMenu,
-    CodeToText
+    firstSettingMenu
   },
   computed: {
     ...mapState(['mainCategory', 'yiqixuanDomainUrl', 'qiniuUploadUrl'])
@@ -299,35 +224,28 @@ export default {
         // console.log(res.data)
         let data = res.data
         this.telNum = data.mobile
-        this.shopName = data.name
-        if (data.name && data.type) {
-          if (data.wechat && data.banner && data.customer_service_mobile) {
+        if (data.mpa) {
+          // this.busiInformation.merchant_no = data.mpa.merchant_no
+          // this.busiInformation.merchant_key = data.mpa.merchant_key_encrypt
+          // this.busiInformation.merchant_cert = data.mpa.merchant_cert_encrypt
+          if (data.name && data.logo_url && data.description && data.customer_service_mobile) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
               this.setRouter('/')
-              this.active = 2
+              this.active = 1
             } else {
-              this.active = 2
+              this.active = 1
             }
           } else {
             if (data.logo_url) {
               this.logoImageUrl = data.logo_url
             }
-            this.textArea = data.description ? data.description : ''
-            if (data.banner) {
-              this.bannerImageUrl = data.banner
-            }
-            this.shopChiefName = data.owner_name ? data.owner_name : ''
-            this.contactWeChat = data.wechat ? data.wechat : ''
-            this.customerServiceNum = data.customer_service_mobile ? data.customer_service_mobile : ''
-            this.getRegionCode(data.province, data.city, data.region)
-            this.contactAddress = data.address ? data.address : ''
-            this.active = 1
+            this.textArea = data.description
+            this.shopName = data.name
+            this.customerServiceNum = data.customer_service_mobile
+            this.active = 0
           }
         } else {
-          if (data.type) {
-            this.categoryValue = data.type
-          }
-          this.active = 0
+          this.setRouter('/binding-mp')
         }
       })
     },
@@ -336,58 +254,27 @@ export default {
       let data = {}
       if (step === 1) {
         data = {
+          mobile: this.telNum,
           name: this.shopName,
-          type: this.getCategory()
-        }
-      } else if (step === 2) {
-        data = {
           logo_url: this.logoImageUrl,
           description: this.textArea,
-          banner: this.bannerImageUrl,
-          owner_name: this.shopChiefName,
-          wechat: this.contactWeChat,
-          customer_service_mobile: this.customerServiceNum,
-          province: CodeToText[this.selectedOptions[0]],
-          city: CodeToText[this.selectedOptions[1]],
-          region: CodeToText[this.selectedOptions[2]],
-          address: this.contactAddress
+          customer_service_mobile: this.customerServiceNum
         }
-      } else if (step === 3) {
+      } else if (step === 2) {
         this.paySettingVerification()
         return false
       }
       this.$validator.validateAll().then((msg) => {
         if (msg) {
-          if (step === 2 && this.bannerImageUrl === '') {
-            this.bannerErrorTips = true
-            return false
-          }
           initialSetData('put', data).then(res => {
             this.active = step
           })
-        } else {
-          if (step === 2 && this.bannerImageUrl === '') {
-            this.bannerErrorTips = true
-          }
         }
       })
-    },
-    // 根据主营类目的value获取类目名称
-    getCategory () {
-      for (let v of this.mainCategory) {
-        if (v.value === this.categoryValue) {
-          return v.label
-        }
-      }
     },
     // 商铺logo图片上传成功后的操作
     handleLogoSuccess (res, file) {
       this.logoImageUrl = res.key
-    },
-    // 商铺banner图片上传成功后的操作
-    handleBannerSuccess (res, file) {
-      // this.bannerImageUrl = URL.createObjectURL(file.raw)
-      this.bannerImageUrl = res.key
     },
     // 上传文件之前对上传内容的验证
     beforeUpload (file) {
@@ -405,16 +292,6 @@ export default {
       if (!isMt10K) {
         this.$message.error('上传图片大小不能小于 100B!')
         return false
-      }
-    },
-    // 省市区三级联动改变时的操作
-    handleChange (value) {
-      // console.log(CodeToText[value[0]], CodeToText[value[1]], CodeToText[value[2]])
-    },
-    // 获取省市区信息，赋值给 selectedOptions 变量
-    getRegionCode (province, city, region) {
-      if (province && city && region) {
-        this.selectedOptions = [TextToCode[province].code, TextToCode[province][city].code, TextToCode[province][city][region].code]
       }
     },
     setMerchantCert () {
@@ -473,7 +350,7 @@ export default {
         localStorage.setItem('api-key', JSON.stringify(res.headers['api-key']))
         localStorage.setItem('api-secret', JSON.stringify(res.headers['api-secret']))
 
-        this.active = 3
+        this.active = 2
         this.setRouter('/')
       })
     },

@@ -48,7 +48,7 @@
               label="拥有订单数"
               width="120">
               <template slot-scope="scope">
-                <div class="11111">{{scope.row.order_count ? scope.row.order_count : 0}}</div>
+                <div>{{scope.row.order_count ? scope.row.order_count : 0}}</div>
               </template>
             </el-table-column>
             <el-table-column

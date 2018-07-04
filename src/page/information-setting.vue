@@ -361,8 +361,6 @@ export default {
       }
     }
   }
-  .subject-info {
-  }
   .subject-info-list {
     padding: 10px 0 20px;
     padding-left: 10px;

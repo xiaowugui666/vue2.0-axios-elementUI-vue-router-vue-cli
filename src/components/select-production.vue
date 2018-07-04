@@ -21,7 +21,8 @@
               @selection-change="handleSelectionChange">
               <el-table-column
                 label="商品"
-                width="400">
+                width="400"
+                show-overflow-tooltip>
                 <template slot-scope="scope">
                   <div class="goods-info-box">
                     <span class="goods-img"><img :src="yiqixuanDomainUrl + scope.row.cover_url" alt=""></span>
@@ -97,14 +98,7 @@ export default {
     },
     // 点击搜索
     diaSearch () {
-      if (this.productionKey !== '') {
-        this.$emit('modalSearch', this.productionKey)
-      } else {
-        this.$message({
-          message: '请输入要搜索的商品名称',
-          type: 'warning'
-        })
-      }
+      this.$emit('modalSearch', this.productionKey)
     },
     // 点击分页,通知父组件改变状态
     currentChange (e) {

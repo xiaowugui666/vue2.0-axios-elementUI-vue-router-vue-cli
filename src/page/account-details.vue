@@ -60,7 +60,7 @@
               background
               prev-text="< 上一页"
               next-text="下一页 >"
-              :page-size="15"
+              :page-size="1"
               @current-change="changePage"
               layout="prev, pager, next"
               :total="totalPage">
@@ -121,12 +121,12 @@ export default {
       }).then(
         res => {
           this.incomeExpenditureData = res.data
-          this.totalPage = parseInt(res.headers.page_count) * 15
+          this.totalPage = parseInt(res.headers.page_count)
         }
       )
     },
     changePage (val) {
-      this.pages = val
+      this.pages = val - 1
       this.getData()
     }
   },
