@@ -445,7 +445,7 @@ export default {
     }
     .block{
     margin-left:20px;
-  }
+    }
     .el-input__inner{
       height: 30px;
       line-height: 30px;

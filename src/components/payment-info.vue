@@ -22,6 +22,7 @@
             :data="token"
             accept=".p12"
             :show-file-list="false"
+            :before-upload="beforeUpload"
             :on-success="qnUploadSuccess">
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
@@ -96,16 +97,26 @@ export default {
       }).catch(() => {
       })
     },
+    // 上传p12证书
     qnUploadSuccess (res, file) {
       paySetting('put', {merchant_cert: res.key}).then(resp => {
         this.busiInformation.merchant_cert = res.key
         // this.$emit('changeSetting', response.key, 3)
       })
     },
+    // 获取七牛上传文件的token
     getToken () {
       getQnToken('document').then(res => {
         this.token = res.data
       })
+    },
+    // 上传p12文件前的验证
+    beforeUpload (file) {
+      const isP12 = file.type === 'application/x-pkcs12'
+      if (!isP12) {
+        this.$message.error('只能上传p12格式的文件!')
+        return false
+      }
     }
   },
   computed: {
