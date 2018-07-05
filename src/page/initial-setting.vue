@@ -76,6 +76,7 @@
                     :data="docToken"
                     accept=".p12"
                     :show-file-list="false"
+                    :before-upload="p12BeforeUpload"
                     :on-success="qnUploadSuccess">
                     <el-button size="small" type="primary">点击上传</el-button>
                   </el-upload>
@@ -276,7 +277,7 @@ export default {
     handleLogoSuccess (res, file) {
       this.logoImageUrl = res.key
     },
-    // 上传文件之前对上传内容的验证
+    // 上传图片文件之前对上传内容的验证
     beforeUpload (file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       const isLt1M = file.size / 1024 / 1024 < 1
@@ -291,6 +292,14 @@ export default {
       }
       if (!isMt10K) {
         this.$message.error('上传图片大小不能小于 100B!')
+        return false
+      }
+    },
+    // 上传p12文件之前对上传内容的验证
+    p12BeforeUpload (file) {
+      const isP12 = file.type === 'application/x-pkcs12'
+      if (!isP12) {
+        this.$message.error('只能上传p12格式的文件!')
         return false
       }
     },
