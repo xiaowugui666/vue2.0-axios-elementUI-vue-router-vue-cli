@@ -11,7 +11,8 @@
               <p v-html="content.content"></p>
               <span @click="navigateTo">全文 ></span>
             </div>
-            <img v-for="(item,index) in content.imgs" :key="index" :src="item.url">
+            <img v-if="content.cover_url" :src="yiqixuanDomainUrl+content.cover_url" alt="">
+            <img v-else v-for="(item,index) in content.images" :key="index" :src="yiqixuanDomainUrl+item.img_url">
           </div>
           <div class="hr"></div>
           <div class="approvals" v-if="approvals.length">
@@ -48,6 +49,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import {getTrendDetail, getComments, putComment} from '../axios/api'
 export default {
   data () {
@@ -106,6 +108,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   },
   components: {
     menuLeft
@@ -176,7 +179,7 @@ export default {
       img {
         vertical-align: middle;
         margin-left: 10px;
-        width: 90px;
+        width: 60px;
         height: 60px;
         margin-top: 10px;
         &:nth-child(3) {

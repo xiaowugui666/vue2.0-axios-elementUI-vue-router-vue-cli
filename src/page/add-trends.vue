@@ -171,31 +171,31 @@ export default {
     },
     // 点击保存
     saveTrends () {
-      // 编辑动态
-      if (this.$route.query.id) {
-        let params = {}
-        params.type = this.trendType
-        params.content = this.quillContent
-        // 如果为编辑短动态
-        if (this.trendType == 1) {
-          params.feed_images = this.imgsList
-        } else {
-          params.title = this.title
-          params.description = this.textContent
-          params.cover_url = this.imgUrl
-        }
-        putTrendDetail(params, this.$route.query.id).then(res => {
-          if (res.status == 200) {
-            this.$router.push({name: 'trendsManagement'})
+      if (this.quillContent && (this.fileList.length || this.title)) {
+        // 编辑动态
+        if (this.$route.query.id) {
+          let params = {}
+          params.type = this.trendType
+          params.content = this.quillContent
+          // 如果为编辑短动态
+          if (this.trendType == 1) {
+            params.feed_images = this.imgsList
+          } else {
+            params.title = this.title
+            params.description = this.textContent
+            params.cover_url = this.imgUrl
           }
-        }).catch(() => {
-          this.$message({
-            message: '保存动态失败，请稍后重试',
-            type: 'error'
+          putTrendDetail(params, this.$route.query.id).then(res => {
+            if (res.status == 200) {
+              this.$router.push({name: 'trendsManagement'})
+            }
+          }).catch(() => {
+            this.$message({
+              message: '保存动态失败，请稍后重试',
+              type: 'error'
+            })
           })
-        })
-      } else {
-        if (this.quillContent && (this.fileList.length || this.title)) {
+        } else {
           // 新增动态
           let params = {}
           params.content = this.quillContent
@@ -215,12 +215,12 @@ export default {
               type: 'error'
             })
           })
-        } else {
-          this.$message({
-            message: '请完善必填项',
-            type: 'info'
-          })
         }
+      } else {
+        this.$message({
+          message: '请完善必填项',
+          type: 'info'
+        })
       }
     },
     // 上传缩略图
