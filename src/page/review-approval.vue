@@ -34,7 +34,7 @@
             <span class="item-point" v-else></span>
             <div class="item-content">
               <p v-if="item.title"><span class="title">{{item.title}}</span><span>{{item.created_at}}</span></p>
-              <p class="content-mess" v-if="item.cover_url">{{item.description}}</p>
+              <p class="content-mess" v-if="item.type==2">{{item.description}}</p>
               <p class="content-short-dynamic" v-else><span class="content-short-dynamic-txt">{{item.content}}</span><span class="short-dynamic-time">{{item.created_at}}</span></p>
             </div>
             <div :class="{'item-status': true, 'active-statu': (reviewStatu == 1 ? true : false)}" @click="itemDetail(item.id)">
