@@ -194,9 +194,10 @@ export default {
       right: 0;
       background: #fff;
       text-align: center;
-      writing-mode: vertical-rl;
       .el-button {
-        padding: 22px 13px;
+        width: 40px;
+        box-sizing: border-box;
+        padding: 22px 0;
         border: none;
         margin-left: -10px;
         color: #333;

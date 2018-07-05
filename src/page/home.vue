@@ -234,16 +234,18 @@ export default {
       border-right: none;
     }
   }
-  .online-consulting {
+  .online-consulting, .QR-code {
     position: fixed;
     z-index: 99;
     right: 0;
     top: 100px;
     background: #fff;
     text-align: center;
-    writing-mode: vertical-rl;
+    /*writing-mode: vertical-rl;*/
     .el-button {
-      padding: 22px 13px;
+      width: 40px;
+      box-sizing: border-box;
+      padding: 22px 0;
       border: none;
       margin-left: -10px;
       color: @b2;
@@ -257,24 +259,6 @@ export default {
   }
   .QR-code{
     top: 220px;
-    position: fixed;
-    z-index: 99;
-    right: 0;
-    background: #fff;
-    text-align: center;
-    writing-mode: vertical-rl;
-    .el-button {
-      padding: 22px 13px;
-      border: none;
-      margin-left: -10px;
-      color: @b2;
-      font-size: 12px;
-      line-height: 1.4;
-      &:hover {
-        background: #fff;
-        color: @b2;
-      }
-    }
   }
   .detailed-consultation {
     font-size: 12px;

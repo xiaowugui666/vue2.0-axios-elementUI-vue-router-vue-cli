@@ -49,46 +49,47 @@
               </div>
               <button @click="searchOrder" class="search">搜索</button>
             </div>
-
         </div>
         <div class="tradeRecord">
-            <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
-                <el-tab-pane label="全部" name="first"></el-tab-pane>
-                <el-tab-pane  label="待付款" name="second"></el-tab-pane>
-                <el-tab-pane  label="待发货" name="third"></el-tab-pane>
-                <el-tab-pane  label="已发货" name="fourth"></el-tab-pane>
-                <el-tab-pane  label="已完成" name="five"></el-tab-pane>
-                <el-tab-pane  label="已取消" name="six"></el-tab-pane>
-            </el-tabs>
-            <div class="tradeList" v-for="(item,index) in ordersDetail" :key="index">
-              <div class="top">
-                <label>下单时间：{{item.created_at}}</label>
-                <label>订单编号：{{item.no}}</label>
-                <label>客户手机：{{item.mobile}}</label>
-              </div>
-              <div class="content">
-                  <div>
-                      <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
-                        <div class="proInfo">
-                          <img :src="orderImageUrl(i.cover_url)" alt="">
-                          <div class="desc">{{i.name}}</div>
-                        </div>
-                        <div class="proNum">数量 x {{i.count}}</div>
-                        <div class="price">
-                          <label>￥{{item.items[0].price | money}}</label>
-                        </div>
+          <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
+            <el-tab-pane label="全部" name="first"></el-tab-pane>
+            <el-tab-pane  label="待付款" name="second"></el-tab-pane>
+            <el-tab-pane  label="待发货" name="third"></el-tab-pane>
+            <el-tab-pane  label="已发货" name="fourth"></el-tab-pane>
+            <el-tab-pane  label="已完成" name="five"></el-tab-pane>
+            <el-tab-pane  label="已取消" name="six"></el-tab-pane>
+          </el-tabs>
+          <el-button @click="excelExportClick" :loading="excelExportLoading" class="excel-export-btn" type="success" size="small">Excel导出</el-button>
+          <div class="tradeList" v-for="(item,index) in ordersDetail" :key="index">
+            <div class="top">
+              <label>下单时间：{{item.created_at}}</label>
+              <label>订单编号：{{item.no}}</label>
+              <label>客户手机：{{item.mobile}}</label>
+            </div>
+            <div class="content">
+                <div>
+                    <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
+                      <div class="proInfo">
+                        <img :src="orderImageUrl(i.cover_url)" alt="">
+                        <div class="desc">{{i.name}}</div>
                       </div>
-                  </div>
-                <div class="orderMon" :style="{height:item.items.length*80+'px'}">
-                  <label>￥{{item.amount | money}}</label>
-                  <label>运费：{{item.express_amount | money}}</label>
+                      <div class="proNum">数量 x {{i.count}}</div>
+                      <div class="price">
+                        <label>￥{{item.items[0].price | money}}</label>
+                      </div>
+                    </div>
                 </div>
-                <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
-                    <label>{{orderMessage(item.status)}}</label>
-                  <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
-                </div>
+              <div class="orderMon" :style="{height:item.items.length*80+'px'}">
+                <label>￥{{item.amount | money}}</label>
+                <label>运费：{{item.express_amount | money}}</label>
+              </div>
+              <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
+                  <label>{{orderMessage(item.status)}}</label>
+                <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
               </div>
             </div>
+          </div>
+          <div v-if="ordersDetail.length<=0" class="no-data">暂无数据</div>
           <el-pagination
             v-if="totalPagina != 0"
             background
@@ -107,7 +108,7 @@
   </div>
 </template>
 <script>
-import {order} from '@/axios/api'
+import {order, excelExport} from '@/axios/api'
 import menuLeft from '@/components/menu-left'
 import {mapState} from 'vuex'
 export default {
@@ -152,6 +153,7 @@ export default {
       tradeList: [],
       // 标记当前所处订单分类
       statu: '',
+      excelExportLoading: false,
       // flagObj：是否已点击搜索
       flag: false
     }
@@ -166,6 +168,60 @@ export default {
     changeType () {
     },
     changeTime (res) {
+    },
+    // 导出excel
+    excelExportClick () {
+      // 若订单编号有输入，则判断
+      if (this.keyValue != '' && this.keyValue.length != 32 && this.value == 1) {
+        this.$message({
+          showClose: true,
+          message: '请输入正确的订单编号',
+          type: 'warning'
+        })
+        return false
+      }
+      if (this.keyValue != '' && this.keyValue.length != 11 && this.value == 3) {
+        this.$message({
+          showClose: true,
+          message: '请输入正确的手机号',
+          type: 'warning'
+        })
+        return false
+      }
+      // 参数
+      let params = {}
+      params.status = this.statu
+      if (this.keyValue !== '') {
+        if (this.value == 1) {
+          params.no = this.keyValue
+        } else if (this.value == 2) {
+          params.consignee = this.keyValue
+        } else if (this.value == 3) {
+          params.mobile = this.keyValue
+        }
+      }
+      if (this.keyName !== '') {
+        params.name = this.keyName
+      }
+      if (this.keyTime && this.keyTime.length > 0) {
+        let dateBegin = new Date(this.keyTime[0])
+        let dateEnd = new Date(this.keyTime[1])
+        params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+        params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
+      }
+      this.excelExportLoading = true
+      excelExport(params).then(res => {
+        if (res.data) {
+          window.open(res.data)
+        } else {
+          this.$message({
+            showClose: true,
+            message: '非常抱歉，您的搜索结果为空，无法导出数据哦！',
+            type: 'error'
+          })
+        }
+        this.excelExportLoading = false
+      }).catch()
     },
     // 订单状态
     orderMessage (status) {
@@ -445,7 +501,7 @@ export default {
     }
     .block{
     margin-left:20px;
-  }
+    }
     .el-input__inner{
       height: 30px;
       line-height: 30px;
@@ -483,7 +539,22 @@ export default {
 
   .tradeRecord {
     background: #fff;
-    padding:30px 20px 20px;
+    padding:20px;
+    position: relative;
+    .excel-export-btn {
+      width: 80px;
+      height: 30px;
+      padding: 0;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .no-data {
+      color: @b9;
+      font-size: 12px;
+      text-align: center;
+      padding: 30px 0 20px;
+    }
     .tradeList{
           padding-top: 15px;
           display: block;
@@ -667,10 +738,9 @@ export default {
       .search{
         line-height: 30px;
         width: 80px;
-        background: #DE5B67;
+        background: @mainC;
         color:#fff;
         text-align: center;
-        line-height: 30px;
         border-radius: 2px;
       }
       .orderType{
