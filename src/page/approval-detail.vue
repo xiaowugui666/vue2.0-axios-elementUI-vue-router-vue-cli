@@ -94,13 +94,22 @@ export default {
       param.status = val
       putComment(param, id).then(res => {
         this.getFeedComment({})
+        if (val === 2) {
+          this.$message({
+            showClose: true,
+            message: '通过成功',
+            type: 'success'
+          })
+        } else if (val === 3) {
+          this.$message({
+            showClose: true,
+            message: '关闭成功',
+            type: 'success'
+          })
+        }
+      }).catch(() => {
         this.$message({
-          message: '审批成功',
-          type: 'success'
-        })
-      }).catch(err => {
-        console.dir(err)
-        this.$message({
+          showClose: true,
           message: '审批评论失败，请稍后重试',
           type: 'error'
         })
