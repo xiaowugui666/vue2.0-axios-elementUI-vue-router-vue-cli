@@ -28,7 +28,7 @@
           <li :class="{'active':reviewStatu == 2}" @click="changState(2)">已通过<span v-if="reviewStatu == 2 && tabCount"> ( {{tabCount}} ) </span></li>
           <li :class="{'active':reviewStatu == 3}" @click="changState(3)">未通过<span v-if="reviewStatu == 3 && tabCount"> ( {{tabCount}} ) </span></li>
         </ul>
-        <div v-if="items.length" class="review-items">
+        <div v-if="items.length>0" class="review-items">
           <div class="review-item" v-for="(item,index) in items" :key="index">
             <img :src="yiqixuanDomainUrl + item.cover_url" v-if="item.cover_url">
             <span class="item-point" v-else></span>
@@ -92,21 +92,23 @@ export default {
     },
     // 点击搜索
     search () {
-      let dateBegin = new Date(this.keyTime[0])
-      let dateEnd = new Date(this.keyTime[1])
-      this.searchObj.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
-      this.searchObj.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
       let params = {}
       if (this.keyTime && this.keyTime.length > 0) {
+        let dateBegin = new Date(this.keyTime[0])
+        let dateEnd = new Date(this.keyTime[1])
+        this.searchObj.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
+        this.searchObj.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         params = this.searchObj
       }
       params.status = this.reviewStatu
       getFeedComment(params).then(res => {
-        this.$message.success('获取数据成功！')
-        if (res.data.length > 0) {
-          this.items = res.data.data
-          this.tabCount = res.data.tab_count
-        }
+        this.$message({
+          showClose: true,
+          message: '获取数据成功！',
+          type: 'success'
+        })
+        this.items = res.data
+        // this.tabCount = res.data.tab_count
       })
     },
     // 点击查看动态详情
