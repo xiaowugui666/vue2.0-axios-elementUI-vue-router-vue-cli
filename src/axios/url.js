@@ -3,6 +3,7 @@ let api = ''
 // 根据dev.env.js和prod.env.js获取域名配置
 api = 'https://' + process.env.API_HOST + '.yiqixuan.com'
 // api = 'https://wu-v11-develop.yiqixuan.com'
+// api = 'http://192.168.20.107'
 
 export default {
   ip: api
