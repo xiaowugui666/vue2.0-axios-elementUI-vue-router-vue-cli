@@ -43,7 +43,7 @@
                       class="input-new-tag"
                       v-if="inputSpacVisible[index]"
                       v-model="inputSpacValue"
-                      :ref="'saveSpecTagInput'+index"
+                      :ref="'saveSpecTagInput'"
                       size="small"
                       maxlength="20"
                       @keyup.enter.native="handleInputSpec(index, item.id)"
@@ -86,7 +86,7 @@
                     </el-upload>
                   </div>
                   <p class="first-category-tips">图片请控制在1MB以内，支持jpg、jpeg、png格式的图片</p>
-                  <div class="err-tips" :style="{'display':firstCategoryImage?'none':'block'}">清先添加图片</div>
+                  <div class="err-tips" :style="{'display':firstCategoryImage?'none':'block'}">请先添加图片</div>
                 </li>
               </ul>
             </div>
@@ -211,7 +211,7 @@ export default {
     deleteGoodsCategoryConfirm (id, e) {
       // console.log(123)
       e.stopPropagation()
-      this.$confirm('确认关闭？')
+      this.$confirm('确认删除此分类？')
         .then(_ => {
           deleteGoodsCategory(id, 0).then(res => {
             this.$message('删除分类成功！')
@@ -229,16 +229,20 @@ export default {
       let values = this.categoryList[index].children
       // 删除选择的二级分类
       deleteGoodsCategory(tag.id, this.categoryList[index].id).then(res => {
-        // this.$message('删除二级分类成功！')
+        this.$message.error('删除二级分类成功！')
         this.categoryList[index].children.splice(values.indexOf(tag), 1)
       })
     },
     // 显示 规则值输入框，使输入框获取焦点
     showSpecInput (index) {
-      this.$set(this.inputSpacVisible, index, true)
-      this.$nextTick(_ => {
-        this.$refs['saveSpecTagInput' + index][0].$refs.input.focus()
-      })
+      if (this.categoryList[index].children.length >= 30) {
+        this.$message.warning('二级分类不能超过30个！')
+      } else {
+        this.$set(this.inputSpacVisible, index, true)
+        this.$nextTick(_ => {
+          this.$refs['saveSpecTagInput'][0].$refs.input.focus()
+        })
+      }
     },
     // 获取二级类目输入框的内容，赋值给this.categoryList[index].children，清空this.inputSpacValue
     handleInputSpec (index, id) {
@@ -253,7 +257,7 @@ export default {
           }
           // 请求接口，保存二级商品分类
           addGoodsCategory(data).then(res => {
-            // this.$message.success('添加二级分类成功！')
+            this.$message.success('添加二级分类成功！')
             data.id = res.data.id
             this.categoryList[index].children.push(data)
           })
@@ -370,6 +374,7 @@ export default {
           }
         }
         .collapse-body {
+          padding: 20px;
           .tag-img {
             width: 85px;
             height: 85px;
@@ -516,7 +521,6 @@ export default {
       color: @b8;
     }
     .el-collapse-item__wrap {
-      padding: 20px;
       background: #EFEFEF;
     }
     .el-collapse-item__content {
