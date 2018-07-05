@@ -234,6 +234,7 @@ export default {
       for (let i = 0; i < this.imgsList.length; i++) {
         if (this.imgsList[i] == file.img_url) {
           this.imgsList.splice(i, 1)
+          return false
         }
       }
     },
