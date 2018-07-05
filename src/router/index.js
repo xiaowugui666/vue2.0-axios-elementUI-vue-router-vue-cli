@@ -10,7 +10,6 @@ const account = r => require.ensure([], () => r(require('@/page/account')))
 const accountDetails = r => require.ensure([], () => r(require('@/page/account-details')))
 const marketingManagement = r => require.ensure([], () => r(require('@/page/marketing-management')))
 const addMarketingActivity = r => require.ensure([], () => r(require('@/page/add-marketing-activity')))
-const informationSetting = r => require.ensure([], () => r(require('@/page/information-setting')))
 const addEditGoods = r => require.ensure([], () => r(require('@/page/add-edit-goods')))
 const categoryManagement = r => require.ensure([], () => r(require('@/page/category-management')))
 const orderSetting = r => require.ensure([], () => r(require('@/page/order-setting')))
@@ -29,30 +28,6 @@ const reviewApproval = r => require.ensure([], () => r(require('@/page/review-ap
 const viewTrends = r => require.ensure([], () => r(require('@/page/view-trends')))
 const approvalDetail = r => require.ensure([], () => r(require('@/page/approval-detail')))
 const approvalSolved = r => require.ensure([], () => r(require('@/page/approval-solved')))
-
-// import home from '@/page/home'
-// import initialSetting from '@/page/initial-setting'
-// import commodityManagement from '@/page/commodity-management'
-// import orderManagement from '@/page/order-management'
-// import customerManagement from '@/page/customer-management'
-// import customerOrder from '@/page/customer-order'
-// import account from '@/page/account'
-// import accountDetails from '@/page/account-details'
-// import marketingManagement from '@/page/marketing-management'
-// import addMarketingActivity from '@/page/add-marketing-activity'
-// import informationSetting from '@/page/information-setting'
-// import addEditGoods from '@/page/add-edit-goods'
-// import categoryManagement from '@/page/category-management'
-// import orderSetting from '@/page/order-setting'
-// import paySetting from '@/page/pay-setting'
-// import mpSetting from '@/page/mp-setting'
-// import shopProfile from '@/page/shop-profile'
-// import orderAfterSale from '@/page/order-afterSale'
-// import orderDetail from '@/page/order-detail'
-// import orderRebate from '@/page/order-rebate'
-// import login from '@/page/login'
-// import err404 from '@/page/404'
-// import bindingMp from '@/page/binding-mp'
 
 Vue.use(Router)
 
@@ -138,11 +113,6 @@ export default new Router({
       path: '/add-marketing-activity/:class',
       name: 'addMarketingActivity',
       component: addMarketingActivity
-    },
-    {
-      path: '/information-setting',
-      name: 'informationSetting',
-      component: informationSetting
     },
     {
       path: '/order-setting',
