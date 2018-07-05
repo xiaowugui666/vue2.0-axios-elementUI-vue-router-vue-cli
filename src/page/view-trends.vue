@@ -4,7 +4,7 @@
     <div class="view-trends-content">
       <div class="view-header">动态管理 > 查看动态</div>
       <div class="view-body">
-        <div class="view-title"><span></span><span>内容编辑</span></div>
+        <div class="view-title"><span></span><span>内容</span></div>
         <div class="hr"></div>
         <div class="view-mess-title" v-if="trendType == 2">
           <span class="pre-text">标      题 ：</span>
