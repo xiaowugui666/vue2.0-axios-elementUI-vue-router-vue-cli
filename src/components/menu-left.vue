@@ -10,31 +10,31 @@
       @close="handleClose"
       router
       >
-        <el-menu-item index="1" route="/">
-          <i class="icon-概况"></i>
-          <span>概况</span>
-        </el-menu-item>
-        <el-menu-item index="2" route="/shop-profile">
-          <i class="icon-店铺"></i>
-          <span>店铺</span>
-        </el-menu-item>
-        <el-submenu index="9">
-          <template slot="title">
-            <i class="icon-动态-6"></i>
-            <span>动态</span>
-          </template>
-          <el-menu-item index="9-1" route="/trends-management">动态管理</el-menu-item>
-          <!--<el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>-->
-          <el-menu-item index="9-2" route="/review-approval">评论审批</el-menu-item>
-        </el-submenu>
-        <el-submenu index="3">
-          <template slot="title">
-            <i class="icon-商品"></i>
-            <span>商品</span>
-          </template>
-          <el-menu-item index="3-1" route="/commodity-management">商品管理</el-menu-item>
-          <!--<el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>-->
-          <el-menu-item index="3-2" route="/category-management">类目管理</el-menu-item>
+      <el-menu-item index="1" route="/">
+        <i class="icon-概况"></i>
+        <span>概况</span>
+      </el-menu-item>
+      <el-menu-item index="2" route="/shop-profile">
+        <i class="icon-店铺"></i>
+        <span>店铺</span>
+      </el-menu-item>
+      <el-submenu index="9">
+        <template slot="title">
+          <i class="icon-动态-6"></i>
+          <span>动态</span>
+        </template>
+        <el-menu-item index="9-1" route="/trends-management">动态管理</el-menu-item>
+        <!--<el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>-->
+        <el-menu-item index="9-2" route="/review-approval">评论审批</el-menu-item>
+      </el-submenu>
+      <el-submenu index="3">
+        <template slot="title">
+          <i class="icon-商品"></i>
+          <span>商品</span>
+        </template>
+        <el-menu-item index="3-1" route="/commodity-management">商品管理</el-menu-item>
+        <!--<el-menu-item index="/oneKeyIntroduction">一键导入</el-menu-item>-->
+        <el-menu-item index="3-2" route="/category-management">类目管理</el-menu-item>
       </el-submenu>
       <el-submenu index="4">
         <template slot="title">

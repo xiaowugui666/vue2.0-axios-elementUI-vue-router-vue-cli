@@ -63,7 +63,6 @@ export default {
   mounted () {
     // 获取动态详情
     getTrendDetail(this.$route.query.id).then(res => {
-      console.log(res)
       this.content = res.data
     })
     this.getFeedComment({})
@@ -78,7 +77,6 @@ export default {
       params.feed_id = this.id
       params.status = this.status
       getComments(params).then(res => {
-        console.log(res)
         this.approvals = res.data
         this.totalPagina = res.headers.page_count
       })
@@ -93,7 +91,6 @@ export default {
       param.feed_id = this.id
       param.status = val
       putComment(param, id).then(res => {
-        console.log(res)
         this.getFeedComment({})
         this.$message({
           message: '审批成功',
@@ -136,9 +133,9 @@ export default {
     padding: 20px;
     .no-data {
       height: 50px;
-      border: 1px solid #d5d5d5;
       text-align: center;
-      color: #222222;
+      color: @b8;
+      font-size: 12px;
       line-height: 50px;
     }
     .no-data.inner {
@@ -147,7 +144,7 @@ export default {
     }
     .appro-content {
       box-sizing: border-box;
-      border: 1px solid #D5D5D5;
+      border: 1px solid #eaeaea;
       padding: 25px 20px 0px;
       font-size: 12px;
       color: #888888;
@@ -189,13 +186,13 @@ export default {
     }
     .hr {
       height: 2px;
-      background: #D5D5D5;
+      background: @bg;
       margin-top: 20px;
     }
     .approvals {
       .appro-item {
         padding: 20px 0;
-        border-bottom: 1px dashed #d5d5d5;
+        border-bottom: 1px dashed #eaeaea;
         position: relative;
         &:last-child {
           border-bottom: none;

@@ -32,10 +32,10 @@
           <div class="review-item" v-for="(item,index) in items" :key="index">
             <img :src="yiqixuanDomainUrl + item.cover_url" v-if="item.cover_url">
             <span class="item-point" v-else></span>
-            <div class="item-content" :style="{'margin-left':(item.img ? '15px' : '25px')}">
-              <p><span class="title">{{item.title}}</span><span>{{item.date}}</span></p>
+            <div class="item-content">
+              <p v-if="item.title"><span class="title">{{item.title}}</span><span>{{item.created_at}}</span></p>
               <p class="content-mess" v-if="item.cover_url">{{item.description}}</p>
-              <p class="content-mess" v-else>{{item.content}}</p>
+              <p class="content-short-dynamic" v-else><span class="content-short-dynamic-txt">{{item.content}}</span><span class="short-dynamic-time">{{item.created_at}}</span></p>
             </div>
             <div :class="{'item-status': true, 'active-statu': (reviewStatu == 1 ? true : false)}" @click="itemDetail(item.id)">
               {{reviewStatu == 1 ? '未审批' : (reviewStatu == 2 ? '已通过' : '未通过')}}
@@ -96,12 +96,17 @@ export default {
       let dateEnd = new Date(this.keyTime[1])
       this.searchObj.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
       this.searchObj.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
-      let params = this.searchObj
+      let params = {}
+      if (this.keyTime && this.keyTime.length > 0) {
+        params = this.searchObj
+      }
       params.status = this.reviewStatu
       getFeedComment(params).then(res => {
-        console.log(res)
-        this.items = res.data.data
-        this.tabCount = res.data.tab_count
+        this.$message.success('获取数据成功！')
+        if (res.data.length > 0) {
+          this.items = res.data.data
+          this.tabCount = res.data.tab_count
+        }
       })
     },
     // 点击查看动态详情
@@ -123,7 +128,6 @@ export default {
     // 获取列表数据
     getFeedComment (params) {
       getFeedComment(params).then(res => {
-        console.log(res)
         this.items = res.data
         this.tabCount = res.headers.data_count
         this.totalPagina = res.headers.page_count
@@ -182,7 +186,6 @@ export default {
   position: relative;
   height: 95%;
   .review-header {
-    min-width: 1000px;
     height: 55px;
     padding-top: 25px;
     background: #FFFFFF;
@@ -207,18 +210,18 @@ export default {
     .no-data {
       margin: 20px;
       height: 50px;
-      border: 1px solid #d5d5d5;
       text-align: center;
-      color: #222222;
+      color: @b8;
+      font-size: 12px;
       line-height: 50px;
     }
     .review-status {
       display: flex;
       height: 40px;
-      font-size: 16px;
+      font-size: 14px;
       color: #222222;
       line-height: 40px;
-      border-bottom: 1px solid #d5d5d5;
+      border-bottom: 1px solid @bg;
       user-select: none;
       li {
         margin: 0 45px;
@@ -231,6 +234,7 @@ export default {
     }
     .review-items {
       padding: 20px;
+      font-size: 0;
       .review-item {
         overflow: hidden;
         border: 1px solid #D5D5D5;
@@ -241,41 +245,64 @@ export default {
           margin-top: 0;
         }
         img {
-          float: left;
+          display: inline-block;
+          vertical-align: middle;
           width: 90px;
           height: 60px;
+          margin-right: 20px;
         }
         div {
-          float: left;
+          display: inline-block;
+          vertical-align: middle;
         }
         .item-point {
-          position: absolute;
-          top: 50%;
-          margin-top: -4px;
           display: inline-block;
-          width: 8px;
-          height: 8px;
-          border-radius: 8px;
-          background: #FA505D;
+          vertical-align: middle;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: @mainC;
+          margin-right: 10px;
         }
         .item-content {
-          width: 80%;
+          width: 75%;
           font-size: 12px;
           color: #888888;
-          vertical-align: bottom;
-          p {
+          .fontEllipsis() {
+            max-width: 600px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
           }
+          span {
+            display: inline-block;
+            vertical-align: middle;
+          }
           .title {
-            font-size: 16px;
+            .fontEllipsis();
+            font-size: 14px;
             color: #222222;
             font-weight: bold;
             margin-right: 20px;
           }
           .content-mess {
+            .fontEllipsis();
             margin-top: 10px;
+          }
+          .content-short-dynamic {
+            display: inline-block;
+            vertical-align: middle;
+            .content-short-dynamic-txt {
+              .fontEllipsis();
+              color: @b2;
+              font-weight: bold;
+              font-size: 14px;
+            }
+            .short-dynamic-time {
+              margin-left: 20px;
+              font-size: 12px;
+              color: @b8;
+            }
           }
         }
         .item-status {

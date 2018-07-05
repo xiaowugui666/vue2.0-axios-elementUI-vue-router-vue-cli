@@ -5,7 +5,7 @@
       <div>
         <el-button @click="subMpaAudit" :disabled="mpaAudit===2" type="success" size="small">{{mpaAudit===2?'审核中':'提交审核'}}</el-button>
       </div>
-      <p class="take-care">注意：请确保您已经正确填写了 <a href="" target="_blank">必要的类目设置</a> ，且已经上架了商品（空白店铺可能无法通过微信审核）；</p>
+      <p class="take-care">注意：请确保您已经正确填写了 <a href="http://www.51zan.cn/hotArticle.html?type=skill&articleId=29#lmsz" target="_blank">必要的类目设置</a> ，且已经上架了商品（空白店铺可能无法通过微信审核）；</p>
     </div>
     <div class="history-version-update-record">
       <div class="title">历史版本更新记录</div>
