@@ -29,7 +29,7 @@
             <li v-if="routerIf">
               <span class="name required">特<span class="right">价：</span></span>
               <span class="special-offer goods-price">
-                <input type="text" v-validate="{decimal:2,required:true,min_value: 0,max_value:99999999999}" maxlength="11" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
+                <input type="text" v-validate="{decimal:2,required:true,min_value: 0,max_value:originalPrice}" maxlength="11" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
                 <div class="err-tips" v-if="errors.has('特价价格')" style="color: red;margin-top: 5px;margin-left: 80px;">{{errors.first('特价价格')}}</div>
               </span>
             </li>
@@ -329,7 +329,7 @@ export default {
           }
         } else {
           this.$message({
-            message: '请确保编辑信息完善',
+            message: '请确保编辑信息正确',
             type: 'warning'
           })
         }

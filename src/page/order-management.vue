@@ -155,7 +155,8 @@ export default {
       statu: '',
       excelExportLoading: false,
       // flagObj：是否已点击搜索
-      flag: false
+      flag: false,
+      flagObj: {}
     }
   },
   computed: {
@@ -278,6 +279,7 @@ export default {
           params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
           params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
+        this.flagObj = params
         params.page = 0
         params.per_page = 15
         order(params).then(res => {
@@ -334,24 +336,7 @@ export default {
       this.currentPage = 1
       let params = {}
       if (this.flag) {
-        if (this.keyValue !== '') {
-          if (this.value == 1) {
-            params.no = this.keyValue
-          } else if (this.value == 2) {
-            params.consignee = this.keyValue
-          } else if (this.value == 3) {
-            params.mobile = this.keyValue
-          }
-        }
-        if (this.keyName !== '') {
-          params.name = this.keyName
-        }
-        if (this.keyTime.length) {
-          let dateBegin = new Date(this.keyTime[0])
-          let dateEnd = new Date(this.keyTime[1])
-          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
-          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
-        }
+        params = this.flagObj
       }
       this.setStatu(tab.index)
       params.status = this.statu
@@ -368,24 +353,7 @@ export default {
     currentIndex (val) {
       let params = {}
       if (this.flag) {
-        if (this.keyValue !== '') {
-          if (this.value == 1) {
-            params.no = this.keyValue
-          } else if (this.value == 2) {
-            params.consignee = this.keyValue
-          } else if (this.value == 3) {
-            params.mobile = this.keyValue
-          }
-        }
-        if (this.keyName !== '') {
-          params.name = this.keyName
-        }
-        if (this.keyTime.length) {
-          let dateBegin = new Date(this.keyTime[0])
-          let dateEnd = new Date(this.keyTime[1])
-          params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
-          params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
-        }
+        params = this.flagObj
       }
       params.page = val - 1
       params.status = this.statu
