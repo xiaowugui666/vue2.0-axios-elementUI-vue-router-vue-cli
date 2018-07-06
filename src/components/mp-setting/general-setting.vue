@@ -90,20 +90,31 @@
           </li>
           <li>
             <span class="name required alignment-top">商铺logo：</span>
-            <el-upload
-              class="avatar-uploader"
-              :action="qiniuUploadUrl"
-              :data="upToken"
-              accept=".jpg,.png"
-              :before-upload="beforeUpload"
-              :show-file-list="false"
-              :on-success="handleLogoSuccess">
-              <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
+            <div class="img-upload-box">
+              <el-upload
+                class="avatar-uploader"
+                :action="qiniuUploadUrl"
+                :data="upToken"
+                accept=".jpg,.png"
+                :before-upload="beforeUpload"
+                :show-file-list="false"
+                :on-success="handleLogoSuccess">
+                <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
+              </el-upload>
               <div class="alignment-tip">
-                <el-button size="small" type="primary">点击上传</el-button>
+                <el-upload
+                  class="avatar-uploader"
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
+                  accept=".jpg,.png"
+                  :before-upload="beforeUpload"
+                  :show-file-list="false"
+                  :on-success="handleLogoSuccess">
+                  <el-button size="small" type="primary">点击上传</el-button>
+                </el-upload>
                 <p slot="tip" class="el-upload__tip">建议尺寸：160*160像素，只能上传jpg/jpeg/png文件，且不超过1MB</p>
               </div>
-            </el-upload>
+            </div>
           </li>
           <li>
             <span class="name required alignment-top">欢迎文案：</span>
@@ -112,22 +123,33 @@
           </li>
           <li>
             <span class="name alignment-top">首页展示图：</span>
-            <el-upload
-              class="avatar-uploader"
-              :action="qiniuUploadUrl"
-              :data="upToken"
-              accept=".jpg,.png"
-              :before-upload="beforeUpload"
-              :show-file-list="false"
-              :on-success="handleBannerSuccess">
-              <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
-              <div class="alignment-tip">
-                <el-button size="small" type="primary">点击上传</el-button>
-                <el-button @click="(event)=>handleBannerDelete(event)" size="small" type="primary">点击删除</el-button>
+            <div class="img-upload-box">
+              <el-upload
+                class="avatar-uploader"
+                :action="qiniuUploadUrl"
+                :data="upToken"
+                accept=".jpg,.png"
+                :before-upload="beforeUpload"
+                :show-file-list="false"
+                :on-success="handleBannerSuccess">
+                <img v-if="bannerImageUrl" :src="yiqixuanDomainUrl+bannerImageUrl" class="avatar avatar2">
+              </el-upload>
+              <div class="alignment-tip alignment-tip-txt">
+                <el-upload
+                  class="avatar-uploader"
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
+                  accept=".jpg,.png"
+                  :before-upload="beforeUpload"
+                  :show-file-list="false"
+                  :on-success="handleBannerSuccess">
+                  <el-button size="small" type="primary">点击上传</el-button>
+                  <el-button @click="(event)=>handleBannerDelete(event)" size="small" type="primary">点击删除</el-button>
+                </el-upload>
                 <p slot="tip" class="banner-tip">商铺首页展示的banner</p>
                 <p slot="tip" class="el-upload__tip">建议尺寸：710*288，只能上传jpg/jpeg/png文件，且不超过1MB</p>
               </div>
-            </el-upload>
+            </div>
           </li>
           <li>
             <span class="name">店长姓名：</span>
@@ -479,6 +501,7 @@ export default {
     li {
       padding-top: 20px;
       font-size: 12px;
+      position: relative;
       span {
         display: inline-block;
         vertical-align: middle;
@@ -537,6 +560,40 @@ export default {
       color: @b5b5;
     }
   }
+  .img-upload-box {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    min-height: 80px;
+    .alignment-tip {
+      display: inline-block;
+      vertical-align: top;
+      width: 500px;
+      height: 80px;
+      text-align: left;
+      position: relative;
+      .el-upload__tip {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        color: @b8;
+        width: 100%;
+      }
+    }
+    .alignment-tip-txt {
+      .el-upload__tip {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        color: @b8;
+        width: 100%;
+      }
+      .banner-tip {
+        color: @b8;
+        padding-top: 10px;
+      }
+    }
+  }
   .avatar-uploader {
     display: inline-block;
     .avatar {
@@ -549,24 +606,6 @@ export default {
     .avatar.avatar2 {
       width: 200px;
       height: auto;
-    }
-    .alignment-tip {
-      display: inline-block;
-      vertical-align: top;
-      height: 80px;
-      width: 400px;
-      text-align: left;
-      position: relative;
-      .el-upload__tip {
-        color: @b8;
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-      }
-      .banner-tip {
-        color: @b8;
-        padding-top: 10px;
-      }
     }
   }
 </style>

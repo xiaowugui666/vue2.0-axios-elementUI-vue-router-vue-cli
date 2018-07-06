@@ -1,9 +1,9 @@
 let api = ''
 
 // 根据dev.env.js和prod.env.js获取域名配置
-api = 'https://' + process.env.API_HOST + '.yiqixuan.com'
+// api = 'https://' + process.env.API_HOST + '.yiqixuan.com'
 // api = 'https://backend-v120-develop.yiqixuan.com/'
-// api = 'https://backend-v120-releases.yiqixuan.com'
+api = 'https://backend-v120-releases.yiqixuan.com'
 
 export default {
   ip: api
