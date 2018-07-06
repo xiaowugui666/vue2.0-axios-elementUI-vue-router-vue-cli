@@ -6,7 +6,7 @@
         <div class="add-body">
           <div class="add-title"><span></span><span>内容编辑</span></div>
           <div class="hr"></div>
-          <div class="add-topic left-padding" v-if="trendType == 2 || addType == 2">
+          <div class="add-topic left-padding" v-if="addType == 2">
             <span class="pre-text required">标      题 ：</span>
             <el-input
               size="small"
@@ -16,11 +16,11 @@
               v-model="title"></el-input>
             <div class="err-tips">{{ errors.first('商品名称') }}</div>
           </div>
-          <div class="description left-padding" v-if="trendType == 2 || addType == 2">
+          <div class="description left-padding" v-if="addType == 2">
             <span class="pre-text">简      述 ：</span>
             <textarea type="textarea" class="add-textarea" v-model="textContent" maxlength="140"></textarea>
           </div>
-          <div class="add-thumbnail left-padding" v-if="trendType == 2 || addType == 2">
+          <div class="add-thumbnail left-padding" v-if="addType == 2">
             <span class="pre-text">缩 略 图 ： </span>
             <el-upload
               class="avatar-uploader"
@@ -36,7 +36,7 @@
           </div>
           <div class="add-message left-padding">
             <span class="pre-text required">内      容 ：</span>
-            <div class="rich-text-editor clear" v-if="trendType == 2 || addType == 2">
+            <div class="rich-text-editor clear" v-if="addType == 2">
               <!--商品图文详情编辑框-->
               <quill-editor v-model.trim="quillContent"
                             ref="myQuillEditor"
@@ -59,7 +59,7 @@
             </div>
             <textarea v-else class="add-textarea" v-model="quillContent" maxlength="140"></textarea>
           </div>
-          <div class="add-imgs left-padding" v-if="trendType == 1 || addType == 1">
+          <div class="add-imgs left-padding" v-if="addType == 1">
             <span class="pre-text required">配      图 ：</span>
             <el-upload
               :action="qiniuUploadUrl"
@@ -109,8 +109,6 @@ export default {
       ['clean']
     ]
     return {
-      // 动态类型
-      trendType: '',
       // 长动态标题
       title: '',
       // 新增动态类型
@@ -119,7 +117,6 @@ export default {
       textContent: '',
       // 图片上传列表
       fileList: [],
-      imgsList: [],
       // 动态数据
       data: {},
       // 七牛token
@@ -144,7 +141,7 @@ export default {
       getTrendDetail(this.$route.query.id).then(res => {
         // 赋值操作
         this.data = res.data
-        this.trendType = res.data.type
+        this.addType = res.data.type
         this.title = res.data.title
         this.textContent = res.data.description
         this.quillContent = res.data.content
@@ -152,7 +149,6 @@ export default {
         for (let x = 0; x < tempArr.length; x++) {
           tempArr[x].url = this.yiqixuanDomainUrl + tempArr[x].img_url
           tempArr[x].icon_url = tempArr[x].img_url
-          this.imgsList.push(tempArr[x].img_url)
         }
         this.fileList = tempArr
         // 图片路径赋值 ///////////////////////////////////////须修改
@@ -169,44 +165,42 @@ export default {
         this.upToken.token = res.data.token
       }).catch()
     },
+    // 获取图片列表的url
+    getImgsList () {
+      let imgsList = []
+      for (let v of this.fileList) {
+        imgsList.push(v.icon_url)
+      }
+      return imgsList
+    },
     // 点击保存
     saveTrends () {
-      // 编辑动态
-      if (this.$route.query.id) {
+      if (this.quillContent && (this.fileList.length || this.title)) {
+        // 编辑动态
         let params = {}
-        params.type = this.trendType
+        params.type = this.addType
         params.content = this.quillContent
-        // 如果为编辑短动态
-        if (this.trendType == 1) {
-          params.feed_images = this.imgsList
+        if (this.addType === 1) { // 发布短动态
+          params.feed_images = this.getImgsList()
         } else {
           params.title = this.title
           params.description = this.textContent
           params.cover_url = this.imgUrl
         }
-        putTrendDetail(params, this.$route.query.id).then(res => {
-          if (res.status == 200) {
-            this.$router.push({name: 'trendsManagement'})
-          }
-        }).catch(() => {
-          this.$message({
-            message: '保存动态失败，请稍后重试',
-            type: 'error'
+        if (this.$route.query.id) {
+          // 如果为编辑动态
+          putTrendDetail(params, this.$route.query.id).then(res => {
+            if (res.status == 200) {
+              this.$router.push({name: 'trendsManagement'})
+            }
+          }).catch(() => {
+            this.$message({
+              message: '保存动态失败，请稍后重试',
+              type: 'error'
+            })
           })
-        })
-      } else {
-        if (this.quillContent && (this.fileList.length || this.title)) {
+        } else {
           // 新增动态
-          let params = {}
-          params.content = this.quillContent
-          params.type = this.addType
-          if (this.addType == 1) { // 发布短动态
-            params.feed_images = this.imgsList
-          } else {
-            params.title = this.title
-            params.description = this.textContent
-            params.cover_url = this.imgUrl
-          }
           addTrends(params).then(res => {
             this.$router.push({name: 'trendsManagement'})
           }).catch(() => {
@@ -215,12 +209,12 @@ export default {
               type: 'error'
             })
           })
-        } else {
-          this.$message({
-            message: '请完善必填项',
-            type: 'info'
-          })
         }
+      } else {
+        this.$message({
+          message: '请完善必填项',
+          type: 'info'
+        })
       }
     },
     // 上传缩略图
@@ -230,12 +224,6 @@ export default {
     // 点击缩略图删除
     removeFileList (file, fileList) {
       this.fileList = fileList
-      // 遍历删除imgsList当前删除项
-      for (let i = 0; i < this.imgsList.length; i++) {
-        if (this.imgsList[i] == file.img_url) {
-          this.imgsList.splice(i, 1)
-        }
-      }
     },
     // 判断配图是否重复
     imgsBeforeUpload (file) {
@@ -278,7 +266,6 @@ export default {
     // 新增配图
     handlePictureList (res, file) {
       this.fileList.push({url: this.yiqixuanDomainUrl + file.response.key, icon_url: file.response.key})
-      this.imgsList.push(file.response.key)
     },
     // 富文本框操作
     onEditorBlur (val) {

@@ -6,7 +6,8 @@
       <div class="solved-body">
         <div class="solved-container">
           <div class="container-header" v-if="JSON.stringify(content) != '{}'">
-            <img :src="yiqixuanDomainUrl + content.cover_url">
+            <img v-if="content.cover_url" :src="yiqixuanDomainUrl+content.cover_url" alt="">
+            <img v-else v-for="(item,index) in content.images" :key="index" :src="yiqixuanDomainUrl+item.img_url">
             <div class="container-content">
               <p><span class="container-title">{{content.title}}</span><span>{{content.date}}</span></p>
               <div>
@@ -138,7 +139,7 @@ export default {
         overflow: hidden;
         display: flex;
         img {
-          width: 90px;
+          width: 60px;
           height: 60px;
         }
         .container-content {
