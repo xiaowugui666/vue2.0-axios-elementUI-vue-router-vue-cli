@@ -68,17 +68,23 @@ export default {
         end_at: end,
         type: type
       }).then(res => {
-        // 浏览量 pv
-        let tempArr = res.data.stat_mpa
-        for (let i = 0, len = tempArr.length; i < len; i++) {
-          let newArray = tempArr[i].begin_at.split(' ')
-          this.date.push(newArray[0])
-          this.mpaPv.push(tempArr[i].pv)
-          this.mpaUv.push(tempArr[i].uv)
-        }
-        tempArr = res.data.stat_goods
-        for (let i = 0, len = tempArr.length; i < len; i++) {
-          this.goodsPv.push(tempArr[i].pv)
+        if (res.data.stat_mpa.length > 0) {
+          // 浏览量 pv
+          let tempArr = res.data.stat_mpa
+          for (let i = 0, len = tempArr.length; i < len; i++) {
+            let newArray = tempArr[i].begin_at.split(' ')
+            this.date.push(newArray[0])
+            this.mpaPv.push(tempArr[i].pv)
+            this.mpaUv.push(tempArr[i].uv)
+          }
+        } else if (res.data.stat_goods.length > 0) {
+          // 商品浏览量
+          let tempArr = res.data.stat_goods
+          for (let i = 0, len = tempArr.length; i < len; i++) {
+            let newArray = tempArr[i].begin_at.split(' ')
+            this.date.push(newArray[0])
+            this.goodsPv.push(tempArr[i].pv)
+          }
         }
         this.drawLine()
       })
@@ -155,11 +161,11 @@ export default {
             // hoverAnimation: false,
             data: this.mpaPv
           },
-          {
-            name: '访客数',
-            type: 'line',
-            data: this.mpaUv
-          },
+          // {
+          //   name: '访客数',
+          //   type: 'line',
+          //   data: this.mpaUv
+          // },
           {
             name: '商品浏览量',
             type: 'line',
