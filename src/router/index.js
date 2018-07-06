@@ -28,7 +28,8 @@ const reviewApproval = r => require.ensure([], () => r(require('@/page/review-ap
 const viewTrends = r => require.ensure([], () => r(require('@/page/view-trends')))
 const approvalDetail = r => require.ensure([], () => r(require('@/page/approval-detail')))
 const approvalSolved = r => require.ensure([], () => r(require('@/page/approval-solved')))
-
+const groupBuyManagement = r => require.ensure([], () => r(require('@/page/group-buy-management')))
+const addGroupBuy = r => require.ensure([], () => r(require('@/page/add-group-buy')))
 Vue.use(Router)
 
 export default new Router({
@@ -108,6 +109,16 @@ export default new Router({
       path: '/marketing-management/:class',
       name: 'marketingManagement',
       component: marketingManagement
+    },
+    {
+      path: '/group-buy-management/:class',
+      name: 'groupBuyManagement',
+      component: groupBuyManagement
+    },
+    {
+      path: '/add-group-buy',
+      name: 'addGroupBuy',
+      component: addGroupBuy
     },
     {
       path: '/add-marketing-activity/:class',
