@@ -347,7 +347,7 @@ export default {
       [{'size': ['small', false, 'large', 'huge']}],
       [{'header': [1, 2, 3, 4, 5, 6, false]}],
       [{'color': []}, {'background': []}],
-      [{'font': []}],
+      [{'font': [12, 14]}],
       [{'align': []}],
       ['link', 'image'],
       ['clean']
@@ -679,7 +679,7 @@ export default {
     },
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
-      this.goodsImageShowList.push({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
+      this.goodsImageShowList.unshift({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
       this.goodsImageValidate = false
     },
     // 删除商品图片列表中的图片，删除商品图片的key

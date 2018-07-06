@@ -4,7 +4,7 @@
     <div class="orderManager">
         <div class="header">
           <div class="selectInfo">
-            <el-select v-model="value" placeholder="订单号"  @change="changeType" >
+            <el-select v-model.trim="value" placeholder="订单号"  @change="changeType" >
               <el-option
                 v-for="item in options"
                 :key="item.value"
@@ -14,7 +14,7 @@
             </el-select>
             <el-input
               placeholder="订单号"
-              v-model="keyValue"
+              v-model.trim="keyValue"
               maxlength="50"
               v-validate="'decimal'"
               name="orderNumber"
@@ -24,7 +24,7 @@
               <label>下单时间</label>
               <el-date-picker
                 @change="changeTime"
-                v-model="keyTime"
+                v-model.trim="keyTime"
                 type="daterange"
                 align="right"
                 unlink-panels
@@ -42,7 +42,7 @@
                 <label>商品名称</label>
                 <el-input
                   placeholder="请输入商品名称"
-                  v-model="keyName"
+                  v-model.trim="keyName"
                   maxlength="20"
                   clearable>
                 </el-input>
@@ -51,7 +51,7 @@
             </div>
         </div>
         <div class="tradeRecord">
-          <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
+          <el-tabs v-model.trim="tradeType" type="card" @tab-click="handleClick">
             <el-tab-pane label="全部" name="first"></el-tab-pane>
             <el-tab-pane  label="待付款" name="second"></el-tab-pane>
             <el-tab-pane  label="待发货" name="third"></el-tab-pane>
@@ -168,6 +168,8 @@ export default {
     changeType () {
     },
     changeTime (res) {
+      this.timeBtn1 = false
+      this.timeBtn2 = false
     },
     // 导出excel
     excelExportClick () {
@@ -221,7 +223,9 @@ export default {
           })
         }
         this.excelExportLoading = false
-      }).catch()
+      }).catch(() => {
+        this.excelExportLoading = false
+      })
     },
     // 订单状态
     orderMessage (status) {
@@ -252,9 +256,9 @@ export default {
           type: 'warning'
         })
       } else {
-        this.tradeType = 'first'
         // 参数
         let params = {}
+        params.status = this.statu
         this.flag = true
         if (this.keyValue !== '') {
           if (this.value == 1) {
@@ -268,7 +272,7 @@ export default {
         if (this.keyName !== '') {
           params.name = this.keyName
         }
-        if (this.keyTime.length) {
+        if (this.keyTime && this.keyTime.length) {
           let dateBegin = new Date(this.keyTime[0])
           let dateEnd = new Date(this.keyTime[1])
           params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
@@ -308,6 +312,22 @@ export default {
       }
       // console.log(this.keyTime)
     },
+    // 订单分类状态更改
+    setStatu (index) {
+      if (index == 1) {
+        this.statu = 200
+      } else if (index == 2) {
+        this.statu = 205
+      } else if (index == 3) {
+        this.statu = 400
+      } else if (index == 4) {
+        this.statu = 405
+      } else if (index == 5) {
+        this.statu = 207
+      } else {
+        this.statu = ''
+      }
+    },
     // 订单分类状态点击
     handleClick (tab) {
       // console.log(tab.index)
@@ -333,19 +353,7 @@ export default {
           params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
       }
-      if (tab.index == 1) {
-        this.statu = 200
-      } else if (tab.index == 2) {
-        this.statu = 205
-      } else if (tab.index == 3) {
-        this.statu = 400
-      } else if (tab.index == 4) {
-        this.statu = 405
-      } else if (tab.index == 5) {
-        this.statu = 207
-      } else {
-        this.statu = ''
-      }
+      this.setStatu(tab.index)
       params.status = this.statu
       order(params).then(res => {
         // console.log(res)
