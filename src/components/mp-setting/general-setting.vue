@@ -216,20 +216,31 @@
           </li>
           <li>
             <span class="name alignment-top">分享图片：</span>
-            <el-upload
-              class="avatar-uploader"
-              :action="qiniuUploadUrl"
-              :data="upToken"
-              accept=".jpg,.png"
-              :before-upload="beforeUpload"
-              :show-file-list="false"
-              :on-success="handleShareSuccess">
-              <img v-if="shareImage" :src="yiqixuanDomainUrl+shareImage" class="avatar avatar2">
-              <div class="alignment-tip">
-                <el-button size="small" type="primary">点击上传</el-button>
+            <div class="img-upload-box">
+              <el-upload
+                class="avatar-uploader"
+                :action="qiniuUploadUrl"
+                :data="upToken"
+                accept=".jpg,.png"
+                :before-upload="beforeUpload"
+                :show-file-list="false"
+                :on-success="handleShareSuccess">
+                <img v-if="shareImage" :src="yiqixuanDomainUrl+shareImage" class="avatar avatar2">
+              </el-upload>
+              <div class="alignment-tip alignment-tip-txt">
+                <el-upload
+                  class="avatar-uploader"
+                  :action="qiniuUploadUrl"
+                  :data="upToken"
+                  accept=".jpg,.png"
+                  :before-upload="beforeUpload"
+                  :show-file-list="false"
+                  :on-success="handleShareSuccess">
+                  <el-button size="small" type="primary">点击上传</el-button>
+                </el-upload>
                 <p slot="tip" class="el-upload__tip">建议宽高比：5:4，只能上传jpg/jpeg/png文件，且不超过1MB</p>
               </div>
-            </el-upload>
+            </div>
           </li>
         </ul>
       </div>
