@@ -29,7 +29,7 @@
             <li v-if="routerIf">
               <span class="name required">特<span class="right">价：</span></span>
               <span class="special-offer goods-price">
-                <input type="text" v-validate="{decimal:2,required:true,min_value: 0,max_value:99999999999}" maxlength="11" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
+                <input type="text" v-validate="{decimal:2,required:true,min_value: 0,max_value:originalPrice}" maxlength="11" name="特价价格" v-model="specialOffer" :class="{'input':true,'is-danger':errors.has('email')}">
                 <div class="err-tips" v-if="errors.has('特价价格')" style="color: red;margin-top: 5px;margin-left: 80px;">{{errors.first('特价价格')}}</div>
               </span>
             </li>
@@ -270,66 +270,73 @@ export default {
     // 点击保存
     saveEditor () {
       if (JSON.stringify(this.good) !== '{}' || this.recommendGoods.length !== 0) {
-        if (!this.errors.items.length && this.activityTime.length) {
-          let params = {}
-          let _this = this
-          params.id = this.good.id
-          params.goods_sku_id = this.good.id
-          params.goods_id = this.good.goods_id
-          params.price = this.specialOffer * 100
-          params.begin_at = new Date(new Date(this.activityTime[0]).getTime() + 8 * 3600 * 1000)
-          params.end_at = new Date(new Date(this.activityTime[1]).getTime() + 8 * 3600 * 1000)
-          params.stock_count = this.stock
-          // 如果为新建商品
-          if (JSON.stringify(this.$route.query) == '{}') { // 新建
-            // 如果路由为special
-            if (this.$route.params.class == 'special-offer' && this.stock.length) {
-              if (parseFloat(this.specialOffer) < this.originalPrice) {
-                addSpecialGood(params).then(res => {
+        if (this.activityTime) {
+          if (!this.errors.items.length && this.activityTime.length) {
+            let params = {}
+            let _this = this
+            params.id = this.good.id
+            params.goods_sku_id = this.good.id
+            params.goods_id = this.good.goods_id
+            params.price = this.specialOffer * 100
+            params.begin_at = new Date(new Date(this.activityTime[0]).getTime() + 8 * 3600 * 1000)
+            params.end_at = new Date(new Date(this.activityTime[1]).getTime() + 8 * 3600 * 1000)
+            params.stock_count = this.stock
+            // 如果为新建商品
+            if (JSON.stringify(this.$route.query) == '{}') { // 新建
+              // 如果路由为special
+              if (this.$route.params.class == 'special-offer' && this.stock.length) {
+                if (parseFloat(this.specialOffer) < this.originalPrice) {
+                  addSpecialGood(params).then(res => {
+                    if (res.data.success) {
+                      _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+                    } else {
+                      this.$message('新增商品失败，请勿重复添加或确认时间段')
+                    }
+                  }).catch()
+                }
+              } else if (this.$route.params.class == 'recommend' && !this.stock.length) { // 路由为recommend
+                let idArray = []
+                for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
+                  idArray.push(this.recommendGoods[i].id)
+                }
+                params.goods_ids = idArray
+                newRecommendGoods(params).then(res => {
                   if (res.data.success) {
                     _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-                  } else {
-                    this.$message('新增商品失败，请勿重复添加或确认时间段')
                   }
                 }).catch()
+              } else {
+                this.$message({
+                  message: '请确保编辑信息完善',
+                  type: 'warning'
+                })
               }
-            } else if (this.$route.params.class == 'recommend' && !this.stock.length) { // 路由为recommend
-              let idArray = []
-              for (let i = 0, len = this.recommendGoods.length; i < len; i++) {
-                idArray.push(this.recommendGoods[i].id)
+            } else { // 编辑
+              // 更改特价商品信息
+              if (this.$route.params.class == 'special-offer') {
+                closeGoods(params).then(res => {
+                  if (res.status == 200) {
+                    _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+                  } else {
+                    _this.$message(res.data.message)
+                  }
+                })
+              } else if (this.$route.params.class == 'recommend') {
+                // 推荐
+                closeRecommendGood(params).then(res => {
+                  _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
+                })
               }
-              params.goods_ids = idArray
-              newRecommendGoods(params).then(res => {
-                if (res.data.success) {
-                  _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-                }
-              }).catch()
-            } else {
-              this.$message({
-                message: '请确保编辑信息完善',
-                type: 'warning'
-              })
             }
-          } else { // 编辑
-            // 更改特价商品信息
-            if (this.$route.params.class == 'special-offer') {
-              closeGoods(params).then(res => {
-                if (res.status == 200) {
-                  _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-                } else {
-                  _this.$message(res.data.message)
-                }
-              })
-            } else if (this.$route.params.class == 'recommend') {
-              // 推荐
-              closeRecommendGood(params).then(res => {
-                _this.$router.push({path: '/marketing-management/' + _this.$route.params.class})
-              })
-            }
+          } else {
+            this.$message({
+              message: '请确保编辑信息正确',
+              type: 'warning'
+            })
           }
         } else {
           this.$message({
-            message: '请确保编辑信息完善',
+            message: '请确保编辑信息正确',
             type: 'warning'
           })
         }
