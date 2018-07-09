@@ -37,7 +37,7 @@
                             :key="item"
                             :value="item"></el-option>
                         </el-select>
-                        <label v-else>{{expressCompany}}</label>
+                        <label v-else>{{expressName}}</label>
                       </div>
                       <div>
                           <i>快递单号：</i>
@@ -108,6 +108,8 @@ export default {
       tradeType: 2,
       // 快递公司
       transComp: {},
+      // 已发货快递公司名称
+      expressName: '',
       transCompValue: '',
       // 订单详情
       tradeList: {},
@@ -190,6 +192,7 @@ export default {
       } else {
         this.tradeType = 4
       }
+      this.expressName = res.data.express_code
       // 如果订单状态为已付款时
       if (this.tradeType === 1) {
         transComp().then(res => {
@@ -212,10 +215,6 @@ export default {
       set (value) {
         this.tradeList.amount = value * 100
       }
-    },
-    // 快递公司
-    expressCompany () {
-      return this.transComp[this.tradeList.express_code]
     }
   },
   components: {

@@ -141,7 +141,7 @@ export default {
       let name = ''
       if (this.rebateDetail.items.length == 1) {
         name = this.rebateDetail.items[0].name
-      } else {
+      } else if (this.rebateDetail.items.length > 1) {
         let len = this.rebateDetail.items.length
         for (let i = 0; i < len - 1; i++) {
           name = this.rebateDetail.items[i].name + '/'

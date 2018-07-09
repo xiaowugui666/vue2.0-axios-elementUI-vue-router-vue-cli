@@ -155,6 +155,15 @@ export function order (data) {
   })
 }
 
+// 导出excel
+export const excelExport = function (data) {
+  return fetch({
+    url: api.ip + '/management/order/export',
+    method: 'GET',
+    params: data
+  })
+}
+
 // 获取售后订单列表
 export function afterSaleGoods (data) {
   return fetch({
