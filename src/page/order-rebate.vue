@@ -51,7 +51,7 @@
             </div>
             <div class="right" v-if="tradeType < 3 ">
                 <div class="top" v-if="tradeType == 0">
-                  <label  class="agree" @click="editorDetail(3)">同意</label>
+                  <label  class="sureBtn" @click="editorDetail(3)">同意</label>
                   <label  class="disagree" @click="editorDetail(2)">拒绝</label>
                 </div>
                 <div class="tip" v-if="tradeType == 0">留言：</div>
@@ -237,7 +237,7 @@ export default {
       justify-content: center;
       label:nth-child(1){
         margin-right: 30px;
-        background: #63A4FF;
+        /*background: #63A4FF;*/
         width: 100px;
         height: 30px;
         border-radius: 2px;

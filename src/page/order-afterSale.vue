@@ -120,7 +120,7 @@
               width="168"
               label="操作">
               <template slot-scope="scope">
-                <el-button type="text" @click="refundsDetails(scope.row.id)">订单详情</el-button>
+                <el-button type="text" @click="refundsDetails(scope.row.id)" class="orange">订单详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -412,7 +412,7 @@ export default {
     border: 1px solid #d5d5d5;
   }
   .el-pagination.is-background .el-pager li:not(.disabled).active {
-    background-color: #DE5B67;
+    background-color: #FA505D;
     color: #fff;
   }
   .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
@@ -441,11 +441,11 @@ export default {
     border-left: 1px solid #D5D5D5;
   }
   .el-pagination.is-background .el-pager li:not(.disabled):hover {
-    color: #DE5B67; }
+    color: #FA505D; }
   .el-tabs__item.is-active {
     font-family: MicrosoftYaHei;
     font-size: 14px;
-    color: #333333;
+    color: #FA505D;
     text-align: center;
   }
   .el-tabs--top.el-tabs--card .el-tabs__item{
@@ -453,15 +453,15 @@ export default {
   }
   .el-tabs--top.el-tabs--card .is-active{
     box-sizing: border-box;
-    background: #EFEFEF;
     font-family: MicrosoftYaHei-Bold;
     font-size: 14px;
-    color: #333333;
     font-weight: 500;
-    border-bottom: 1px solid #F5F5F5;
+    border-bottom: 2px solid #FA505D;
+    color: #FA505D;
+    background: #fff;
   }
   .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-    border-bottom-color:  #333;
+    border-bottom-color:  #FA505D;
   }
   .el-tabs--top.el-tabs--card .el-tabs__item:last-child{
     padding-right: 0px;
@@ -484,7 +484,6 @@ export default {
     position: relative;
   }
   .el-table__body-wrapper tr td .el-button--text{
-    border: 1px solid #63A4FF;
     padding: 4px 8px;
   }
   .header{
@@ -614,13 +613,19 @@ export default {
         float: left;
       }
       .search{
-        line-height: 30px;
+        color: #fff;
+        background-color: #FA505D;
+        border-color: #FA505D;
+        /*padding: 9px 15px;*/
+        font-size: 12px;
         width: 80px;
-        background: #DE5B67;
-        color:#fff;
-        text-align: center;
-        line-height: 30px;
+        height: 30px;
         border-radius: 2px;
+      }
+      .search:hover{
+        background: #fb737d;
+        border-color: #fb737d;
+        color: #fff;
       }
       .orderType{
         margin-left: 20px;

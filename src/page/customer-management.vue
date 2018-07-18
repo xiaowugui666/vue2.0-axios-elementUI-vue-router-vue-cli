@@ -56,7 +56,7 @@
               label="操作">
               <template slot-scope="scope">
                 <el-button type="text" @click="editDetails(scope.$index)">编辑</el-button>
-                <el-button type="text" @click="orderDetails(scope.$index)">订单详情</el-button>
+                <el-button type="text" @click="orderDetails(scope.$index)" class="orange">订单详情</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -333,6 +333,10 @@ export default {
     }
     .el-table__body-wrapper tr td .el-button--text{
       border: 1px solid #63A4FF;
+      padding: 4px 8px;
+    }
+    .el-table__body-wrapper tr td .el-button--text:last-child{
+      border: 1px solid @orange;
       padding: 4px 8px;
     }
     .el-dialog .el-dialog__header .el-dialog__title {

@@ -44,7 +44,11 @@ export default {
     return {
       editState: false,
       cancellationTime: '',
-      receiptTime: ''
+      receiptTime: '',
+      name: '',
+      logo_url: '',
+      description: '',
+      customer_service_mobile: ''
     }
   },
   components: {
@@ -65,7 +69,11 @@ export default {
     saveClick () {
       let data = {
         order_expire_time: parseInt(this.cancellationTime) * 60,
-        confirm_goods_time: parseInt(this.receiptTime)
+        confirm_goods_time: parseInt(this.receiptTime),
+        name: this.name,
+        logo_url: this.logo_url,
+        description: this.description,
+        customer_service_mobile: this.customer_service_mobile
       }
       initialSetData('put', data).then(res => {
         this.editState = !this.editState
@@ -87,6 +95,10 @@ export default {
       // console.log(res.data)
       this.cancellationTime = res.data.order_expire_time ? res.data.order_expire_time / 60 : res.data.order_expire_time
       this.receiptTime = res.data.order_auto_confirm_days
+      this.name = res.data.name
+      this.logo_url = res.data.logo_url
+      this.description = res.data.description
+      this.customer_service_mobile = res.data.customer_service_mobile
     })
   }
 }
@@ -134,7 +146,7 @@ export default {
         height: 14px;
         margin-top: 1px;
         margin-right: 10px;
-        background: #999;
+        background: #FA505D;
       }
     }
     .plate-inner {

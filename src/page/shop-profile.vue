@@ -192,7 +192,7 @@ export default {
     li {
       display: inline-block;
       vertical-align: middle;
-      width: 19.5%;
+      width: 24.9%;
       height: 40px;
       line-height: 1.4;
       text-align: center;

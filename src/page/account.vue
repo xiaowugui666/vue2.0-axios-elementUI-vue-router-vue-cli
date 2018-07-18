@@ -54,7 +54,7 @@
                 label="操作"
                 width="150">
                 <template slot-scope="scope">
-                  <el-button @click="detailsLink(scope.row.id)" type="text" size="small">详情</el-button>
+                  <el-button @click="detailsLink(scope.row.id)" type="text" size="small" class="orange">详情</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -241,7 +241,7 @@ export default {
             text-align: center;
             color: #666;
             .profit {
-              color: #DE5B67;
+              color: #FA505D;
             }
             .loss {
               color: #6BA725;
@@ -268,7 +268,6 @@ export default {
       }
       td {
         .el-button--text {
-          border: 1px solid #63A4FF;
           padding: 4px 8px;
         }
       }

@@ -29,6 +29,7 @@ const config = {
   events: 'blur',
   inject: true
 }
+
 Vue.use(VeeValidate, config)
 
 Vue.filter('money', function (val) {
