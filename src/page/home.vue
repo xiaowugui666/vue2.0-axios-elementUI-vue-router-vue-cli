@@ -44,14 +44,8 @@
         </li>
       </ul>
       <echarts></echarts>
-      <div class="online-consulting">
-        <el-popover
-          placement="left"
-          width="150"
-          trigger="hover">
-          <div class="detailed-consultation">详情咨询微信号：<span>{{wechat}}</span></div>
-          <el-button slot="reference">在<br>线<br>咨<br>询</el-button>
-        </el-popover>
+      <div class="online-consulting" @click="consultationQQ">
+        <el-button slot="reference">在<br>线<br>咨<br>询<br><img class="qq-icon" src="../assets/qq.svg"></el-button>
       </div>
       <div class="QR-code">
         <el-popover
@@ -60,7 +54,7 @@
           trigger="hover">
           <div class="code">
             <span>店铺预览码</span>
-            <img :src="yiqixuanDomainUrl + QRcode" />
+            <img v-if="QRcode" :src="yiqixuanDomainUrl + QRcode" />
             <span>微信扫描预览店铺</span>
           </div>
           <el-button slot="reference">店<br>铺<br>预<br>览<br></el-button>
@@ -107,7 +101,7 @@ export default {
     menuLeft
   },
   computed: {
-    ...mapState(['menuShow', 'yiqixuanDomainUrl'])
+    ...mapState(['yiqixuanDomainUrl'])
   },
   methods: {
     getShopInfo () {
@@ -115,6 +109,10 @@ export default {
         this.shopName = res.data.name
         this.wechat = res.data.wechat
       }).catch()
+    },
+    // 咨询QQ，打开QQ聊天应用
+    consultationQQ () {
+      window.open('http://wpa.b.qq.com/cgi/wpa.php?ln=1&key=XzgwMDE5MDczOV80ODM3MjVfODAwMTkwNzM5XzJf')
     }
   }
 }
@@ -122,6 +120,7 @@ export default {
 <style scoped lang="less">
   @import '../fonts/icomoon.css';
   .home-content {
+    min-width: 1000px;
     margin-right: 60px;
   }
   .shop-info, .shortcut-entrance, .home-survey {
@@ -245,7 +244,7 @@ export default {
     .el-button {
       width: 40px;
       box-sizing: border-box;
-      padding: 22px 0;
+      padding:16px 0;
       border: none;
       margin-left: -10px;
       color: @b2;
@@ -255,10 +254,18 @@ export default {
         background: #fff;
         color: @b2;
       }
+      &:focus {
+        background: #fff;
+        color: @b2;
+      }
+      .qq-icon {
+        margin-top: 5px;
+        width: 28px;
+      }
     }
   }
   .QR-code{
-    top: 220px;
+    top: 260px;
   }
   .detailed-consultation {
     font-size: 12px;

@@ -11,7 +11,8 @@
               <p v-html="content.content"></p>
               <span @click="navigateTo">全文 ></span>
             </div>
-            <img v-for="(item,index) in content.imgs" :key="index" :src="item.url">
+            <img v-if="content.cover_url" :src="yiqixuanDomainUrl+content.cover_url" alt="">
+            <img v-else v-for="(item,index) in content.images" :key="index" :src="yiqixuanDomainUrl+item.img_url">
           </div>
           <div class="hr"></div>
           <div class="approvals" v-if="approvals.length">
@@ -48,6 +49,7 @@
 
 <script>
 import menuLeft from '@/components/menu-left'
+import {mapState} from 'vuex'
 import {getTrendDetail, getComments, putComment} from '../axios/api'
 export default {
   data () {
@@ -92,13 +94,22 @@ export default {
       param.status = val
       putComment(param, id).then(res => {
         this.getFeedComment({})
+        if (val === 2) {
+          this.$message({
+            showClose: true,
+            message: '通过成功',
+            type: 'success'
+          })
+        } else if (val === 3) {
+          this.$message({
+            showClose: true,
+            message: '关闭成功',
+            type: 'success'
+          })
+        }
+      }).catch(() => {
         this.$message({
-          message: '审批成功',
-          type: 'success'
-        })
-      }).catch(err => {
-        console.dir(err)
-        this.$message({
+          showClose: true,
           message: '审批评论失败，请稍后重试',
           type: 'error'
         })
@@ -106,6 +117,7 @@ export default {
     }
   },
   computed: {
+    ...mapState(['yiqixuanDomainUrl'])
   },
   components: {
     menuLeft
@@ -133,9 +145,9 @@ export default {
     padding: 20px;
     .no-data {
       height: 50px;
-      border: 1px solid #d5d5d5;
       text-align: center;
-      color: #222222;
+      color: @b8;
+      font-size: 12px;
       line-height: 50px;
     }
     .no-data.inner {
@@ -144,7 +156,7 @@ export default {
     }
     .appro-content {
       box-sizing: border-box;
-      border: 1px solid #D5D5D5;
+      border: 1px solid #eaeaea;
       padding: 25px 20px 0px;
       font-size: 12px;
       color: #888888;
@@ -176,7 +188,7 @@ export default {
       img {
         vertical-align: middle;
         margin-left: 10px;
-        width: 90px;
+        width: 60px;
         height: 60px;
         margin-top: 10px;
         &:nth-child(3) {
@@ -186,13 +198,13 @@ export default {
     }
     .hr {
       height: 2px;
-      background: #D5D5D5;
+      background: @bg;
       margin-top: 20px;
     }
     .approvals {
       .appro-item {
         padding: 20px 0;
-        border-bottom: 1px dashed #d5d5d5;
+        border-bottom: 1px dashed #eaeaea;
         position: relative;
         &:last-child {
           border-bottom: none;

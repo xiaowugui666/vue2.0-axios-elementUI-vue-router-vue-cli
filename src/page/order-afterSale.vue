@@ -7,7 +7,7 @@
           <div>
             <label>订单编号</label>
             <el-input
-              v-model="keyValue"
+              v-model.trim="keyValue"
               maxlength="50"
               clearable>
             </el-input>
@@ -16,7 +16,7 @@
             <label>申请时间</label>
             <el-date-picker
               @change="changeTime"
-              v-model="keyTime"
+              v-model.trim="keyTime"
               type="daterange"
               align="right"
               unlink-panels
@@ -33,14 +33,14 @@
           <div class="keyName">
             <label>退款编号</label>
             <el-input
-              v-model="keyName"
+              v-model.trim="keyName"
               maxlength="50"
               clearable>
             </el-input>
           </div>
           <div class="orderType">
             <label>退款方式</label>
-            <el-select v-model="OrderType" placeholder="退款方式"  @change="changeType" >
+            <el-select v-model.trim="OrderType" placeholder="退款方式"  @change="changeType" >
               <el-option
                 v-for="item in optionType"
                 :key="item.value"
@@ -54,12 +54,12 @@
 
       </div>
       <div class="tradeRecord">
-        <el-tabs v-model="tradeType" type="card" @tab-click="handleClick">
-          <el-tab-pane label="全部" name="first"></el-tab-pane>
-          <el-tab-pane  label="退款中"  name="second"></el-tab-pane>
-          <el-tab-pane  label="退换货中"  name="third"></el-tab-pane>
-          <el-tab-pane  label="退款成功"  name="fourth"></el-tab-pane>
-          <el-tab-pane  label="退款关闭"  name="five"></el-tab-pane>
+        <el-tabs v-model.trim="tradeType" type="card" @tab-click="handleClick">
+          <el-tab-pane label="全部" name="1"></el-tab-pane>
+          <el-tab-pane  label="退款中"  name="2"></el-tab-pane>
+          <el-tab-pane  label="退换货中"  name="3"></el-tab-pane>
+          <el-tab-pane  label="退款成功"  name="4"></el-tab-pane>
+          <el-tab-pane  label="退款关闭"  name="5"></el-tab-pane>
         </el-tabs>
         <div class="tradeList">
           <el-table
@@ -154,7 +154,7 @@ export default {
       timeBtn2: false,
       timeBtn3: false,
       // 搜索时间间隔
-      keyTime: '',
+      keyTime: [],
       // 搜索类别
       keyValue: '',
       // 商品名称
@@ -183,7 +183,7 @@ export default {
       // 订单类型
       OrderType: '1',
       // 交易类型
-      tradeType: 'first',
+      tradeType: '1',
       // 订单详情
       refunds: [],
       // 总页数
@@ -203,6 +203,9 @@ export default {
     changeType () {
     },
     changeTime () {
+      this.timeBtn1 = false
+      this.timeBtn2 = false
+      this.timeBtn3 = false
     },
     // 点击搜索
     searchOrder () {
@@ -221,13 +224,13 @@ export default {
         this.flag = true
         params.order_no = this.keyValue
         params.no = this.keyName
-        if (this.keyTime.length) {
+        if (this.keyTime && this.keyTime.length) {
           let dateBegin = new Date(this.keyTime[0])
           let dateEnd = new Date(this.keyTime[1])
           params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
           params.end_at = dateEnd.getFullYear() + '-' + (dateEnd.getMonth() + 1) + '-' + dateEnd.getDate()
         }
-        params.status = 0
+        params.status = this.statu
         afterSaleGoods(params).then(res => {
           // console.log(res)
           this.totalPagina = parseInt(res.headers.page_count)
@@ -243,7 +246,7 @@ export default {
       if (this.flag) {
         params.order_no = this.keyValue
         params.no = this.keyName
-        if (this.keyTime.length) {
+        if (this.keyTime && this.keyTime.length) {
           let dateBegin = new Date(this.keyTime[0])
           let dateEnd = new Date(this.keyTime[1])
           params.begin_at = dateBegin.getFullYear() + '-' + (dateBegin.getMonth() + 1) + '-' + dateBegin.getDate()
