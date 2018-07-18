@@ -10,7 +10,7 @@
             <li :class="{'active':managementState==3}" @click="changState(3)">进行中</li>
             <li :class="{'active':managementState==4}" @click="changState(4)">已结束</li>
           </ul>
-          <el-button @click="setRouter({name:'addMarketingActivity',params:{class:linkClass}})" type="primary" size="small" class="newly-build">新建</el-button>
+          <el-button @click="setRouter({name:'addMarketingActivity',params:{class:linkClass}})" type="primary" size="small" class="newly-build addBtn">新建</el-button>
         </div>
         <div class="active-goods-table">
           <el-table

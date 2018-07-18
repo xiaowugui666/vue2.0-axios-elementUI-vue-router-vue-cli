@@ -188,7 +188,7 @@ export default {
     position: absolute;
     left: 71px;
     z-index: 11;
-    width: 100px;
+    width: 110px;
   }
   .user-flow-chart {
     padding: 20px 0 30px 20px;

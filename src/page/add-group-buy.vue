@@ -7,7 +7,7 @@
           <div class="add-edit">
             拼团 > 新增
           </div>
-          <el-button class="save"  type="success" @click="save()" size="small">保存</el-button>
+          <el-button class="save"  type="success" @click="submitForm('ruleForm')" size="small">保存</el-button>
         </div>
         <div class="groupbuy-setting-list plate">
           <div class="title">拼团基础设置</div>
@@ -29,16 +29,16 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="拼团失效时间："  prop="outTime">
-              <el-input v-model="ruleForm.outTime" placeholder="拼团失效时间为1-23小时"></el-input>
+              <el-input v-model="ruleForm.outTime" class="outTime" placeholder="拼团失效时间为1-23小时"></el-input>
             </el-form-item>
             <el-form-item label="开团人数：" prop="groupNum">
-              <el-input v-model="ruleForm.groupNum" placeholder="开团人数至少为2人" ></el-input>
+              <el-input v-model="ruleForm.groupNum"  class="groupNum"  placeholder="开团人数至少为2人" ></el-input>
             </el-form-item>
-            <el-form-item label="单个用户购买次数上限："  prop="limitNum">
-              <el-input v-model="ruleForm.limitNum" placeholder="设置为0，表示不设上限"></el-input>
+            <el-form-item label="单个用户购买件数上限："  prop="limitNum">
+              <el-input v-model="ruleForm.limitNum"  placeholder="设置为0，表示不设上限"></el-input>
+              <div class="tips">设置为0，表示不设上限</div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary"  @click="submitForm('ruleForm')">保存</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -49,10 +49,10 @@
               <el-input v-model="setPrice.groupPrice"  class="groupPrice"></el-input>
             </el-form-item>
             <el-form-item label="库存："  prop="totalCount">
-              <el-input v-model="setPrice.totalCount"></el-input>
+              <el-input v-model.number="setPrice.totalCount"></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary"  @click="submitGroupForm('setPrice')">保存</el-button>
+              <el-button type="primary"  @click="submitGroupForm('setPrice')">修改</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -163,6 +163,8 @@ export default {
         callback(new Error('失效时间不能为空'))
       } else if (value > 23 || value < 1) {
         callback(new Error('失效时间大于1小时，小于23小时'))
+      } else if (value.indexOf('.') > -1) {
+        callback(new Error('失效时间必须是整数'))
       } else if (isNaN(value)) {
         callback(new Error('失效时间必须是数字'))
       } else {
@@ -175,6 +177,8 @@ export default {
         callback(new Error('开团人数不能为空'))
       } else if (value < 2) {
         callback(new Error('开团人数大于2人'))
+      } else if (value.indexOf('.') > -1) {
+        callback(new Error('开团人数必须是整数'))
       } else if (isNaN(value)) {
         callback(new Error('开团人数必须是数字'))
       } else {
@@ -186,8 +190,10 @@ export default {
         callback(new Error('单个用户购买件数上限不能为空'))
       } else if (isNaN(value)) {
         callback(new Error('单个用户购买件数必须是数字'))
-      } else if (value != 0 && value < 3) {
-        callback(new Error('单个用户购买件数要大于3哦'))
+      } else if (value.indexOf('.') > -1) {
+        callback(new Error('单个用户购买件数必须整数'))
+      } else if (value != 0 && value < 1) {
+        callback(new Error('单个用户购买件数要大于1哦'))
       } else {
         callback()
       }
@@ -227,8 +233,8 @@ export default {
         rangeTime: [],
         outTime: '',
         groupNum: '',
-        limitNum: '',
-        exemption: 1,
+        limitNum: '3',
+        exemption: 2,
         obj: {}
       },
       setPrice: {
@@ -302,6 +308,10 @@ export default {
         return value.spec_a + ':' + value.property_a + ';'
       }
     },
+    // sdkj
+    integer (value) {
+      console.log(value)
+    },
     getGroupInfo () {
       getGroupInfo(this.$route.params.id).then(res => {
         if (res.status == 200) {
@@ -341,38 +351,6 @@ export default {
       var s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
       return Y + '-' + M + '-' + D + ' ' + h + ':' + m + ':' + s
     },
-    // 设置保存
-    save () {
-      var arr = []
-      this.goods.forEach(function (v) {
-        var o = {}
-        o.sku_id = v.id
-        o.price = v.prices * 100
-        o.goods_id = v.goods_id
-        o.stock_count = v.stock_counts
-        arr.push(o)
-      })
-      this.ruleForm.obj.goods_sku = arr
-      if (this.ruleForm.obj) {
-        setGroupInfo(this.ruleForm.obj).then(res => {
-          if (res.status == 200) {
-            this.$message({
-              type: 'success',
-              message: `拼团成功`
-            })
-            this.setGroupProduct(this.productId)
-            localStorage.goods_sku = []
-            this.$router.push({name: 'groupBuyManagement'})
-          }
-        })
-      } else {
-        this.$message({
-          type: 'warning',
-          message: `请设置拼团基础设置`
-        })
-      }
-    },
-    // 批量喊出规格
     groupDelete () {
       var newArr = this.goods
       if (this.multipleSelection.length > 0) {
@@ -382,8 +360,6 @@ export default {
           type: 'warning'
         }).then(() => {
           // 删除该规格拼团
-          console.log(this.goods)
-          console.log(this.multipleSelection)
           for (var i = 0; i < this.goods.length; i++) {
             for (var j = 0; j < this.multipleSelection.length; j++) {
               if (this.goods[i].id == this.multipleSelection[j].id) {
@@ -425,7 +401,7 @@ export default {
       if (this.goods[index].stock_count < parseFloat(this.goods[index].stock_counts)) {
         this.goods[index].stock_counts = ''
         this.$message({
-          message: '拼团库存不能大于商品商品库存',
+          message: '拼团库存不能大于商品库存',
           type: 'error'
         })
       }
@@ -452,8 +428,13 @@ export default {
       if (this.groupProductId.length > 0) {
         groupGoodSku({goods: this.groupProductId}).then(res => {
           if (res.status == 200) {
-            this.goods = res.data
-            localStorage.goods_sku = JSON.stringify(res.data)
+            var goods = res.data
+            goods.forEach(function (v) {
+              v.prices = ''
+              v.stock_counts = ''
+            })
+            this.goods = goods
+            localStorage.goods_sku = JSON.stringify(goods)
           }
         })
       }
@@ -465,13 +446,12 @@ export default {
       this.$router.push({name: 'selectProduct'})
     },
     handleSelectionChange (val) {
-      console.log(111)
       if (val.length == 0) {
         this.isGroupSet = false
       }
       this.multipleSelection = val
     },
-    // 拼团基础设置
+    // 创建拼团
     submitForm (formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -485,9 +465,26 @@ export default {
             min_join_count: this.ruleForm.groupNum,
             buy_limit_count: this.ruleForm.limitNum
           }
-          this.$message({
-            message: '设置成功',
-            type: 'success'
+          var arr = []
+          this.goods.forEach(function (v) {
+            var o = {}
+            o.sku_id = v.id
+            o.price = v.prices * 100
+            o.goods_id = v.goods_id
+            o.stock_count = v.stock_counts
+            arr.push(o)
+          })
+          this.ruleForm.obj.goods_sku = arr
+          setGroupInfo(this.ruleForm.obj).then(res => {
+            if (res.status == 200) {
+              this.$message({
+                type: 'success',
+                message: `拼团成功`
+              })
+              this.setGroupProduct(this.productId)
+              localStorage.goods_sku = []
+              this.$router.push({name: 'groupBuyManagement'})
+            }
           })
         } else {
           this.$message({
@@ -532,6 +529,9 @@ export default {
 }
 </script>
 <style lang="less">
+  .groupNum .el-input__inner,.outTime .el-input__inner{
+    padding-right: 100px;
+  }
   .datalist{
     .el-table--scrollable-x .el-table__body-wrapper {
       overflow-x: hidden;
@@ -545,6 +545,15 @@ export default {
   .groupbuy-setting-list{
     .el-form-item.is-success .el-input__inner {
       border-color: @green;
+    }
+    .el-form-item{
+      position: relative;
+      .tips{
+        position: absolute;
+        left: 380px;
+        color: #999;
+        top: 0px;
+      }
     }
     .el-date-editor .el-range-input {
       width:100%;
@@ -718,13 +727,26 @@ export default {
   }
 </style>
 <style scoped lang="less">
+    .outTime::after{
+      content: '小时';
+      position: absolute;
+      top: 0px;
+      left: 330px;
+      color: #999;
+    }
+    .groupNum::after{
+      content: '人';
+      position: absolute;
+      top: 0px;
+      left: 340px;
+      color: #999;
+    }
     .add-activity-object .save {
       position: absolute;
       top: 34px;
       right: 45px;
       z-index: 9999;
     }
-
     .add-activity-object .el-button--small{
       padding: 0;
       width: 80px;
