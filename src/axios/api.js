@@ -12,6 +12,46 @@ export function lookOption (issuer, userId) { // lookOption是你要调用接口
     }
   })
 }
+/* 拼团 */
+// 拼团列表
+export function groupList (data) {
+  return fetch({
+    url: api.ip + '/management/goods_groupon',
+    method: 'GET',
+    params: data
+  })
+}
+// 删除拼团列表
+export function deleteGroupList (data) {
+  return fetch({
+    url: api.ip + '/management/goods_groupon/' + data + '/delete',
+    method: 'DElETE'
+  })
+}
+// 获取拼团信息
+export function getGroupInfo (data) {
+  return fetch({
+    url: api.ip + '/management/goods_groupon/' + data,
+    method: 'GET'
+  })
+}
+// 编辑拼团设置
+export function setGroupInfo (data) {
+  return fetch({
+    url: api.ip + '/management/goods_groupon',
+    method: 'post',
+    data: data
+  })
+}
+
+// 获取所选商品的所有规格
+export function groupGoodSku (data) {
+  return fetch({
+    url: api.ip + '/management/goods_sku/search_goods',
+    method: 'post',
+    data: data
+  })
+}
 
 /* 首页 */
 // 首页交易额
@@ -223,6 +263,14 @@ export const goodsList = function (data) {
     params: data
   })
 }
+
+// export const goodsList = function (data) {
+//   return fetch({
+//     url: api.ip + '/management/goods/with_sku',
+//     method: 'get', // 请求方法
+//     data: data
+//   })
+// }
 
 // 获取客户列表
 export const user = function (data) {

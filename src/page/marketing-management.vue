@@ -97,7 +97,7 @@
               width="80"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div v-if="goodsList.length" :style="[{'color':getActivityState(scope.$index)=='未开始'?'#DE5B67':(getActivityState(scope.$index)=='活动中'?'#6BA725':'#676767')}]">
+                <div v-if="goodsList.length" :style="[{'color':getActivityState(scope.$index)=='未开始'?'#DE5B67':(getActivityState(scope.$index)=='进行中'?'#6BA725':'#676767')}]">
                   {{getActivityState(scope.$index)}}
                 </div>
               </template>

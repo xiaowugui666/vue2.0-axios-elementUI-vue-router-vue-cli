@@ -222,6 +222,21 @@ export default {
   margin: 0 20px 20px 200px;
   padding-top: 20px;
   position: relative;
+  .icon-查看[data-v-278dd273]:before {
+    content: "\E905";
+    color: #000;
+    font-size: 18px;
+  }
+  .icon-评论[data-v-278dd273]:before {
+    content: "\E901";
+    color: #000;
+    font-size: 18px;
+  }
+  .icon-点赞[data-v-278dd273]:before {
+    content: "\E903";
+    color: #000;
+    font-size: 20px;
+  }
   .trends-header {
     min-width: 1000px;
     height: 55px;

@@ -85,7 +85,7 @@
                 </div>
                 <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
                     <label>{{orderMessage(item.status)}}</label>
-                  <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
+                  <router-link :to="{ name:'orderDetail',params:{id:item.id }}" class="orange" tag="label">订单详情</router-link>
                 </div>
               </div>
             </div>
@@ -385,10 +385,12 @@ export default {
     font-size: 14px;
     color: #333333;
     font-weight: 500;
-    border-bottom: 1px solid #F5F5F5;
+    border-bottom: 2px solid #F5F5F5;
   }
   .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
-    border-bottom-color:  #333;
+    border-bottom-color:  @mainC;
+    color: @mainC;
+    background: #fff;
   }
   .el-tabs--top.el-tabs--card .el-tabs__item:last-child{
     padding-right: 0px;
@@ -567,9 +569,9 @@ export default {
                 height: 24px;
                 line-height: 24px;
                 text-align: center;
-                border: 1px solid #63A4FF;
+                /*border: 1px solid #63A4FF;*/
                 border-radius: 2px;
-                color:#63A4FF;
+                /*color:#63A4FF;*/
                 font-size: 12px;
                 margin: 0 auto;
                 margin-top: 10px;
@@ -581,7 +583,7 @@ export default {
               label:first-child{
                 font-family: MicrosoftYaHei;
                 font-size: 12px;
-                color: #DE5B67;
+                color: @mainC;
               }
               label:last-child{
                 ont-family: MicrosoftYaHei;
@@ -665,13 +667,19 @@ export default {
         }
       }
       .search{
-        line-height: 30px;
+        color: #fff;
+        background-color: #FA505D;
+        border-color: #FA505D;
+        /*padding: 9px 15px;*/
+        font-size: 12px;
         width: 80px;
-        background: #DE5B67;
-        color:#fff;
-        text-align: center;
-        line-height: 30px;
+        height: 30px;
         border-radius: 2px;
+      }
+      .search:hover{
+        background: #fb737d;
+        border-color: #fb737d;
+        color: #fff;
       }
       .orderType{
         margin-left: 20px;

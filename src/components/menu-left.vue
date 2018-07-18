@@ -59,7 +59,7 @@
         </template>
           <el-menu-item index="7-1" :route="{name:'marketingManagement',params:{class:'special-offer'}}">特价</el-menu-item>
           <el-menu-item index="7-2" :route="{name:'marketingManagement',params:{class:'recommend'}}">推荐</el-menu-item>
-          <el-menu-item index="7-3" :route="{name:'groupBuyManagement',params:{class:'recommend'}}">拼团</el-menu-item>
+          <el-menu-item index="7-3" :route="{name:'groupBuyManagement'}">拼团</el-menu-item>
       </el-submenu>
       <el-submenu index="8">
         <template slot="title">

@@ -5,12 +5,12 @@
       <div class="marketing-management-content">
         <div class="marketing-management-state clear">
           <ul>
-            <li :class="{'active':managementState==1}" @click="changState(1)">全部</li>
-            <li :class="{'active':managementState==2}" @click="changState(2)">未开始</li>
-            <li :class="{'active':managementState==3}" @click="changState(3)">进行中</li>
-            <li :class="{'active':managementState==4}" @click="changState(4)">已结束</li>
+            <li :class="{'active':managementState==0}" @click="changState(0)">全部</li>
+            <li :class="{'active':managementState==1}" @click="changState(1)">未开始</li>
+            <li :class="{'active':managementState==2}" @click="changState(2)">进行中</li>
+            <li :class="{'active':managementState==3}" @click="changState(3)">已结束</li>
           </ul>
-          <el-button @click="setRouter({name:'addGroupBuy'})" type="primary" size="small" class="newly-build">新建</el-button>
+          <el-button @click="setRouter()"  size="small" class="newly-build addBtn">新建</el-button>
         </div>
         <div class="active-goods-table">
           <el-table
@@ -29,42 +29,16 @@
                   <span class="goods-img"><img :src="(scope.row.goods_sku && scope.row.goods_sku.cover_url) ? yiqixuanDomainUrl + scope.row.goods_sku.cover_url : yiqixuanDomainUrl + scope.row.goods.cover_url" alt=""></span>
                   <div class="goods-info">
                     <p class="goods-info-name">{{scope.row.goods.name}}</p>
-                    <div class="goods-info-price-category">
-                      <span v-if="linkClass == 'special-offer' && scope.row.goods_sku && (scope.row.goods_sku.property_a || scope.row.goods_sku.property_b || scope.row.goods_sku.property_c)" class="goods-info-category">
-                        {{showSpecific(scope.$index)}}
-                      </span>
-                      <span class="goods-info-price">￥{{(linkClass == 'recommend' ? scope.row.goods.price : scope.row.price) | money}}</span>
-                    </div>
                   </div>
                 </div>
               </template>
             </el-table-column>
             <el-table-column
-              prop="goods.stock_count"
-              label="库存"
-              width="80"
-              show-overflow-tooltip>
-            </el-table-column>
-            <el-table-column
-              prop="goods.price"
+              prop="min_join_count"
               label="开团人数"
-              width="80"
+              width="120"
               show-overflow-tooltip>
             </el-table-column>
-            <!--<el-table-column-->
-              <!--prop="goods_sku.sales_count"-->
-              <!--label="特价售出"-->
-              <!--v-if="linkClass == 'special-offer'"-->
-              <!--width="80"-->
-              <!--show-overflow-tooltip>-->
-            <!--</el-table-column>-->
-            <!--<el-table-column-->
-              <!--prop="goods.sales_count"-->
-              <!--label="推荐售出"-->
-              <!--v-else-->
-              <!--width="80"-->
-              <!--show-overflow-tooltip>-->
-            <!--</el-table-column>-->
             <el-table-column
               prop="begin_at"
               label="开始时间"
@@ -76,12 +50,17 @@
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
+              prop="created_at"
+              label="创建时间"
+              show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column
               prop="status"
               label="状态"
-              width="80"
+              width="120"
               show-overflow-tooltip>
               <template slot-scope="scope">
-                <div v-if="goodsList.length" :style="[{'color':getActivityState(scope.$index)=='未开始'?'#DE5B67':(getActivityState(scope.$index)=='活动中'?'#6BA725':'#676767')}]">
+                <div v-if="goodsList.length" :style="[{'color':getActivityState(scope.$index)=='未开始'?'#FA505D':(getActivityState(scope.$index)=='进行中'?'#2cBA4A':'#676767')}]">
                   {{getActivityState(scope.$index)}}
                 </div>
               </template>
@@ -90,26 +69,24 @@
               label="操作"
               width="180">
               <template slot-scope="scope">
-                <el-button type="text" :disabled="getActivityState(scope.$index) !== '未开始' || scope.row.status == 2" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
-                <el-button :disabled="getActivityState(scope.$index) == '已结束' || scope.row.status == 2" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
-                <el-button :disabled="getActivityState(scope.$index) == '进行中' && scope.row.status == 1" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
+                <el-button type="text" :disabled="scope.row.status == 2" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
+                <el-button :disabled="scope.row.status == 1 || scope.row.status == 3" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
+                <el-button :disabled="scope.row.status ==2" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <!--<div class="paging-box clear">-->
-          <!--<el-pagination-->
-            <!--background-->
-            <!--v-if="goodsList.length"-->
-            <!--:currentPage="curPage"-->
-            <!--:page-size="5"-->
-            <!--@current-change="currentChange($event)"-->
-            <!--prev-text="< 上一页"-->
-            <!--next-text="下一页 >"-->
-            <!--layout="prev, pager, next"-->
-            <!--:total="totalPagina * 5">-->
-          <!--</el-pagination>-->
-        <!--</div>-->
+        <div class="paging-box clear">
+        <el-pagination
+        background
+        :page-size="15"
+        @current-change="currentChange($event)"
+        prev-text="< 上一页"
+        next-text="下一页 >"
+        layout="prev, pager, next"
+        :total="totalPagina * 15">
+        </el-pagination>
+        </div>
       </div>
     </div>
   </div>
@@ -118,29 +95,23 @@
 <script>
 import {mapState} from 'vuex'
 import menuLeft from '@/components/menu-left'
-import {marketingGoods, closeGoods, deleteSpecial, deleteRecommend, closeRecommendGood, changeSort} from '../axios/api'
+import {groupList, closeGoods, deleteGroupList, closeRecommendGood, changeSort} from '../axios/api'
 export default {
   data () {
     return {
-      managementState: 1,
+      managementState: 0,
       goodsList: [],
       multipleSelection: '',
       linkClass: this.$route.params.class,
       timeStamp: '',
       // 左侧菜单栏选中的菜单index
-      menuLeftIndex: '7-3'
+      menuLeftIndex: '7-3',
+      page: 0,
+      totalPagina: 0
     }
   },
   mounted () {
     this.request()
-    // this.setMenuLeftIndex()
-  },
-  watch: {
-    '$route' () {
-      this.linkClass = this.$route.params.class
-      this.managementState = 1
-      this.request()
-    }
   },
   methods: {
     // 点击改变排序状态
@@ -170,31 +141,15 @@ export default {
         })
       }
     },
-    // 通过url上带的参数选择菜单栏选中状态
-    // setMenuLeftIndex () {
-    //   if (this.linkClass === 'special-offer') {
-    //     this.menuLeftIndex = '7-1'
-    //   } else if (this.linkClass === 'recommend') {
-    //     this.menuLeftIndex = '7-2'
-    //   } else {
-    //     this.menuLeftIndex = '7-3'
-    //   }
-    // },
     // 页面初始数据加载
-    request (curPage) {
-      // 路由判定
-      let router = 'special-offer'
-      if (this.linkClass == 'special-offer') {
-        router = 'special_goods'
-      } else if (this.linkClass == 'recommend') {
-        router = 'recommend_goods'
-      }
+    request () {
       // 获取商品列表
-      marketingGoods(router, {
-        type: this.managementState
+      groupList({
+        status: this.managementState,
+        page: this.page
       }).then(res => {
-        this.goodsList = res.data
-        this.timeStamp = res.headers.time
+        this.goodsList = res.data.data
+        this.totalPagina = res.data.pageCount
       })
     },
     // 点击排序状态
@@ -254,26 +209,13 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // 特价商品路由，删除特价商品
-        if (this.$route.params.class == 'special-offer') {
-          deleteSpecial(data.id).then(res => {
-            this.request().done(() => {
-              this.$message({
-                type: 'success',
-                message: `删除成功`
-              })
-            })
+        deleteGroupList(data.id).then(res => {
+          this.request()
+          this.$message({
+            type: 'success',
+            message: '删除成功'
           })
-        } else if (this.$route.params.class == 'recommend') {
-        // 推荐商品路由，删除推荐商品
-          deleteRecommend(data.id).then(res => {
-            this.request()
-            this.$message({
-              type: 'success',
-              message: `删除成功`
-            })
-          })
-        }
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -289,12 +231,11 @@ export default {
     },
     getActivityState (index) {
       let s = ''
-      let date = this.timeStamp
-      if (this.goodsList[index].begin_at > date && this.goodsList[index].status == 1) {
+      if (this.goodsList[index].status == 1) {
         s = '未开始'
-      } else if (this.goodsList[index].begin_at < date && this.goodsList[index].end_at > date && this.goodsList[index].status == 1) {
+      } else if (this.goodsList[index].status == 2) {
         s = '进行中'
-      } else {
+      } else if (this.goodsList[index].status == 3) {
         s = '已结束'
       }
       return s
@@ -313,15 +254,15 @@ export default {
       }
       return specificList
     },
-    setRouter (link) {
-      this.$router.push(link)
+    setRouter () {
+      this.$router.push({name: 'addGroupBuy', params: { id: 'newCreat' }})
     },
     // 编辑操作
     editor (value) {
       // 活动进行状态
       let activeStatu = value.status
       if (activeStatu === 1) {
-        this.$router.push({name: 'addMarketingActivity', query: {class: this.$route.params.class, id: value.id}})
+        this.$router.push({name: 'addGroupBuy', params: { id: value.id }})
       }
     }
   },
@@ -368,9 +309,10 @@ export default {
             border-bottom: 1px solid #fff;
             cursor: pointer;
             &.active {
-              border-bottom-color: #333;
+              border-bottom:2px solid #FA505D;
               font-weight: bold;
-              background: #EFEFEF;
+              color: #FA505D;
+              background: #fff;
             }
           }
         }

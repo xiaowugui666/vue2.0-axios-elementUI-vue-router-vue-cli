@@ -1025,7 +1025,7 @@ export default {
             quick_delivery: this.quick_delivery
           }
           // 判断是否存在商品规格
-          if (this.specificationList.length > 0) {
+          if (this.verificationSpec()) {
             this.getSpecs()
             data.specs = this.specs
             data.sku = this.handleSuksPrice()
@@ -1113,7 +1113,7 @@ export default {
           height: 14px;
           margin-top: 3px;
           margin-right: 10px;
-          background: #999;
+          background: @mainC;
         }
       }
       .required::before {

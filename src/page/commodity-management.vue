@@ -34,7 +34,7 @@
               <el-button @click="batchOperation(3)" :disabled="disabled[2] || disabledDelete" size="small">批量删除</el-button>
             </el-row>
           </div>
-          <el-button class="add-edit-goods" type="primary" size="small" @click="setRouter('/add-edit-goods')">添加商品</el-button>
+          <el-button class="add-edit-goods addBtn" type="primary" size="small"    @click="setRouter('/add-edit-goods')">添加商品</el-button>
         </div>
         <div class="commodity-list-table">
           <el-table
@@ -433,9 +433,10 @@ export default {
           border-bottom: 1px solid #fff;
           cursor: pointer;
           &.active {
-            border-bottom-color: #333;
+            border-bottom:2px solid @mainC;
             font-weight: bold;
-            background: #EFEFEF;
+            color: @mainC;
+            background: #fff;
           }
         }
       }

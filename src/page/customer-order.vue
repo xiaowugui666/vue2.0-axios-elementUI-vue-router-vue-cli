@@ -83,8 +83,8 @@
             </div>
             <div class="orderResult"  :style="{height:item.length+'px'} ">
                 <label>{{tradeStatus(item.status)}}</label>
-              <router-link v-if="item.status > 405" :to="{ path: '/order-rebate',query:{id:item.id }}" tag="label">订单详情</router-link>
-              <router-link v-else :to="{ name: 'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
+              <router-link v-if="item.status > 405" :to="{ path: '/order-rebate',query:{id:item.id }}" class="orange" tag="label">订单详情</router-link>
+              <router-link v-else :to="{ name: 'orderDetail',params:{id:item.id }}" class="orange"  tag="label">订单详情</router-link>
             </div>
           </div>
         </div>
@@ -472,9 +472,7 @@ export default {
               height: 24px;
               line-height: 24px;
               text-align: center;
-              border: 1px solid #63A4FF;
               border-radius: 2px;
-              color:#63A4FF;
               font-size: 12px;
               margin: 0 auto;
               margin-top: 10px;
