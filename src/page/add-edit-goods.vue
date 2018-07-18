@@ -254,7 +254,7 @@
                 <span class="name">划线价格：</span>
                 <div>
                   <span class="goods-price">
-                    <input type="text" v-model.trim="goodsLinePrice" v-validate="{decimal: 2}" name="划线价格" placeholder="" :disabled="verificationSpec()" maxlength="12">
+                    <input type="text" v-model.trim="goodsLinePrice" v-validate="{decimal: 2}" name="划线价格" maxlength="12">
                   </span>
                   <div class="err-tips">{{ errors.first('划线价格') }}</div>
                 </div>
@@ -561,11 +561,8 @@ export default {
           this.specificationList.push(obj)
         }
         this.skus = sku
-      } else {
-        if (displayPrice) {
-          this.goodsLinePrice = (displayPrice / 100).toFixed(2)
-        }
       }
+      this.goodsLinePrice = displayPrice ? (displayPrice / 100).toFixed(2) : ''
       this.goodsPrice = (price / 100).toFixed(2)
       this.goodStock = stockCount
     },
@@ -679,7 +676,7 @@ export default {
     },
     // 商品图片上传成功的操作
     goodsUploadSuccess (response, file, fileList) {
-      this.goodsImageShowList.unshift({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
+      this.goodsImageShowList.push({id: '', url: this.yiqixuanDomainUrl + response.key, key: response.key, modified: file.name})
       this.goodsImageValidate = false
     },
     // 删除商品图片列表中的图片，删除商品图片的key
@@ -1022,7 +1019,8 @@ export default {
             status: this.grounding ? 1 : 2,
             free_return: this.free_return,
             genuine_article: this.genuine_article,
-            quick_delivery: this.quick_delivery
+            quick_delivery: this.quick_delivery,
+            display_price: Math.round(this.goodsLinePrice * 100)
           }
           // 判断是否存在商品规格
           if (this.verificationSpec()) {
@@ -1030,7 +1028,6 @@ export default {
             data.specs = this.specs
             data.sku = this.handleSuksPrice()
           } else {
-            data.display_price = Math.round(this.goodsLinePrice * 100)
             data.price = Math.round(this.goodsPrice * 100)
             data.stock_count = this.goodStock
           }
@@ -1471,6 +1468,10 @@ export default {
   .add-goods-object {
     .el-input__inner {
       border-radius: 0;
+    }
+    .ql-container {
+      max-height: 600px;
+      overflow-y: auto;
     }
     .ql-container, .ql-editor {
       min-height: 200px;
