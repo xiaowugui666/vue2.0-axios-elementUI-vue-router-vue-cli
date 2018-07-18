@@ -202,7 +202,7 @@ export default {
       margin-right: 10px;
       width: 3px;
       height: 14px;
-      background: #999;
+      background: @mainC;
     }
   }
 </style>

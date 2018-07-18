@@ -257,6 +257,10 @@ export default {
 </style>
 <style lang="less">
   .account-object {
+    .icon-查看[data-v-317e5734]:before {
+      content: "\E905";
+      color: #5a2e0b;
+    }
     .el-table {
       th {
         color: #333;

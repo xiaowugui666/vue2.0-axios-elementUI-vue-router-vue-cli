@@ -124,7 +124,7 @@ export default {
     position: absolute;
     width: 3px;
     height: 13px;
-    background: #999;
+    background: @mainC;
     top:4px;
     left:0;
   }
