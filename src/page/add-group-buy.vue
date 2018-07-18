@@ -465,27 +465,48 @@ export default {
             min_join_count: this.ruleForm.groupNum,
             buy_limit_count: this.ruleForm.limitNum
           }
-          var arr = []
-          this.goods.forEach(function (v) {
-            var o = {}
-            o.sku_id = v.id
-            o.price = v.prices * 100
-            o.goods_id = v.goods_id
-            o.stock_count = v.stock_counts
-            arr.push(o)
-          })
-          this.ruleForm.obj.goods_sku = arr
-          setGroupInfo(this.ruleForm.obj).then(res => {
-            if (res.status == 200) {
-              this.$message({
-                type: 'success',
-                message: `拼团成功`
+          // 商品为空
+          if (this.goods.length == 0) {
+            this.$message({
+              message: '请添加商品',
+              type: 'error'
+            })
+          } else {
+            var arr = []
+            var isTrue = true
+            this.goods.forEach((v) => {
+              // 没设置商品拼团价格或库存
+              if (!v.prices || !v.stock_counts) {
+                isTrue = false
+              } else {
+                var o = {}
+                o.sku_id = v.id
+                o.price = v.prices * 100
+                o.goods_id = v.goods_id
+                o.stock_count = v.stock_counts
+                arr.push(o)
+              }
+            })
+            if (isTrue) {
+              this.ruleForm.obj.goods_sku = arr
+              setGroupInfo(this.ruleForm.obj).then(res => {
+                if (res.status == 200) {
+                  this.$message({
+                    type: 'success',
+                    message: `拼团成功`
+                  })
+                  this.setGroupProduct(this.productId)
+                  localStorage.goods_sku = []
+                  this.$router.push({name: 'groupBuyManagement'})
+                }
               })
-              this.setGroupProduct(this.productId)
-              localStorage.goods_sku = []
-              this.$router.push({name: 'groupBuyManagement'})
+            } else {
+              this.$message({
+                message: '请正确设置所有商品拼团价格或库存',
+                type: 'error'
+              })
             }
-          })
+          }
         } else {
           this.$message({
             message: '设置失败，请认真检查设置项哦',
