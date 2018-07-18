@@ -19,21 +19,32 @@
                 <div class="err-tips">{{ errors.first('商铺名称') }}</div>
               </li>
               <li>
-                <span class="name alignment-top required">商铺logo：</span>
-                <el-upload
-                  class="avatar-uploader"
-                  :action="qiniuUploadUrl"
-                  :data="upToken"
-                  accept=".jpg,.png"
-                  :before-upload="beforeUpload"
-                  :show-file-list="false"
-                  :on-success="handleLogoSuccess">
-                  <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
+                <span class="name required alignment-top">商铺logo：</span>
+                <div class="img-upload-box">
+                  <el-upload
+                    class="avatar-uploader"
+                    :action="qiniuUploadUrl"
+                    :data="upToken"
+                    accept=".jpg,.png"
+                    :before-upload="beforeUpload"
+                    :show-file-list="false"
+                    :on-success="handleLogoSuccess">
+                    <img :src="yiqixuanDomainUrl+logoImageUrl" class="avatar">
+                  </el-upload>
                   <div class="alignment-tip">
-                    <el-button size="small" type="primary">点击上传</el-button>
+                    <el-upload
+                      class="avatar-uploader"
+                      :action="qiniuUploadUrl"
+                      :data="upToken"
+                      accept=".jpg,.png"
+                      :before-upload="beforeUpload"
+                      :show-file-list="false"
+                      :on-success="handleLogoSuccess">
+                      <el-button size="small" type="primary">点击上传</el-button>
+                    </el-upload>
                     <p slot="tip" class="el-upload__tip">建议尺寸：160*160像素，只能上传jpg/jpeg/png文件，且不超过1MB</p>
                   </div>
-                </el-upload>
+                </div>
               </li>
               <li>
                 <span class="name alignment-top required">欢迎文案：</span>
@@ -222,13 +233,9 @@ export default {
     // 进入页面获取店铺信息
     getInitialSetData () {
       initialSetData('get').then(res => {
-        // console.log(res.data)
         let data = res.data
         this.telNum = data.mobile
         if (data.mpa) {
-          // this.busiInformation.merchant_no = data.mpa.merchant_no
-          // this.busiInformation.merchant_key = data.mpa.merchant_key_encrypt
-          // this.busiInformation.merchant_cert = data.mpa.merchant_cert_encrypt
           if (data.name && data.logo_url && data.description && data.customer_service_mobile) {
             if (data.mpa.merchant_no && data.mpa.merchant_key_encrypt && data.mpa.merchant_cert_encrypt) {
               this.setRouter('/')
@@ -511,6 +518,36 @@ export default {
       }
     }
   }
+  .img-upload-box {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    min-height: 80px;
+    .alignment-tip {
+      display: inline-block;
+      vertical-align: top;
+      width: 500px;
+      height: 80px;
+      text-align: left;
+      position: relative;
+      .el-upload__tip {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        color: @b8;
+        width: 100%;
+      }
+    }
+    .alignment-tip-txt {
+      .el-upload__tip {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        color: @b8;
+        width: 100%;
+      }
+    }
+  }
   .avatar-uploader {
     display: inline-block;
     .avatar {
@@ -518,31 +555,7 @@ export default {
       height: 80px;
       display: inline-block;
       vertical-align: top;
-    }
-    .avatar.avatar2 {
-      width: 200px;
-      height: auto;
-    }
-    .avatar {
       margin-right: 17px;
-    }
-    .alignment-tip {
-      display: inline-block;
-      vertical-align: top;
-      height: 80px;
-      width: 400px;
-      text-align: left;
-      position: relative;
-      .el-upload__tip {
-        color: @b8;
-        position: absolute;
-        width: 100%;
-        bottom: 0;
-      }
-      .banner-tip {
-        color: @b8;
-        padding-top: 10px;
-      }
     }
   }
   .checked-protocol {
