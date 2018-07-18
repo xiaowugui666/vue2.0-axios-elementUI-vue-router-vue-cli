@@ -67,8 +67,7 @@
               <label>客户手机：{{item.mobile}}</label>
             </div>
             <div class="content">
-                <div>
-                    <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
+                <div class="prolist"  v-for="(i,id) in item.items"  :key="id">
                       <div class="proInfo">
                         <img :src="orderImageUrl(i.cover_url)" alt="">
                         <div class="desc">{{i.name}}</div>
@@ -82,11 +81,11 @@
                     <label>{{orderMessage(item.status)}}</label>
                   <router-link :to="{ name:'orderDetail',params:{id:item.id }}" class="orange" tag="label">订单详情</router-link>
                 </div>
-              <div class="orderMon" :style="{height:item.items.length*80+'px'}">
-                <label>￥{{item.amount | money}}</label>
-                <label>运费：{{item.express_amount | money}}</label>
-              </div>
-              <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
+                <div class="orderMon" :style="{height:item.items.length*80+'px'}">
+                  <label>￥{{item.amount | money}}</label>
+                  <label>运费：{{item.express_amount | money}}</label>
+                </div>
+                <div class="orderResult"  :style="{height:item.items.length*80+'px'}">
                   <label>{{orderMessage(item.status)}}</label>
                 <router-link :to="{ name:'orderDetail',params:{id:item.id }}" tag="label">订单详情</router-link>
               </div>

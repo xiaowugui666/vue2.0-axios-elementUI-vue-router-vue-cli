@@ -58,8 +58,8 @@
         </div>
         <div class="datalist">
           <div class="clear setGroup">
-            <button class="left" @click="groupUpdate()">批量修改</button>
-            <button class="left" @click="groupDelete()">批量删除</button>
+            <button class="left"  @click="groupUpdate()">批量修改</button>
+            <button class="left"  @click="groupDelete()">批量删除</button>
             <button class="right"  v-if="newCreat == 'newCreat'" @click="addGroupBuy()">新增商品</button>
           </div>
           <el-table
@@ -456,9 +456,10 @@ export default {
             localStorage.goods_sku = JSON.stringify(res.data)
           }
         })
-      } else {
-        this.goods = JSON.parse(localStorage.goods_sku)
       }
+      // else {
+      //   this.goods = JSON.parse(localStorage.goods_sku)
+      // }
     },
     addGroupBuy () {
       this.$router.push({name: 'selectProduct'})

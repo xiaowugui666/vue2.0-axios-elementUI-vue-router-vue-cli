@@ -95,7 +95,7 @@
 <script>
 import {mapState} from 'vuex'
 import menuLeft from '@/components/menu-left'
-import {groupList, closeGoods, deleteGroupList, closeRecommendGood, changeSort} from '../axios/api'
+import {groupList, closeGoods, deleteGroupList, closeRecommendGood} from '../axios/api'
 export default {
   data () {
     return {
@@ -115,32 +115,32 @@ export default {
   },
   methods: {
     // 点击改变排序状态
-    handleClick (value, val) {
-      let nextInd = val == 1 ? value - 1 : value + 1
-      if (nextInd > -1 && nextInd < this.goodsList.length) {
-        let route = ''
-        let params = {}
-        params.from_id = this.goodsList[value].id
-        params.to_id = this.goodsList[nextInd].id
-        if (this.linkClass == 'recommend') {
-          route = 'recommend_goods'
-        } else {
-          route = 'special_goods'
-        }
-        changeSort(route, params).then(res => {
-          if (res.status == 200) {
-            // 改变goodsList数据，刷新视图层
-            let temp = this.goodsList.splice(value, 1)
-            this.goodsList.splice(nextInd, 0, temp[0])
-          } else {
-            this.$message({
-              message: '修改顺序失败，请稍后重试',
-              type: 'error'
-            })
-          }
-        })
-      }
-    },
+    // handleClick (value, val) {
+    //   let nextInd = val == 1 ? value - 1 : value + 1
+    //   if (nextInd > -1 && nextInd < this.goodsList.length) {
+    //     let route = ''
+    //     let params = {}
+    //     params.from_id = this.goodsList[value].id
+    //     params.to_id = this.goodsList[nextInd].id
+    //     if (this.linkClass == 'recommend') {
+    //       route = 'recommend_goods'
+    //     } else {
+    //       route = 'special_goods'
+    //     }
+    //     changeSort(route, params).then(res => {
+    //       if (res.status == 200) {
+    //         // 改变goodsList数据，刷新视图层
+    //         let temp = this.goodsList.splice(value, 1)
+    //         this.goodsList.splice(nextInd, 0, temp[0])
+    //       } else {
+    //         this.$message({
+    //           message: '修改顺序失败，请稍后重试',
+    //           type: 'error'
+    //         })
+    //       }
+    //     })
+    //   }
+    // },
     // 页面初始数据加载
     request () {
       // 获取商品列表
@@ -149,7 +149,7 @@ export default {
         page: this.page
       }).then(res => {
         this.goodsList = res.data.data
-        this.totalPagina = res.data.pageCount
+        this.totalPagina = res.data.pageCount + 1
       })
     },
     // 点击排序状态
@@ -157,11 +157,6 @@ export default {
       this.managementState = value
       this.request()
     },
-    // 点击分页
-    // currentChange (value) {
-    //   console.log(value)
-    //   this.request()
-    // },
     // 关闭活动
     closingActivity (data) {
       let _this = this
@@ -223,12 +218,10 @@ export default {
         })
       })
     },
-    // input输入改变排序
-    sorting (e) {
-    },
     handleSelectionChange (val) {
       this.multipleSelection = val
     },
+    // 团购状态
     getActivityState (index) {
       let s = ''
       if (this.goodsList[index].status == 1) {
@@ -241,19 +234,19 @@ export default {
       return s
     },
     // 商品规格
-    showSpecific (index) {
-      let specificList = ''
-      if (this.goodsList[index].goods_sku.property_a) {
-        specificList += this.goodsList[index].goods_sku.property_a
-        if (this.goodsList[index].goods_sku.property_b) {
-          specificList += '；' + this.goodsList[index].goods_sku.property_b
-          if (this.goodsList[index].goods_sku.property_c) {
-            specificList += '；' + this.goodsList[index].goods_sku.property_c
-          }
-        }
-      }
-      return specificList
-    },
+    // showSpecific (index) {
+    //   let specificList = ''
+    //   if (this.goodsList[index].goods_sku.property_a) {
+    //     specificList += this.goodsList[index].goods_sku.property_a
+    //     if (this.goodsList[index].goods_sku.property_b) {
+    //       specificList += '；' + this.goodsList[index].goods_sku.property_b
+    //       if (this.goodsList[index].goods_sku.property_c) {
+    //         specificList += '；' + this.goodsList[index].goods_sku.property_c
+    //       }
+    //     }
+    //   }
+    //   return specificList
+    // },
     setRouter () {
       this.$router.push({name: 'addGroupBuy', params: { id: 'newCreat' }})
     },
