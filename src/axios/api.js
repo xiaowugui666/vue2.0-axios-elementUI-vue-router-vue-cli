@@ -51,6 +51,15 @@ export function setGroupInfo (data, method) {
   })
 }
 
+// 编辑拼团设置
+export function updateGroupInfo (data, id) {
+  return fetch({
+    url: api.ip + '/management/goods_groupon/' + id,
+    method: 'put',
+    data: data
+  })
+}
+
 // 获取所选商品的所有规格
 export function groupGoodSku (data) {
   return fetch({

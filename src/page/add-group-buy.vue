@@ -137,14 +137,16 @@
           </el-table>
         </div>
       </div>
+      <select-group-production  :yiqixuanDomainUrl="yiqixuanDomainUrl"   @goodsId="getGoodsId" @handleClose="getHandleClose" :goods-dialog-visible="goodsDialogVisible"></select-group-production>
     </div>
   </div>
 </template>
 
 <script>
 import menuLeft from '@/components/menu-left'
-import { mapState, mapMutations } from 'vuex'
-import { groupGoodSku, setGroupInfo, getGroupInfo } from '@/axios/api'
+import { mapState } from 'vuex'
+import selectGroupProduction from '@/components/select-group-production'
+import { groupGoodSku, setGroupInfo, getGroupInfo, updateGroupInfo } from '@/axios/api'
 export default {
   data () {
     let validateRangeTime = (rule, value, callback) => {
@@ -286,10 +288,11 @@ export default {
     }
   },
   computed: {
-    ...mapState(['menuLeft', 'yiqixuanDomainUrl', 'groupProductId'])
+    ...mapState(['menuLeft', 'yiqixuanDomainUrl'])
   },
   components: {
-    menuLeft
+    menuLeft,
+    selectGroupProduction
   },
   mounted () {
     this.newCreat = this.$route.params.id
@@ -302,7 +305,20 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setGroupProduct']),
+    getGoodsId (value) {
+      var arr = []
+      arr.push(value)
+      groupGoodSku({goods: arr}).then(res => {
+        if (res.status == 200) {
+          var goods = res.data
+          goods.forEach(function (v) {
+            v.prices = ''
+            v.stock_counts = ''
+          })
+          this.goods = goods
+        }
+      })
+    },
     showSpecs (value) {
       if (value.spec_c) {
         return value.spec_a + ':' + value.property_a + ',' + value.spec_b + ':' + value.property_b + ',' + value.spec_c + ':' + value.property_c + ';'
@@ -368,7 +384,6 @@ export default {
             }
           }
           this.goods = newArr
-          localStorage.goods_sku = JSON.stringify(this.goods)
           this.$message({
             type: 'success',
             message: `删除成功`
@@ -388,10 +403,10 @@ export default {
     },
     // 设置拼团价格
     setGroupMoney (index) {
-      if (this.goods[index].price < parseFloat(this.goods[index].prices * 100)) {
+      if (this.goods[index].price <= parseFloat(this.goods[index].prices * 100)) {
         this.goods[index].prices = ''
         this.$message({
-          message: '拼团价格不能大于商品价格',
+          message: '拼团价格不能大于等于商品价格',
           type: 'error'
         })
       } else if (isNaN(this.goods[index].prices)) {
@@ -422,10 +437,16 @@ export default {
           message: '拼团库存只能是数字',
           type: 'error'
         })
-      } else if (this.goods[index].stock_counts <= 0) {
+      } else if (this.goods[index].stock_counts < 2) {
         this.goods[index].stock_counts = ''
         this.$message({
-          message: '拼团库存必须大于0',
+          message: '拼团库存必须大于等于2',
+          type: 'error'
+        })
+      } else if (this.goods[index].stock_counts.indexOf('.') > -1) {
+        this.goods[index].stock_counts = ''
+        this.$message({
+          message: '拼团库存必须是整数',
           type: 'error'
         })
       }
@@ -440,7 +461,6 @@ export default {
       }).then(() => {
         // 删除该规格拼团
         this.goods.splice(value, 1)
-        localStorage.goods_sku = JSON.stringify(this.goods)
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -449,25 +469,19 @@ export default {
       })
     },
     groupGoodSku () {
-      if (this.groupProductId.length > 0) {
-        groupGoodSku({goods: this.groupProductId}).then(res => {
-          if (res.status == 200) {
-            var goods = res.data
-            goods.forEach(function (v) {
-              v.prices = ''
-              v.stock_counts = ''
-            })
-            this.goods = goods
-            localStorage.goods_sku = JSON.stringify(goods)
-          }
-        })
-      }
-      // else {
-      //   this.goods = JSON.parse(localStorage.goods_sku)
-      // }
+      groupGoodSku({goods: this.groupProductId}).then(res => {
+        if (res.status == 200) {
+          var goods = res.data
+          goods.forEach(function (v) {
+            v.prices = ''
+            v.stock_counts = ''
+          })
+          this.goods = goods
+        }
+      })
     },
     addGroupBuy () {
-      this.$router.push({name: 'selectProduct'})
+      this.goodsDialogVisible = true
     },
     handleSelectionChange (val) {
       if (val.length == 0) {
@@ -498,37 +512,70 @@ export default {
           } else {
             var arr = []
             var isTrue = true
-            this.goods.forEach((v) => {
-              // 没设置商品拼团价格或库存
-              if (!v.prices || !v.stock_counts) {
-                isTrue = false
-              } else {
-                var o = {}
-                o.sku_id = v.id
-                o.price = v.prices * 100
-                o.goods_id = v.goods_id
-                o.stock_count = v.stock_counts
-                arr.push(o)
-              }
-            })
-            if (isTrue) {
-              this.ruleForm.obj.goods_sku = arr
-              setGroupInfo(this.ruleForm.obj, this.method).then(res => {
-                if (res.status == 200) {
-                  this.$message({
-                    type: 'success',
-                    message: `拼团成功`
-                  })
-                  this.setGroupProduct(this.productId)
-                  localStorage.goods_sku = []
-                  this.$router.push({name: 'groupBuyManagement'})
+            if (this.$route.params.id == 'newCreat') {
+              this.goods.forEach((v) => {
+                // 没设置商品拼团价格或库存
+                if (!v.prices || !v.stock_counts) {
+                  isTrue = false
+                } else {
+                  var o = {}
+                  o.sku_id = v.id
+                  o.price = v.prices * 100
+                  o.goods_id = v.goods_id
+                  o.stock_count = v.stock_counts
+                  arr.push(o)
                 }
               })
+              if (isTrue) {
+                this.ruleForm.obj.goods_sku = arr
+                setGroupInfo(this.ruleForm.obj, this.method).then(res => {
+                  if (res.status == 200) {
+                    this.$message({
+                      type: 'success',
+                      message: `拼团成功`
+                    })
+                    this.$router.push({name: 'groupBuyManagement'})
+                  }
+                })
+              } else {
+                this.$message({
+                  message: '请正确设置所有商品拼团价格或库存',
+                  type: 'error'
+                })
+              }
             } else {
-              this.$message({
-                message: '请正确设置所有商品拼团价格或库存',
-                type: 'error'
+              // 编辑团购
+              this.goods.forEach((v) => {
+                // 没设置商品拼团价格或库存
+                if (!v.prices || !v.stock_counts) {
+                  isTrue = false
+                } else {
+                  var o = {}
+                  o.sku_id = v.id
+                  o.prices = v.prices * 100
+                  o.goods_id = v.goods_id
+                  o.stock_counts = v.stock_counts
+                  arr.push(o)
+                }
               })
+              if (isTrue) {
+                this.ruleForm.obj.goods_sku = arr
+                // this.ruleForm.obj.goods_groupon_id = this.$route.params.id
+                updateGroupInfo(this.ruleForm.obj, this.$route.params.id).then(res => {
+                  if (res.status == 200) {
+                    this.$message({
+                      type: 'success',
+                      message: `编辑成功`
+                    })
+                    this.$router.push({name: 'groupBuyManagement'})
+                  }
+                })
+              } else {
+                this.$message({
+                  message: '请正确设置所有商品拼团价格或库存',
+                  type: 'error'
+                })
+              }
             }
           }
         } else {
@@ -562,10 +609,6 @@ export default {
           })
         }
       })
-    },
-    // 删除当前选择商品
-    deleteRecommend (index) {
-      this.recommendGoods.splice(index, 1)
     },
     getHandleClose (msg) {
       this.goodsDialogVisible = msg
