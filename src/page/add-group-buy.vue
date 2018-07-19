@@ -394,6 +394,18 @@ export default {
           message: '拼团价格不能大于商品价格',
           type: 'error'
         })
+      } else if (isNaN(this.goods[index].prices)) {
+        this.goods[index].prices = ''
+        this.$message({
+          message: '拼团价格只能是数字',
+          type: 'error'
+        })
+      } else if (this.goods[index].prices <= 0) {
+        this.goods[index].prices = ''
+        this.$message({
+          message: '拼团价格必须大于0',
+          type: 'error'
+        })
       }
     },
     // 设置拼团库存
@@ -402,6 +414,18 @@ export default {
         this.goods[index].stock_counts = ''
         this.$message({
           message: '拼团库存不能大于商品库存',
+          type: 'error'
+        })
+      } else if (isNaN(this.goods[index].stock_counts)) {
+        this.goods[index].stock_counts = ''
+        this.$message({
+          message: '拼团库存只能是数字',
+          type: 'error'
+        })
+      } else if (this.goods[index].stock_counts <= 0) {
+        this.goods[index].stock_counts = ''
+        this.$message({
+          message: '拼团库存必须大于0',
           type: 'error'
         })
       }
