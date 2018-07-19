@@ -29,13 +29,13 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="拼团失效时间："  prop="outTime">
-              <el-input v-model="ruleForm.outTime" class="outTime" placeholder="拼团失效时间为1-23小时"></el-input>
+              <el-input v-model="ruleForm.outTime" maxlength="5" class="outTime" placeholder="拼团失效时间为1-23小时"></el-input>
             </el-form-item>
             <el-form-item label="开团人数：" prop="groupNum">
-              <el-input v-model="ruleForm.groupNum"  class="groupNum"  placeholder="开团人数至少为2人" ></el-input>
+              <el-input v-model="ruleForm.groupNum"  class="groupNum"  maxlength="10" placeholder="开团人数至少为2人" ></el-input>
             </el-form-item>
             <el-form-item label="单个用户购买件数上限："  prop="limitNum">
-              <el-input v-model="ruleForm.limitNum"  placeholder="设置为0，表示不设上限"></el-input>
+              <el-input v-model="ruleForm.limitNum"  class="limitNum"  maxlength="10" placeholder="设置为0，表示不设上限"></el-input>
               <div class="tips">设置为0，表示不设上限</div>
             </el-form-item>
             <el-form-item>
@@ -158,7 +158,7 @@ export default {
       }
     }
     let validateOutTime = (rule, value, callback) => {
-      // value = parseFloat(value)
+      value = String(value)
       if (value == '') {
         callback(new Error('失效时间不能为空'))
       } else if (value > 23 || value < 1) {
@@ -172,7 +172,7 @@ export default {
       }
     }
     let validateGroupNum = (rule, value, callback) => {
-      // value = parseFloat(value)
+      value = String(value)
       if (value == '') {
         callback(new Error('开团人数不能为空'))
       } else if (value < 2) {
@@ -186,6 +186,7 @@ export default {
       }
     }
     let validateLimitNum = (rule, value, callback) => {
+      value = String(value)
       if (value == '') {
         callback(new Error('单个用户购买件数上限不能为空'))
       } else if (isNaN(value)) {
@@ -254,6 +255,7 @@ export default {
       originalPrice: '',
       stock: '',
       goods: [],
+      method: 'post',
       multipleSelection: '',
       productId: '',
       goodsList: [],
@@ -293,7 +295,9 @@ export default {
     this.newCreat = this.$route.params.id
     if (this.$route.params.id == 'newCreat') {
       this.groupGoodSku()
+      this.method = 'post'
     } else {
+      this.method = 'put'
       this.getGroupInfo()
     }
   },
@@ -307,10 +311,6 @@ export default {
       } else if (value.spec_a) {
         return value.spec_a + ':' + value.property_a + ';'
       }
-    },
-    // sdkj
-    integer (value) {
-      console.log(value)
     },
     getGroupInfo () {
       getGroupInfo(this.$route.params.id).then(res => {
@@ -489,7 +489,7 @@ export default {
             })
             if (isTrue) {
               this.ruleForm.obj.goods_sku = arr
-              setGroupInfo(this.ruleForm.obj).then(res => {
+              setGroupInfo(this.ruleForm.obj, this.method).then(res => {
                 if (res.status == 200) {
                   this.$message({
                     type: 'success',
@@ -550,7 +550,7 @@ export default {
 }
 </script>
 <style lang="less">
-  .groupNum .el-input__inner,.outTime .el-input__inner{
+  .groupNum .el-input__inner,.outTime .el-input__inner,.limitNum .el-input__inner{
     padding-right: 100px;
   }
   .datalist{
@@ -757,6 +757,13 @@ export default {
     }
     .groupNum::after{
       content: '人';
+      position: absolute;
+      top: 0px;
+      left: 340px;
+      color: #999;
+    }
+    .limitNum::after{
+      content: '件';
       position: absolute;
       top: 0px;
       left: 340px;

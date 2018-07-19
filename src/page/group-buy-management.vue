@@ -70,7 +70,7 @@
               width="180">
               <template slot-scope="scope">
                 <el-button type="text" :disabled="scope.row.status == 2" @click="editor(scope.row)" class="edit-btn">编辑</el-button>
-                <el-button :disabled="scope.row.status == 1 || scope.row.status == 3" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
+                <el-button :disabled="scope.row.status == 1 || scope.row.status == 3 || scope.row.status == 4" @click="closingActivity(scope.row)" type="text" class="close-btn">关闭</el-button>
                 <el-button :disabled="scope.row.status ==2" @click="deleteActivity(scope.row)" type="text" class="delete-btn">删除</el-button>
               </template>
             </el-table-column>
@@ -95,7 +95,7 @@
 <script>
 import {mapState} from 'vuex'
 import menuLeft from '@/components/menu-left'
-import {groupList, closeGoods, deleteGroupList, closeRecommendGood} from '../axios/api'
+import {groupList, deleteGroupList, closeGroupList} from '../axios/api'
 export default {
   data () {
     return {
@@ -159,37 +159,18 @@ export default {
     },
     // 关闭活动
     closingActivity (data) {
-      let _this = this
       this.$confirm(`是否关闭该活动`, '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        // 特价商品路由，关闭特价商品活动
-        if (this.$route.params.class == 'special-offer') {
-          closeGoods({
-            id: data.id,
-            status: 2
-          }).then(res => {
-            _this.request()
-            _this.$message({
-              type: 'success',
-              message: `关闭成功`
-            })
+        closeGroupList(data.id).then(res => {
+          this.request()
+          this.$message({
+            type: 'success',
+            message: '关闭成功'
           })
-        } else if (this.$route.params.class == 'recommend') {
-          // 推荐商品路由，关闭该推荐商品
-          closeRecommendGood({
-            id: data.id,
-            status: 2
-          }).then(res => {
-            _this.request()
-            _this.$message({
-              type: 'success',
-              message: `关闭成功`
-            })
-          })
-        }
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
@@ -228,7 +209,7 @@ export default {
         s = '未开始'
       } else if (this.goodsList[index].status == 2) {
         s = '进行中'
-      } else if (this.goodsList[index].status == 3) {
+      } else if (this.goodsList[index].status == 3 || this.goodsList[index].status == 4) {
         s = '已结束'
       }
       return s
@@ -253,10 +234,7 @@ export default {
     // 编辑操作
     editor (value) {
       // 活动进行状态
-      let activeStatu = value.status
-      if (activeStatu === 1) {
-        this.$router.push({name: 'addGroupBuy', params: { id: value.id }})
-      }
+      this.$router.push({name: 'addGroupBuy', params: { id: value.id }})
     }
   },
   computed: {
@@ -302,7 +280,7 @@ export default {
             border-bottom: 1px solid #fff;
             cursor: pointer;
             &.active {
-              border-bottom:2px solid #FA505D;
+              border-bottom:3px solid #FA505D;
               font-weight: bold;
               color: #FA505D;
               background: #fff;

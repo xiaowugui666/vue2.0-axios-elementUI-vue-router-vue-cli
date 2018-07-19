@@ -456,7 +456,7 @@ export default {
     font-family: MicrosoftYaHei-Bold;
     font-size: 14px;
     font-weight: 500;
-    border-bottom: 2px solid #FA505D;
+    border-bottom: 3px solid #FA505D;
     color: #FA505D;
     background: #fff;
   }

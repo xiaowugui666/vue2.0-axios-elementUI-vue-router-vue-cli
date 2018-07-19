@@ -419,7 +419,7 @@ export default {
     font-size: 14px;
     color: #333333;
     font-weight: 500;
-    border-bottom: 2px solid #F5F5F5;
+    border-bottom: 3px solid #F5F5F5;
   }
   .el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
     border-bottom-color:  @mainC;

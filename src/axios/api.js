@@ -28,6 +28,13 @@ export function deleteGroupList (data) {
     method: 'DElETE'
   })
 }
+// 关闭拼团列表
+export function closeGroupList (data) {
+  return fetch({
+    url: api.ip + '/management/goods_groupon/' + data + '/close',
+    method: 'put'
+  })
+}
 // 获取拼团信息
 export function getGroupInfo (data) {
   return fetch({
@@ -36,10 +43,10 @@ export function getGroupInfo (data) {
   })
 }
 // 编辑拼团设置
-export function setGroupInfo (data) {
+export function setGroupInfo (data, method) {
   return fetch({
     url: api.ip + '/management/goods_groupon',
-    method: 'post',
+    method: method,
     data: data
   })
 }

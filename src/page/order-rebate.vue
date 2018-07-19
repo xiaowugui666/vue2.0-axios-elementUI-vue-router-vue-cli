@@ -58,7 +58,7 @@
                 <textarea v-if="tradeType == 0" id="tips" v-model="resRemark" cols="30" rows="10">
                 </textarea>
                 <div v-else class="refund-step-end">
-                  <img v-if="tradeType == 1" src="/static/icon/hourglass.png">
+                  <img v-if="tradeType == 1"  width="80px" src="/static/icon/hourglass.png">
                   <i v-else class="icon-成功 green"></i>
                   <span :style="{color: (tradeType == 1 ? '#FFAC5A' : '#2CBA4A')}">{{tradeType == 1 ? '处理中' : '退款完成'}}</span>
                 </div>

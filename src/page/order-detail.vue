@@ -164,6 +164,7 @@ export default {
               this.tradeList = res.data
               this.tradeType = 2
               this.isCompile = false
+              this.expressName = this.transCompValue
             })
           }
         })
