@@ -219,7 +219,7 @@ export default {
     let validateTotalCount = (rule, value, callback) => {
       value = parseFloat(value)
       var b = this.multipleSelection.every(function (v) {
-        return value <= v.stock_count
+        return value <= v.total_stock_count
       })
       if (value == '') {
         callback(new Error('批量修改库存不能为空'))
@@ -297,8 +297,8 @@ export default {
   mounted () {
     this.newCreat = this.$route.params.id
     if (this.$route.params.id == 'newCreat') {
-      this.groupGoodSku()
-      this.method = 'post'
+      // this.groupGoodSku()
+      // this.method = 'post'
     } else {
       this.method = 'put'
       this.getGroupInfo()
@@ -311,11 +311,12 @@ export default {
       groupGoodSku({goods: arr}).then(res => {
         if (res.status == 200) {
           var goods = res.data
-          goods.forEach(function (v) {
+          goods.forEach((v) => {
             v.prices = ''
             v.stock_counts = ''
+            v.total_stock_count = v.stock_count + v.stock_counts
+            this.goods.push(v)
           })
-          this.goods = goods
         }
       })
     },
@@ -341,6 +342,7 @@ export default {
           var goods = res.data.goods_sku
           goods.forEach(v => {
             v.prices = parseFloat(v.prices / 100).toFixed(2)
+            v.total_stock_count = v.stock_count + v.stock_counts
             this.goods.push(v)
           })
         }
@@ -425,7 +427,7 @@ export default {
     },
     // 设置拼团库存
     setGroupCount (index) {
-      if (this.goods[index].stock_count < parseFloat(this.goods[index].stock_counts)) {
+      if (this.goods[index].total_stock_count < parseFloat(this.goods[index].stock_counts)) {
         this.goods[index].stock_counts = ''
         this.$message({
           message: '拼团库存不能大于商品库存',
@@ -451,8 +453,6 @@ export default {
         })
       }
     },
-    showSpecific (value) {
-    },
     deleteSku (value) {
       this.$confirm(`是否删除该规格`, '提示', {
         confirmButtonText: '确定',
@@ -468,18 +468,22 @@ export default {
         })
       })
     },
-    groupGoodSku () {
-      groupGoodSku({goods: this.groupProductId}).then(res => {
-        if (res.status == 200) {
-          var goods = res.data
-          goods.forEach(function (v) {
-            v.prices = ''
-            v.stock_counts = ''
-          })
-          this.goods = goods
-        }
-      })
-    },
+    // groupGoodSku () {
+    //   groupGoodSku({goods: this.groupProductId}).then(res => {
+    //     if (res.status == 200) {
+    //       var goods = res.data
+    //       var arr = []
+    //       goods.forEach(function (v) {
+    //         v.prices = ''
+    //         v.stock_counts = ''
+    //         v.total_stock_count = v.stock_count + v.stock_counts
+    //         arr.push(v)
+    //       })
+    //       this.goods = arr
+    //       console.log(this.goods)
+    //     }
+    //   })
+    // },
     addGroupBuy () {
       this.goodsDialogVisible = true
     },
@@ -586,6 +590,16 @@ export default {
         }
       })
     },
+    // 初始化表格选中状态
+    toggleSelection (rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row)
+        })
+      } else {
+        this.$refs.multipleTable.clearSelection()
+      }
+    },
     // 批量数据修改
     submitGroupForm (formName) {
       this.$refs[formName].validate((valid) => {
@@ -598,8 +612,10 @@ export default {
               }
             }
           }
+          this.toggleSelection()
+          this.isGroupSet = false
           this.$message({
-            message: '设置成功',
+            message: '批量设置设置成功',
             type: 'success'
           })
         } else {

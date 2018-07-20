@@ -6,16 +6,12 @@ Vue.use(Vuex)
 const state = {
   menuLeft: '',
   qiniuUploadUrl: '//upload.qiniup.com',
-  yiqixuanDomainUrl: '//image.yiqixuan.com/',
-  groupProductId: []
+  yiqixuanDomainUrl: '//image.yiqixuan.com/'
 }
 
 const mutations = {
   setMenuLeft (state, i) {
     state.menuLeft = i
-  },
-  setGroupProduct (state, value) {
-    state.groupProductId = value
   }
 }
 

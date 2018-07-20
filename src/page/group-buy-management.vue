@@ -79,6 +79,7 @@
         <div class="paging-box clear">
         <el-pagination
         background
+        v-if="totalPagina>1"
         :page-size="15"
         @current-change="currentChange($event)"
         prev-text="< 上一页"
@@ -149,7 +150,15 @@ export default {
         page: this.page
       }).then(res => {
         this.goodsList = res.data.data
-        this.totalPagina = res.data.pageCount + 1
+        this.totalPagina = res.data.pageCount
+      })
+    },
+    currentChange (value) {
+      groupList({
+        status: this.managementState,
+        page: value - 1
+      }).then(res => {
+        this.goodsList = res.data.data
       })
     },
     // 点击排序状态
