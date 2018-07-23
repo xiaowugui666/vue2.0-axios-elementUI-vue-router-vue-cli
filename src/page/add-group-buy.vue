@@ -307,9 +307,7 @@ export default {
   },
   methods: {
     getGoodsId (value) {
-      var arr = []
-      arr.push(value)
-      groupGoodSku({goods: arr}).then(res => {
+      groupGoodSku({goods_id: value}).then(res => {
         if (res.status == 200) {
           var goods = res.data
           goods.forEach((v) => {

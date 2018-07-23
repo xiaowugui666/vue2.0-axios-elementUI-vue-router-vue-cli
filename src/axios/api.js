@@ -24,7 +24,7 @@ export function groupList (data) {
 // 删除拼团列表
 export function deleteGroupList (data) {
   return fetch({
-    url: api.ip + '/management/goods_groupon/' + data + '/delete',
+    url: api.ip + '/management/goods_groupon/' + data,
     method: 'DElETE'
   })
 }
@@ -32,7 +32,7 @@ export function deleteGroupList (data) {
 export function closeGroupList (data) {
   return fetch({
     url: api.ip + '/management/goods_groupon/' + data + '/close',
-    method: 'put'
+    method: 'post'
   })
 }
 // 获取拼团信息
