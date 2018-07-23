@@ -187,7 +187,7 @@ export default {
         })
       })
     },
-    // 删除商品
+    // 删除团购活动
     deleteActivity (data) {
       this.$confirm(`是否删除该活动`, '提示', {
         confirmButtonText: '确定',

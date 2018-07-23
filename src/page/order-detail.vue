@@ -43,8 +43,8 @@
                           <i>快递单号：</i>
                             <input v-if="isCompile" type="text" maxlength="20" v-model.trim="expressNo">
                             <label v-else>{{tradeList.express_no}}</label>
+                          <el-button v-if="isCompile" @click="commitTrade" style="height: 30px;width: 80px; letter-spacing: 1px;margin-left: 20px"  size="small" type="success">提交</el-button>
                       </div>
-                      <el-button v-if="isCompile" @click="commitTrade" style="height: 30px;width: 80px; letter-spacing: 1px;" size="small" type="success">提交</el-button>
                     </div>
                 </div>
                 <div class="right">
@@ -225,13 +225,16 @@ export default {
 </script>
 <style lang="less">
   .orderDetail {
+    .el-input__suffix{
+      right: 16px;
+    }
     .el-steps--horizontal {
       white-space: nowrap;
       width: 60%;
       margin-top: 20px;
     }
     .el-input{
-      width: 133px;
+      width: 150px;
       height: 27px;
       .el-input__inner{
         width: 133px;
