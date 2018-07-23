@@ -35,7 +35,6 @@
               <el-table-column
                 prop="goods_status"
                 label="售价"
-                width="300"
                 show-overflow-tooltip>
                 <template slot-scope="scope">
                   <span v-if="scope.row.price_low == scope.row.price_high" class="goods-info-price">￥{{scope.row.price_high | money}}</span>

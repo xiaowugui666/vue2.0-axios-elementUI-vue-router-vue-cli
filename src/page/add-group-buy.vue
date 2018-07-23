@@ -89,7 +89,6 @@
             <el-table-column
               prop="stock_count"
               label="规格"
-              width="300"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <span class="goods-info-price" v-if="scope.row.sku_desc">{{scope.row.sku_desc}}</span>
@@ -107,7 +106,7 @@
             </el-table-column>
             <el-table-column
               label="拼团价格"
-              width="200"
+              width="150"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-input    v-model="scope.row.prices"  @blur="setGroupMoney(scope.$index)"></el-input>
@@ -121,7 +120,7 @@
             </el-table-column>
             <el-table-column
               label="库存"
-              width="200"
+              width="150"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-input   v-model="scope.row.stock_counts"  @blur="setGroupCount(scope.$index)"></el-input>
@@ -129,7 +128,7 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              width="200">
+              width="150">
               <template slot-scope="scope">
                 <el-button @click="deleteSku(scope.$index)" type="text" class="delete-btn">删除</el-button>
               </template>
@@ -160,7 +159,6 @@ export default {
       }
     }
     let validateOutTime = (rule, value, callback) => {
-      value = String(value)
       if (value == '') {
         callback(new Error('失效时间不能为空'))
       } else if (value > 23 || value < 1) {
@@ -174,7 +172,6 @@ export default {
       }
     }
     let validateGroupNum = (rule, value, callback) => {
-      value = String(value)
       if (value == '') {
         callback(new Error('开团人数不能为空'))
       } else if (value < 2) {
@@ -188,7 +185,6 @@ export default {
       }
     }
     let validateLimitNum = (rule, value, callback) => {
-      value = String(value)
       if (value == '') {
         callback(new Error('单个用户购买件数上限不能为空'))
       } else if (isNaN(value)) {
@@ -202,7 +198,7 @@ export default {
       }
     }
     let validateGroupPrice = (rule, value, callback) => {
-      value = parseFloat(value) * 100
+      value = value * 100
       var b = this.multipleSelection.every(function (v) {
         return value < v.price
       })
@@ -217,7 +213,6 @@ export default {
       }
     }
     let validateTotalCount = (rule, value, callback) => {
-      value = parseFloat(value)
       var b = this.multipleSelection.every(function (v) {
         return value <= v.total_stock_count
       })
