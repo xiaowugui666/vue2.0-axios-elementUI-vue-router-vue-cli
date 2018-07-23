@@ -3,7 +3,7 @@
     <menu-left :routeIndex="menuLeftIndex"></menu-left>
     <div class="add-activity-object">
       <div class="add-activity-content">
-        <div class="bread-bar plate">
+        <div class="bread-bar plate flex">
           <div class="add-edit">
             拼团 > 新增
           </div>
@@ -852,12 +852,6 @@ export default {
       left: 340px;
       color: #999;
     }
-    .add-activity-object .save {
-      position: absolute;
-      top: 34px;
-      right: 45px;
-      z-index: 9999;
-    }
     .add-activity-object .el-button--small{
       padding: 0;
       width: 80px;
@@ -906,8 +900,13 @@ export default {
         cursor: not-allowed;
       }
     }
+    .flex{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     .plate {
-      padding: 20px 15px;
+      padding: 20px 20px 20px 15px;
       margin-bottom: 20px;
       background: #fff;
       color: #333;
