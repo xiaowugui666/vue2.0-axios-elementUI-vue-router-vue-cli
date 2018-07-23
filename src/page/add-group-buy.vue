@@ -159,6 +159,7 @@ export default {
       }
     }
     let validateOutTime = (rule, value, callback) => {
+      value = String(value)
       if (value == '') {
         callback(new Error('失效时间不能为空'))
       } else if (value > 23 || value < 1) {
@@ -172,6 +173,7 @@ export default {
       }
     }
     let validateGroupNum = (rule, value, callback) => {
+      value = String(value)
       if (value == '') {
         callback(new Error('开团人数不能为空'))
       } else if (value < 2) {
@@ -185,6 +187,7 @@ export default {
       }
     }
     let validateLimitNum = (rule, value, callback) => {
+      value = String(value)
       if (value == '') {
         callback(new Error('单个用户购买件数上限不能为空'))
       } else if (isNaN(value)) {
@@ -213,6 +216,7 @@ export default {
       }
     }
     let validateTotalCount = (rule, value, callback) => {
+      value = String(value)
       var b = this.multipleSelection.every(function (v) {
         return value <= v.total_stock_count
       })
@@ -220,6 +224,8 @@ export default {
         callback(new Error('批量修改库存不能为空'))
       } else if (isNaN(value)) {
         callback(new Error('批量修改库存必须是数字'))
+      } else if (value.indexOf('.') > -1) {
+        callback(new Error('库存必须是整数'))
       } else if (!b) {
         callback(new Error('批量修改库存必须比所选规格的现有库存低'))
       } else {
