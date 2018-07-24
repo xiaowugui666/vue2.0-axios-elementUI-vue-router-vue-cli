@@ -226,16 +226,19 @@ export default {
     content: "\E905";
     color: #000;
     font-size: 18px;
+    font-weight: 600;
   }
   .icon-评论[data-v-278dd273]:before {
     content: "\E901";
     color: #000;
     font-size: 18px;
+    font-weight: 600;
   }
   .icon-点赞[data-v-278dd273]:before {
     content: "\E903";
     color: #000;
     font-size: 20px;
+    font-weight: 600;
   }
   .trends-header {
     min-width: 1000px;

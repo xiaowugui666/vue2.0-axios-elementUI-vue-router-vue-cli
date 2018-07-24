@@ -433,7 +433,7 @@ export default {
           border-bottom: 1px solid #fff;
           cursor: pointer;
           &.active {
-            border-bottom:2px solid @mainC;
+            border-bottom:3px solid @mainC;
             font-weight: bold;
             color: @mainC;
             background: #fff;

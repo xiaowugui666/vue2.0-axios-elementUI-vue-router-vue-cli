@@ -89,6 +89,7 @@
             <el-table-column
               prop="stock_count"
               label="规格"
+              width="230"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <span class="goods-info-price" v-if="scope.row.sku_desc">{{scope.row.sku_desc}}</span>
@@ -98,7 +99,7 @@
             <el-table-column
               prop="price"
               label="原价"
-              width="150"
+              width="110"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <span class="goods-info-price">￥{{ scope.row.price| money}}</span>
@@ -106,7 +107,7 @@
             </el-table-column>
             <el-table-column
               label="拼团价格"
-              width="150"
+              width="110"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-input    v-model="scope.row.prices"  @blur="setGroupMoney(scope.$index)"></el-input>
@@ -115,12 +116,12 @@
             <el-table-column
               prop="stock_count"
               label="现有库存"
-              width="150"
+              width="110"
               show-overflow-tooltip>
             </el-table-column>
             <el-table-column
               label="库存"
-              width="150"
+              width="110"
               show-overflow-tooltip>
               <template slot-scope="scope">
                 <el-input   v-model="scope.row.stock_counts"  @blur="setGroupCount(scope.$index)"></el-input>
@@ -128,7 +129,7 @@
             </el-table-column>
             <el-table-column
               label="操作"
-              width="150">
+              width="110">
               <template slot-scope="scope">
                 <el-button @click="deleteSku(scope.$index)" type="text" class="delete-btn">删除</el-button>
               </template>
@@ -306,19 +307,23 @@ export default {
     }
   },
   methods: {
+    // 获取商品所有规格信息
     getGoodsId (value) {
       groupGoodSku({goods_id: value}).then(res => {
         if (res.status == 200) {
           var goods = res.data
+          var arr = []
           goods.forEach((v) => {
             v.prices = ''
             v.stock_counts = ''
             v.total_stock_count = v.stock_count + v.stock_counts
-            this.goods.push(v)
+            arr.push(v)
           })
+          this.goods = arr
         }
       })
     },
+    // 商品规格
     showSpecs (value) {
       if (value.spec_c) {
         return value.spec_a + ':' + value.property_a + ',' + value.spec_b + ':' + value.property_b + ',' + value.spec_c + ':' + value.property_c + ';'
@@ -328,6 +333,7 @@ export default {
         return value.spec_a + ':' + value.property_a + ';'
       }
     },
+    // 获取编辑的拼团信息
     getGroupInfo () {
       getGroupInfo(this.$route.params.id).then(res => {
         if (res.status == 200) {
@@ -368,6 +374,7 @@ export default {
       var s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
       return Y + '-' + M + '-' + D + ' ' + h + ':' + m + ':' + s
     },
+    // 批量删除
     groupDelete () {
       var newArr = this.goods
       if (this.multipleSelection.length > 0) {
@@ -452,6 +459,7 @@ export default {
         })
       }
     },
+    // 删除尺寸
     deleteSku (value) {
       this.$confirm(`是否删除该规格`, '提示', {
         confirmButtonText: '确定',
@@ -467,22 +475,7 @@ export default {
         })
       })
     },
-    // groupGoodSku () {
-    //   groupGoodSku({goods: this.groupProductId}).then(res => {
-    //     if (res.status == 200) {
-    //       var goods = res.data
-    //       var arr = []
-    //       goods.forEach(function (v) {
-    //         v.prices = ''
-    //         v.stock_counts = ''
-    //         v.total_stock_count = v.stock_count + v.stock_counts
-    //         arr.push(v)
-    //       })
-    //       this.goods = arr
-    //       console.log(this.goods)
-    //     }
-    //   })
-    // },
+    // 添加商品
     addGroupBuy () {
       this.goodsDialogVisible = true
     },
