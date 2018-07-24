@@ -224,7 +224,6 @@ export default {
       }
     }
     let validateTotalCount = (rule, value, callback) => {
-      value = String(value)
       var b = this.multipleSelection.every(function (v) {
         return value <= v.total_stock_count
       })
@@ -232,8 +231,6 @@ export default {
         callback(new Error('批量修改库存不能为空'))
       } else if (isNaN(value)) {
         callback(new Error('批量修改库存必须是数字'))
-      } else if (value.indexOf('.') > -1) {
-        callback(new Error('库存必须是整数'))
       } else if (!b) {
         callback(new Error('批量修改库存必须比所选规格的现有库存低'))
       } else {
