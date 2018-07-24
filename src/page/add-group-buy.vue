@@ -61,6 +61,7 @@
             <button class="left"  @click="groupUpdate()">批量修改</button>
             <button class="left"  @click="groupDelete()">批量删除</button>
             <button class="right"  v-if="newCreat == 'newCreat'" @click="addGroupBuy()">新增商品</button>
+            <button class="right"  v-if="newCreat != 'newCreat'" @click="addGroupSku()">新增规格</button>
           </div>
           <el-table
             ref="multipleTable"
@@ -310,6 +311,22 @@ export default {
     // 获取商品所有规格信息
     getGoodsId (value) {
       groupGoodSku({goods_id: value}).then(res => {
+        if (res.status == 200) {
+          var goods = res.data
+          var arr = []
+          goods.forEach((v) => {
+            v.prices = ''
+            v.stock_counts = ''
+            v.total_stock_count = v.stock_count + v.stock_counts
+            arr.push(v)
+          })
+          this.goods = arr
+        }
+      })
+    },
+    addGroupSku () {
+      let id = this.goods[0].goods_id
+      groupGoodSku({goods_id: id}).then(res => {
         if (res.status == 200) {
           var goods = res.data
           var arr = []
