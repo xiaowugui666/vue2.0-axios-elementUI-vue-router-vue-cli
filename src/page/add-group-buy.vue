@@ -491,6 +491,10 @@ export default {
       }).then(() => {
         // 删除该规格拼团
         this.goods.splice(value, 1)
+        this.$message({
+          type: 'success',
+          message: `删除成功`
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
