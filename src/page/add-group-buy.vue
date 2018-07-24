@@ -58,10 +58,16 @@
         </div>
         <div class="datalist">
           <div class="clear setGroup">
-            <button class="left"  @click="groupUpdate()">批量修改</button>
+            <el-row>
+              <el-button class="left"  @click="groupUpdate()" :disabled="multipleSelection.length == 0" size="small">批量修改</el-button>
+              <el-button class="left"  @click="groupDelete()" :disabled="multipleSelection.length == 0" size="small">批量删除</el-button>
+              <button class="right"  v-if="newCreat == 'newCreat'" @click="addGroupBuy()">新增商品</button>
+              <button class="right"  v-if="newCreat != 'newCreat'" @click="addGroupSku()">新增规格</button>
+            </el-row>
+         <!--   <button class="left"  @click="groupUpdate()">批量修改</button>
             <button class="left"  @click="groupDelete()">批量删除</button>
             <button class="right"  v-if="newCreat == 'newCreat'" @click="addGroupBuy()">新增商品</button>
-            <button class="right"  v-if="newCreat != 'newCreat'" @click="addGroupSku()">新增规格</button>
+            <button class="right"  v-if="newCreat != 'newCreat'" @click="addGroupSku()">新增规格</button>-->
           </div>
           <el-table
             ref="multipleTable"
@@ -691,8 +697,8 @@ export default {
        font-family: MicrosoftYaHei;
        font-size: 12px;
        background: #fff;
-       color: #333333;
-       border: 1px solid #333333;
+       /*color: #333333;*/
+       border: 1px solid #dcdfe6;
        border-radius: 2px;
        cursor: pointer;
      }
@@ -702,6 +708,25 @@ export default {
       button:nth-child(3){
         border: 1px solid #FA505D;
         color: #FA505D;
+      }
+      .el-button--default {
+        color: #333;
+        border-color: #333;
+        background: #fff;
+        &.is-disabled {
+          border: 1px solid #B5B5B5;
+          color: #999;
+        }
+      }
+      .el-button--text {
+        width: auto;
+        padding: 0 7px;
+        height: 24px;
+        border: 1px solid #63A4FF;
+        &:disabled {
+          color: @b9;
+          border-color: @b5b5;
+        }
       }
     }
   }
