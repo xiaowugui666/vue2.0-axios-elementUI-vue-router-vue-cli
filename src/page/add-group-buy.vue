@@ -299,8 +299,6 @@ export default {
   mounted () {
     this.newCreat = this.$route.params.id
     if (this.$route.params.id == 'newCreat') {
-      // this.groupGoodSku()
-      // this.method = 'post'
     } else {
       this.method = 'put'
       this.getGroupInfo()
@@ -327,15 +325,24 @@ export default {
       // let id = this.goods[0].goods_id
       groupGoodSku({goods_id: this.productId}).then(res => {
         if (res.status == 200) {
-          var goods = res.data
+          var goodsku = res.data
           var arr = []
-          goods.forEach((v) => {
+          for (var i = 0; i < this.goods.length; i++) {
+            for (var j = 0; j < goodsku.length; j++) {
+              if (goodsku[j].id == this.goods[i].goods_sku_id) {
+                goodsku.splice(j, 1)
+                j = j - 1
+              }
+            }
+          }
+          // console.log(goodsku)
+          goodsku.forEach((v) => {
             v.prices = ''
             v.stock_counts = ''
             v.total_stock_count = v.stock_count + v.stock_counts
             arr.push(v)
           })
-          this.goods = arr
+          this.goods = this.goods.concat(goodsku)
         }
       })
     },
