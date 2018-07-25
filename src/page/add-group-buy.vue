@@ -64,10 +64,6 @@
               <button class="right"  v-if="newCreat == 'newCreat'" @click="addGroupBuy()">新增商品</button>
               <button class="right"  v-if="newCreat != 'newCreat'" @click="addGroupSku()">新增规格</button>
             </el-row>
-         <!--   <button class="left"  @click="groupUpdate()">批量修改</button>
-            <button class="left"  @click="groupDelete()">批量删除</button>
-            <button class="right"  v-if="newCreat == 'newCreat'" @click="addGroupBuy()">新增商品</button>
-            <button class="right"  v-if="newCreat != 'newCreat'" @click="addGroupSku()">新增规格</button>-->
           </div>
           <el-table
             ref="multipleTable"
@@ -328,8 +324,8 @@ export default {
       })
     },
     addGroupSku () {
-      let id = this.goods[0].goods_id
-      groupGoodSku({goods_id: id}).then(res => {
+      // let id = this.goods[0].goods_id
+      groupGoodSku({goods_id: this.productId}).then(res => {
         if (res.status == 200) {
           var goods = res.data
           var arr = []
@@ -370,6 +366,7 @@ export default {
             v.total_stock_count = v.stock_count + v.stock_counts
             this.goods.push(v)
           })
+          this.productId = this.goods[0].goods_id
         }
       })
     },
